@@ -36,7 +36,7 @@ void GameEngineDefaultRenderer::SetPipeLine(const std::string& _name)
 
 	if (true == shaderResources_.IsConstantBuffer("TRANSFORMDATA"))
 	{
-		shaderResources_.SetConstantBufferLink(
+		shaderResources_.SetConstantBuffer_Link(
 			"TRANSFORMDATA",
 			&GetTransformData(),
 			sizeof(GetTransformData())

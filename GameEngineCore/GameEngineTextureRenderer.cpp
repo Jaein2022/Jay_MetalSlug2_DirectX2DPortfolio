@@ -258,12 +258,12 @@ void GameEngineTextureRenderer::ScaleToTexture()
 
 void GameEngineTextureRenderer::CurAnimationReset()
 {
-	CurAnimationStartPivotFrame(currentAnimation_->desc_.start_);
+	CurAnimationSetStartPivotFrame(currentAnimation_->desc_.start_);
 }
 
-void GameEngineTextureRenderer::CurAnimationStartPivotFrame(int _setFrame)
+void GameEngineTextureRenderer::CurAnimationSetStartPivotFrame(int _setFrame)
 {
-	currentAnimation_->desc_.curFrame_ += currentAnimation_->desc_.start_ + _setFrame;
+	currentAnimation_->desc_.curFrame_ = currentAnimation_->desc_.start_ + _setFrame;
 }
 
 GameEngineTexture* GameEngineTextureRenderer::GetCurrentTexture() const
@@ -297,7 +297,7 @@ void GameEngineTextureRenderer::SetTextureRendererSetting()
 	frameData_.sizeX = 1.f;
 	frameData_.sizeY = 1.f;
 
-	this->shaderResources_.SetConstantBufferLink("AtlasData", frameData_);
+	this->shaderResources_.SetConstantBuffer_Link("AtlasData", frameData_);
 }
 
 void GameEngineTextureRenderer::FrameDataReset()

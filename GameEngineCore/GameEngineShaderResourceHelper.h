@@ -39,8 +39,8 @@ public:
 	bool IsSampler(const std::string& _name);
 	//이 셰이더 리소스 세터가 주어진 이름의 샘플러를 가지고 있는가를 외부에서 확인하는 함수.
 
-	void SetConstantBufferLink(const std::string& _name, const void* _data, UINT _size);	//참조로 연결??
-	void SetConstantBufferNew(const std::string& _name, const void* _data, UINT _size);	//깊은 복사??
+	void SetConstantBuffer_Link(const std::string& _name, const void* _data, UINT _size);	//참조로 연결??
+	void SetConstantBuffer_New(const std::string& _name, const void* _data, UINT _size);	//깊은 복사??
 	//외부 데이타를 복사받아야 하는 등의 SetConstantBufferLink()를 사용할 수 없는 예외적인 상황에만 사용할 것.
 
 	GameEngineTexture* SetTexture(const std::string& _textureSetterName, const std::string& _textureName);
@@ -57,15 +57,15 @@ public:
 
 public:
 	template<typename Resource>
-	void SetConstantBufferLink(const std::string& _name, const Resource& _data)
+	void SetConstantBuffer_Link(const std::string& _name, const Resource& _data)
 	{
-		SetConstantBufferLink(_name, &_data, static_cast<UINT>(sizeof(Resource)));
+		SetConstantBuffer_Link(_name, &_data, static_cast<UINT>(sizeof(Resource)));
 	}
 
 	template<typename Resource>
-	void SetConstantBufferNew(const std::string& _name, const Resource& _data)
+	void SetConstantBuffer_New(const std::string& _name, const Resource& _data)
 	{
-		SetConstantBufferNew(_name, &_data, static_cast<UINT>(sizeof(Resource)));
+		SetConstantBuffer_New(_name, &_data, static_cast<UINT>(sizeof(Resource)));
 	}
 
 

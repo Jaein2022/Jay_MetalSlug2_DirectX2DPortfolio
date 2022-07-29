@@ -150,7 +150,7 @@ public:
 	void ScaleToTexture();	//텍스처 크기에 메쉬 스케일을 자동으로 맞춰주는 함수.
 
 	void CurAnimationReset();	//FrameDataReset()함수와 무슨 차이지? 
-	void CurAnimationStartPivotFrame(int _setFrame);	//애니메이션 중 내가 원하는 프레임으로 옮기는 함수.
+	void CurAnimationSetStartPivotFrame(int _setFrame);	//애니메이션 중 내가 원하는 프레임으로 옮기는 함수.
 
 	GameEngineTexture* GetCurrentTexture() const;
 

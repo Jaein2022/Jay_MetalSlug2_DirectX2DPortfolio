@@ -65,7 +65,7 @@ bool GameEngineShaderResourceHelper::IsSampler(const std::string& _name)
 
 }
 
-void GameEngineShaderResourceHelper::SetConstantBufferLink(
+void GameEngineShaderResourceHelper::SetConstantBuffer_Link(
 	const std::string& _name,
 	const void* _data,
 	UINT _size
@@ -103,7 +103,7 @@ void GameEngineShaderResourceHelper::SetConstantBufferLink(
 
 }
 
-void GameEngineShaderResourceHelper::SetConstantBufferNew(const std::string& _name, const void* _data, UINT _size)
+void GameEngineShaderResourceHelper::SetConstantBuffer_New(const std::string& _name, const void* _data, UINT _size)
 {
 	if (false == IsConstantBuffer(_name))
 	{
@@ -142,7 +142,7 @@ void GameEngineShaderResourceHelper::SetConstantBufferNew(const std::string& _na
 			_size,
 			_data,
 			_size
-		);	//±íÀºº¹»ç?
+		);	//±íÀºº¹»ç.
 
 		nameStartIter->second.size_ = _size;
 	}
