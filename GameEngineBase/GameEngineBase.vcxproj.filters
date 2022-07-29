@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="PreCompile">
+      <UniqueIdentifier>{c22cabe4-ff19-4072-a01d-13c690397b9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debug">
+      <UniqueIdentifier>{1471f3f8-5e7b-4e14-a5ab-4b9570c2ad18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IO">
+      <UniqueIdentifier>{5a0e1706-3a12-4ff9-a3aa-87b23f7411f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mathmatics">
+      <UniqueIdentifier>{015b3238-3838-4d48-a764-f84efce4131d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{6e2b7746-622d-41d6-b5d4-bee4c691356e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{680f88b7-7fb0-446d-a4e0-6a8c6c0f1fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="String">
+      <UniqueIdentifier>{47db3a8c-d058-42e7-a334-a6ddf2d9e507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Windows">
+      <UniqueIdentifier>{e5e7d2ae-1a6e-44d7-b77a-21b0a5d3ac1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{d13fc7ed-ea06-45ef-aafd-df34044487d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\Sound">
+      <UniqueIdentifier>{7dbcc9be-b763-4a2c-be4f-d01e4c0a3741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\Sound\Fmod">
+      <UniqueIdentifier>{95f759a4-755d-4961-9c8e-cf00fce4fd97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\Sound\Fmod\Inc%28Header%29">
+      <UniqueIdentifier>{50538d1d-91c5-4402-8582-47e471e2db51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\Sound\Fmod\Bin%28Library%29">
+      <UniqueIdentifier>{a76b4337-e88a-4d3b-9b12-cd9a083f8fa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\Sound\Fmod\Bin%28Library%29\Debug">
+      <UniqueIdentifier>{08f01226-35ba-4db1-86a2-095aeff9af50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\Sound\Fmod\Bin%28Library%29\Release">
+      <UniqueIdentifier>{b3b2bd89-b53d-49a3-9b94-b04467621ae0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PreCompile.cpp">
+      <Filter>PreCompile</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineDebug.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEnginePath.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineDirectory.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineFile.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineString.cpp">
+      <Filter>String</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineRandom.cpp">
+      <Filter>Mathmatics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineDebugObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineUpdateObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineNameObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineTime.cpp">
+      <Filter>Mathmatics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineInput.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineWindow.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineMath.cpp">
+      <Filter>Mathmatics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineTransform.cpp">
+      <Filter>Mathmatics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineTransform_Collision.cpp">
+      <Filter>Mathmatics</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineSound.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PreCompile.h">
+      <Filter>PreCompile</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineDebug.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEnginePath.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineDirectory.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineFile.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineString.h">
+      <Filter>String</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineRandom.h">
+      <Filter>Mathmatics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineDebugObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineUpdateObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineNameObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineTime.h">
+      <Filter>Mathmatics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineInput.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineWindow.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineMath.h">
+      <Filter>Mathmatics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineTransform.h">
+      <Filter>Mathmatics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEngineSound.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod.hpp">
+      <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod.h">
+      <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Debug\fmodL_vc.lib">
+      <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Debug</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Release\fmod.dll">
+      <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Release</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Release\fmod_vc.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ThirdParty\FMOD\Bin\Debug\fmodL.dll">
+      <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Debug</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ThirdParty\FMOD\Bin\Release\fmod_vc.lib">
+      <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Release</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
