@@ -145,7 +145,7 @@ ID3D11DepthStencilView* GameEngineTexture::CreateDepthStencilView()
 	return depthStencilView_;
 }
 
-void GameEngineTexture::Cut(const std::string& _textureName, int _splitX, int _splitY)
+void GameEngineTexture::Cut(const std::string& _textureName, int _x, int _y)
 {
 	GameEngineTexture* findTexture = GameEngineTexture::Find(_textureName);
 	if (nullptr == findTexture)
@@ -155,7 +155,7 @@ void GameEngineTexture::Cut(const std::string& _textureName, int _splitX, int _s
 	}
 	else
 	{
-		findTexture->Cut(_splitX, _splitY);
+		findTexture->Cut(_x, _y);
 	}
 }
 
@@ -265,16 +265,16 @@ void GameEngineTexture::TextureCreate(const D3D11_TEXTURE2D_DESC& _desc)
 
 }
 
-void GameEngineTexture::Cut(int _splitX, int _splitY)
+void GameEngineTexture::Cut(int _x, int _y)
 {
-	float sizeX = 1.f / _splitX;
-	float sizeY = 1.f / _splitY;
+	float sizeX = 1.f / _x;
+	float sizeY = 1.f / _y;
 
 	float4 cuttingStart = float4::Zero;
 
-	for (int y = 0; y < _splitY; y++)
+	for (int y = 0; y < _y; y++)
 	{
-		for (int x = 0; x < _splitX; x++)
+		for (int x = 0; x < _x; x++)
 		{
 			float4 frameData;
 			frameData.posX = cuttingStart.x;

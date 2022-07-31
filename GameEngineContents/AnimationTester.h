@@ -24,6 +24,7 @@ public:
 private:
 	GameEngineTextureRenderer* legRenderer_;
 	float velocity_;
+	bool isMoving_;
 
 };
 

@@ -1,7 +1,7 @@
 #include "PreCompile.h"
 #include "AnimationTester.h"
 
-AnimationTester::AnimationTester(): legRenderer_(nullptr), velocity_(100.f)
+AnimationTester::AnimationTester(): legRenderer_(nullptr), velocity_(100.f), isMoving_(false)
 {
 }
 
@@ -30,9 +30,16 @@ void AnimationTester::Start()
 	legRenderer_ = CreateComponent<GameEngineTextureRenderer>();
 	legRenderer_->GetTransform().SetLocalScale(100, 100, 1);
 
+	if (false == GameEngineTexture::Find("Tarma_LegAtlas.png")->IsCut())
+	{
+		GameEngineTexture::Cut("Tarma_LegAtlas.png", 5, 5);
+	}
+	legRenderer_->SetTexture("Tarma_LegAtlas.png");
 
+	FrameAnimation_Desc testAnimationDesc = FrameAnimation_Desc("Tarma_LegAtlas.png", 1, 12, 0.05f, true);
 
-
+	legRenderer_->CreateFrameAnimation_AtlasTexture("LegTest", testAnimationDesc);
+	legRenderer_->ChangeFrameAnimation("LegTest");
 }
 
 void AnimationTester::Update(float _deltaTime)
@@ -40,10 +47,16 @@ void AnimationTester::Update(float _deltaTime)
 	if (true == GameEngineInput::GetInst()->IsPressed("MoveLeft"))
 	{
 		this->GetTransform().SetWorldLeftMove(velocity_, _deltaTime);
+		isMoving_ = true;
 	}
 	else if (true == GameEngineInput::GetInst()->IsPressed("MoveRight"))
 	{
 		this->GetTransform().SetWorldRightMove(velocity_, _deltaTime);
+		isMoving_ = true;
+	}
+	else
+	{
+		isMoving_ = false;
 	}
 
 

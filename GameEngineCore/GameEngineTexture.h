@@ -50,7 +50,8 @@ public:
 	ID3D11RenderTargetView* CreateRenderTargetView();	//렌더타겟뷰 생성 함수.
 	ID3D11DepthStencilView* CreateDepthStencilView();	//깊이스텐실뷰 생성 함수.
 
-	static void Cut(const std::string& _textureName, int _splitX, int _splitY);
+	static void Cut(const std::string& _textureName, int _x, int _y);
+	
 
 	float4 GetPixel(int _x, int _y);
 
@@ -79,13 +80,18 @@ public:
 			static_cast<float>(texture2DDesc_.Height));
 	}
 
+	bool IsCut()
+	{
+		return false == cutData_.empty();
+	}
+
 
 private:
 	void TextureLoad(const std::string& _path);
 	//지정한 경로에서 텍스처를 불러오는 함수.셰이더리소스뷰 생성 과정까지 포함되어 있음.
 
 	void TextureCreate(const D3D11_TEXTURE2D_DESC& _desc);	//ID3D11Texture2D* 형 텍스처 생성 함수. 
-	void Cut(int _splitX, int _splitY);
+	void Cut(int _x, int _y);
 
 private:
 	ID3D11Texture2D* texture2D_;

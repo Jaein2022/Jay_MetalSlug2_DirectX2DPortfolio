@@ -28,5 +28,9 @@ public:
 
 
 private:
+	 
+
+private:
+	void LoadContentsResource();	//길어지면 전용 cpp파일로 분리.
 
 };
