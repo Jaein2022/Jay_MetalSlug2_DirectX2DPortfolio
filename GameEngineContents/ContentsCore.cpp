@@ -1,6 +1,6 @@
 #include "PreCompile.h"
 #include "ContentsCore.h"
-#include "TempLevel.h"
+#include "TestLevel.h"
 
 ContentsCore::ContentsCore()
 {
@@ -18,10 +18,10 @@ void ContentsCore::Start()
 
 	GameEngineGUI::CreateGUIWindow<GameEngineStatusWindow>("EngineStatus", nullptr);
 
-	CreateLevel<TempLevel>("Temp");
+	CreateLevel<TestLevel>("TestLevel");
 
 
-	ChangeLevel("Temp");
+	ChangeLevel("TestLevel");
 
 	//GameEngineDebug::ConsoleOpen(); 콘솔창이 필요하면 복원.
 }

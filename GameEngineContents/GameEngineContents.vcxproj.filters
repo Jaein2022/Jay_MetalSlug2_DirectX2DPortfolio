@@ -7,6 +7,9 @@
     <Filter Include="Core">
       <UniqueIdentifier>{ed68ba18-bbcb-4c7a-b813-1e22e2cc7a61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Temp">
+      <UniqueIdentifier>{33c83817-a0e9-4a85-8277-950290f42c2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -15,7 +18,12 @@
     <ClInclude Include="ContentsCore.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="TempLevel.h" />
+    <ClInclude Include="TestLevel.h">
+      <Filter>Temp</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationTester.h">
+      <Filter>Temp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -24,6 +32,11 @@
     <ClCompile Include="ContentsCore.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="TempLevel.cpp" />
+    <ClCompile Include="TestLevel.cpp">
+      <Filter>Temp</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationTester.cpp">
+      <Filter>Temp</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
