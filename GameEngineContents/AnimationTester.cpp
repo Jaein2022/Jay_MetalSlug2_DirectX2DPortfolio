@@ -28,11 +28,11 @@ void AnimationTester::Start()
 	}
 
 	legRenderer_ = CreateComponent<GameEngineTextureRenderer>();
-	legRenderer_->GetTransform().SetLocalScale(100, 100, 1);
+	legRenderer_->GetTransform().SetLocalScale(150, 150, 1);
 
-	if (false == GameEngineTexture::Find("Tarma_LegAtlas.png")->IsCut())
+	if (0 == GameEngineTexture::Find("Tarma_LegAtlas.png")->GetCutCount())
 	{
-		GameEngineTexture::Cut("Tarma_LegAtlas.png", 5, 5);
+		GameEngineTexture::Cut("Tarma_LegAtlas.png", 5, 6);
 	}
 	legRenderer_->SetTexture("Tarma_LegAtlas.png");
 

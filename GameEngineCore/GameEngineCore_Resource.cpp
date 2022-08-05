@@ -17,6 +17,7 @@
 #include "GameEnginePixelShader.h"
 #include "GameEngineDepthStencil.h"
 #include "GameEngineBlend.h"
+#include "GameEngineFont.h"
 
 void EngineInputLayout()
 {
@@ -282,6 +283,15 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine3->SetRasterizer("EngineRasterizer");
 	newRenderingPipeLine3->SetBlend_OutputMerger("AlphaBlend");
 	newRenderingPipeLine3->SetDepthStencil_OutputMerger("EngineBaseDepth");
+
+	GameEngineRenderingPipeLine* newRenderingPipeLine4 = GameEngineRenderingPipeLine::Create("3DDebug");
+	newRenderingPipeLine4->SetVertexBuffer_InputAssembler1("BoxVertex");
+	newRenderingPipeLine4->SetVertexShader("Debug3D.hlsl");
+	newRenderingPipeLine4->SetIndexBuffer_InputAssembler2("BoxIndex");
+	newRenderingPipeLine4->SetPixelShader("Debug3D.hlsl");
+	newRenderingPipeLine4->SetRasterizer("EngineRasterizer");
+	newRenderingPipeLine4->SetBlend_OutputMerger("AlphaBlend");
+	newRenderingPipeLine4->SetDepthStencil_OutputMerger("EngineBaseDepth");
 }
 
 void EngineMesh()
@@ -379,6 +389,8 @@ void EngineMesh()
 	boxIndex.push_back(7);
 
 	GameEngineIndexBuffer::Create("BoxIndex", boxIndex);
+
+	GameEngineFont::Load("돋움");
 }
 
 void ShaderCompile()
@@ -432,6 +444,8 @@ void GameEngineCore::EngineResourceDestroy()
 	GameEngineTexture::ResourceDestroy();
 	GameEngineFolderTexture::ResourceDestroy();
 	GameEngineSampler::ResourceDestroy();
+	GameEngineSound::ResourceDestroy();
+	GameEngineFont::ResourceDestroy();
 
 	GameEngineDevice::Destroy();
 	//모든 리소스들은 다이렉트X 디바이스의 지원이 있어야 존재할 수 있으므로,

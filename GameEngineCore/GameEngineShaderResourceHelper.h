@@ -14,7 +14,7 @@ class GameEngineShaderResourceHelper
 	friend class GameEngineDefaultRenderer;
 
 
-private:
+public:
 	GameEngineShaderResourceHelper();
 	~GameEngineShaderResourceHelper();
 

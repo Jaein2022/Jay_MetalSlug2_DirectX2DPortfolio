@@ -23,7 +23,7 @@ public:
 
 	// 이 오브젝트가 프레임구조안에서 돌때 거치는 절차.
 	virtual void Update(float _deltaTime) = 0;
-
+	void AllUpdate(float _deltaTime);
 
 public:
 	inline void On()
@@ -148,7 +148,7 @@ public:
 
 		while (nullptr != currentObject->GetParent())
 		{
-			currentObject = this->GetParent();
+			currentObject = currentObject->GetParent();
 		}
 		return currentObject;
 	}

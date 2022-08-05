@@ -5,6 +5,7 @@
 #include "GameEngineGUI.h"
 #include "GameEngineCamera.h"
 #include "GameEngineCameraActor.h"
+#include "GameEngineCoreDebug.h"
 
 #pragma comment(lib, "GameEngineBase.lib")
 
@@ -42,7 +43,8 @@ void GameEngineCore::WindowCreate(const std::string& _title, GameEngineCore* _us
 	GameEngineWindow::GetInst()->CreateGameWindow(nullptr, _title.c_str());
 	//윈도우 핸들 생성.
 
-	GameEngineWindow::GetInst()->SetWindowScaleAndPosition({ 100, 100 }, { 1280, 720 });
+	GameEngineWindow::GetInst()->SetWindowScaleAndPosition(
+		_userCore->StartWindowPosition(), _userCore->StartWindowSize());
 	//윈도우 생성 위치와 크기 조정.
 
 	GameEngineWindow::GetInst()->ShowGameWindow();
@@ -66,6 +68,8 @@ void GameEngineCore::CoreStart(GameEngineCore* _userCore)
 	//엔진코어 초기화 및 각종 엔진 리소스 준비.
 	//유저코어의 스타트 이전에 엔진 리소스 준비가 끝나있어야 한다.
 
+	GameEngineDebug::Debug3DInitialize();
+
 	GameEngineGUI::Initialize();
 	//ImGUI 초기화.
 
@@ -79,12 +83,15 @@ void GameEngineCore::CoreUpdate(GameEngineCore* _userCore)
 	{
 		if (nullptr != currentLevel_)
 		{
+			currentLevel_->ActorOffEvent();
 			currentLevel_->OffEvent();
 			currentLevel_->OverChildMove(nextLevel_);	//원하는 오브젝트를 다음 레벨로 넘긴다. 
 		}
 		currentLevel_ = nextLevel_;
 		nextLevel_ = nullptr;
 		currentLevel_->OnEvent();
+		currentLevel_->ActorOnEvent();
+
 		currentLevel_->ResetAccTime();
 		GameEngineTime::GetInst()->Reset();
 		//GameEngineInput::GetInst()->Reset();

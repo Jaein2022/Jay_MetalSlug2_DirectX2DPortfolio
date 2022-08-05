@@ -5,7 +5,7 @@
 #include "GameEngineDevice.h"
 
 GameEngineCamera::GameEngineCamera()
-	: size_(GameEngineWindow::GetInst()->GetScale()),
+	: size_(GameEngineWindow::GetScale()),
 	projectionMode_(CameraProjectionMode::Perspective),
 	nearZ_(0.1f),
 	farZ_(1000.f),
@@ -34,7 +34,7 @@ float4 GameEngineCamera::GetMouseScreenPosition()
 	}
 
 	if (false == ScreenToClient(	//화면 전체 기준 마우스 포인터 좌표를 특정 윈도우 기준 좌표로 변환하는 함수.
-		GameEngineWindow::GetInst()->GetHWND(),	//마우스 포인터 좌표를 알려고 하는 윈도우의 핸들.
+		GameEngineWindow::GetHWND(),	//마우스 포인터 좌표를 알려고 하는 윈도우의 핸들.
 		&pointerPosition	//변환할 화면 전체기준 마우스 포인터 좌표.
 	))
 	{
@@ -56,7 +56,7 @@ float4 GameEngineCamera::GetMouseWorldPosition()
 	}
 
 	if (false == ScreenToClient(	//화면 전체 기준 마우스 포인터 좌표를 특정 윈도우 기준 좌표로 변환하는 함수.
-		GameEngineWindow::GetInst()->GetHWND(),	//마우스 포인터 좌표를 알려고 하는 윈도우의 핸들.
+		GameEngineWindow::GetHWND(),	//마우스 포인터 좌표를 알려고 하는 윈도우의 핸들.
 		&pointerPosition	//변환할 화면 전체기준 마우스 포인터 좌표.
 	))
 	{
@@ -148,14 +148,14 @@ void GameEngineCamera::Render(float _deltaTime)
 		break;
 	}
 
-	for (std::pair<const int, std::list<GameEngineRenderer*>>& group : allRenderers_)
+	for (std::pair<const int, std::list<GameEngineRenderer*>>& rendererGroupPair : allRenderers_)
 	{
-		float scaleTime = GameEngineTime::GetDeltaTime(group.first);
+		float scaleTime = GameEngineTime::GetDeltaTime(rendererGroupPair.first);
 
-		std::list<GameEngineRenderer*>& sortingRendererList = group.second;
+		std::list<GameEngineRenderer*>& sortingRendererList = rendererGroupPair.second;
 		sortingRendererList.sort(ZSort);	//<-이거 있고 없고의 차이가 뭐길래 투명이 제대로 적용되지??
 
-		for (GameEngineRenderer* const renderer : group.second)
+		for (GameEngineRenderer* const renderer : rendererGroupPair.second)
 			//이 위치의 const는 renderer가 가리키는 메모리 위치를 변경할 수 없게 하겠다는 의미이다. 
 			//하지만 renderer가 가리키는 메모리가 가진 값은 얼마든지 변경 가능하다.
 		{

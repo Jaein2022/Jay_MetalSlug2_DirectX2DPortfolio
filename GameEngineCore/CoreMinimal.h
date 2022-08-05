@@ -14,7 +14,10 @@
 #include "GameEngineDefaultRenderer.h"
 #include "GameEngineTextureRenderer.h"
 #include "GameEngineUIRenderer.h"
+
 #include "GameEngineStateManager.h"
+#include "GameEngineCoreDebug.h"
+
 		 
 #include "GameEngineGUI.h"
 #include "GameEngineStatusWindow.h"

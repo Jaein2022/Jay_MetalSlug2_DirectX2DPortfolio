@@ -12,6 +12,8 @@ class GameEngineRenderTarget : public GameEngineRes<GameEngineRenderTarget>
 	friend GameEngineRes<GameEngineRenderTarget>;
 	//GameEngineRenderTarget클래스의 프라이빗 소멸자를 GameEngineRes클래스에서 호출하기 위한 방법.
 
+	friend class GameEngineStatusWindow;
+	//프렌드 이유??
 
 	//게임엔진렌더타겟과 게임엔진텍스쳐 클래스를 분리한 이유: 
 	//게임엔진텍스쳐는 자기가 가진 텍스쳐와 그 서브리소스들만 가지고 관리하는 클래스이고,
@@ -32,11 +34,30 @@ private:
 
 public:
 	static GameEngineRenderTarget* Create(const std::string& _name);
+	static GameEngineRenderTarget* Create();
 
-	void CreateRenderTarget(	//렌더타겟으로 쓸 게임엔진텍스처 객체를 생성, 저장하는 함수.
+	void CreateRenderTargetTexture(	//렌더타겟으로 쓸 게임엔진텍스처 객체를 생성, 저장하는 함수.
 		ID3D11Texture2D* _texture,
 		const float4& _clearColor
 	);
+	void CreateRenderTargetTexture(
+		const float4& _size,
+		const float4& _color
+	);
+	void CreateRenderTargetTexture(
+		const float4& _size,
+		DXGI_FORMAT _format,
+		const float4& _color
+	);
+	void CreateRenderTargetTexture(
+		D3D11_TEXTURE2D_DESC _desc,
+		const float4& _color
+	);
+	void CreateRenderTargetTexture(
+		GameEngineTexture* _texture,
+		const float4& _color
+	);
+
 	void CreateDepthTexture(int _index);
 	void Clear();	//교체된 전면버퍼 렌더타겟뷰를 한 색상으로 덮어서 초기화하는 함수.
 	void Setting();	//해당 리소스를 렌더링 파이프라인에 연결하는 함수.
@@ -47,6 +68,9 @@ private:
 
 	std::vector<ID3D11RenderTargetView*> renderTargetViews_;
 	//위 텍스쳐에서 파생된 렌더타겟뷰들.
+
+	std::vector<ID3D11ShaderResourceView*> shaderResourceViews_;
+	//
 
 	std::vector<float4> clearColors_;
 	//렌더타겟뷰를 초기화할때 쓸 색상값들.

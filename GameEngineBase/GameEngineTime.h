@@ -39,6 +39,11 @@ public:
 
 	static float GetDeltaTime()
 	{
+		if (0.05f <= inst_->deltaTime_)
+		{
+			inst_->deltaTime_ = 0.05f;
+		}
+
 		return inst_->deltaTime_;
 	}
 
@@ -47,7 +52,7 @@ public:
 		return inst_->deltaTime_ * inst_->GetTimeScale(_index);
 	}
 	template <typename EnumType>
-	void GetDeltaTime(EnumType _type)
+	void inline GetDeltaTime(EnumType _type)
 	{
 		return GetDeltaTime(static_cast<int>(_type));
 	}

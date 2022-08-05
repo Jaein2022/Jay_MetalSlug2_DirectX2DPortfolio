@@ -6,10 +6,12 @@
 #include "GameEngineCameraActor.h"
 #include "GameEngineDevice.h"
 #include "GameEngineGUI.h"
+#include "GameEngineCollision.h"
+#include "GameEngineCoreDebug.h"
 
 GameEngineLevel::GameEngineLevel()
 {
-	cameras_.resize(static_cast<UINT>(CameraOrder::Max));
+	cameras_.resize(static_cast<size_t>(CameraOrder::UICamera) + 1);
 
 	GameEngineCameraActor* mainCameraActor = CreateActor<GameEngineCameraActor>();
 	mainCameraActor->GetTransform().SetLocalPosition(0, 0, -100);
@@ -72,17 +74,15 @@ void GameEngineLevel::LevelUpdate(float _deltaTime)
 
 void GameEngineLevel::ActorsUpdate(float _deltaTime)
 {
-	for (const std::pair<int, std::list<GameEngineActor*>>& actorList : allActors_)
+	for (const std::pair<int, std::list<GameEngineActor*>>& actorListPair : allActors_)
 	{
-		float scaleTime = GameEngineTime::GetDeltaTime(actorList.first);
-
-		for (GameEngineActor* const actor : actorList.second)
+		for (GameEngineActor* const actor : actorListPair.second)
 			//이 위치의 const는 actor가 가리키는 메모리 위치를 변경할 수 없게 하겠다는 의미이다. 
 			//하지만 actor가 가리키는 메모리가 가진 값은 얼마든지 변경 가능하다.
 		{
 			if (true == actor->IsUpdate())
 			{
-				actor->AllUpdate(scaleTime, _deltaTime);
+				actor->AllUpdate(_deltaTime);
 				//액터들과 그 아래 컴포넌트들의 업데이트는 전부 AllUpdate로 통합.	
 			}
 		}
@@ -103,9 +103,9 @@ void GameEngineLevel::Render(float _deltaTime)
 
 		cameras_[i]->Render(_deltaTime);
 	}
+	GameEngineDebug::Debug3DRender();
 
 	GameEngineGUI::Render(this, _deltaTime);
-
 
 	GameEngineDevice::RenderEnd();
 }
@@ -144,6 +144,26 @@ void GameEngineLevel::Release(float _deltaTime)
 		//렌더러 삭제가 아니라 i번째 카메라의 allRenderers_리스트에서 빼는 등록해제인 것에 유의.
 	}
 
+	for (std::map<int, std::list<GameEngineCollision*>>::iterator collisionGroupIter = allCollisions_.begin();
+		collisionGroupIter != allCollisions_.end(); collisionGroupIter++)
+	{
+		std::list<GameEngineCollision*>& collisionGroup = collisionGroupIter->second;
+
+		for (std::list<GameEngineCollision*>::iterator collisionIter = collisionGroup.begin();
+			collisionIter != collisionGroup.end(); /*collisionIter++*/)
+		{
+			if (true == (*collisionIter)->IsDead())
+			{
+				collisionIter = collisionGroup.erase(collisionIter);
+				//여기서는 allColiisions_에서 제거하기만 한다.
+			}
+			else
+			{
+				++collisionIter;
+			}
+		}
+	}
+
 	for (std::map<int, std::list<GameEngineActor*>>::iterator actorGroupIter = allActors_.begin();
 		actorGroupIter != allActors_.end(); actorGroupIter++)
 	{
@@ -171,59 +191,76 @@ void GameEngineLevel::Release(float _deltaTime)
 
 void GameEngineLevel::PushRenderer(GameEngineRenderer* _renderer, int _cameraOrder)
 {
-	if (static_cast<int>(CameraOrder::Max) <= _cameraOrder
+	if (static_cast<int>(CameraOrder::UICamera) < _cameraOrder
 		|| static_cast<int>(CameraOrder::MainCamera) > _cameraOrder)
 	{
 		MsgBoxAssert("카메라 오더가 허용 범위를 넘어섰습니다.");
 		return;
 	}
+
+	cameras_[static_cast<int>(_renderer->cameraOrder_)]->allRenderers_[_renderer->GetOrder()].remove(_renderer);
+	//
+
+	_renderer->cameraOrder_ = static_cast<CameraOrder>(_cameraOrder);
+
 
 	cameras_[_cameraOrder]->PushRenderer(_renderer);
 }
 
 void GameEngineLevel::PushCamera(GameEngineCamera* _camera, int _cameraOrder)
 {
-	if (static_cast<int>(CameraOrder::Max) <= _cameraOrder
+	if (static_cast<int>(CameraOrder::UICamera) < _cameraOrder
 		|| static_cast<int>(CameraOrder::MainCamera) > _cameraOrder)
 	{
 		MsgBoxAssert("카메라 오더가 허용 범위를 넘어섰습니다.");
 		return;
 	}
 
+	cameras_.resize(static_cast<size_t>(_cameraOrder) + 1);
+
 	cameras_[_cameraOrder] = _camera;
+}
+
+void GameEngineLevel::PushCollision(GameEngineCollision* _collision, int _order)
+{
+	allCollisions_[_collision->GetOrder()].remove(_collision);
+	//원래 그룹에서 제거.
+
+	_collision->SetOrder(_order);
+	//새 오더 부여.
+
+	allCollisions_[_collision->GetOrder()].push_back(_collision);
+	//새 그룹에 삽입.
 }
 
 void GameEngineLevel::OverChildMove(GameEngineLevel* _nextLevel)
 {
-	std::map<int, std::list<GameEngineActor*>>::iterator startGroupIter = allActors_.begin();
-	std::map<int, std::list<GameEngineActor*>>::iterator endGroupIter = allActors_.end();
+	std::list<GameEngineActor*> actorOverList;
 
-	std::list<GameEngineActor*> overList;
-
-	for (; startGroupIter != endGroupIter; ++startGroupIter)
+	for (std::map<int, std::list<GameEngineActor*>>::iterator actorGroupIter = allActors_.begin();
+		actorGroupIter != allActors_.end(); actorGroupIter++)
 	{
-		std::list<GameEngineActor*>& group = startGroupIter->second;
 
-		std::list<GameEngineActor*>::iterator groupStart = group.begin();
-		std::list<GameEngineActor*>::iterator groupEnd = group.end();
-		for (; groupStart != groupEnd; )
+		std::list<GameEngineActor*>& actorGroup = actorGroupIter->second;
+		for (std::list<GameEngineActor*>::iterator actorIter = actorGroup.begin();
+			actorIter != actorGroup.end(); /*actorIter++*/)
 		{
-			if (true == (*groupStart)->isLevelOver_)
+			if (true == (*actorIter)->isLevelOver_)
 			{
-				overList.push_back((*groupStart));
-				groupStart = group.erase(groupStart);
+				actorOverList.push_back(*actorIter);
+				actorIter = actorGroup.erase(actorIter);
 			}
 			else
 			{
-				++groupStart;
+				++actorIter;
 			}
-
 		}
 	}
 
-	for (GameEngineActor* OverActor : overList)
+	for (GameEngineActor* overActor : actorOverList)
 	{
-		_nextLevel->allActors_[OverActor->GetOrder()].push_back(OverActor);
+		overActor->SetLevel(_nextLevel);
+		_nextLevel->allActors_[overActor->GetOrder()].push_back(overActor);
 	}
 
 	for (size_t i = 0; i < cameras_.size(); i++)
@@ -236,5 +273,62 @@ void GameEngineLevel::OverChildMove(GameEngineLevel* _nextLevel)
 		cameras_[i]->OverRenderer(_nextLevel->cameras_[i]);
 	}
 
+	std::list<GameEngineCollision*> collisionOverList;
+
+	for (std::map<int, std::list<GameEngineCollision*>>::iterator collisionGroupIter = allCollisions_.begin();
+		collisionGroupIter != allCollisions_.end(); collisionGroupIter++)
+	{
+		std::list<GameEngineCollision*>& collisionGroup = collisionGroupIter->second;
+
+		for (std::list<GameEngineCollision*>::iterator collisionIter = collisionGroup.begin();
+			collisionIter != collisionGroup.end(); /*collisionIter++*/)
+		{
+			if (true == (*collisionIter)->GetRoot<GameEngineActor>()->isLevelOver_)
+			{
+				collisionOverList.push_back(*collisionIter);
+				collisionIter = collisionGroup.erase(collisionIter);
+			}
+			else
+			{
+				++collisionIter;
+			}
+		}
+	}
+
+	for (GameEngineCollision* overCollision : collisionOverList)
+	{
+		_nextLevel->allCollisions_[overCollision->GetOrder()].push_back(overCollision);
+	}
 }
 
+void GameEngineLevel::ActorOnEvent()
+{
+	for (const std::pair<int, std::list<GameEngineActor*>>& actorListPair : allActors_)
+	{
+		for (GameEngineActor* const actor : actorListPair.second)
+			//이 위치의 const는 actor가 가리키는 메모리 위치를 변경할 수 없게 하겠다는 의미이다. 
+			//하지만 actor가 가리키는 메모리가 가진 값은 얼마든지 변경 가능하다.
+		{
+			if (true == actor->IsUpdate())
+			{
+				actor->OnEvent();
+			}
+		}
+	}
+}
+
+void GameEngineLevel::ActorOffEvent()
+{
+	for (const std::pair<int, std::list<GameEngineActor*>>& actorListPair : allActors_)
+	{
+		for (GameEngineActor* const actor : actorListPair.second)
+			//이 위치의 const는 actor가 가리키는 메모리 위치를 변경할 수 없게 하겠다는 의미이다. 
+			//하지만 actor가 가리키는 메모리가 가진 값은 얼마든지 변경 가능하다.
+		{
+			if (true == actor->IsUpdate())
+			{
+				actor->OffEvent();
+			}
+		}
+	}
+}

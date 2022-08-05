@@ -38,13 +38,32 @@ public:
 	{
 		projectionMode_ = _mode;
 	}
-	inline float4 GetMouseWorldDirection()
+	inline const float4& GetMouseWorldDirection()
 	{
 		return mouseDirection_;
 	}
 	CameraProjectionMode GetProjectionMode()
 	{
 		return projectionMode_;
+	}
+
+	inline void SetProjectionSize(const float4& _size)
+	{
+		size_ = _size;
+	}
+	inline const float4& GetProjectionSize() const
+	{
+		return size_;
+	}
+
+	inline const float4x4& GetViewMatrix()
+	{
+		return viewMatrix_;
+	}
+
+	inline const float4x4& GetProjectionMatrix() const
+	{
+		return projectionMatrix_;
 	}
 
 

@@ -1,11 +1,11 @@
 #pragma once
 #include "GameEngineTransformComponent.h"
+#include "GameEngineLevel.h"
 
-class GameEngineLevel;
 class GameEngineRenderer : public GameEngineTransformComponent
 {
-	friend GameEngineLevel;
 	friend class GameEngineCamera;
+	friend GameEngineLevel;
 
 public:
 
@@ -18,6 +18,7 @@ public:
 	GameEngineRenderer& operator=(GameEngineRenderer&& _other) = delete;
 
 public:
+	void ChangeCamera(CameraOrder _order);
 
 
 protected:
@@ -28,5 +29,8 @@ protected:
 protected:
 	void PushRendererToMainCamera();	//렌더러가 메인카메라에 등록하는 함수.
 	void PushRendererToUICamera();		//렌더러가 UI카메라에 등록하는 함수.
+
+protected:
+	CameraOrder cameraOrder_;
 
 };

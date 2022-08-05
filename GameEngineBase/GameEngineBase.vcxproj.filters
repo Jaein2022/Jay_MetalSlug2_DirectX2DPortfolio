@@ -155,6 +155,21 @@
     <ClInclude Include="ThirdParty\FMOD\Include\fmod.h">
       <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
     </ClInclude>
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_codec.h">
+      <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_common.h">
+      <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_dsp.h">
+      <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_dsp_effects.h">
+      <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_output.h">
+      <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Debug\fmodL_vc.lib">
@@ -163,16 +178,11 @@
     <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Release\fmod.dll">
       <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Release</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Release\fmod_vc.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ThirdParty\FMOD\Bin\Debug\fmodL.dll">
-      <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Debug</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="ThirdParty\FMOD\Bin\Release\fmod_vc.lib">
+    <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Release\fmod_vc.lib">
       <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Release</Filter>
-    </Library>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="ThirdParty\FMOD\Bin\Debug\fmodL.dll">
+      <Filter>ThirdParty\Sound\Fmod\Bin%28Library%29\Debug</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

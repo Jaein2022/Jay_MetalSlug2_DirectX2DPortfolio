@@ -6,19 +6,31 @@
 //Forward declare message handler from imgui_impl_win32.cpp
 //->imgui_impl_win32.cpp에 있는 메세지 핸들러의 전방선언.
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-std::list<GameEngineGUIWindow*> GameEngineGUI::windows_;
+
 
 void GameEngineGUIWindow::Begin()
 {
-    std::string tempName = GameEngineString::AnsiToUTF8Return(this->GetNameConstPtr());
+    std::string guiWindowName = GameEngineString::AnsiToUTF8Return(this->GetNameConstPtr());
 
-    ImGui::Begin(tempName.c_str());
+    ImGui::Begin(guiWindowName.c_str());
 }
 
 void GameEngineGUIWindow::End()
 {
     ImGui::End();
 }
+
+void GameEngineGUIWindow::Start()
+{
+}
+
+void GameEngineGUIWindow::Update(float _deltaTime)
+{
+}
+
+
+
+std::list<GameEngineGUIWindow*> GameEngineGUI::guiWindows_;
 
 GameEngineGUI::GameEngineGUI()
 {
@@ -35,20 +47,16 @@ void GameEngineGUI::Render(GameEngineLevel* _level, float _deltaTime)
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();  //<-ImGUI 렌더링 시작 함수??
 
-    //필요한 ImGUI관련 렌더링 정보는 이 아래로.
-
-    for (GameEngineGUIWindow* guiWindow : windows_)
+    for (GameEngineGUIWindow* guiWindow : guiWindows_)
     {
-        //if (false == guiWindow->isOpened_)
-        //{
-        //    continue;
-        //}
-        guiWindow->Begin();
-        guiWindow->OnGUI(_level, _deltaTime);
-        guiWindow->End();
+        if (true == guiWindow->IsUpdate())
+        {
+            guiWindow->Begin();        
+            guiWindow->OnGUI(_level, _deltaTime);
+            guiWindow->End();      
+        }
     }
 
-    //필요한 ImGUI관련 렌더링 정보는 이 위로.
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
 
@@ -107,7 +115,7 @@ void GameEngineGUI::Initialize()
     );
 
     // Setup Platform/Renderer backends
-    ImGui_ImplWin32_Init(GameEngineWindow::GetInst()->GetHWND());
+    ImGui_ImplWin32_Init(GameEngineWindow::GetHWND());
     ImGui_ImplDX11_Init(GameEngineDevice::GetDevice(), GameEngineDevice::GetContext());
 
     GameEngineWindow::GetInst()->SetMessageHandler(ImGui_ImplWin32_WndProcHandler);
@@ -116,7 +124,7 @@ void GameEngineGUI::Initialize()
 
 void GameEngineGUI::Destroy()
 {
-    for (GameEngineGUIWindow* guiWindow : windows_)
+    for (GameEngineGUIWindow* guiWindow : guiWindows_)
     {
         if (nullptr != guiWindow)
         {
@@ -124,7 +132,6 @@ void GameEngineGUI::Destroy()
             guiWindow = nullptr;
         }
     }
-
 
     // Cleanup
     ImGui_ImplDX11_Shutdown();

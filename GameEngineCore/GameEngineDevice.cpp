@@ -16,7 +16,7 @@ void GameEngineDevice::Initialize()
 
 void GameEngineDevice::CreateDevice()
 {
-	if (nullptr == GameEngineWindow::GetInst()->GetHWND())
+	if (nullptr == GameEngineWindow::GetHWND())
 	{
 		MsgBoxAssert("윈도우가 생성되지 않았는데 디바이스 초기화를 하려고 했습니다..");
 		return;
@@ -87,7 +87,7 @@ void GameEngineDevice::CreateDevice()
 
 void GameEngineDevice::CreateSwapChain()
 {
-	float4 screenSize = GameEngineWindow::GetInst()->GetScale();
+	float4 screenSize = GameEngineWindow::GetScale();
 
 	DXGI_SWAP_CHAIN_DESC scInfo = { 0 };
 
@@ -114,7 +114,7 @@ void GameEngineDevice::CreateSwapChain()
 	scInfo.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
 	//버퍼 사용처: 화면에 출력할 렌더타겟으로 | 셰이더를 거친 결과물을 받는 용도로.
 
-	scInfo.OutputWindow = GameEngineWindow::GetInst()->GetHWND();
+	scInfo.OutputWindow = GameEngineWindow::GetHWND();
 	//지정한 렌더타겟을 출력할 윈도우의 핸들.
 
 	scInfo.BufferCount = 2;		//사용할 버퍼 개수: 2개.
@@ -215,10 +215,10 @@ void GameEngineDevice::CreateSwapChain()
 		return;
 	}
 
-	backBufferRenderTarget_ = GameEngineRenderTarget::Create("BackBufferRenderTarget");
+	backBufferRenderTarget_ = GameEngineRenderTarget::Create("BackBuffer_RenderTarget");
 	//백버퍼 용도로 쓸 빈 깡통 렌더타겟 생성.
 
-	backBufferRenderTarget_->CreateRenderTarget(backBufferTexture, float4::Blue);
+	backBufferRenderTarget_->CreateRenderTargetTexture(backBufferTexture, float4::Blue);
 	//스왑체인에서 받아온 백버퍼 텍스처로 렌더타겟뷰를 만든다.
 
 	backBufferRenderTarget_->CreateDepthTexture(0);

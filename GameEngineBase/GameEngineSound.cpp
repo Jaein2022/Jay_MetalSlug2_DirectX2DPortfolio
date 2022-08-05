@@ -14,6 +14,7 @@ FMOD::System* soundSystem_ = nullptr;
 
 class SoundSystemCreater
 {
+public:
     SoundSystemCreater()
     {
         FMOD::System_Create(&soundSystem_);
@@ -31,6 +32,10 @@ class SoundSystemCreater
     }
 };
 
+SoundSystemCreater CreateInst = SoundSystemCreater();
+
+std::map<std::string, GameEngineSound*> GameEngineSound::allResource_;
+
 
 GameEngineSound::GameEngineSound() : sound_(nullptr)
 {
@@ -42,8 +47,8 @@ GameEngineSound::~GameEngineSound()
 
 GameEngineSoundPlayer GameEngineSound::SoundPlayControl(const std::string& _name, unsigned int _loopCount /*= 0*/)
 {
-    std::string upperCaseName = GameEngineString::ToUpperReturn(_name);
-    GameEngineSound* findSound = GameEngineSound::FindRessource(upperCaseName);
+    std::string uppercaseResourceName = GameEngineString::ToUpperReturn(_name);
+    GameEngineSound* findSound = GameEngineSound::FindResources(uppercaseResourceName);
     if (nullptr == findSound)
     {
         MsgBoxAssertString(_name + ": 그런 이름의 사운드가 존재하지 않습니다.");
@@ -61,8 +66,8 @@ GameEngineSoundPlayer GameEngineSound::SoundPlayControl(const std::string& _name
 
 void GameEngineSound::SoundPlayOneshot(const std::string& _name, int _loopCount)
 {
-    std::string upperCaseName = GameEngineString::ToUpperReturn(_name);
-    GameEngineSound* findSound = GameEngineSound::FindRessource(upperCaseName);
+    std::string uppercaseResourceName = GameEngineString::ToUpperReturn(_name);
+    GameEngineSound* findSound = GameEngineSound::FindResources(uppercaseResourceName);
     if (nullptr == findSound)
     {
         MsgBoxAssertString(_name + ": 그런 이름의 사운드가 존재하지 않습니다.");
@@ -97,7 +102,7 @@ GameEngineSound* GameEngineSound::LoadResource(const std::string& _path)
 
 GameEngineSound* GameEngineSound::LoadResource(const std::string& _path, const std::string& _name)
 {
-    std::string upperCaseName = GameEngineString::ToUpperReturn(_name);
+    std::string uppercaseResourceName = GameEngineString::ToUpperReturn(_name);
     GameEngineSound* newSound = new GameEngineSound();
     if (false == newSound->Load(_path))
     {
@@ -107,15 +112,15 @@ GameEngineSound* GameEngineSound::LoadResource(const std::string& _path, const s
         return nullptr;
     }
 
-    allResource_.insert(std::make_pair(upperCaseName, newSound));
+    allResource_.insert(std::make_pair(uppercaseResourceName, newSound));
 
     return newSound;
 }
 
-GameEngineSound* GameEngineSound::FindRessource(const std::string& _name)
+GameEngineSound* GameEngineSound::FindResources(const std::string& _name)
 {
-    std::string upperCaseName = GameEngineString::ToUpperReturn(_name);
-    std::map<std::string, GameEngineSound*>::iterator findIter = allResource_.find(upperCaseName);
+    std::string uppercaseResourceName = GameEngineString::ToUpperReturn(_name);
+    std::map<std::string, GameEngineSound*>::iterator findIter = allResource_.find(uppercaseResourceName);
     if (allResource_.end() == findIter)
     {
         return nullptr;
@@ -126,7 +131,7 @@ GameEngineSound* GameEngineSound::FindRessource(const std::string& _name)
     }
 }
 
-void GameEngineSound::AllResourceDestroy()
+void GameEngineSound::ResourceDestroy()
 {
     for (std::pair<std::string, GameEngineSound*> Res : allResource_)
     {

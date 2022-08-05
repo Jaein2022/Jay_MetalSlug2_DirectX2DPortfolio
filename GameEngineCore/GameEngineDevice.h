@@ -56,6 +56,11 @@ public:
 		return deviceContext_;
 	}
 
+	static GameEngineRenderTarget* GetBackBuffer()
+	{
+		return backBufferRenderTarget_;
+	}
+
 private:
 	static void CreateDevice();
 	//인터페이스 구조체 ID3D11Device타입 포인터 객체와 ID3D11DeviceContext타입 포인터 객체를 생성해서,

@@ -47,11 +47,11 @@ public:
 	void VSSetting(int _bindPoint);
 	void PSSetting(int _bindPoint);
 
-	ID3D11RenderTargetView* CreateRenderTargetView();	//렌더타겟뷰 생성 함수.
-	ID3D11DepthStencilView* CreateDepthStencilView();	//깊이스텐실뷰 생성 함수.
+	ID3D11RenderTargetView* CreateRenderTargetView();
+	ID3D11ShaderResourceView* CreateShaderResourceView();
+	ID3D11DepthStencilView* CreateDepthStencilView();
 
 	static void Cut(const std::string& _textureName, int _x, int _y);
-	
 
 	float4 GetPixel(int _x, int _y);
 
@@ -76,13 +76,19 @@ public:
 	float4 GetScale()
 	{
 		//(metadata_.width), (metadata_.height)이거쓰면 0,0되서 텍스쳐 생성에 실패함 뜸
-		return float4(static_cast<float>(texture2DDesc_.Width),
-			static_cast<float>(texture2DDesc_.Height));
+		return float4(static_cast<float>(desc_.Width),
+			static_cast<float>(desc_.Height));
 	}
 
-	bool IsCut()
+	size_t GetCutCount()
 	{
-		return false == cutData_.empty();
+		return cutData_.size();
+	}
+
+	float4 GetCutScale(int _index)
+	{
+		return float4(cutData_[_index].sizeX * static_cast<float>(desc_.Width),
+			cutData_[_index].sizeY * static_cast<float>(desc_.Height));
 	}
 
 
@@ -108,7 +114,8 @@ private:
 	//셰이더리소스뷰:
 
 	ID3D11DepthStencilView* depthStencilView_;	//깊이스텐실뷰.
-	D3D11_TEXTURE2D_DESC texture2DDesc_;	//깊이스텐실 버퍼로 사용할 텍스처 생성용 명세서.
+
+	D3D11_TEXTURE2D_DESC desc_;	//텍스처 생성용 명세서.
 
 
 	DirectX::ScratchImage scratchImage_;//DirectXTex로 불러온 텍스처

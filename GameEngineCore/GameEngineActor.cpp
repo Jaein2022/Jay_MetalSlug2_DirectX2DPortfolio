@@ -72,20 +72,3 @@ void GameEngineActor::Update(float _deltaTime)
 void GameEngineActor::End()
 {
 }
-
-void GameEngineActor::AllUpdate(float _scaleTime, float _deltaTime)
-{
-	this->AddAccTime(_deltaTime);
-	this->ReleaseUpdate(_deltaTime);
-	this->Update(_scaleTime);
-
-	for (GameEngineUpdateObject* object : children_)
-	{
-		object->AddAccTime(_deltaTime);
-		object->ReleaseUpdate(_deltaTime); //deadTime_이 0이 된 오브젝트들에게 사망 판정을 내린다.
-		if (true == object->IsUpdate())
-		{
-			object->Update(_scaleTime);
-		}
-	}
-}

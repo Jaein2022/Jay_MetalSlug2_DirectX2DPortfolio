@@ -17,23 +17,75 @@ GameEngineRenderTarget* GameEngineRenderTarget::Create(const std::string& _name)
 	return CreateNamedRes(_name);
 }
 
-void GameEngineRenderTarget::CreateRenderTarget(
+GameEngineRenderTarget* GameEngineRenderTarget::Create()
+{
+	return CreateUnnamedRes();
+}
+
+void GameEngineRenderTarget::CreateRenderTargetTexture(
 	ID3D11Texture2D* _texture,
-	const float4& _clearColor
+	const float4& _color
 )
 {
 	GameEngineTexture* newTexture = GameEngineTexture::Create(_texture);
 	//_texture를 저장할 newTexture를 생성한다.
 
-	this->renderTargets_.push_back(newTexture);
+	CreateRenderTargetTexture(newTexture, _color);
+}
+
+void GameEngineRenderTarget::CreateRenderTargetTexture(
+	const float4& _size,
+	const float4& _color
+)
+{
+	CreateRenderTargetTexture(_size, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, _color);
+}
+
+void GameEngineRenderTarget::CreateRenderTargetTexture(
+	const float4& _size,
+	DXGI_FORMAT _format,
+	const float4& _color
+)
+{
+	D3D11_TEXTURE2D_DESC newTextureDesc = { 0 };
+	newTextureDesc.Width = _size.UIX();
+	newTextureDesc.Height = _size.UIY();
+	newTextureDesc.MipLevels = 1;
+	newTextureDesc.ArraySize = 1;
+	newTextureDesc.Format = _format;
+	newTextureDesc.SampleDesc.Count = 1;
+	newTextureDesc.SampleDesc.Quality = 0;
+	newTextureDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	newTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
+	CreateRenderTargetTexture(newTextureDesc, _color);
+}
+
+void GameEngineRenderTarget::CreateRenderTargetTexture(
+	D3D11_TEXTURE2D_DESC _desc,
+	const float4& _color
+)
+{
+	GameEngineTexture* newTexture = GameEngineTexture::Create(_desc);
+	CreateRenderTargetTexture(newTexture, _color);
+}
+
+void GameEngineRenderTarget::CreateRenderTargetTexture(
+	GameEngineTexture* _texture,
+	const float4& _color
+)
+{
+	this->renderTargets_.push_back(_texture);
 	//renderTargets_에 newTexture를 저장한다.
 
-	this->renderTargetViews_.push_back(newTexture->CreateRenderTargetView());
+	this->renderTargetViews_.push_back(_texture->CreateRenderTargetView());
 	//newTexture에서 생성한 렌더타겟뷰를 저장한다.
 
-	this->clearColors_.push_back(_clearColor);
-	//_clearColor도 저장한다.
+	this->shaderResourceViews_.push_back(_texture->CreateShaderResourceView());
+	//
 
+	this->clearColors_.push_back(_color);
+	//_color도 저장한다.
 }
 
 void GameEngineRenderTarget::CreateDepthTexture(int _index)

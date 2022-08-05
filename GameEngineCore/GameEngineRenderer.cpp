@@ -1,14 +1,18 @@
 #include "PreCompile.h"
 #include "GameEngineRenderer.h"
 #include "GameEngineActor.h"
-#include "GameEngineLevel.h"
 
-GameEngineRenderer::GameEngineRenderer()
+GameEngineRenderer::GameEngineRenderer(): cameraOrder_(CameraOrder::UICamera)
 {
 }
 
 GameEngineRenderer::~GameEngineRenderer()
 {
+}
+
+void GameEngineRenderer::ChangeCamera(CameraOrder _order)
+{
+	this->GetActor()->GetLevel()->PushRenderer(this, _order);
 }
 
 void GameEngineRenderer::Start()
@@ -59,7 +63,7 @@ void GameEngineRenderer::PushRendererToUICamera()
 //
 //	for (size_t i = 0; i < drawVertex.size(); i += 3)
 //	{
-//		Polygon(GameEngineWindow::GetInst().GetHDC(), &drawVertex[i], 3);
+//		Polygon(GameEngineWindow::GetHDC(), &drawVertex[i], 3);
 //	}
 //
 //}

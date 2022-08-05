@@ -39,6 +39,15 @@ GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Create(const std::stri
 	return CreateNamedRes(_name);
 }
 
+void GameEngineRenderingPipeLine::AllShaderReset()
+{
+	GameEngineDevice::GetContext()->VSSetShader(nullptr, nullptr, 0);
+	GameEngineDevice::GetContext()->HSSetShader(nullptr, nullptr, 0);
+	GameEngineDevice::GetContext()->DSSetShader(nullptr, nullptr, 0);
+	GameEngineDevice::GetContext()->GSSetShader(nullptr, nullptr, 0);
+	GameEngineDevice::GetContext()->PSSetShader(nullptr, nullptr, 0);
+}
+
 void GameEngineRenderingPipeLine::SetVertexBuffer_InputAssembler1(const std::string& _name)
 {
 	this->vertexBuffer_ = GameEngineVertexBuffer::Find(_name);

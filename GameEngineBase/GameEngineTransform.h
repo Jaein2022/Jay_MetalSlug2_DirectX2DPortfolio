@@ -4,10 +4,17 @@
 
 enum class CollisionBodyType
 {
+	CT_Point2D,
+	CT_Sphere2D,
+	CT_AABB2D,
+	CT_OBB2D,
+
 	CT_Point,
 	CT_Sphere,
 	CT_AABB,
 	CT_OBB,
+
+	CT_Max
 };
 
 class CollisionData
@@ -16,12 +23,12 @@ class CollisionData
 
 	union
 	{
-		DirectX::BoundingSphere SPHERE_;
-		DirectX::BoundingBox AABB_;
-		DirectX::BoundingOrientedBox OBB_;
+		DirectX::BoundingSphere sphere_;
+		DirectX::BoundingBox aabb_;
+		DirectX::BoundingOrientedBox obb_;
 	};
 
-	CollisionData() : OBB_()
+	CollisionData() : obb_()
 		//가장 많은 데이타가 필요한 OBB로 초기화를 하면, 
 		// 같은 데이타를 쓰는 유니언의 다른 변수들도 같이 초기화가 된다
 	{
@@ -112,15 +119,20 @@ public:
 
 	void PixLocalPositiveX();
 
-	void CopyTransform(const GameEngineTransform& _transform);
+	void Copy(const GameEngineTransform& _transform);
 
 
 public:
 	//충돌 함수들.
 
-	static bool SphereToSpherer(const GameEngineTransform& _sphereA, const GameEngineTransform& _sphereB);
+	static bool SphereToSphere(const GameEngineTransform& _sphereA, const GameEngineTransform& _sphereB);
 	static bool AABBToAABB(const GameEngineTransform& _boxA, const GameEngineTransform& _boxB);
 	static bool OBBToOBB(const GameEngineTransform& _boxA, const GameEngineTransform& _boxB);
+
+	static bool Sphere2DToSphere2D(const GameEngineTransform& _sphereA, const GameEngineTransform& _sphereB);
+	static bool AABB2DToAABB2D(const GameEngineTransform& _boxA, const GameEngineTransform& _boxB);
+	static bool OBB2DToOBB2D(const GameEngineTransform& _boxA, const GameEngineTransform& _boxB);
+
 
 public:
 	inline void SetLocalScale(const float4& _localScale)

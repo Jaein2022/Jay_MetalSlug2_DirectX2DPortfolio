@@ -8,7 +8,7 @@ GameEngineTexture::GameEngineTexture()
 	renderTargetView_(nullptr),
 	shaderResourceView_(nullptr),
 	depthStencilView_(nullptr),
-	texture2DDesc_(),
+	desc_(),
 	metaData_()
 {
 }
@@ -43,7 +43,7 @@ GameEngineTexture* GameEngineTexture::Create(const std::string& _name, ID3D11Tex
 {
 	GameEngineTexture* newRes = CreateNamedRes(_name);
 	newRes->texture2D_ = _texture;
-	_texture->GetDesc(&newRes->texture2DDesc_);
+	_texture->GetDesc(&newRes->desc_);
 	return newRes;
 }
 
@@ -51,7 +51,7 @@ GameEngineTexture* GameEngineTexture::Create(ID3D11Texture2D* _texture)
 {
 	GameEngineTexture* newRes = CreateUnnamedRes();
 	newRes->texture2D_ = _texture;
-	_texture->GetDesc(&newRes->texture2DDesc_);
+	_texture->GetDesc(&newRes->desc_);
 	return newRes;
 }
 
@@ -125,6 +125,26 @@ ID3D11RenderTargetView* GameEngineTexture::CreateRenderTargetView()
 	return this->renderTargetView_;
 }
 
+ID3D11ShaderResourceView* GameEngineTexture::CreateShaderResourceView()
+{
+	if (nullptr != shaderResourceView_)
+	{
+		return shaderResourceView_;
+	}
+
+	if (S_OK != GameEngineDevice::GetDevice()->CreateShaderResourceView(
+		texture2D_,
+		nullptr,
+		&shaderResourceView_
+	))
+	{
+		MsgBoxAssert("셰이더리소스뷰 생성 실패.");
+		return nullptr;
+	}
+
+	return shaderResourceView_;
+}
+
 ID3D11DepthStencilView* GameEngineTexture::CreateDepthStencilView()
 {
 	if (nullptr != depthStencilView_)
@@ -150,7 +170,7 @@ void GameEngineTexture::Cut(const std::string& _textureName, int _x, int _y)
 	GameEngineTexture* findTexture = GameEngineTexture::Find(_textureName);
 	if (nullptr == findTexture)
 	{
-		MsgBoxAssertString(_textureName + ": 그런 이름의 텍스쳐가 존재하지 않습니다.");
+		MsgBoxAssertString(_textureName + ": 그런 이름의 텍스쳐가 없습니다.");
 		return;
 	}
 	else
@@ -186,7 +206,8 @@ float4 GameEngineTexture::GetPixel(int _x, int _y)
 
 	int index = _y * static_cast<int>(this->scratchImage_.GetMetadata().width) + _x;
 
-	color = color + static_cast<uint8_t>(index) * 4;
+	color = color + (index * 4);
+	//*color = *color + (index * 4);
 
 	unsigned char r = color[0];
 	unsigned char g = color[1];
@@ -245,16 +266,16 @@ void GameEngineTexture::TextureLoad(const std::string& _path)
 		return;
 	}
 
-	texture2DDesc_.Width = static_cast<UINT>(metaData_.width);
-	texture2DDesc_.Height = static_cast<UINT>(metaData_.height);
+	desc_.Width = static_cast<UINT>(metaData_.width);
+	desc_.Height = static_cast<UINT>(metaData_.height);
 }
 
 void GameEngineTexture::TextureCreate(const D3D11_TEXTURE2D_DESC& _desc)
 {
-	texture2DDesc_ = _desc;
+	desc_ = _desc;
 
 	if (S_OK != GameEngineDevice::GetDevice()->CreateTexture2D(
-		&texture2DDesc_,	//텍스처2D 생성용 명세서.
+		&desc_,	//텍스처2D 생성용 명세서.
 		nullptr,			//텍스처 생성시 필요한 초기데이터.
 		&texture2D_			//생성한 텍스처를 받을 ID3D11Texture2D 인터페이스 포인터.
 	))
@@ -289,6 +310,4 @@ void GameEngineTexture::Cut(int _x, int _y)
 		cuttingStart.x = 0.f;
 		cuttingStart.y += sizeY;
 	}
-
-
 }

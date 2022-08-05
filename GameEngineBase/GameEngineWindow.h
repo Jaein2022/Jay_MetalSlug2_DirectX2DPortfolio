@@ -46,19 +46,19 @@ public:
 		}
 	}
 
-	HDC GetHDC() const
+	static HDC GetHDC()
 	{
-		return hdc_;
+		return inst_->hdc_;
 	}
 
-	HWND GetHWND() const
+	static HWND GetHWND() 
 	{
-		return windowHandle_;
+		return inst_->windowHandle_;
 	}
 
-	const float4& GetScale() const
+	static float4 GetScale() 
 	{
-		return windowScale_;
+		return inst_->windowScale_;
 	}
 
 	void SetMessageHandler(

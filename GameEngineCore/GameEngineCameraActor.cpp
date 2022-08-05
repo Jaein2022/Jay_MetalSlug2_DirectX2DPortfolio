@@ -104,11 +104,11 @@ void GameEngineCameraActor::FreeCameraModeOnOff()
 	{
 		prevProjectionMode_ = cameraComponent_->GetProjectionMode();
 		cameraComponent_->SetProjectionMode(CameraProjectionMode::Perspective);
-		originalTransform_.CopyTransform(this->GetTransform());
+		originalTransform_.Copy(this->GetTransform());
 	}
 	else
 	{
 		cameraComponent_->SetProjectionMode(prevProjectionMode_);
-		this->GetTransform().CopyTransform(originalTransform_);
+		this->GetTransform().Copy(originalTransform_);
 	}
 }

@@ -1,0 +1,109 @@
+#include "PreCompile.h"
+#include "GameEngineCollision.h"
+#include "GameEngineLevel.h"
+
+bool (*GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_Max)][static_cast<int>(CollisionBodyType::CT_Max)])
+(const GameEngineTransform& _transformA, const GameEngineTransform& _transformB);
+
+class GameEngineCollisionFunctionInit
+{
+	//이 클래스의 존재 이유: 
+public:
+	GameEngineCollisionFunctionInit()
+	{
+		memset(
+			GameEngineCollision::collisionFunctions_,
+			0,
+			sizeof(GameEngineCollision::collisionFunctions_));
+
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_Sphere)][static_cast<int>(CollisionBodyType::CT_Sphere)]
+			= &GameEngineTransform::SphereToSphere;
+
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_AABB)][static_cast<int>(CollisionBodyType::CT_AABB)]
+			= &GameEngineTransform::AABBToAABB;
+
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_OBB)][static_cast<int>(CollisionBodyType::CT_OBB)]
+			= &GameEngineTransform::OBBToOBB;
+
+
+
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_Sphere2D)][static_cast<int>(CollisionBodyType::CT_Sphere2D)]
+			= &GameEngineTransform::Sphere2DToSphere2D;
+
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_AABB2D)][static_cast<int>(CollisionBodyType::CT_AABB2D)]
+			= &GameEngineTransform::AABB2DToAABB2D;
+
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_OBB2D)][static_cast<int>(CollisionBodyType::CT_OBB2D)]
+			= &GameEngineTransform::OBB2DToOBB2D;
+
+		//추가 함수가 필요하다면 그때그때 만들어서 추가할 것.
+	}
+
+	~GameEngineCollisionFunctionInit()
+	{
+	}
+};
+
+GameEngineCollisionFunctionInit inst_;
+
+GameEngineCollision::GameEngineCollision()
+{
+}
+
+GameEngineCollision::~GameEngineCollision()
+{
+}
+
+void GameEngineCollision::ChangeOrder(int _order)
+{
+	this->GetActor()->GetLevel()->PushCollision(this, _order);
+}
+
+bool GameEngineCollision::IsCollision(
+	CollisionBodyType _thisType,
+	int _groupOrder,
+	CollisionBodyType _otherType,
+	std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function /*= nullptr*/
+)
+{
+	int thisType = static_cast<int>(_thisType);
+	int otherType = static_cast<int>(_otherType);
+
+	if (nullptr == GameEngineCollision::collisionFunctions_[thisType][otherType])
+	{
+		MsgBoxAssert("아직 준비되지 않은 충돌 함수입니다.");
+		return false;
+	}
+
+	std::map<int, std::list<GameEngineCollision*>>& allCollisions
+		= this->GetActor()->GetLevel()->allCollisions_;
+
+	std::list<GameEngineCollision*>& collisionGroup = allCollisions[_groupOrder];
+
+	for (GameEngineCollision* collision : collisionGroup)
+	{
+		if (false == collision->IsUpdate())
+		{
+			continue;
+		}
+
+		if (true == GameEngineCollision::collisionFunctions_[thisType][otherType](this->GetTransform(), collision->GetTransform()))
+		{
+			if (nullptr != _function)
+			{
+				if (true == _function(this, collision))	//연결된 충돌 함수가 true를 반환하면 충돌체크를 한번만 한다.
+														//연결된 충돌 함수가 false를 반환하면 충돌체크를 계속 한다.
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+void GameEngineCollision::Start()
+{
+	this->GetActor()->GetLevel()->PushCollision(this, this->GetOrder());
+}

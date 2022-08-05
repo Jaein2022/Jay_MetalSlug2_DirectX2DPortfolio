@@ -29,9 +29,9 @@ public:
 	static GameEngineSound* LoadResource(const GameEngineFile& _path);
 	static GameEngineSound* LoadResource(const std::string& _path);
 	static GameEngineSound* LoadResource(const std::string& _path, const std::string& _name);
-	static GameEngineSound* FindRessource(const std::string& _name);
+	static GameEngineSound* FindResources(const std::string& _name);
 
-	static void AllResourceDestroy();
+	static void ResourceDestroy();
 
 protected:
 	bool Load(const std::string& _path);

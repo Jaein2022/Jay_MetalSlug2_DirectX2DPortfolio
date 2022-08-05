@@ -11,6 +11,5 @@ GameEngineStateManager::~GameEngineStateManager()
 
 void GameEngineStateManager::Update(float _deltaTime)
 {
-	currentState_->info_.stateTime_ += _deltaTime;
 	currentState_->StateUpdate(_deltaTime);
 }

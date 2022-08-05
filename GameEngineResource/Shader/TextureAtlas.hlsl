@@ -47,10 +47,16 @@ Output TextureAtlas_VS(Input _input)
     return newOutput;
 }
 
+cbuffer ColorData : register(b0)
+{
+    float4 mulColor_;
+    float4 plusColor_;
+};
+
 Texture2D Tex : register(t0);
 SamplerState Smp : register(s0);
 
 float4 TextureAtlas_PS(Output _input) : SV_Target0 //SV_Target[n]: n번 렌더타겟에 결과값을 저장한다.
-{   
-    return Tex.Sample(Smp, _input.texcoord_.xy);
+{
+    return (Tex.Sample(Smp, _input.texcoord_.xy) * mulColor_) + plusColor_;
 }

@@ -15,10 +15,14 @@
 #include <GameEngineCore\GameEngineDefaultRenderer.h>
 #include <GameEngineCore\GameEngineTextureRenderer.h>
 #include <GameEngineCore\GameEngineUIRenderer.h>
+#include <GameEngineCore\GameEngineFontRenderer.h>
 
+#include <GameEngineCore\GameEngineFont.h>
 #include <GameEngineCore\GameEngineTexture.h>
 #include <GameEngineCore\GameEngineGUI.h>
 #include <GameEngineCore\GameEngineStatusWindow.h>
+#include <GameEngineCore\GameEngineCollision.h>
+#include <GameEngineCore\GameEngineCoreDebug.h>
 
 #include <GameEngineCore\GameEngineStateManager.h>
 

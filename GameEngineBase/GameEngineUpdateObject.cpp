@@ -1,5 +1,6 @@
 #include "PreCompile.h"
 #include "GameEngineUpdateObject.h"
+#include "GameEngineTime.h"
 
 GameEngineUpdateObject::GameEngineUpdateObject()
 	: order_(0),
@@ -38,6 +39,23 @@ void GameEngineUpdateObject::ReleaseHierarchy()
 
 	//더 이상의 자식이 없다면 함수 호출을 멈추고 여기까지 내려온다.
 	delete this;	//이 프레임워크에서 진짜로 오브젝트의 메모리해제를 하는 부분.
+}
+
+void GameEngineUpdateObject::AllUpdate(float _deltaTime)
+{
+	this->AddAccTime(_deltaTime);
+	this->ReleaseUpdate(_deltaTime);
+	this->Update(GameEngineTime::GetInst()->GetTimeScale(this->GetOrder()) * _deltaTime);
+
+	for (GameEngineUpdateObject* object : children_)
+	{
+		object->AddAccTime(_deltaTime);
+		object->ReleaseUpdate(_deltaTime); //deadTime_이 0이 된 오브젝트들에게 사망 판정을 내린다.
+		if (true == object->IsUpdate())
+		{
+			object->AllUpdate(_deltaTime);
+		}
+	}
 }
 
 void GameEngineUpdateObject::ReleaseObject(std::list<GameEngineUpdateObject*>& _releaseList)

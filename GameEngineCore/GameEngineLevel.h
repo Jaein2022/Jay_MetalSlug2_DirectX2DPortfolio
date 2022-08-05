@@ -12,7 +12,6 @@ enum class CameraOrder
 	User6,
 	User7,
 	UICamera,
-	Max
 };
 
 class GameEngineCamera;
@@ -20,6 +19,7 @@ class GameEngineCameraActor;
 class GameEngineRenderer;
 class GameEngineActor;
 class GameEngineTransform;
+class GameEngineCollision;
 class GameEngineLevel : public GameEngineNameObject, public GameEngineUpdateObject
 {
 	//레벨: 액터들이 움직이는 배경.
@@ -28,6 +28,7 @@ class GameEngineLevel : public GameEngineNameObject, public GameEngineUpdateObje
 	friend GameEngineRenderer;
 	friend GameEngineCamera;
 	friend GameEngineActor;
+	friend GameEngineCollision;
 
 protected:
 	GameEngineLevel();	//이제는 레벨 생성자에서 메인카메라와 UI카메라를 생성하고 시작한다.
@@ -124,13 +125,16 @@ private:
 	void LevelUpdate(float _deltaTime);
 	void ActorsUpdate(float _deltaTime);
 	void Render(float _deltaTime);		//메인카메라가 가진 렌더러들의 정보대로 렌더하는 함수.
-	void RemoveActor(GameEngineActor* _actor);	//allActors_맵에서 지정한 액터를 제거하는 함수.
+	void RemoveActor(GameEngineActor* _actor);	//allActors_맵에서 액터를 제거하는 함수.
 	void Release(float _deltaTime);	//이 프레임워크의 정식 오브젝트 삭제 절차.
 
 private:
 	void PushRenderer(GameEngineRenderer* _renderer, int _cameraOrder);	//메인카메라에 렌더러를 등록하는 함수. 
 	void PushCamera(GameEngineCamera* _camera, int _cameraOrder);	//해당 레벨의 메인카메라를 등록하는 함수.
+	void PushCollision(GameEngineCollision* _collision, int _order);
 	void OverChildMove(GameEngineLevel* _nextLevel);	//오브젝트를 다음 레벨로 이전시키는 함수.
+	void ActorOnEvent();
+	void ActorOffEvent();
 
 private:
 	void PushCamera(GameEngineCamera* _camera, CameraOrder _order)
@@ -155,16 +159,15 @@ private:
 
 private:
 	std::map<int, std::list<GameEngineActor*>> allActors_;
-	//해당 레벨의 모든 액터들이 저장된 맵.
+	//이 레벨의 모든 액터들이 저장된 맵.
 
 	std::list<GameEngineUpdateObject*> deleteObjects;
 	//삭제 예정인 모든 오브젝트들이 종류 불문하고 잠시 저장되는 일종의 휴지통.
 
 
 	std::vector<GameEngineCamera*> cameras_;	//이 레벨이 사용하는 모든 카메라들.
-	//GameEngineCamera* mainCamera_;	//주 카메라. 
-	//GameEngineCamera* uiCamera_;	//UI전용 카메라. 당장은 사용하지 않음.
 
+	std::map<int, std::list<GameEngineCollision*>> allCollisions_;	//이 레벨의 모든 충돌체들.	
 };
 
 

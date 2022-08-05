@@ -71,12 +71,6 @@ protected:
 	virtual void Update(float _deltaTime) override;
 	virtual void End() override;
 
-
-
-private:
-	void AllUpdate(float _scaleTime, float _deltaTime);
-	//액터와 액터가 가진 모든 컴포넌트들을 업데이트하는 함수.
-
 private:
 	void SetLevel(GameEngineLevel* _level)
 	{

@@ -32,6 +32,10 @@ public:
 
 	static GameEngineRenderingPipeLine* Create(const std::string& _name);
 
+	static void AllShaderReset();
+
+public:
+
 	//세팅 준비 함수들.
 	//void SetInputLayout_InputAssembler1(const std::string& _name);
 	// 인풋레이아웃은 따로 생성하지 않고, 버텍스버퍼와 버텍스셰이더가 둘 다 갖추어지면 인풋레이아웃이 생성되게 한다.

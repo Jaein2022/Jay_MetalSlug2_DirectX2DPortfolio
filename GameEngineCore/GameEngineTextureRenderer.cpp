@@ -5,70 +5,89 @@
 
 void FrameAnimation::Reset()
 {
-	desc_.frameTime_ = 0.f;
-	desc_.curFrame_ = desc_.start_;
+	info_.frameTime_ = 0.f;
+	info_.curFrame_ = 0;
 }
 
 void FrameAnimation::Update(float _deltaTime)
 {
-	desc_.frameTime_ += _deltaTime;
+	info_.frameTime_ += _deltaTime;
 
 	if (nullptr != time_)
 	{
-		this->time_(desc_, _deltaTime);
+		this->time_(info_, _deltaTime);
 	}
 
 	if (false == bOnceStart_
-		&& desc_.curFrame_ == desc_.start_)
+		&& info_.curFrame_ == 0)
 	{
 		if (nullptr != start_)
 		{
-			this->start_(desc_);
+			this->start_(info_);
 		}
 
 		bOnceStart_ = true;
 		bOnceEnd_ = false;
 	}
 
-	if (desc_.interval_ <= desc_.frameTime_)
+	if (info_.interval_ <= info_.frameTime_)
 	{
-		++desc_.curFrame_;
+		++info_.curFrame_;
 		if (nullptr != frame_)
 		{
-			frame_(desc_);
+			frame_(info_);
 		}
 
-		if (desc_.curFrame_ > desc_.end_)
+		if (info_.curFrame_ >= info_.frames_.size())
 		{
 			if (false == bOnceEnd_ && nullptr != end_)
 			{
-				end_(desc_);
+				end_(info_);
 				bOnceStart_ = false;
 				bOnceEnd_ = true;
 			}
 
-			if (true == desc_.isLoop_)
+			if (true == info_.isLoop_)
 			{
-				desc_.curFrame_ = desc_.start_;
+				info_.curFrame_ = 0;
 			}
 			else
 			{
-				desc_.curFrame_ = desc_.end_;
+				info_.curFrame_ = static_cast<UINT>(info_.frames_.size() - 1);
 			}
 		}
 
 		if (nullptr != atlasTexture_)
 		{
 			parentRenderer_->currentTexture_ = atlasTexture_;
-			parentRenderer_->SetTexture(atlasTexture_, desc_.curFrame_);
+			parentRenderer_->SetTexture(atlasTexture_, info_.curFrame_);
 			parentRenderer_->SetPivot();
+
+			if (0 != atlasTexture_->GetCutCount())
+			{
+				if (ScaleMode::Image == parentRenderer_->scaleMode_)
+				{
+					parentRenderer_->ScaleToCutTexture(info_.frames_[info_.curFrame_]);
+				}
+			}
+			else
+			{
+				if (ScaleMode::Image == parentRenderer_->scaleMode_)
+				{
+					parentRenderer_->ScaleToTexture();
+				}
+			}
 		}
 		else if (nullptr != folderTexture_)
 		{
 			parentRenderer_->FrameDataReset();
-			parentRenderer_->currentTexture_ = folderTexture_->GetTexture(desc_.curFrame_);
-			parentRenderer_->SetTexture(folderTexture_->GetTexture(desc_.curFrame_));
+			parentRenderer_->currentTexture_ = folderTexture_->GetTexture(info_.frames_[info_.curFrame_]);
+			parentRenderer_->SetTexture(folderTexture_->GetTexture(info_.frames_[info_.curFrame_]));
 			parentRenderer_->SetPivot();
+			if (ScaleMode::Image == parentRenderer_->scaleMode_)
+			{
+				parentRenderer_->ScaleToTexture();
+			}
 		}
 		else
 		{
@@ -76,7 +95,7 @@ void FrameAnimation::Update(float _deltaTime)
 			return;
 		}
 
-		desc_.frameTime_ -= desc_.interval_;
+		info_.frameTime_ -= info_.interval_;
 	}
 
 }
@@ -84,7 +103,9 @@ void FrameAnimation::Update(float _deltaTime)
 GameEngineTextureRenderer::GameEngineTextureRenderer()
 	: currentTexture_(nullptr),
 	currentAnimation_(nullptr),
-	pivotMode_(PivotMode::Custom)
+	pivotMode_(PivotMode::Custom),
+	scaleMode_(ScaleMode::Custom),
+	scaleRatio_(1.f)
 {
 }
 
@@ -193,9 +214,9 @@ void GameEngineTextureRenderer::CreateFrameAnimation_AtlasTexture(const std::str
 	}
 
 	FrameAnimation& newAnimation = allAnimations_[uppercaseAnimationName];	//생성과 동시에 삽입.
-	newAnimation.desc_ = _desc;
+	newAnimation.info_ = _desc;
 	newAnimation.parentRenderer_ = this;
-	newAnimation.atlasTexture_ = GameEngineTexture::Find(newAnimation.desc_.textureName_);
+	newAnimation.atlasTexture_ = GameEngineTexture::Find(newAnimation.info_.textureName_);
 	newAnimation.folderTexture_ = nullptr;
 }
 
@@ -210,20 +231,18 @@ void GameEngineTextureRenderer::CreateFrameAnimation_FolderTexture(const std::st
 	}
 
 	FrameAnimation& newAnimation = allAnimations_[uppercaseAnimationName];	//생성과 동시에 삽입.
-	newAnimation.desc_ = _desc;
+	newAnimation.info_ = _desc;
 	newAnimation.parentRenderer_ = this;
 	newAnimation.atlasTexture_ = nullptr;
-	newAnimation.folderTexture_ = GameEngineFolderTexture::Find(newAnimation.desc_.textureName_);
+	newAnimation.folderTexture_ = GameEngineFolderTexture::Find(newAnimation.info_.textureName_);
 
-
-	if (-1 == newAnimation.desc_.start_)
+	if (0 == newAnimation.info_.frames_.size())
 	{
-		newAnimation.desc_.start_ = 0;
-	}
-
-	if (-1 == newAnimation.desc_.end_)
-	{
-		newAnimation.desc_.end_ = static_cast<UINT>(newAnimation.folderTexture_->GetTextureCount()) - 1;
+		for (UINT textureIndex = 0; textureIndex < newAnimation.folderTexture_->GetTextureCount();
+			textureIndex++)
+		{
+			newAnimation.info_.frames_.push_back(textureIndex);
+		}
 	}
 }
 
@@ -236,34 +255,66 @@ void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animati
 		MsgBoxAssertString(_animationName + ": 그런 이름의 애니메이션이 존재하지 않습니다.");
 		return;
 	}
-	else
+
+	if (this->currentAnimation_ != &allAnimations_[uppercaseAnimationName])
 	{
 		this->currentAnimation_ = &allAnimations_[uppercaseAnimationName];
 		this->currentAnimation_->Reset();
 		if (nullptr != currentAnimation_->atlasTexture_)
 		{
-			SetTexture(currentAnimation_->atlasTexture_, currentAnimation_->desc_.curFrame_);
+			SetTexture(currentAnimation_->atlasTexture_, currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
 		}
 		else if (nullptr != currentAnimation_->folderTexture_)
 		{
-			SetTexture(currentAnimation_->folderTexture_->GetTexture(currentAnimation_->desc_.curFrame_));
+			SetTexture(
+				currentAnimation_->folderTexture_->GetTexture(
+					currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]));
 		}
 	}
 }
 
 void GameEngineTextureRenderer::ScaleToTexture()
 {
-	this->GetTransform().SetLocalScale(currentTexture_->GetScale());
+	float4 scale = currentTexture_->GetScale();
+
+	if (0 > this->GetTransform().GetLocalScale().x)
+	{
+		scale.x = -scale.x;
+	}
+
+	if (0 > this->GetTransform().GetLocalScale().y)
+	{
+		scale.y = -scale.y;
+	}
+
+	this->GetTransform().SetLocalScale(scale * scaleRatio_);
+}
+
+void GameEngineTextureRenderer::ScaleToCutTexture(int _index)
+{
+	float4 scale = currentTexture_->GetCutScale(_index);
+
+	if (0 > this->GetTransform().GetLocalScale().x)
+	{
+		scale.x = -scale.x;
+	}
+
+	if (0 > this->GetTransform().GetLocalScale().y)
+	{
+		scale.y = -scale.y;
+	}
+
+	this->GetTransform().SetLocalScale(scale * scaleRatio_);
 }
 
 void GameEngineTextureRenderer::CurAnimationReset()
 {
-	CurAnimationSetStartPivotFrame(currentAnimation_->desc_.start_);
+	CurAnimationSetStartPivotFrame(0);
 }
 
 void GameEngineTextureRenderer::CurAnimationSetStartPivotFrame(int _setFrame)
 {
-	currentAnimation_->desc_.curFrame_ = currentAnimation_->desc_.start_ + _setFrame;
+	currentAnimation_->info_.curFrame_ = _setFrame;
 }
 
 GameEngineTexture* GameEngineTextureRenderer::GetCurrentTexture() const
@@ -298,6 +349,7 @@ void GameEngineTextureRenderer::SetTextureRendererSetting()
 	frameData_.sizeY = 1.f;
 
 	this->shaderResources_.SetConstantBuffer_Link("AtlasData", frameData_);
+	this->shaderResources_.SetConstantBuffer_Link("ColorData", colorData_);
 }
 
 void GameEngineTextureRenderer::FrameDataReset()

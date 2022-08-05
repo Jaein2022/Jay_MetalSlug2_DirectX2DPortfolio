@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -210,6 +210,11 @@
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="ThirdParty\FMOD\Include\fmod.h" />
     <ClInclude Include="ThirdParty\FMOD\Include\fmod.hpp" />
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_codec.h" />
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_common.h" />
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_dsp.h" />
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_dsp_effects.h" />
+    <ClInclude Include="ThirdParty\FMOD\Include\fmod_output.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameEngineDebug.cpp">

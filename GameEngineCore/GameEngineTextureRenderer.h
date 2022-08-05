@@ -10,6 +10,22 @@ enum class PivotMode
 	None
 };
 
+enum class ScaleMode
+{
+	Image,
+	Custom,
+};
+
+struct ColorData
+{
+	float4 mulColor_;
+	float4 plusColor_;
+
+	ColorData() : mulColor_(float4::White), plusColor_(float4::Zero)
+	{
+	}
+};
+
 class FrameAnimation_Desc
 {
 	//프레임 애니메이션 생성에 필요한 각종 상세정보들을 모아서 저장, 관리하는 클래스.
@@ -19,20 +35,16 @@ public:
 	bool isLoop_;		//true == 애니메이션 무한반복. false == 1회반복 후 마지막프레임에서 정지.
 	float interval_;	//프레임간 시간간격. 기본값 0.1f
 
-	UINT start_;	//시작 프레임 인덱스.
-	UINT curFrame_;	//현재 프레임 인덱스.
-	UINT end_;		//마지막 프레임 인덱스.
+	UINT curFrame_;
 
 	float frameTime_;//현재프레임 지난 시간.
 
-
+	std::vector<UINT> frames_;
 
 	FrameAnimation_Desc()
 		: isLoop_(false),
-		interval_(1.f),
-		start_(-1),
+		interval_(0.1f),
 		curFrame_(-1),
-		end_(-1),
 		frameTime_(0.f)
 	{
 	}
@@ -41,9 +53,21 @@ public:
 		: textureName_(_textureName),
 		isLoop_(_isLoop),
 		interval_(_interval),
-		start_(_start),
 		curFrame_(_start),
-		end_(_end),
+		frameTime_(0.f)
+	{
+		for (UINT frameIndex = _start; frameIndex <= _end; frameIndex++)
+		{
+			frames_.push_back(frameIndex);
+		}
+	}
+
+	FrameAnimation_Desc(const std::string _textureName, const std::vector<UINT>& _frames, float _interval, bool _isLoop = true)
+		: textureName_(_textureName),
+		isLoop_(_isLoop),
+		interval_(_interval),
+		curFrame_(0),
+		frames_(_frames),
 		frameTime_(0.f)
 	{
 	}
@@ -52,14 +76,10 @@ public:
 		: textureName_(_textureName),
 		isLoop_(_isLoop),
 		interval_(_interval),
-		start_(-1),
 		curFrame_(0),
-		end_(-1),
 		frameTime_(0.f)
 	{
 	}
-
-
 };
 
 class GameEngineFolderTexture;
@@ -70,7 +90,7 @@ class FrameAnimation
 	friend class GameEngineTextureRenderer;
 	//
 
-	FrameAnimation_Desc desc_;	//애니메이션 생성시 필요한 상세정보 모음.
+	FrameAnimation_Desc info_;	//애니메이션 생성시 필요한 상세정보 모음.
 
 	GameEngineTextureRenderer* parentRenderer_;	//부모 렌더러.
 
@@ -148,6 +168,7 @@ public:
 	void ChangeFrameAnimation(const std::string& _animationName);
 
 	void ScaleToTexture();	//텍스처 크기에 메쉬 스케일을 자동으로 맞춰주는 함수.
+	void ScaleToCutTexture(int _index);
 
 	void CurAnimationReset();	//FrameDataReset()함수와 무슨 차이지? 
 	void CurAnimationSetStartPivotFrame(int _setFrame);	//애니메이션 중 내가 원하는 프레임으로 옮기는 함수.
@@ -155,73 +176,10 @@ public:
 	GameEngineTexture* GetCurrentTexture() const;
 
 public:
-	template<typename ObjectType>
-	void AnimationBindStart(
-		const std::string& _animationName,
-		void(ObjectType::* _function)(const FrameAnimation_Desc&), ObjectType* _this)
-	{
-		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
-
-		if (allAnimations_.end() == allAnimations_.find(uppercaseAnimationName))
-		{
-			MsgBoxAssertString(_animationName + ": 그런 이름의 애니메이션이 없습니다.");
-			return;
-		}
-
-		allAnimations_[uppercaseAnimationName].start_ = std::bind(_function, _this, allAnimations_[uppercaseAnimationName].desc_);
-	}
-
-	template<typename ObjectType>
-	void AnimationBindFrame(
-		const std::string& _animationName,
-		void(ObjectType::* _function)(const FrameAnimation_Desc&), ObjectType* _this)
-	{
-		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
-
-		if (allAnimations_.end() == allAnimations_.find(uppercaseAnimationName))
-		{
-			MsgBoxAssertString(_animationName + ": 그런 이름의 애니메이션이 없습니다.");
-			return;
-		}
-
-		allAnimations_[uppercaseAnimationName].frame_ = std::bind(_function, _this, allAnimations_[uppercaseAnimationName].desc_);
-	}
-
-	template<typename ObjectType>
-	void AnimationBindTime(
-		const std::string& _animationName,
-		void(ObjectType::* _function)(const FrameAnimation_Desc&), ObjectType* _this)
-	{
-		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
-
-		if (allAnimations_.end() == allAnimations_.find(uppercaseAnimationName))
-		{
-			MsgBoxAssertString(_animationName + ": 그런 이름의 애니메이션이 없습니다.");
-			return;
-		}
-
-		allAnimations_[uppercaseAnimationName].time_ = std::bind(_function, _this, allAnimations_[uppercaseAnimationName].desc_);
-	}
-
-	template<typename ObjectType>
-	void AnimationBindEnd(
-		const std::string& _animationName,
-		void(ObjectType::* _function)(const FrameAnimation_Desc&), ObjectType* _this)
-	{
-		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
-
-		if (allAnimations_.end() == allAnimations_.find(uppercaseAnimationName))
-		{
-			MsgBoxAssertString(_animationName + ": 그런 이름의 애니메이션이 없습니다.");
-			return;
-		}
-
-		allAnimations_[uppercaseAnimationName].end_ = std::bind(_function, _this, allAnimations_[uppercaseAnimationName].desc_);
-	}
 
 	void AnimationBindStart(
 		const std::string& _animationName,
-		void(*_function)(const FrameAnimation_Desc&))
+		std::function<void(const FrameAnimation_Desc&)> _function)
 	{
 		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
 
@@ -231,12 +189,12 @@ public:
 			return;
 		}
 
-		allAnimations_[uppercaseAnimationName].start_ = std::bind(_function, allAnimations_[uppercaseAnimationName].desc_);
+		allAnimations_[uppercaseAnimationName].start_ = _function;
 	}
 
 	void AnimationBindFrame(
 		const std::string& _animationName,
-		void(*_function)(const FrameAnimation_Desc&))
+		std::function<void(const FrameAnimation_Desc&)> _function)
 	{
 		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
 
@@ -246,12 +204,12 @@ public:
 			return;
 		}
 
-		allAnimations_[uppercaseAnimationName].frame_ = std::bind(_function, allAnimations_[uppercaseAnimationName].desc_);
+		allAnimations_[uppercaseAnimationName].frame_ = _function;
 	}
 
 	void AnimationBindTime(
 		const std::string& _animationName,
-		void(*_function)(const FrameAnimation_Desc&))
+		std::function<void(const FrameAnimation_Desc&, float)> _function)
 	{
 		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
 
@@ -261,12 +219,12 @@ public:
 			return;
 		}
 
-		allAnimations_[uppercaseAnimationName].time_ = std::bind(_function, allAnimations_[uppercaseAnimationName].desc_);
+		allAnimations_[uppercaseAnimationName].time_ = _function;
 	}
 
 	void AnimationBindEnd(
 		const std::string& _animationName,
-		void(*_function)(const FrameAnimation_Desc&))
+		std::function<void(const FrameAnimation_Desc&)> _function)
 	{
 		std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
 
@@ -276,7 +234,27 @@ public:
 			return;
 		}
 
-		allAnimations_[uppercaseAnimationName].end_ = std::bind(_function, allAnimations_[uppercaseAnimationName].desc_);
+		allAnimations_[uppercaseAnimationName].end_ = _function;
+	}
+
+	void SetScaleMode_Image()
+	{
+		scaleMode_ = ScaleMode::Image;
+	}
+
+	void SetScaleRatio(float _scale)
+	{
+		scaleRatio_ = _scale;
+	}
+
+	float GetScaleRatio()
+	{
+		return scaleRatio_;
+	}
+
+	ColorData& GetColorData()
+	{
+		return colorData_;
 	}
 
 
@@ -295,5 +273,10 @@ private:
 
 	std::map<std::string, FrameAnimation> allAnimations_;	//<-왜 값형??
 	FrameAnimation* currentAnimation_;
+
+	ScaleMode scaleMode_;
+	float scaleRatio_;
+
+	ColorData colorData_;
 };
 

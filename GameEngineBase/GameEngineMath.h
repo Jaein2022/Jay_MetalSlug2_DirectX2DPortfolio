@@ -611,6 +611,24 @@ public:
 			&& (this->IW() == _value.IW());
 	}
 
+	bool IsZero2D() const
+	{
+		return x == 0.f && y == 0.f;
+	}
+
+	UINT GetUINTColor() const
+	{
+		UINT color = 0;
+		char* colorPtr = reinterpret_cast<char*>(&color);
+
+		colorPtr[0] = static_cast<int>(x * 255.f);
+		colorPtr[1] = static_cast<int>(y * 255.f);
+		colorPtr[2] = static_cast<int>(z * 255.f);
+		colorPtr[3] = static_cast<int>(w * 255.f);
+
+		return color;
+	}
+
 };
 
 class float4x4
