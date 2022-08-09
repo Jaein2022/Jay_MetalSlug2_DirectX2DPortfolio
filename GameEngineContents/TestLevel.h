@@ -1,6 +1,6 @@
 #pragma once
 
-class AnimationTester;
+class Player;
 class TestLevel: public GameEngineLevel
 {
 	//이 클래스의 존재 이유: 여러가지 테스트.
@@ -23,7 +23,7 @@ public:
 	void End() override;
 
 private:
-	AnimationTester* tester_;
+	Player* testPlayer_;
 
 };
 

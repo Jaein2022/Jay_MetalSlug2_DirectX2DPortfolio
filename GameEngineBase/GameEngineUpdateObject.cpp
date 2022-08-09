@@ -58,6 +58,32 @@ void GameEngineUpdateObject::AllUpdate(float _deltaTime)
 	}
 }
 
+void GameEngineUpdateObject::AllOnEvent()
+{
+	this->OnEvent();
+
+	for (GameEngineUpdateObject* object : children_)
+	{
+		if (true == object->IsUpdate())
+		{
+			object->AllOnEvent();
+		}
+	}
+}
+
+void GameEngineUpdateObject::AllOffEvent()
+{
+	this->OffEvent();
+
+	for (GameEngineUpdateObject* object : children_)
+	{
+		if (true == object->IsUpdate())
+		{
+			object->AllOffEvent();
+		}
+	}
+}
+
 void GameEngineUpdateObject::ReleaseObject(std::list<GameEngineUpdateObject*>& _releaseList)
 {
 	//자기 자신이 (true == IsDead())인지 == 사망판정을 받았는지 확인한다.

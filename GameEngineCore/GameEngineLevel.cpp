@@ -8,6 +8,7 @@
 #include "GameEngineGUI.h"
 #include "GameEngineCollision.h"
 #include "GameEngineCoreDebug.h"
+#include "GEngine.h"
 
 GameEngineLevel::GameEngineLevel()
 {
@@ -63,6 +64,32 @@ GameEngineTransform& GameEngineLevel::GetUICameraActorTransform()
 	return cameras_[static_cast<int>(CameraOrder::UICamera)]->GetActor()->GetTransform();
 }
 
+void GameEngineLevel::AllClear()
+{
+	for (const std::pair<int, std::list<GameEngineActor*>>& actorListPair : allActors_)
+	{
+		for (GameEngineActor* const actor : actorListPair.second)
+		{
+			delete actor;
+		}
+	}
+
+	//for (std::map<int, std::list<GameEngineActor*>>::iterator actorGroupIter = allActors_.begin();
+	//	actorGroupIter != allActors_.end(); actorGroupIter++)
+	//{
+	//	for (std::list<GameEngineActor*>::iterator actorIter = actorGroupIter->second.begin();
+	//		actorIter != actorGroupIter->second.end(); actorIter++)
+	//	{
+	//		delete *actorIter;
+	//	}
+	//}
+	//위 코드로 삭제가 제대로 안된다면 이 코드로 대체.
+
+	allActors_.clear();
+	cameras_.clear();
+	allCollisions_.clear();
+}
+
 void GameEngineLevel::LevelUpdate(float _deltaTime)
 {
 	this->AddAccTime(_deltaTime);
@@ -91,6 +118,25 @@ void GameEngineLevel::ActorsUpdate(float _deltaTime)
 
 void GameEngineLevel::Render(float _deltaTime)
 {
+	if (true == GEngine::IsCollisionDebug())
+	{
+		for (std::map<int, std::list<GameEngineCollision*>>::iterator collisionGroupIter = allCollisions_.begin();
+			collisionGroupIter != this->allCollisions_.end(); collisionGroupIter++)
+		{
+			std::list<GameEngineCollision*>& collisionGroup = collisionGroupIter->second;
+
+			for (std::list<GameEngineCollision*>::iterator collisionIter = collisionGroup.begin();
+				collisionIter != collisionGroup.end(); collisionIter++)
+			{
+				if (true == (*collisionIter)->IsUpdate())
+				{
+					(*collisionIter)->DebugRender();
+					//진짜 렌더링 과정이 아니므로 RenderStart()와 RenderEnd()사이에 들어가지 않아도 된다.
+				}
+			}
+		}
+	}
+
 	GameEngineDevice::RenderStart();
 	//RenderStart()와 RenderEnd()사이에 모든 렌더링 과정이 들어가야 한다. 
 
@@ -311,7 +357,7 @@ void GameEngineLevel::ActorOnEvent()
 		{
 			if (true == actor->IsUpdate())
 			{
-				actor->OnEvent();
+				actor->AllOnEvent();
 			}
 		}
 	}
@@ -327,7 +373,7 @@ void GameEngineLevel::ActorOffEvent()
 		{
 			if (true == actor->IsUpdate())
 			{
-				actor->OffEvent();
+				actor->AllOffEvent();
 			}
 		}
 	}

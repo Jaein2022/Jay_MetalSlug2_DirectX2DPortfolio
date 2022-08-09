@@ -57,13 +57,13 @@ void FrameAnimation::Update(float _deltaTime)
 			}
 		}
 
-		if (nullptr != atlasTexture_)
+		if (nullptr != cutTexture_)
 		{
-			parentRenderer_->currentTexture_ = atlasTexture_;
-			parentRenderer_->SetTexture(atlasTexture_, info_.curFrame_);
+			parentRenderer_->currentTexture_ = cutTexture_;
+			parentRenderer_->SetTexture(cutTexture_, info_.curFrame_);
 			parentRenderer_->SetPivot();
 
-			if (0 != atlasTexture_->GetCutCount())
+			if (0 != cutTexture_->GetCutCount())
 			{
 				if (ScaleMode::Image == parentRenderer_->scaleMode_)
 				{
@@ -203,7 +203,7 @@ void GameEngineTextureRenderer::SetSamplingMode_Linear()
 	this->shaderResources_.SetSampler("Smp", "EngineSampler_Linear");
 }
 
-void GameEngineTextureRenderer::CreateFrameAnimation_AtlasTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc)
+void GameEngineTextureRenderer::CreateFrameAnimation_CutTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc)
 {
 	std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
 
@@ -216,7 +216,7 @@ void GameEngineTextureRenderer::CreateFrameAnimation_AtlasTexture(const std::str
 	FrameAnimation& newAnimation = allAnimations_[uppercaseAnimationName];	//생성과 동시에 삽입.
 	newAnimation.info_ = _desc;
 	newAnimation.parentRenderer_ = this;
-	newAnimation.atlasTexture_ = GameEngineTexture::Find(newAnimation.info_.textureName_);
+	newAnimation.cutTexture_ = GameEngineTexture::Find(newAnimation.info_.textureName_);
 	newAnimation.folderTexture_ = nullptr;
 }
 
@@ -233,7 +233,7 @@ void GameEngineTextureRenderer::CreateFrameAnimation_FolderTexture(const std::st
 	FrameAnimation& newAnimation = allAnimations_[uppercaseAnimationName];	//생성과 동시에 삽입.
 	newAnimation.info_ = _desc;
 	newAnimation.parentRenderer_ = this;
-	newAnimation.atlasTexture_ = nullptr;
+	newAnimation.cutTexture_ = nullptr;
 	newAnimation.folderTexture_ = GameEngineFolderTexture::Find(newAnimation.info_.textureName_);
 
 	if (0 == newAnimation.info_.frames_.size())
@@ -260,9 +260,9 @@ void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animati
 	{
 		this->currentAnimation_ = &allAnimations_[uppercaseAnimationName];
 		this->currentAnimation_->Reset();
-		if (nullptr != currentAnimation_->atlasTexture_)
+		if (nullptr != currentAnimation_->cutTexture_)
 		{
-			SetTexture(currentAnimation_->atlasTexture_, currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
+			SetTexture(currentAnimation_->cutTexture_, currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
 		}
 		else if (nullptr != currentAnimation_->folderTexture_)
 		{

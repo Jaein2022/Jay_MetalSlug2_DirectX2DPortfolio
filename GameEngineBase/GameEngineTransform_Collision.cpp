@@ -50,7 +50,7 @@ bool GameEngineTransform::OBB2DToOBB2D(const GameEngineTransform& _boxA, const G
 }
 void GameEngineTransform::CollisionScaleSetting()
 {
-	collisionDataObject_.obb_.Extents = (data_.worldScaleVector_ * 0.5f);
+	collisionDataObject_.obb_.Extents = (data_.worldScaleVector_.ABS3DReturn() * 0.5f);
 }
 
 void GameEngineTransform::CollisionRotationSetting()

@@ -23,7 +23,10 @@ public:
 
 	// 이 오브젝트가 프레임구조안에서 돌때 거치는 절차.
 	virtual void Update(float _deltaTime) = 0;
+
 	void AllUpdate(float _deltaTime);
+	void AllOnEvent();
+	void AllOffEvent();
 
 public:
 	inline void On()
@@ -52,6 +55,11 @@ public:
 			return this->isUpdate_ && false == this->isDead_ && true == parent_->IsUpdate();
 			//자기 자신이 isUpdate_ == true여도 부모 오브젝트가 isUpdate_ == false면 업데이트에서 제외된다. 
 		}
+	}
+
+	inline bool& IsUpdateRef()
+	{
+		return isUpdate_;
 	}
 
 	inline bool IsDead()

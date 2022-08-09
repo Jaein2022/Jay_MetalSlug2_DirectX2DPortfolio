@@ -2,6 +2,26 @@
 #include "GameEngineRes.h"
 #include <GameEngineCore\ThirdParty\DirectXTex\Include\DirectXTex.h>
 
+struct PixelColor
+{
+	union
+	{
+		struct
+		{
+			unsigned char r;
+			unsigned char g;
+			unsigned char b;
+			unsigned char a;
+		};
+
+		unsigned int color_;
+	};
+
+	PixelColor() : color_(0)
+	{
+	}
+};
+
 class GameEngineTexture : public GameEngineRes<GameEngineTexture>
 {
 	//ID3D11Texture2D* 형태로 할당된 텍스쳐와 거기서 파생된 각종 서브리소스뷰들을 저장, 관리하기 위한 클래스.
@@ -53,7 +73,8 @@ public:
 
 	static void Cut(const std::string& _textureName, int _x, int _y);
 
-	float4 GetPixel(int _x, int _y);
+	float4 GetPixelToFloat4(int _x, int _y);	//float4는 실수 특성상 색상값의 오차 발생 가능성 있음.
+	PixelColor GetPixelToPixelColor(int _x, int _y);	//unsigned int 형태로 받아서 색상값의 오차 없음.
 
 public:
 	float4 GetFrameData(int _index)

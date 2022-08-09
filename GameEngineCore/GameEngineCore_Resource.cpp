@@ -257,6 +257,7 @@ void EngineTextureLoad()
 
 void EngineRenderingPipeLine()
 {
+
 	GameEngineRenderingPipeLine* newRenderingPipeLine1 = GameEngineRenderingPipeLine::Create("Color");
 	newRenderingPipeLine1->SetVertexBuffer_InputAssembler1("RectVertex");
 	newRenderingPipeLine1->SetVertexShader("Color.hlsl");
@@ -265,6 +266,7 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine1->SetRasterizer("EngineRasterizer");
 	newRenderingPipeLine1->SetBlend_OutputMerger("AlphaBlend");
 	newRenderingPipeLine1->SetDepthStencil_OutputMerger("EngineBaseDepth");
+
 
 	GameEngineRenderingPipeLine* newRenderingPipeLine2 = GameEngineRenderingPipeLine::Create("Texture");
 	newRenderingPipeLine2->SetVertexBuffer_InputAssembler1("RectVertex");
@@ -275,6 +277,7 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine2->SetBlend_OutputMerger("AlphaBlend");
 	newRenderingPipeLine2->SetDepthStencil_OutputMerger("EngineBaseDepth");
 
+
 	GameEngineRenderingPipeLine* newRenderingPipeLine3 = GameEngineRenderingPipeLine::Create("TextureAtlas");
 	newRenderingPipeLine3->SetVertexBuffer_InputAssembler1("RectVertex");
 	newRenderingPipeLine3->SetVertexShader("TextureAtlas.hlsl");
@@ -284,6 +287,7 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine3->SetBlend_OutputMerger("AlphaBlend");
 	newRenderingPipeLine3->SetDepthStencil_OutputMerger("EngineBaseDepth");
 
+
 	GameEngineRenderingPipeLine* newRenderingPipeLine4 = GameEngineRenderingPipeLine::Create("3DDebug");
 	newRenderingPipeLine4->SetVertexBuffer_InputAssembler1("BoxVertex");
 	newRenderingPipeLine4->SetVertexShader("Debug3D.hlsl");
@@ -291,7 +295,18 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine4->SetPixelShader("Debug3D.hlsl");
 	newRenderingPipeLine4->SetRasterizer("EngineRasterizer");
 	newRenderingPipeLine4->SetBlend_OutputMerger("AlphaBlend");
-	newRenderingPipeLine4->SetDepthStencil_OutputMerger("EngineBaseDepth");
+	newRenderingPipeLine4->SetDepthStencil_OutputMerger("EngineBaseDepth"); 
+	
+	
+	GameEngineRenderingPipeLine* newRenderingPipeLine5 = GameEngineRenderingPipeLine::Create("DebugTexture");
+	newRenderingPipeLine5->SetVertexBuffer_InputAssembler1("RectVertex");
+	newRenderingPipeLine5->SetVertexShader("DebugTexture.hlsl");
+	newRenderingPipeLine5->SetIndexBuffer_InputAssembler2("RectIndex");
+	newRenderingPipeLine5->SetPixelShader("DebugTexture.hlsl");
+	newRenderingPipeLine5->SetRasterizer("EngineRasterizer");
+	newRenderingPipeLine5->SetBlend_OutputMerger("AlphaBlend");
+	newRenderingPipeLine5->SetDepthStencil_OutputMerger("EngineBaseDepth");
+
 }
 
 void EngineMesh()
@@ -323,15 +338,15 @@ void EngineMesh()
 	//기본 육면체.
 	std::vector<GameEngineVertex> boxVertex;
 	boxVertex.reserve(8);
-	boxVertex.push_back({ float4(-0.5f, 0.5f, -0.5f) });	//0번 점.
-	boxVertex.push_back({ float4(0.5f, 0.5f, -0.5f) });		//1번 점.
-	boxVertex.push_back({ float4(0.5f, -0.5f, -0.5f) });	//2번 점.
-	boxVertex.push_back({ float4(-0.5f, -0.5f, -0.5f) });	//3번 점.
+	boxVertex.push_back({ float4(-0.5f, 0.5f, -0.5f), float4(), float4(0, 0) });	//0번 점.
+	boxVertex.push_back({ float4(0.5f, 0.5f, -0.5f), float4(), float4(1, 0) });		//1번 점.
+	boxVertex.push_back({ float4(0.5f, -0.5f, -0.5f), float4(), float4(1, 1) });	//2번 점.
+	boxVertex.push_back({ float4(-0.5f, -0.5f, -0.5f), float4(), float4(0, 1) });	//3번 점.
 
-	boxVertex.push_back({ float4(0.5f, 0.5f, 0.5f) });		//4번 점.
-	boxVertex.push_back({ float4(-0.5f, 0.5f, 0.5f) });		//5번 점.
-	boxVertex.push_back({ float4(-0.5f, -0.5f, 0.5f) });	//6번 점.
-	boxVertex.push_back({ float4(0.5f, -0.5f, 0.5f) });		//7번 점.
+	boxVertex.push_back({ float4(0.5f, 0.5f, 0.5f), float4(), float4(0, 1) });		//4번 점.
+	boxVertex.push_back({ float4(-0.5f, 0.5f, 0.5f), float4(), float4(1, 1) });		//5번 점.
+	boxVertex.push_back({ float4(-0.5f, -0.5f, 0.5f), float4(), float4(1, 0) });	//6번 점.
+	boxVertex.push_back({ float4(0.5f, -0.5f, 0.5f), float4(), float4(0, 0) });		//7번 점.
 	GameEngineVertexBuffer::Create("BoxVertex", boxVertex);
 
 	std::vector<int> boxIndex;

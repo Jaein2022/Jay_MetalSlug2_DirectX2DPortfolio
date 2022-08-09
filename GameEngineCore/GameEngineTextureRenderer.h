@@ -94,7 +94,7 @@ class FrameAnimation
 
 	GameEngineTextureRenderer* parentRenderer_;	//부모 렌더러.
 
-	GameEngineTexture* atlasTexture_;			//단일 텍스쳐.			
+	GameEngineTexture* cutTexture_;			//단일 텍스쳐.			
 	GameEngineFolderTexture* folderTexture_;	//폴더단위 텍스쳐들 모음.
 	//두개가 동시에 사용되는 경우는 없음!
 
@@ -112,7 +112,7 @@ class FrameAnimation
 public:
 	FrameAnimation()
 		: parentRenderer_(nullptr),
-		atlasTexture_(nullptr),
+		cutTexture_(nullptr),
 		folderTexture_(nullptr),
 		bOnceStart_(false),
 		bOnceEnd_(false)
@@ -162,7 +162,7 @@ public:
 	//필터가 D3D11_FILTER_MIN_MAG_MIP_LINEAR로 세팅된 샘플러 사용.
 
 
-	void CreateFrameAnimation_AtlasTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc);
+	void CreateFrameAnimation_CutTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc);
 	void CreateFrameAnimation_FolderTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc);
 
 	void ChangeFrameAnimation(const std::string& _animationName);

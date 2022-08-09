@@ -40,11 +40,12 @@ protected:
 	GameEngineLevel& operator=(GameEngineLevel&& _other) = delete;
 
 public:
-	//메인카메라 액터의 트랜스폼을 가져오는 함수.
 	GameEngineCameraActor* GetMainCameraActor();
 	GameEngineTransform& GetMainCameraActorTransform();
 	GameEngineCameraActor* GetUICameraActor();
 	GameEngineTransform& GetUICameraActorTransform();
+
+	void AllClear();
 
 
 public:

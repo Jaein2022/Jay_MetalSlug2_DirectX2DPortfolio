@@ -7,7 +7,10 @@
     <Filter Include="Core">
       <UniqueIdentifier>{ed68ba18-bbcb-4c7a-b813-1e22e2cc7a61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Temp">
+    <Filter Include="Common">
+      <UniqueIdentifier>{8d96ce6f-0a7a-4496-b4ab-a6800dee117f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test">
       <UniqueIdentifier>{33c83817-a0e9-4a85-8277-950290f42c2a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -19,10 +22,13 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="TestLevel.h">
-      <Filter>Temp</Filter>
+      <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationTester.h">
-      <Filter>Temp</Filter>
+    <ClInclude Include="TestPlayer.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -33,10 +39,10 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="TestLevel.cpp">
-      <Filter>Temp</Filter>
+      <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationTester.cpp">
-      <Filter>Temp</Filter>
+    <ClCompile Include="TestPlayer.cpp">
+      <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

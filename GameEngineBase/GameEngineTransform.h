@@ -429,7 +429,6 @@ private:
 		{
 			data_.worldScaleVector_ = this->data_.localScaleVector_ * parentTransform_->data_.worldScaleVector_;
 		}
-		CollisionScaleSetting();
 
 		data_.localScaleMatrix_.Scale(data_.localScaleVector_);
 		CalculateWorldMatrix();
@@ -439,6 +438,7 @@ private:
 			child->CalculateWorldScale(child->data_.localScaleVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
+		CollisionDataSetting();
 	}
 	void CalculateWorldScale(float _localScaleX, float _localScaleY, float _localScaleZ)
 	{
@@ -456,7 +456,6 @@ private:
 			this->data_.worldScaleVector_ = this->data_.localScaleVector_ * parentTransform_->data_.worldScaleVector_;
 		}
 
-		CollisionScaleSetting();
 
 		data_.localScaleMatrix_.Scale(
 			data_.localScaleVector_.x,
@@ -470,6 +469,7 @@ private:
 			child->CalculateWorldScale(child->data_.localScaleVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
+		CollisionDataSetting();
 	}
 
 	void CalculateWorldRotation(const float4& _localRotationVector)
@@ -485,7 +485,6 @@ private:
 			data_.worldRotationVector_ = this->data_.localRotationVector_ + parentTransform_->data_.worldRotationVector_;
 		}
 
-		CollisionRotationSetting();
 
 		data_.localRotationMatrix_.Rotate3AxisByDegree(data_.localRotationVector_);
 		CalculateWorldMatrix();
@@ -495,6 +494,7 @@ private:
 			child->CalculateWorldRotation(child->data_.localRotationVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
+		CollisionDataSetting();
 	}
 	void CalculateWorldRotation(float _degreeX, float _degreeY, float _degreeZ)
 	{
@@ -512,7 +512,6 @@ private:
 			data_.worldRotationVector_ = this->data_.localRotationVector_ + parentTransform_->data_.worldRotationVector_;
 		}
 
-		CollisionRotationSetting();
 
 		data_.localRotationMatrix_.Rotate3AxisByDegree(
 			data_.localRotationVector_.x,
@@ -526,6 +525,7 @@ private:
 			child->CalculateWorldRotation(child->data_.localRotationVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
+		CollisionDataSetting();
 	}
 
 	void CalculateWorldPosition(const float4& _localPositionVector)
@@ -541,7 +541,6 @@ private:
 			data_.worldPositionVector_ = this->data_.localPositionVector_ * parentTransform_->data_.worldWorldMatrix_;
 		}
 
-		CollisionPositionSetting();
 
 		data_.localPositionMatrix_.Position(data_.localPositionVector_);
 		CalculateWorldMatrix();
@@ -551,6 +550,7 @@ private:
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
 
+		CollisionDataSetting();
 	}
 	void CalculateWorldPosition(float _positionX, float _positionY, float _positionZ)
 	{
@@ -567,7 +567,6 @@ private:
 			data_.worldPositionVector_ = this->data_.localPositionVector_ * parentTransform_->data_.worldWorldMatrix_;
 		}
 
-		CollisionPositionSetting();
 
 		data_.localPositionMatrix_.Position(
 			data_.localPositionVector_.x,
@@ -580,6 +579,7 @@ private:
 		{
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
+		CollisionDataSetting();
 	}
 
 

@@ -12,7 +12,7 @@ void GameEngineGUIWindow::Begin()
 {
     std::string guiWindowName = GameEngineString::AnsiToUTF8Return(this->GetNameConstPtr());
 
-    ImGui::Begin(guiWindowName.c_str());
+    ImGui::Begin(guiWindowName.c_str(), &IsUpdateRef());
 }
 
 void GameEngineGUIWindow::End()

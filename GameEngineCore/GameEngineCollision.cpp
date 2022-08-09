@@ -1,6 +1,7 @@
 #include "PreCompile.h"
 #include "GameEngineCollision.h"
 #include "GameEngineLevel.h"
+#include "GameEngineCoreDebug.h"
 
 bool (*GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_Max)][static_cast<int>(CollisionBodyType::CT_Max)])
 (const GameEngineTransform& _transformA, const GameEngineTransform& _transformB);
@@ -46,7 +47,7 @@ public:
 
 GameEngineCollisionFunctionInit inst_;
 
-GameEngineCollision::GameEngineCollision()
+GameEngineCollision::GameEngineCollision() : debugType_(CollisionBodyType::CT_Max), color_(1.f, 0.f, 0.f, 0.5f)
 {
 }
 
@@ -66,6 +67,11 @@ bool GameEngineCollision::IsCollision(
 	std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function /*= nullptr*/
 )
 {
+	if (false == this->IsUpdate())
+	{
+		return false;
+	}
+
 	int thisType = static_cast<int>(_thisType);
 	int otherType = static_cast<int>(_otherType);
 
@@ -101,6 +107,49 @@ bool GameEngineCollision::IsCollision(
 	}
 
 	return false;
+}
+
+void GameEngineCollision::DebugRender()
+{
+	switch (this->debugType_)
+	{
+		//case CollisionType::CT_Point2D:
+		//	break;
+
+	case CollisionBodyType::CT_Sphere2D:
+		GameEngineDebug::DrawSphere(GetTransform(), color_);
+		break;
+
+	case CollisionBodyType::CT_AABB2D:
+		GameEngineDebug::DrawBox(GetTransform(), color_);
+		break;
+
+	case CollisionBodyType::CT_OBB2D:
+		GameEngineDebug::DrawBox(GetTransform(), color_);
+		break;
+
+
+
+		//case CollisionType::CT_Point:
+		//	break;
+
+	case CollisionBodyType::CT_Sphere:
+		GameEngineDebug::DrawSphere(GetTransform(), color_);
+		break;
+
+	case CollisionBodyType::CT_AABB:
+		GameEngineDebug::DrawBox(GetTransform(), color_);
+		break;
+
+	case CollisionBodyType::CT_OBB:
+		GameEngineDebug::DrawBox(GetTransform(), color_);
+		break;
+
+
+	default:
+		MsgBoxAssert("지원되지 않는 콜리전 타입입니다. 콜리전타입이 Max가 아닌지 확인하십시오.");
+		break;
+	}
 }
 
 void GameEngineCollision::Start()

@@ -4,6 +4,8 @@
     <FxCompile Include="Color.hlsl" />
     <FxCompile Include="Texture.hlsl" />
     <FxCompile Include="TextureAtlas.hlsl" />
+    <FxCompile Include="Debug3D.hlsl" />
+    <FxCompile Include="DebugTexture.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TransformHeader.hlsli" />

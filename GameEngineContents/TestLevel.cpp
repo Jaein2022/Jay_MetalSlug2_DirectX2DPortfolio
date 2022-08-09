@@ -1,8 +1,8 @@
 #include "PreCompile.h"
 #include "TestLevel.h"
-#include "AnimationTester.h"
+#include "Player.h"
 
-TestLevel::TestLevel(): tester_(nullptr)
+TestLevel::TestLevel(): testPlayer_(nullptr)
 {
 }
 
@@ -12,7 +12,7 @@ TestLevel::~TestLevel()
 
 void TestLevel::Start()
 {
-	tester_ = CreateActor<AnimationTester>(0, "Tester");
+	testPlayer_ = CreateActor<Player>(0, "TestPlayer");
 }
 
 void TestLevel::Update(float _deltaTime)

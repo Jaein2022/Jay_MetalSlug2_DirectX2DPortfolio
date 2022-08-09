@@ -1,8 +1,5 @@
 #pragma once
 #include "GameEngineCore.h"
-#include "GameEngineLevel.h"
-#include "GameEngineActor.h"
-
 
 class GEngine
 {
@@ -10,6 +7,7 @@ class GEngine
 	//게임엔진코어의 클래스들은 이 클래스를 사용해선 절대 안된다. 
 	//컨텐츠 제작자만을 위한 인터페이스 제공용 클래스.
 
+	static bool isCollisionDebug_;
 
 private:
 
@@ -23,6 +21,12 @@ private:
 
 public:
 	static void ChangeLevel(const std::string& _levelName);
+	static void CollisionDebugOn();
+	static void CollisionDebugOff();
+	static void CollisionDebugSwitch();
+	static bool IsCollisionDebug();
+	static GameEngineLevel* GetCurrentLevel();
+
 
 };
 
