@@ -132,7 +132,7 @@ private:
 private:
 	void PushRenderer(GameEngineRenderer* _renderer, int _cameraOrder);	//메인카메라에 렌더러를 등록하는 함수. 
 	void PushCamera(GameEngineCamera* _camera, int _cameraOrder);	//해당 레벨의 메인카메라를 등록하는 함수.
-	void PushCollision(GameEngineCollision* _collision, int _order);
+	void PushCollision(GameEngineCollision* _collision, int _collisionOrder);
 	void OverChildMove(GameEngineLevel* _nextLevel);	//오브젝트를 다음 레벨로 이전시키는 함수.
 	void ActorOnEvent();
 	void ActorOffEvent();

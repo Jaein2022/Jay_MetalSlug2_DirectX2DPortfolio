@@ -54,6 +54,21 @@ void GameEngineStatusWindow::OnGUI(GameEngineLevel* _level, float _deltaTime)
 	}
 
 
+	ImGui::Text("Level Selection");
+	for (std::pair<std::string, GameEngineLevel*> levelPair : GameEngineCore::allLevels_)
+	{
+		if (true == ImGui::Button(levelPair.first.c_str()))
+		{
+			GameEngineCore::ChangeLevel(levelPair.first);
+		}
+
+		ImGui::SameLine();
+	}
+
+	ImGui::NewLine();
+
+
+
 	ImGui::Text("All RenderTargets");
 
 	for (std::pair<std::string, GameEngineRenderTarget*> renderTargetPair : GameEngineRenderTarget::namedRes_)

@@ -6,6 +6,7 @@ class GameEngineCore
 	//이 클래스의 존재 이유:
 
 	friend class GEngine;
+	friend class GameEngineStatusWindow;
 
 protected:
 	GameEngineCore();

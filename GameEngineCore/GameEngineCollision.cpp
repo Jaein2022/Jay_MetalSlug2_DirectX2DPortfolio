@@ -55,14 +55,14 @@ GameEngineCollision::~GameEngineCollision()
 {
 }
 
-void GameEngineCollision::ChangeOrder(int _order)
+void GameEngineCollision::ChangeOrder(int _collisionOrder)
 {
-	this->GetActor()->GetLevel()->PushCollision(this, _order);
+	this->GetActor()->GetLevel()->PushCollision(this, _collisionOrder);
 }
 
 bool GameEngineCollision::IsCollision(
 	CollisionBodyType _thisType,
-	int _groupOrder,
+	int _collisionOrder,
 	CollisionBodyType _otherType,
 	std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function /*= nullptr*/
 )
@@ -84,7 +84,7 @@ bool GameEngineCollision::IsCollision(
 	std::map<int, std::list<GameEngineCollision*>>& allCollisions
 		= this->GetActor()->GetLevel()->allCollisions_;
 
-	std::list<GameEngineCollision*>& collisionGroup = allCollisions[_groupOrder];
+	std::list<GameEngineCollision*>& collisionGroup = allCollisions[_collisionOrder];
 
 	for (GameEngineCollision* collision : collisionGroup)
 	{
@@ -102,6 +102,10 @@ bool GameEngineCollision::IsCollision(
 				{
 					return true;
 				}
+			}
+			else
+			{
+				return true;
 			}
 		}
 	}

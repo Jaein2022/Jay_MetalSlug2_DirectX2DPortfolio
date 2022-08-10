@@ -267,12 +267,12 @@ void GameEngineLevel::PushCamera(GameEngineCamera* _camera, int _cameraOrder)
 	cameras_[_cameraOrder] = _camera;
 }
 
-void GameEngineLevel::PushCollision(GameEngineCollision* _collision, int _order)
+void GameEngineLevel::PushCollision(GameEngineCollision* _collision, int _collisionOrder)
 {
 	allCollisions_[_collision->GetOrder()].remove(_collision);
 	//원래 그룹에서 제거.
 
-	_collision->SetOrder(_order);
+	_collision->SetOrder(_collisionOrder);
 	//새 오더 부여.
 
 	allCollisions_[_collision->GetOrder()].push_back(_collision);
@@ -281,6 +281,11 @@ void GameEngineLevel::PushCollision(GameEngineCollision* _collision, int _order)
 
 void GameEngineLevel::OverChildMove(GameEngineLevel* _nextLevel)
 {
+	if (this == _nextLevel)
+	{
+		return;
+	}
+
 	std::list<GameEngineActor*> actorOverList;
 
 	for (std::map<int, std::list<GameEngineActor*>>::iterator actorGroupIter = allActors_.begin();

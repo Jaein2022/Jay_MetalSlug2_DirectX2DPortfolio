@@ -22,7 +22,7 @@ public:
 	void ChangeOrder(int _order);
 	bool IsCollision(		//충돌 여부 판정 함수.
 		CollisionBodyType _thisType,
-		int _groupOrder,
+		int _collisionOrder,
 		CollisionBodyType _otherType,
 		std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function = nullptr);
 	void DebugRender();	//함수 이름과는 다르게, 실제로는 충돌체를 직접 그리지 않고 그리는데 필요한 정보만 저장하는 함수.
@@ -31,19 +31,19 @@ public:
 
 public:
 	template<typename EnumType>
-	void ChangeOrder(EnumType _order)
+	void ChangeOrder(EnumType _collisionOrder)
 	{
-		ChangeOrder(static_cast<int>(_order));
+		ChangeOrder(static_cast<int>(_collisionOrder));
 	}
 
 	template<typename EnumType>
 	bool IsCollision(
 		CollisionBodyType _thisType,
-		EnumType _groupOrder,
+		EnumType _collisionOrder,
 		CollisionBodyType _otherType,
 		std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function = nullptr)
 	{
-		return IsCollision(_thisType, static_cast<int>(_groupOrder), _otherType, _function);
+		return IsCollision(_thisType, static_cast<int>(_collisionOrder), _otherType, _function);
 	}
 
 	void SetDebugSetting(CollisionBodyType _debugType, const float4& _color)

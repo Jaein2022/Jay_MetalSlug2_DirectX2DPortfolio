@@ -44,13 +44,13 @@ void GameEngineUpdateObject::ReleaseHierarchy()
 void GameEngineUpdateObject::AllUpdate(float _deltaTime)
 {
 	this->AddAccTime(_deltaTime);
-	this->ReleaseUpdate(_deltaTime);
+	this->ReleaseUpdate(_deltaTime);	//deadTime_이 0이 된 오브젝트들에게 사망 판정을 내린다.
 	this->Update(GameEngineTime::GetInst()->GetTimeScale(this->GetOrder()) * _deltaTime);
 
 	for (GameEngineUpdateObject* object : children_)
 	{
-		object->AddAccTime(_deltaTime);
-		object->ReleaseUpdate(_deltaTime); //deadTime_이 0이 된 오브젝트들에게 사망 판정을 내린다.
+		//object->AddAccTime(_deltaTime);
+		//object->ReleaseUpdate(_deltaTime); 
 		if (true == object->IsUpdate())
 		{
 			object->AllUpdate(_deltaTime);
