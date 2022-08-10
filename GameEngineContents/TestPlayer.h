@@ -27,30 +27,42 @@ public:
 
 
 private:
-	void Attack();
-	void Fire();
-	void MeleeAttack();
+	void UpdateInputInfo(float _deltaTime);	//키입력 업데이트.
+	//void UpdateContactObject();	//플레이어가 접촉한 오브젝트(아이템, NPC, 적 무기 등) 정보 업데이트.
+	void UpdatePlayerTotalState();	//플레이어 전체 상태 업데이트.
 
-	void Move();
-	void Jump();
-	void Run();
+	//void Move(float _deltaTime);	//좌우 트랜스폼 변화 담당 함수.
+	//void Jump(float _deltaTime);	//상하 트랜스폼 변화 담당 함수.
+	//void Fire();					//플레이어 조준각도에 맞는 원거리무기 투사체 생성 발사 함수.
+	//void ThrowGrenade();			//수류탄 오브젝트 생성 발사 함수.	
+	//void MeleeAttack();			//근접공격 함수.
+
 
 
 private:
+	GameEngineStateManager playerStateManager_;
+
 	GameEngineTextureRenderer* legRenderer_;
 	GameEngineTextureRenderer* topPistolRenderer_;
 	GameEngineTextureRenderer* wholePistolRenderer_;
 	GameEngineTextureRenderer* topWeaponRenderer_;
 	GameEngineTextureRenderer* wholeWeaponRenderer_;
 
-	GameEngineStateManager* playerStateManager_;
+	PlayerState currentState_;
+	std::map<PlayerState, std::string> statesNameMap_;
+
 
 	PlayerWeaponType weapon_;
+	PlayerLegStatus leg_;
+	PlayerTopStatus top_;
+	AimingDirection direction_;
 
-	float velocity_;
+	bool isRight_;
+	float runningSpeed_;
+	float ducksteppingSpeed_;
+
 	int bulletCount_;
 	int grenadeCount_;
-
 
 };
 

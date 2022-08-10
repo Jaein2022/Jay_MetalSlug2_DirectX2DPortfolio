@@ -1,6 +1,6 @@
 #include "PreCompile.h"
 #include "TestLevel.h"
-#include "Player.h"
+#include "TestPlayer.h"
 
 TestLevel::TestLevel(): testPlayer_(nullptr)
 {
@@ -12,7 +12,7 @@ TestLevel::~TestLevel()
 
 void TestLevel::Start()
 {
-	testPlayer_ = CreateActor<Player>(0, "TestPlayer");
+	testPlayer_ = CreateActor<TestPlayer>(0, "TestPlayer");
 }
 
 void TestLevel::Update(float _deltaTime)
