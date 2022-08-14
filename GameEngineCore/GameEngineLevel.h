@@ -158,6 +158,12 @@ private:
 		PushRenderer(_renderer, static_cast<int>(CameraOrder::UICamera));
 	}
 
+	void PushActor(GameEngineActor* _actor, int _objectGroupIndex)
+	{
+		std::list<GameEngineActor*>& actorGroup = allActors_[_objectGroupIndex];
+		actorGroup.push_back(_actor);
+	}
+
 private:
 	std::map<int, std::list<GameEngineActor*>> allActors_;
 	//이 레벨의 모든 액터들이 저장된 맵.

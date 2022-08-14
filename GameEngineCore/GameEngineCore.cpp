@@ -144,15 +144,6 @@ void GameEngineCore::CoreEnd(GameEngineCore* _userCore)
 
 void GameEngineCore::InitializeLevel(GameEngineLevel* _level, const std::string& _levelName)
 {
-	//GameEngineCameraActor* mainCameraActor = _level->CreateActor<GameEngineCameraActor>();
-	//mainCameraActor->GetCameraComponent()->SetProjectionMode(CameraProjectionMode::Orthographic);
-	//mainCameraActor->GetTransform().SetLocalPosition(0, 0, -100);
-	//
-	//GameEngineCameraActor* UICameraActor = _level->CreateActor<GameEngineCameraActor>();
-	//UICameraActor->GetCameraComponent()->SetProjectionMode(CameraProjectionMode::Orthographic);
-	//UICameraActor->GetTransform().SetLocalPosition(0, 0, -100);
-
-
 	_level->Start();
 	_level->SetName(_levelName);
 

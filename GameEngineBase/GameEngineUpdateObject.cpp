@@ -106,11 +106,11 @@ void GameEngineUpdateObject::ReleaseObject(std::list<GameEngineUpdateObject*>& _
 			//자식 오브젝트들 중 사망판정받은 오브젝트가 있다면,
 			_releaseList.push_back((*iter));	//_releaseObjects에 넣어 삭제 대상으로 등록한다.
 
-			GameEngineUpdateObject* tempObject = (*iter);
+			GameEngineUpdateObject* deleteObject = (*iter);
 			++iter;	//chlidren리스트에서 오브젝트를 제거하기 전에 이터레이터를 먼저 이동시키지 않으면,
 			//이터레이터가 다음 노드로 이동할 수 없다.
 
-			tempObject->DetachObject();	//부모 오브젝트의 chlidren리스트에서 제거한다.
+			deleteObject->DetachObject();	//부모 오브젝트의 chlidren리스트에서 제거한다.
 		}
 		else
 		{

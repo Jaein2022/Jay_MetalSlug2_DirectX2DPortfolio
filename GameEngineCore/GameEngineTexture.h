@@ -72,6 +72,7 @@ public:
 	ID3D11DepthStencilView* CreateDepthStencilView();
 
 	static void Cut(const std::string& _textureName, int _x, int _y);
+	void Cut(UINT _startX, UINT _startY, UINT _sizeX, UINT _sizeY);
 
 	float4 GetPixelToFloat4(int _x, int _y);	//float4는 실수 특성상 색상값의 오차 발생 가능성 있음.
 	PixelColor GetPixelToPixelColor(int _x, int _y);	//unsigned int 형태로 받아서 색상값의 오차 없음.
@@ -81,13 +82,13 @@ public:
 	{
 		if (true == this->cutData_.empty())
 		{
-			MsgBoxAssertString(this->GetName() + ": 아직 자르지 않은 텍스쳐입니다.");
+			MsgBoxAssertString(this->GetNameConstRef() + ": 아직 자르지 않은 텍스쳐입니다.");
 			return float4();
 		}
 
 		if (cutData_.size() <= _index)
 		{
-			MsgBoxAssertString(this->GetName() + ": 프레임 범위를 넘어섰습니다.");
+			MsgBoxAssertString(this->GetNameConstRef() + ": 프레임 범위를 넘어섰습니다.");
 			return float4();
 		}
 

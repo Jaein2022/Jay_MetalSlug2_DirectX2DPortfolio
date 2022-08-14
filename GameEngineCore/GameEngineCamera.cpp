@@ -70,7 +70,7 @@ float4 GameEngineCamera::GetMouseWorldPosition()
 	invertedViewportMatrix.Viewport(size_.x, size_.y, 0.f, 0.f, 0.f, 1.f);
 	invertedViewportMatrix.Inverse();
 
-	float4x4 invertedProjectionMatrix = projectionMatrix_.InverseReturn();
+	float4x4 invertedProjectionMatrix = this->projectionMatrix_.InverseReturn();
 
 	pointerPos *= invertedViewportMatrix;
 	pointerPos *= invertedProjectionMatrix;

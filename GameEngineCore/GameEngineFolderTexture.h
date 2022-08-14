@@ -32,7 +32,7 @@ public:
 		return textures_.size();
 	}
 
-	GameEngineTexture* GetTexture(int _index)
+	GameEngineTexture* GetTexture(size_t _index)
 	{
 		if (textures_.size() <= _index || 0 > _index)
 		{

@@ -19,7 +19,7 @@ public:
 		return objectName_;
 	}
 
-	const std::string& GetName()
+	const std::string& GetNameConstRef()	
 	{
 		return objectName_;
 	}

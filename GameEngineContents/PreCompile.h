@@ -27,4 +27,4 @@
 
 #include <GameEngineCore\GameEngineStateManager.h>
 
-
+#include "Enums.h"

@@ -20,5 +20,7 @@
 
 #include <GameEngineBase\GameEngineString.h>
 
+#include <GameEngineBase\magic_enum.hpp>
+
 #include <GameEngineBase\GameEngineInput.h>
 #include <GameEngineBase\GameEngineWindow.h>

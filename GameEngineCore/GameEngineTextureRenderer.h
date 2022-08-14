@@ -34,7 +34,6 @@ public:
 
 	bool isLoop_;		//true == 애니메이션 무한반복. false == 1회반복 후 마지막프레임에서 정지.
 	float interval_;	//프레임간 시간간격. 기본값 0.1f
-
 	UINT curFrame_;
 
 	float frameTime_;//현재프레임 지난 시간.

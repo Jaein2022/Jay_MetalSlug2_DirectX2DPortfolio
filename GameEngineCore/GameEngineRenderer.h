@@ -23,8 +23,9 @@ public:
 
 protected:
 	virtual void Start();
+	virtual void Update(float _deltaTime) {}
 	virtual void Render(float _deltaTime) = 0;
-
+	virtual void End() {}
 
 protected:
 	void PushRendererToMainCamera();	//렌더러가 메인카메라에 등록하는 함수.

@@ -32,6 +32,14 @@ void FrameAnimation::Update(float _deltaTime)
 
 	if (info_.interval_ <= info_.frameTime_)
 	{
+		if (info_.curFrame_ == info_.frames_.size() - 1 
+			&& false == bOnceEnd_ && nullptr != end_)
+		{
+			end_(info_);
+			bOnceStart_ = false;
+			bOnceEnd_ = true;
+		}
+
 		++info_.curFrame_;
 		if (nullptr != frame_)
 		{
@@ -40,13 +48,6 @@ void FrameAnimation::Update(float _deltaTime)
 
 		if (info_.curFrame_ >= info_.frames_.size())
 		{
-			if (false == bOnceEnd_ && nullptr != end_)
-			{
-				end_(info_);
-				bOnceStart_ = false;
-				bOnceEnd_ = true;
-			}
-
 			if (true == info_.isLoop_)
 			{
 				info_.curFrame_ = 0;
@@ -60,7 +61,7 @@ void FrameAnimation::Update(float _deltaTime)
 		if (nullptr != cutTexture_)
 		{
 			parentRenderer_->currentTexture_ = cutTexture_;
-			parentRenderer_->SetTexture(cutTexture_, info_.curFrame_);
+			parentRenderer_->SetTexture(cutTexture_, info_.frames_[info_.curFrame_]);		
 			parentRenderer_->SetPivot();
 
 			if (0 != cutTexture_->GetCutCount())
@@ -103,8 +104,8 @@ void FrameAnimation::Update(float _deltaTime)
 GameEngineTextureRenderer::GameEngineTextureRenderer()
 	: currentTexture_(nullptr),
 	currentAnimation_(nullptr),
-	pivotMode_(PivotMode::Custom),
-	scaleMode_(ScaleMode::Custom),
+	pivotMode_(PivotMode::Center),
+	scaleMode_(ScaleMode::Image),
 	scaleRatio_(1.f)
 {
 }
@@ -262,13 +263,23 @@ void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animati
 		this->currentAnimation_->Reset();
 		if (nullptr != currentAnimation_->cutTexture_)
 		{
-			SetTexture(currentAnimation_->cutTexture_, currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
+			SetTexture(
+				currentAnimation_->cutTexture_,
+				currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
+			if (ScaleMode::Image == this->scaleMode_)
+			{
+				ScaleToCutTexture(currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
+			}
 		}
 		else if (nullptr != currentAnimation_->folderTexture_)
 		{
 			SetTexture(
 				currentAnimation_->folderTexture_->GetTexture(
 					currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]));
+			if (ScaleMode::Image == this->scaleMode_)
+			{
+				ScaleToTexture();
+			}
 		}
 	}
 }

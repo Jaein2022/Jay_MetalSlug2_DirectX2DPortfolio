@@ -122,14 +122,14 @@ public:
 		}
 	}
 
-	const std::string& GetCurrentStateName()
+	std::string GetCurrentStateName()
 	{
 		if (nullptr == currentState_)
 		{
 			return "";
 		}
 
-		return currentState_->GetName();
+		return currentState_->GetNameConstRef();
 	}
 
 	float GetCurrentStateTime()

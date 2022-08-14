@@ -1,6 +1,7 @@
 #include "PreCompile.h"
 #include "GameEngineGUI.h"
 #include "GameEngineDevice.h"
+#include "portable-file-dialogs.h"
 
 
 //Forward declare message handler from imgui_impl_win32.cpp
@@ -69,6 +70,27 @@ void GameEngineGUI::Render(GameEngineLevel* _level, float _deltaTime)
     {
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
+    }
+}
+
+std::string GameEngineGUI::OpenFileDlg(const std::string& _title, const std::string& _startPath)
+{
+    pfd::select_folder dlg = pfd::select_folder(_title, _startPath, pfd::opt::force_path);
+    dlg.kill();
+    return dlg.result();
+}
+
+std::string GameEngineGUI::OpenFolderDlg(const std::string& _title, const std::string& _startPath)
+{
+    pfd::open_file dlg = pfd::open_file(_title, _startPath, { "All Files", "*" }, pfd::opt::force_path);
+    dlg.kill();
+    if (false == dlg.result().empty())
+    {
+        return dlg.result()[0];
+    }
+    else
+    {
+        return "";
     }
 }
 

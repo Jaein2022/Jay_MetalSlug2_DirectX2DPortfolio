@@ -43,6 +43,8 @@ private:
 
 public:
 	static void Render(class GameEngineLevel* _level, float _deltaTime);
+	static std::string OpenFileDlg(const std::string& _title, const std::string& _startPath);
+	static std::string OpenFolderDlg(const std::string& _title, const std::string& _startPath);
 
 
 public:

@@ -97,6 +97,9 @@
     <Filter Include="Debug">
       <UniqueIdentifier>{411a0449-8112-47a0-bc0b-944f75cd0b99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI\PortableFileDialogs">
+      <UniqueIdentifier>{b55780f9-cd17-42c4-92d7-8235010d3843}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -250,6 +253,9 @@
     </ClInclude>
     <ClInclude Include="GameEngineCoreDebug.h">
       <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="portable-file-dialogs.h">
+      <Filter>GUI\PortableFileDialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

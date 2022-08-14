@@ -1,5 +1,4 @@
 #pragma once
-#include "Enums.h"
 
 class TestPlayer : public GameEngineActor
 {
@@ -29,7 +28,7 @@ public:
 private:
 	void UpdateInputInfo(float _deltaTime);	//키입력 업데이트.
 	//void UpdateContactObject();	//플레이어가 접촉한 오브젝트(아이템, NPC, 적 무기 등) 정보 업데이트.
-	void UpdatePlayerTotalState();	//플레이어 전체 상태 업데이트.
+	void UpdatePlayerState();	//플레이어 전체 상태 업데이트.
 
 	//void Move(float _deltaTime);	//좌우 트랜스폼 변화 담당 함수.
 	//void Jump(float _deltaTime);	//상하 트랜스폼 변화 담당 함수.
@@ -49,14 +48,13 @@ private:
 	GameEngineTextureRenderer* wholeWeaponRenderer_;
 
 	PlayerState currentState_;
-	std::map<PlayerState, std::string> statesNameMap_;
-
 
 	PlayerWeaponType weapon_;
 	PlayerLegStatus leg_;
 	PlayerTopStatus top_;
 	AimingDirection direction_;
 
+	bool isLanded_;
 	bool isRight_;
 	float runningSpeed_;
 	float ducksteppingSpeed_;

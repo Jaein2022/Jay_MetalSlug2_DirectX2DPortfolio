@@ -39,6 +39,11 @@ void GameEngineActor::DetachObject()
 
 	this->GetTransform().DetachTransform();
 	//더 이상 액터 부모로 레벨만 온다는 보장이 없다.
+
+	if (false == this->IsDead())
+	{
+		GetLevel()->PushActor(this, this->GetOrder());
+	}
 }
 
 void GameEngineActor::SetParent(GameEngineUpdateObject* _newParent)

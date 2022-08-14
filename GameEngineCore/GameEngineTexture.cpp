@@ -179,6 +179,16 @@ void GameEngineTexture::Cut(const std::string& _textureName, int _x, int _y)
 	}
 }
 
+void GameEngineTexture::Cut(UINT _startX, UINT _startY, UINT _sizeX, UINT _sizeY)
+{
+	float4 frameData;
+	frameData.posX = _startX / this->GetScale().x;
+	frameData.posY = _startY / this->GetScale().y;
+	frameData.sizeX = _sizeX / this->GetScale().x;
+	frameData.sizeY = _sizeY / this->GetScale().y;
+	cutData_.push_back(frameData);
+}
+
 float4 GameEngineTexture::GetPixelToFloat4(int _x, int _y)
 {
 	PixelColor color = GetPixelToPixelColor(_x, _y);

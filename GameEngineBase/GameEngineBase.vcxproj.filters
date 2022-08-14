@@ -46,6 +46,9 @@
     <Filter Include="ThirdParty\Sound\Fmod\Bin%28Library%29\Release">
       <UniqueIdentifier>{b3b2bd89-b53d-49a3-9b94-b04467621ae0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Enum">
+      <UniqueIdentifier>{6767746f-12b9-41ed-9a60-66c93d6379c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -169,6 +172,15 @@
     </ClInclude>
     <ClInclude Include="ThirdParty\FMOD\Include\fmod_output.h">
       <Filter>ThirdParty\Sound\Fmod\Inc%28Header%29</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum.hpp">
+      <Filter>Enum</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum_format.hpp">
+      <Filter>Enum</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum_fuse.hpp">
+      <Filter>Enum</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -70,11 +70,11 @@ protected:
 	{
 		ResType* newRes = CreateRes(_resName);
 		std::pair<std::map<std::string, ResType*>::iterator, bool> insertResult =
-			namedRes_.insert(std::make_pair(newRes->GetName(), newRes));
+			namedRes_.insert(std::make_pair(newRes->GetNameConstRef(), newRes));
 
 		if (false == insertResult.second)
 		{
-			MsgBoxAssertString(newRes->GetName() + ": 이미 존재하는 리소스 이름입니다.");
+			MsgBoxAssertString(newRes->GetNameConstRef() + ": 이미 존재하는 리소스 이름입니다.");
 			return nullptr;
 		}
 

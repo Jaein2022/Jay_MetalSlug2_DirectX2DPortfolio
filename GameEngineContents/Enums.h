@@ -2,6 +2,7 @@
 
 enum class PlayerState
 {
+	Dead = 1000,
 
 	Pistol_Standing_Aiming_Forward						= 1111,
 	Pistol_Standing_Aiming_Upward						= 1112,
@@ -54,13 +55,14 @@ enum class PlayerState
 	Pistol_VerticalJumpingToStanding					= 1811,
 	Pistol_ForwardJumpingToStanding						= 1911,
 
-
-
-
-
-
-	Dead = 0
 };
+
+//template <>
+//struct magic_enum::customize::enum_range<PlayerState> {
+//	static constexpr int min = 1000;
+//	static constexpr int max = 6000;
+//	// (max - min) must be less than UINT16_MAX == 65535.
+//};
 
 enum class AimingDirection
 {
