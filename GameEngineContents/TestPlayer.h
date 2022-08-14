@@ -26,6 +26,9 @@ public:
 
 
 private:
+	void CreatePlayerAnimations();
+	void CreatePlayerStates();
+
 	void UpdateInputInfo(float _deltaTime);	//키입력 업데이트.
 	//void UpdateContactObject();	//플레이어가 접촉한 오브젝트(아이템, NPC, 적 무기 등) 정보 업데이트.
 	void UpdatePlayerState();	//플레이어 전체 상태 업데이트.
@@ -53,6 +56,8 @@ private:
 	PlayerLegStatus leg_;
 	PlayerTopStatus top_;
 	AimingDirection direction_;
+
+	std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
 
 	bool isLanded_;
 	bool isRight_;

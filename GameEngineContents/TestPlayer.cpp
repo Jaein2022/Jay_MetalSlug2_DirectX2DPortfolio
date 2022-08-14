@@ -46,96 +46,10 @@ void TestPlayer::Start()
 		GameEngineInput::GetInst()->CreateKey("Test", 'A');
 	}
 
-	legRenderer_ = CreateComponent<GameEngineTextureRenderer>("RegRenderer");
-	legRenderer_->GetTransform().SetLocalScale(300, 300, 1);
+	CreatePlayerAnimations();
+	CreatePlayerStates();
 
 
-
-	if (0 == GameEngineTexture::Find("Tarma_Leg.png")->GetCutCount())
-	{
-		GameEngineTexture::Cut("Tarma_Leg.png", 6, 5);
-	}
-	legRenderer_->SetTexture("Tarma_Leg.png");
-
-	legRenderer_->CreateFrameAnimation_CutTexture("Standing",
-		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 0.5f, true));
-	legRenderer_->CreateFrameAnimation_CutTexture("Running",
-		FrameAnimation_Desc("Tarma_Leg.png", 6, 17, 0.05f, true));
-	legRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping",
-		FrameAnimation_Desc("Tarma_Leg.png", 18, 23, 0.05f, false));
-	legRenderer_->CreateFrameAnimation_CutTexture("ForwardJumping",
-		FrameAnimation_Desc("Tarma_Leg.png", 24, 29, 0.05f, false));
-
-	legRenderer_->SetPivot(PivotMode::Custom);
-	legRenderer_->GetTransform().SetLocalPosition(0, 0, 10);
-	legRenderer_->ChangeFrameAnimation("Running");
-
-
-
-	topPistolRenderer_ = CreateComponent<GameEngineTextureRenderer>("TopPistolRenderer");
-	topPistolRenderer_->GetTransform().SetLocalScale(300, 300, 1);
-
-	
-	if (0 == GameEngineTexture::Find("Tarma_Top_Pistol.png")->GetCutCount())
-	{
-		GameEngineTexture::Cut("Tarma_Top_Pistol.png", 10, 18);
-	}
-	topPistolRenderer_->SetTexture("Tarma_Top_Pistol.png");	
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing_Aiming_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 0, 3, 0.2f, true));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Running_Aiming_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 10, 21, 0.05f, true));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping_Aiming_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 30, 35, 0.05f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("ForwardJumping_Aiming_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 40, 45, 0.05f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Aiming_ForwardToUpward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 50, 51, 0.05f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Aiming_Upward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 60, 63, 0.05f, true));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Aiming_ForwardToUpward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 70, 71, 0.05f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_ForwardToDownward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 80, 81, 0.05f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_Downward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 90, 90, 0.05f, true));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Firing_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 100, 105, 0.05f, true));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_FiringToAiming_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 110, 113, 0.01f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Firing_Upward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 120, 125, 0.01f, true));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_FiringToAiming_Upward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 130, 133, 0.01f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Firing_Downward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 140, 145, 0.01f, true));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_ThrowingGrenade",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 150, 155, 0.01f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack1",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 160, 165, 0.01f, false));
-
-	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack2",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 170, 175, 0.01f, false));
-
-	topPistolRenderer_->SetPivot(PivotMode::Center);
-	topPistolRenderer_->GetTransform().SetLocalPosition(0, 0, 0);
-	topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
 }
 
 void TestPlayer::Update(float _deltaTime)
@@ -143,6 +57,7 @@ void TestPlayer::Update(float _deltaTime)
 	UpdateInputInfo(_deltaTime);
 
 	UpdatePlayerState();
+	playerStateManager_.Update(_deltaTime);
 }
 
 void TestPlayer::End()
@@ -199,11 +114,19 @@ void TestPlayer::UpdateInputInfo(float _deltaTime)
 		{
 			direction_ = AimingDirection::Upward;
 		}
-
-		if (PlayerTopStatus::Firing == top_)
+		else 
 		{
-			direction_ = AimingDirection::Upward;
+			if (PlayerTopStatus::Firing == top_)
+			{
+				direction_ = AimingDirection::Upward;
+			}
+			else
+			{
+				direction_ = AimingDirection::Forward;
+			}
 		}
+
+
 	}
 	else 
 	{
@@ -229,22 +152,29 @@ void TestPlayer::UpdateInputInfo(float _deltaTime)
 		if (PlayerLegStatus::Ducking == leg_)
 		{
 			leg_ = PlayerLegStatus::Standing;
+			if (PlayerTopStatus::DuckStepping == top_)
+			{
+				top_ = PlayerTopStatus::Aiming;
+			}
 		}
 	}
 
 	//공격키 입력 대응.
-	if (true == GameEngineInput::GetInst()->IsDown("Attack"))
+	if (true == GameEngineInput::GetInst()->IsPressed("Attack"))
 	{
 		top_ = PlayerTopStatus::Firing;
 	}
 	else 
 	{
-		top_ = PlayerTopStatus::Aiming;
+		if (PlayerTopStatus::DuckStepping != top_)
+		{
+			top_ = PlayerTopStatus::Aiming;
+		}
 	}
 
 
 	//점프키 입력 대응.
-	if (true == GameEngineInput::GetInst()->IsDown("Jump"))
+	if (true == GameEngineInput::GetInst()->IsPressed("Jump"))
 	{
 		if (PlayerLegStatus::Standing == leg_ || PlayerLegStatus::Ducking == leg_)
 		{
@@ -260,6 +190,14 @@ void TestPlayer::UpdateInputInfo(float _deltaTime)
 			{
 				leg_ = PlayerLegStatus::VerticalJumping;
 			}
+		}
+	}
+	//임시조치. 픽셀충돌 완정되면 지울 것.
+	else
+	{
+		if (PlayerLegStatus::VerticalJumping == leg_ || PlayerLegStatus::ForwardJumping == leg_)
+		{
+			leg_ = PlayerLegStatus::Standing;
 		}
 	}
 
@@ -279,16 +217,52 @@ void TestPlayer::UpdatePlayerState()
 		+ static_cast<int>(top_)
 		+ static_cast<int>(direction_);
 
-	if (PlayerLegStatus::Running == leg_)
-	{
-		legRenderer_->ChangeFrameAnimation("Running");
-		topPistolRenderer_->ChangeFrameAnimation("Running_Aiming_Forward");
+	currentState_ = allPlayerStates_.find(intCurrentState)->second.first;
 
-	}
-	else
+	playerStateManager_.ChangeState(allPlayerStates_.find(intCurrentState)->second.second);
+
+
+	if (true == topPistolRenderer_->IsUpdate() && true == wholePistolRenderer_->IsUpdate()
+		|| true == topPistolRenderer_->IsUpdate() && true == topWeaponRenderer_->IsUpdate()
+		//|| true == wholeWeaponRenderer_->IsUpdate() && true == topWeaponRenderer_->IsUpdate()
+		//|| true == wholeWeaponRenderer_->IsUpdate() && true == wholePistolRenderer_->IsUpdate()
+	)
 	{
-		legRenderer_->ChangeFrameAnimation("Standing");
-		topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
+		MsgBoxAssert("성립할 수 없는 렌더링 상태입니다.");
+		return;
 	}
+
+
+
+	//if (PlayerLegStatus::Running == leg_)
+	//{
+	//	wholePistolRenderer_->Off();
+	//	legRenderer_->On();
+	//	legRenderer_->ChangeFrameAnimation("Running");
+	//	topPistolRenderer_->On();
+	//	topPistolRenderer_->ChangeFrameAnimation("Running_Aiming_Forward");
+	//}
+	//else if (PlayerLegStatus::Ducking == leg_)
+	//{
+	//	wholePistolRenderer_->On();
+	//	legRenderer_->Off();
+	//	topPistolRenderer_->Off();
+	//	if (PlayerTopStatus::DuckStepping == top_)
+	//	{
+	//		wholePistolRenderer_->ChangeFrameAnimation("Ducking_Ducksteping_Forward");
+	//	}
+	//	else
+	//	{
+	//		wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming_Forward");
+	//	}
+	//}
+	//else
+	//{
+	//	wholePistolRenderer_->Off();
+	//	legRenderer_->On();
+	//	legRenderer_->ChangeFrameAnimation("Standing");
+	//	topPistolRenderer_->On();
+	//	topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
+	//}
 
 }

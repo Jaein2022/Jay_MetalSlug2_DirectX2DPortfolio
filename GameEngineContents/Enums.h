@@ -12,9 +12,8 @@ enum class PlayerState
 	Pistol_Standing_Firing_Upward						= 1122,
 	Pistol_Standing_FiringToAiming_Forward				= 1131,
 	Pistol_Standing_FiringToAiming_Upward				= 1132,
-	Pistol_Standing_ThrowingGrenade						= 1141,
-	Pistol_Standing_MeleeAttack							= 1151,
-	//Standing_Pistol_Idling,
+	//Pistol_Standing_ThrowingGrenade						= 1141,
+	//Pistol_Standing_MeleeAttack							= 1151,
 
 	Pistol_Running_Aiming_Forward						= 1211,
 	Pistol_Running_Aiming_Upward						= 1212,
@@ -22,14 +21,14 @@ enum class PlayerState
 	Pistol_Running_Aiming_UpwardToForward				= 1215,
 	Pistol_Running_Firing_Forward						= 1221,
 	Pistol_Running_Firing_Upward						= 1222,
-	Pistol_Running_ThrowingGrenade						= 1241,
-	Pistol_Running_MeleeAttack							= 1251,
+	//Pistol_Running_ThrowingGrenade						= 1241,
+	//Pistol_Running_MeleeAttack							= 1251,
 
 	Pistol_Ducking_Aiming								= 1311,
 	Pistol_Ducking_Firing								= 1321,
 	Pistol_Ducking_FiringToAiming						= 1331,
 	Pistol_Ducking_ThrowingGrenade						= 1341,
-	Pistol_Ducking_MeleeAttack							= 1351,
+	//Pistol_Ducking_MeleeAttack							= 1351,
 	Pistol_Ducking_DuckStepping							= 1361,
 
 	Pistol_VerticalJumping_Aiming_Forward				= 1411,
@@ -38,8 +37,8 @@ enum class PlayerState
 	Pistol_VerticalJumping_Firing_Forward				= 1421,
 	Pistol_VerticalJumping_Firing_Upward				= 1422,
 	Pistol_VerticalJumping_Firing_Downward				= 1423,
-	Pistol_VerticalJumping_ThrowingGrenade				= 1441,
-	Pistol_VerticalJumping_MeleeAttack					= 1451,
+	//Pistol_VerticalJumping_ThrowingGrenade				= 1441,
+	//Pistol_VerticalJumping_MeleeAttack					= 1451,
 
 	Pistol_ForwardJumping_Aiming_Forward				= 1511,
 	Pistol_ForwardJumping_Aiming_Downward				= 1513,
@@ -47,8 +46,8 @@ enum class PlayerState
 	Pistol_ForwardJumping_Firing_Forward				= 1521,
 	Pistol_ForwardJumping_Firing_Upward					= 1522,
 	Pistol_ForwardJumping_Firing_Downward				= 1523,
-	Pistol_ForwardJumping_ThrowingGrenade				= 1541,
-	Pistol_ForwardJumping_MeleeAttack					= 1551,
+	//Pistol_ForwardJumping_ThrowingGrenade				= 1541,
+	//Pistol_ForwardJumping_MeleeAttack					= 1551,
 
 	Pistol_StandingToDucking							= 1611,
 	Pistol_RunningToStanding							= 1711,
@@ -57,12 +56,12 @@ enum class PlayerState
 
 };
 
-//template <>
-//struct magic_enum::customize::enum_range<PlayerState> {
-//	static constexpr int min = 1000;
-//	static constexpr int max = 6000;
-//	// (max - min) must be less than UINT16_MAX == 65535.
-//};
+template <>
+struct magic_enum::customize::enum_range<PlayerState> {
+	static constexpr int min = 1000;
+	static constexpr int max = 6000;
+	// (max - min) must be less than UINT16_MAX == 65535.
+};
 
 enum class AimingDirection
 {
@@ -101,7 +100,7 @@ enum class PlayerWeaponType
 {
 	Pistol				= 1000,
 	HeavyMachineGun		= 2000,
-	RockeLauncher		= 3000,
-	Shotgun				= 4000,
-	Flameshot			= 5000
+	//RockeLauncher		= 3000,
+	//Shotgun				= 4000,
+	//Flameshot			= 5000
 };
