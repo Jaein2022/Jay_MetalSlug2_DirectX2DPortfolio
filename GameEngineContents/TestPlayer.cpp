@@ -11,13 +11,17 @@ TestPlayer::TestPlayer()
 	wholeWeaponRenderer_(nullptr),
 	currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
 	weapon_(PlayerWeaponType::Pistol),
-	leg_(PlayerLegStatus::Standing),
-	top_(PlayerTopStatus::Aiming),
+	leg_(PlayerLegState::Standing),
+	top_(PlayerTopState::Aiming),
 	direction_(AimingDirection::Forward),
-	isLanded_(true),
-	isRight_(true),
-	runningSpeed_(100.f),
-	ducksteppingSpeed_(50.f),
+	movingDirection_(0),
+	isJumping_(false),
+	isUpKeyPressed_(false),
+	isDownKeyPressed_(false),
+	isJumpKeyDown_(false),
+	isAttackKeyDowned_(false),
+	isSpecialKeyDowned_(false),
+	playerSpeed_(100.f),
 	bulletCount_(-1),
 	grenadeCount_(0)
 {
@@ -54,162 +58,317 @@ void TestPlayer::Start()
 
 void TestPlayer::Update(float _deltaTime)
 {
-	UpdateInputInfo(_deltaTime);
+	UpdateInputInfo();
+	ConvertInputToPlayerStates();
 
-	UpdatePlayerState();
-	playerStateManager_.Update(_deltaTime);
+	UpdatePlayerState(_deltaTime);
+	
 }
 
 void TestPlayer::End()
 {
 }
 
-void TestPlayer::UpdateInputInfo(float _deltaTime)
+void TestPlayer::UpdateInputInfo()
 {
-
-
-
-	//좌우방향키 입력 대응.
 	if (true == GameEngineInput::GetInst()->IsPressed("Right"))
 	{
-		if (PlayerLegStatus::Standing == leg_)
-		{
-			leg_ = PlayerLegStatus::Running;
-		}
-		else if (PlayerLegStatus::Ducking == leg_ && PlayerTopStatus::Firing != top_)
-		{
-			top_ = PlayerTopStatus::DuckStepping;
-		}
-
-		
+		movingDirection_ = 1;
 	}
 	else if (true == GameEngineInput::GetInst()->IsPressed("Left"))
 	{
-		if (PlayerLegStatus::Standing == leg_)
-		{
-			leg_ = PlayerLegStatus::Running;
-		}
-		else if (PlayerLegStatus::Ducking == leg_ && PlayerTopStatus::Firing != top_)
-		{
-			top_ = PlayerTopStatus::DuckStepping;
-		}
-
+		movingDirection_ = -1;
 	}
 	else
 	{
-		if (PlayerLegStatus::Running == leg_)
+		movingDirection_ = 0;
+	}
+
+	if (true == GameEngineInput::GetInst()->IsPressed("Up"))
+	{
+		isUpKeyPressed_ = true;
+	}
+	else 
+	{
+		isUpKeyPressed_ = false;
+	}
+
+	if (true == GameEngineInput::GetInst()->IsPressed("Down"))
+	{
+		isDownKeyPressed_ = true;
+	}
+	else 
+	{
+		isDownKeyPressed_ = false;
+	}
+
+	if (true == GameEngineInput::GetInst()->IsDown("Attack"))
+	{
+		isAttackKeyDowned_ = true;
+	}
+	else
+	{
+		isAttackKeyDowned_ = false;
+	}
+
+	if (true == GameEngineInput::GetInst()->IsDown("Jump"))
+	{
+		isJumpKeyDown_ = true;
+	}
+	else
+	{
+		//점프체계 완성되면 제거.
+		isJumpKeyDown_ = false;
+	}
+
+	if (true == GameEngineInput::GetInst()->IsDown("Special"))
+	{
+		isSpecialKeyDowned_ = true;
+	}
+	else
+	{
+		isSpecialKeyDowned_ = false;
+	}
+}
+
+void TestPlayer::ConvertInputToPlayerStates()
+{
+	if (true == isJumpKeyDown_)
+	{
+		if (false == isJumping_)
 		{
-			leg_ = PlayerLegStatus::Standing;
+			isJumping_ = true;
+			if (0 == movingDirection_)
+			{
+				leg_ = PlayerLegState::VerticalJumping;
+			}
+			else
+			{
+				leg_ = PlayerLegState::ForwardJumping;
+			}
+
+			if (PlayerTopState::DuckStepping == top_)
+			{
+				top_ = PlayerTopState::Aiming;
+			}
+
+			if (PlayerTopState::Firing != top_)
+			{
+				direction_ = AimingDirection::Forward;
+			}
 		}
-		else if (PlayerLegStatus::Ducking == leg_ && PlayerTopStatus::DuckStepping == top_)
+		else
 		{
-			top_ = PlayerTopStatus::Aiming;
+			//점프/픽셀충돌 완성되면 이전 혹은 삭제.
+			if (true == isJumping_)
+			{
+				isJumping_ = false;
+				if (PlayerLegState::VerticalJumping == leg_
+					|| PlayerLegState::ForwardJumping == leg_)
+				{
+					//leg_ = PlayerLegState::JumpingToStanding;
+					leg_ = PlayerLegState::Standing;
+					if (AimingDirection::Downward == direction_)
+					{
+						direction_ = AimingDirection::Forward;
+					}
+				}
+			}
 		}
 	}
 
-	//윗방향 키 입력 대응.
-	if (true == GameEngineInput::GetInst()->IsPressed("Up"))
+	if (true == isDownKeyPressed_)
 	{
-		if (PlayerLegStatus::Running == leg_ || PlayerLegStatus::Standing == leg_)
+		if (true == isJumping_)
 		{
-			direction_ = AimingDirection::Upward;
-		}
-		else 
-		{
-			if (PlayerTopStatus::Firing == top_)
+			if (top_ == PlayerTopState::Aiming || weapon_ == PlayerWeaponType::HeavyMachineGun)
 			{
-				direction_ = AimingDirection::Upward;
+				direction_ = AimingDirection::ForwardToDownward;
+				//direction_ = AimingDirection::Downward;
+			}
+			else
+			{
+				direction_ = AimingDirection::Downward;
+			}
+		}
+		else
+		{
+			//leg_ = PlayerLegState::StandingToDucking;
+			leg_ = PlayerLegState::Ducking;
+		}
+	}
+	else 
+	{
+		if (true == isJumping_)
+		{
+			if (top_ == PlayerTopState::Aiming 
+				|| weapon_ == PlayerWeaponType::HeavyMachineGun && top_ == PlayerTopState::Firing)
+			{
+				direction_ = AimingDirection::DownwardToForward;
+				//direction_ = AimingDirection::Forward;
 			}
 			else
 			{
 				direction_ = AimingDirection::Forward;
 			}
 		}
-
-
-	}
-	else 
-	{
-		direction_ = AimingDirection::Forward;
-	}
-
-
-	//아랫방향 키 입력 대응.
-	if (true == GameEngineInput::GetInst()->IsPressed("Down"))
-	{
-		if (PlayerLegStatus::Standing == leg_)
+		else if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
 		{
-			leg_ = PlayerLegStatus::Ducking;
-		}
-
-		if (PlayerLegStatus::VerticalJumping == leg_ || PlayerLegStatus::ForwardJumping == leg_)
-		{
-			direction_ = AimingDirection::Downward;
-		}
-	}
-	else 
-	{
-		if (PlayerLegStatus::Ducking == leg_)
-		{
-			leg_ = PlayerLegStatus::Standing;
-			if (PlayerTopStatus::DuckStepping == top_)
+			leg_ = PlayerLegState::Standing;
+			if (PlayerTopState::DuckStepping == top_)
 			{
-				top_ = PlayerTopStatus::Aiming;
+				top_ = PlayerTopState::Aiming;
 			}
 		}
 	}
-
-	//공격키 입력 대응.
-	if (true == GameEngineInput::GetInst()->IsPressed("Attack"))
+		
+		
+	if (true == isUpKeyPressed_)
 	{
-		top_ = PlayerTopStatus::Firing;
-	}
-	else 
-	{
-		if (PlayerTopStatus::DuckStepping != top_)
+		if (PlayerLegState::Ducking != leg_)
 		{
-			top_ = PlayerTopStatus::Aiming;
+			if (AimingDirection::Upward != direction_)
+			{
+
+				if ( (PlayerTopState::Aiming == top_ 
+					&& PlayerLegState::VerticalJumping != leg_ && PlayerLegState::ForwardJumping != leg_)
+					|| (PlayerWeaponType::HeavyMachineGun == weapon_ && PlayerTopState::Firing == top_))
+				{
+					direction_ = AimingDirection::ForwardToUpward;
+				}
+				else
+				{
+					direction_ = AimingDirection::Upward;
+				}
+			}
+
+
+
 		}
 	}
-
-
-	//점프키 입력 대응.
-	if (true == GameEngineInput::GetInst()->IsPressed("Jump"))
+	else
 	{
-		if (PlayerLegStatus::Standing == leg_ || PlayerLegStatus::Ducking == leg_)
+		if (AimingDirection::Upward == direction_)
 		{
-			if (true == GameEngineInput::GetInst()->IsPressed("Right"))
+			if ((PlayerTopState::Aiming == top_
+				&& PlayerLegState::VerticalJumping != leg_ && PlayerLegState::ForwardJumping != leg_)
+				|| (PlayerWeaponType::HeavyMachineGun == weapon_ && PlayerTopState::Firing == top_))
 			{
-				leg_ = PlayerLegStatus::ForwardJumping;
-			}
-			else if (true == GameEngineInput::GetInst()->IsPressed("Left"))
-			{
-				leg_ = PlayerLegStatus::ForwardJumping;
+				direction_ = AimingDirection::UpwardToForward;
 			}
 			else
 			{
-				leg_ = PlayerLegStatus::VerticalJumping;
+				direction_ = AimingDirection::Forward;
 			}
 		}
 	}
-	//임시조치. 픽셀충돌 완정되면 지울 것.
-	else
+
+	switch (movingDirection_)
 	{
-		if (PlayerLegStatus::VerticalJumping == leg_ || PlayerLegStatus::ForwardJumping == leg_)
+
+	case -1:
+	{
+		if ( (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
+			&& (PlayerTopState::Firing != top_ && PlayerTopState::ThrowingGrenade != top_) )
 		{
-			leg_ = PlayerLegStatus::Standing;
+			leg_ = PlayerLegState::Ducking;
+			top_ = PlayerTopState::DuckStepping;
 		}
+		else if (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_)
+		{
+			//다리 스테이트 변화 없음.
+		}
+		else 
+		{
+			leg_ = PlayerLegState::Running;
+		}
+
+
+		break;
+	}
+
+	case 1:
+	{
+		if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
+		{
+			leg_ = PlayerLegState::Ducking;
+			if ((PlayerTopState::Firing != top_ && PlayerTopState::ThrowingGrenade != top_))
+			{
+				top_ = PlayerTopState::DuckStepping;
+			}
+		}
+		else if (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_)
+		{
+			//다리 스테이트 변화 없음.
+		}
+		else
+		{
+			leg_ = PlayerLegState::Running;
+		}
+
+		break;
+	}
+
+	case 0:
+	{
+		if (PlayerLegState::Ducking == leg_ && PlayerTopState::DuckStepping == top_)
+		{
+			top_ = PlayerTopState::Aiming;
+		}
+		else if (PlayerLegState::Running == leg_)
+		{
+			//leg_ = PlayerLegState::RunningToStanding;
+			leg_ = PlayerLegState::Standing;
+		}
+
+
+		break;
 	}
 
 
-	//특수공격 키 입력 대응.
-	if (true == GameEngineInput::GetInst()->IsDown("Special"))
+	default:
+		MsgBoxAssert("불가능한 이동 방향입니다.");
+		return;
+	}
+
+	if (true == isAttackKeyDowned_)
 	{
-		top_ = PlayerTopStatus::ThrowingGrenade;
+		if (PlayerTopState::ThrowingGrenade != top_)
+		{
+			top_ = PlayerTopState::Firing;
+			if (PlayerWeaponType::HeavyMachineGun != weapon_)
+			{
+				if (AimingDirection::ForwardToDownward == direction_)
+				{
+					direction_ = AimingDirection::Downward;
+				}
+				else if (AimingDirection::DownwardToForward == direction_)
+				{
+					direction_ = AimingDirection::Forward;
+				}
+				else if (AimingDirection::ForwardToUpward == direction_)
+				{
+					direction_ = AimingDirection::Upward;
+				}
+				else if (AimingDirection::UpwardToForward == direction_)
+				{
+					direction_ = AimingDirection::Forward;
+				}
+			}
+		}
+	}
+	
+	if (true == isSpecialKeyDowned_)
+	{
+		if (PlayerTopState::Firing != top_)
+		{
+			top_ = PlayerTopState::ThrowingGrenade;
+			direction_ = AimingDirection::Forward;
+		}
 	}
 }
 
-void TestPlayer::UpdatePlayerState()
+void TestPlayer::UpdatePlayerState(float _deltaTime)
 {
 	int intCurrentState =
 		static_cast<int>(weapon_)
@@ -217,52 +376,18 @@ void TestPlayer::UpdatePlayerState()
 		+ static_cast<int>(top_)
 		+ static_cast<int>(direction_);
 
+
+	if (allPlayerStates_.end() == allPlayerStates_.find(intCurrentState))
+	{
+		MsgBoxAssertString(std::to_string(intCurrentState) + ": 존재하지 않는 플레이어 스테이트입니다.");
+		return;
+	}
+
 	currentState_ = allPlayerStates_.find(intCurrentState)->second.first;
 
 	playerStateManager_.ChangeState(allPlayerStates_.find(intCurrentState)->second.second);
 
 
-	if (true == topPistolRenderer_->IsUpdate() && true == wholePistolRenderer_->IsUpdate()
-		|| true == topPistolRenderer_->IsUpdate() && true == topWeaponRenderer_->IsUpdate()
-		//|| true == wholeWeaponRenderer_->IsUpdate() && true == topWeaponRenderer_->IsUpdate()
-		//|| true == wholeWeaponRenderer_->IsUpdate() && true == wholePistolRenderer_->IsUpdate()
-	)
-	{
-		MsgBoxAssert("성립할 수 없는 렌더링 상태입니다.");
-		return;
-	}
-
-
-
-	//if (PlayerLegStatus::Running == leg_)
-	//{
-	//	wholePistolRenderer_->Off();
-	//	legRenderer_->On();
-	//	legRenderer_->ChangeFrameAnimation("Running");
-	//	topPistolRenderer_->On();
-	//	topPistolRenderer_->ChangeFrameAnimation("Running_Aiming_Forward");
-	//}
-	//else if (PlayerLegStatus::Ducking == leg_)
-	//{
-	//	wholePistolRenderer_->On();
-	//	legRenderer_->Off();
-	//	topPistolRenderer_->Off();
-	//	if (PlayerTopStatus::DuckStepping == top_)
-	//	{
-	//		wholePistolRenderer_->ChangeFrameAnimation("Ducking_Ducksteping_Forward");
-	//	}
-	//	else
-	//	{
-	//		wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming_Forward");
-	//	}
-	//}
-	//else
-	//{
-	//	wholePistolRenderer_->Off();
-	//	legRenderer_->On();
-	//	legRenderer_->ChangeFrameAnimation("Standing");
-	//	topPistolRenderer_->On();
-	//	topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
-	//}
+	playerStateManager_.Update(_deltaTime);
 
 }

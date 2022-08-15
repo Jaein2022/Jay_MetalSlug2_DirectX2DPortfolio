@@ -29,9 +29,12 @@ private:
 	void CreatePlayerAnimations();
 	void CreatePlayerStates();
 
-	void UpdateInputInfo(float _deltaTime);	//키입력 업데이트.
 	//void UpdateContactObject();	//플레이어가 접촉한 오브젝트(아이템, NPC, 적 무기 등) 정보 업데이트.
-	void UpdatePlayerState();	//플레이어 전체 상태 업데이트.
+
+	void UpdateInputInfo();	//키입력 업데이트.
+	void ConvertInputToPlayerStates();
+
+	void UpdatePlayerState(float _deltaTime);	//플레이어 전체 상태 업데이트.
 
 	//void Move(float _deltaTime);	//좌우 트랜스폼 변화 담당 함수.
 	//void Jump(float _deltaTime);	//상하 트랜스폼 변화 담당 함수.
@@ -53,16 +56,21 @@ private:
 	PlayerState currentState_;
 
 	PlayerWeaponType weapon_;
-	PlayerLegStatus leg_;
-	PlayerTopStatus top_;
+	PlayerLegState leg_;
+	PlayerTopState top_;
 	AimingDirection direction_;
 
 	std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
 
-	bool isLanded_;
-	bool isRight_;
-	float runningSpeed_;
-	float ducksteppingSpeed_;
+	char movingDirection_;	//-1: 좌측으로 이동, 0: 정지, 1: 우측으로 이동.
+	bool isJumping_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
+	bool isUpKeyPressed_;
+	bool isDownKeyPressed_;
+	bool isJumpKeyDown_;
+	bool isAttackKeyDowned_;
+	bool isSpecialKeyDowned_;
+
+	float playerSpeed_;
 
 	int bulletCount_;
 	int grenadeCount_;
