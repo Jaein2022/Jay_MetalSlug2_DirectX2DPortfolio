@@ -13,7 +13,7 @@ void TestPlayer::CreatePlayerAnimations()
 	legRenderer_->SetTexture("Tarma_Leg.png");
 
 	legRenderer_->CreateFrameAnimation_CutTexture("Standing",
-		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 0.5f, true));
+		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 1.f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("Running",
 		FrameAnimation_Desc("Tarma_Leg.png", 6, 17, 0.05f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping",
@@ -23,7 +23,7 @@ void TestPlayer::CreatePlayerAnimations()
 
 	legRenderer_->SetPivot(PivotMode::Custom);
 	legRenderer_->GetTransform().SetLocalPosition(0, 0, 10);
-	legRenderer_->ChangeFrameAnimation("Running");
+	legRenderer_->ChangeFrameAnimation("Standing");
 	legRenderer_->Off();
 
 
@@ -68,14 +68,23 @@ void TestPlayer::CreatePlayerAnimations()
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_ForwardToDownward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 80, 81, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 80, 81, 0.05f, true));
 	topPistolRenderer_->AnimationBindEnd("Jumping_Aiming_ForwardToDownward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			direction_ = AimingDirection::Downward;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_Downward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 90, 90, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 90, 90, 1.f, true));
+
+	//topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_DownwardToForward",
+	//	FrameAnimation_Desc("Tarma_Top_Pistol.png", , , 0.05f, true));
+	//topPistolRenderer_->AnimationBindEnd("Jumping_Aiming_DownwardToForward",
+	//	[this](const FrameAnimation_Desc& _desc)->void {
+	//		direction_ = AimingDirection::Forward;
+	//	}
+	//);
+
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_Firing_Forward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 100, 105, 0.05f, true));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_Firing_Forward",
@@ -129,14 +138,14 @@ void TestPlayer::CreatePlayerAnimations()
 
 
 
-	topWeaponRenderer_ = CreateComponent<GameEngineTextureRenderer>("TopWeaponRenderer");
-	topWeaponRenderer_->GetTransform().SetLocalScale(300, 300, 1);
+	//topWeaponRenderer_ = CreateComponent<GameEngineTextureRenderer>("TopWeaponRenderer");
+	//topWeaponRenderer_->GetTransform().SetLocalScale(300, 300, 1);
 
-	if (0 == GameEngineTexture::Find("Tarma_Top_Weapon.png")->GetCutCount())
-	{
-		GameEngineTexture::Cut("Tarma_Top_Weapon.png", 10, 23);
-	}
-	topWeaponRenderer_->SetTexture("Tarma_Top_Weapon.png");
+	//if (0 == GameEngineTexture::Find("Tarma_Top_Weapon.png")->GetCutCount())
+	//{
+	//	GameEngineTexture::Cut("Tarma_Top_Weapon.png", 10, 23);
+	//}
+	//topWeaponRenderer_->SetTexture("Tarma_Top_Weapon.png");
 
 	//topWeaponRenderer_->CreateFrameAnimation_CutTexture("Standing_Aiming_Forward",
 	//	FrameAnimation_Desc("Tarma_Top_Weapon.png", 0, 3, 0.2f, true));
@@ -184,7 +193,7 @@ void TestPlayer::CreatePlayerAnimations()
 	wholePistolRenderer_->SetTexture("Tarma_Whole_Pistol.png");
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Running, JumpingToStanding",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 0, 3, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 0, 3, 0.05f, true));
 	wholePistolRenderer_->AnimationBindEnd("Running, JumpingToStanding",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			leg_ = PlayerLegState::Standing;
@@ -555,6 +564,20 @@ void TestPlayer::CreatePlayerStates()
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
 		}
 	);
+
+	//playerStateManager_.CreateState(	
+	//	"Pistol_VerticalJumping_Aiming_DownwardToForward",
+	//	[this](float _deltaTime, const StateInfo& _info)->void {
+	//		legRenderer_->On();
+	//		topPistolRenderer_->On();
+	//		wholePistolRenderer_->Off();
+	//		//topWeaponRenderer_->Off();
+	//		//wholeWeaponRenderer_->Off();
+	//
+	//		legRenderer_->ChangeFrameAnimation("VerticalJumping");
+	//		topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
+	//	}
+	//);
 
 	playerStateManager_.CreateState(	
 		"Pistol_VerticalJumping_Firing_Forward",

@@ -159,15 +159,14 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else
 		{
-			//점프/픽셀충돌 완성되면 이전 혹은 삭제.
+			//착지시 스테이트 변화. 점프/픽셀충돌 완성되면 이전 혹은 삭제.
 			if (true == isJumping_)
 			{
 				isJumping_ = false;
 				if (PlayerLegState::VerticalJumping == leg_
 					|| PlayerLegState::ForwardJumping == leg_)
 				{
-					//leg_ = PlayerLegState::JumpingToStanding;
-					leg_ = PlayerLegState::Standing;
+					leg_ = PlayerLegState::JumpingToStanding;
 					if (AimingDirection::Downward == direction_)
 					{
 						direction_ = AimingDirection::Forward;
@@ -179,12 +178,13 @@ void TestPlayer::ConvertInputToPlayerStates()
 
 	if (true == isDownKeyPressed_)
 	{
-		if (true == isJumping_)
+		if (true == isJumping_ 
+			&& (AimingDirection::ForwardToDownward != direction_ && AimingDirection::Downward != direction_))
 		{
-			if (top_ == PlayerTopState::Aiming || weapon_ == PlayerWeaponType::HeavyMachineGun)
+			if (top_ == PlayerTopState::Aiming 
+				|| weapon_ == PlayerWeaponType::HeavyMachineGun && top_ == PlayerTopState::Firing)
 			{
 				direction_ = AimingDirection::ForwardToDownward;
-				//direction_ = AimingDirection::Downward;
 			}
 			else
 			{
@@ -193,19 +193,23 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else
 		{
-			//leg_ = PlayerLegState::StandingToDucking;
-			leg_ = PlayerLegState::Ducking;
+			if (PlayerLegState::Standing == leg_ 
+				|| PlayerLegState::Running == leg_
+				|| PlayerLegState::RunningToStanding == leg_
+				|| PlayerLegState::JumpingToStanding == leg_)
+			{
+				leg_ = PlayerLegState::StandingToDucking;
+			}
 		}
 	}
 	else 
 	{
-		if (true == isJumping_)
+		if (true == isJumping_ && AimingDirection::Downward == direction_)
 		{
 			if (top_ == PlayerTopState::Aiming 
 				|| weapon_ == PlayerWeaponType::HeavyMachineGun && top_ == PlayerTopState::Firing)
 			{
 				direction_ = AimingDirection::DownwardToForward;
-				//direction_ = AimingDirection::Forward;
 			}
 			else
 			{
@@ -241,9 +245,6 @@ void TestPlayer::ConvertInputToPlayerStates()
 					direction_ = AimingDirection::Upward;
 				}
 			}
-
-
-
 		}
 	}
 	else
@@ -282,8 +283,6 @@ void TestPlayer::ConvertInputToPlayerStates()
 		{
 			leg_ = PlayerLegState::Running;
 		}
-
-
 		break;
 	}
 
@@ -305,7 +304,6 @@ void TestPlayer::ConvertInputToPlayerStates()
 		{
 			leg_ = PlayerLegState::Running;
 		}
-
 		break;
 	}
 
@@ -315,16 +313,12 @@ void TestPlayer::ConvertInputToPlayerStates()
 		{
 			top_ = PlayerTopState::Aiming;
 		}
-		else if (PlayerLegState::Running == leg_)
+		else if (PlayerLegState::Running == leg_ )
 		{
-			//leg_ = PlayerLegState::RunningToStanding;
-			leg_ = PlayerLegState::Standing;
+			leg_ = PlayerLegState::RunningToStanding;
 		}
-
-
 		break;
 	}
-
 
 	default:
 		MsgBoxAssert("불가능한 이동 방향입니다.");
@@ -336,25 +330,6 @@ void TestPlayer::ConvertInputToPlayerStates()
 		if (PlayerTopState::ThrowingGrenade != top_)
 		{
 			top_ = PlayerTopState::Firing;
-			if (PlayerWeaponType::HeavyMachineGun != weapon_)
-			{
-				if (AimingDirection::ForwardToDownward == direction_)
-				{
-					direction_ = AimingDirection::Downward;
-				}
-				else if (AimingDirection::DownwardToForward == direction_)
-				{
-					direction_ = AimingDirection::Forward;
-				}
-				else if (AimingDirection::ForwardToUpward == direction_)
-				{
-					direction_ = AimingDirection::Upward;
-				}
-				else if (AimingDirection::UpwardToForward == direction_)
-				{
-					direction_ = AimingDirection::Forward;
-				}
-			}
 		}
 	}
 	
@@ -366,6 +341,52 @@ void TestPlayer::ConvertInputToPlayerStates()
 			direction_ = AimingDirection::Forward;
 		}
 	}
+
+
+
+
+
+
+
+
+
+	if (PlayerTopState::Firing == top_ || PlayerTopState::ThrowingGrenade == top_)
+	{
+		if (PlayerLegState::RunningToStanding == leg_ || PlayerLegState::JumpingToStanding == leg_)
+		{
+			leg_ = PlayerLegState::Standing;
+		}
+		else if (PlayerLegState::StandingToDucking == leg_)
+		{
+			leg_ = PlayerLegState::Ducking;
+		}
+
+		if (PlayerTopState::Firing == top_ && PlayerWeaponType::HeavyMachineGun != weapon_)
+		{
+			if (AimingDirection::ForwardToDownward == direction_)
+			{
+				direction_ = AimingDirection::Downward;
+			}
+			else if (AimingDirection::DownwardToForward == direction_)
+			{
+				direction_ = AimingDirection::Forward;
+			}
+			else if (AimingDirection::ForwardToUpward == direction_)
+			{
+				direction_ = AimingDirection::Upward;
+			}
+			else if (AimingDirection::UpwardToForward == direction_)
+			{
+				direction_ = AimingDirection::Forward;
+			}
+		}
+
+		if (PlayerTopState::ThrowingGrenade == top_)
+		{
+			direction_ = AimingDirection::Forward;
+		}
+	}
+
 }
 
 void TestPlayer::UpdatePlayerState(float _deltaTime)
