@@ -1,4 +1,5 @@
 #include "TransformHeader.hlsli"
+#include "RenderOption.hlsli"
 
 struct Input
 {

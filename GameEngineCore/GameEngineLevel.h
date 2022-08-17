@@ -47,7 +47,6 @@ public:
 
 	void AllClear();
 
-
 public:
 	//메인카메라 컴포넌트를 가져오는 함수.
 	GameEngineCamera* GetMainCamera()

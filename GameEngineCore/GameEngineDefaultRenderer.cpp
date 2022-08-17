@@ -43,6 +43,14 @@ void GameEngineDefaultRenderer::SetPipeLine(const std::string& _name)
 		);
 	}
 
+	if (true == shaderResources_.IsConstantBuffer("RENDEROPTION"))
+	{
+		shaderResources_.SetConstantBuffer_Link(
+			"RENDEROPTION",
+			&renderOption_,
+			sizeof(renderOption_)
+		);
+	}
 }
 
 void GameEngineDefaultRenderer::Start()

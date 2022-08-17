@@ -26,7 +26,7 @@ public:
 
 	GameEngineActor* GetActor()
 	{
-		return this->GetParent<GameEngineActor>();
+		return this->GetRoot<GameEngineActor>();
 	}
 
 	template<typename ParentType>

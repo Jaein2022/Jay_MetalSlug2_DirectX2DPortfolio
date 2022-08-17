@@ -113,6 +113,11 @@ public:
 			cutData_[_index].sizeY * static_cast<float>(desc_.Height));
 	}
 
+	float4 GetCutPos(int _index)
+	{
+		return float4(cutData_[_index].posX * static_cast<float>(desc_.Width),
+			cutData_[_index].posY * static_cast<float>(desc_.Height));
+	}
 
 private:
 	void TextureLoad(const std::string& _path);

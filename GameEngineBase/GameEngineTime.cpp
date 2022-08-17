@@ -3,7 +3,7 @@
 
 GameEngineTime* GameEngineTime::inst_ = new GameEngineTime();
 
-GameEngineTime::GameEngineTime() : deltaTime_(0.00f)
+GameEngineTime::GameEngineTime() : deltaTime_(0.00f), globalScale_(1.f)
 {
 }
 

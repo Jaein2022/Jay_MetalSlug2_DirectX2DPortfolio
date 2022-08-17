@@ -1,6 +1,20 @@
 #pragma once
 #include "GameEngineDefaultRenderer.h"
 
+enum class LeftAndRightSort
+{
+	Left = 0x0,
+	Center = 0x1,
+	Right = 0x2,
+};
+
+enum class TopAndBotSort
+{
+	Top = 0x0,
+	VCenter = 0x4,
+	Bot = 0x8
+};
+
 class GameEngineRenderTarget;
 class GameEngineFont;
 class GameEngineFontRenderer : public GameEngineDefaultRenderer
@@ -46,6 +60,16 @@ public:
 		fontSize_ = _size;
 	}
 
+	void SetLeftAndRightSort(LeftAndRightSort _value)
+	{
+		lr_ = _value;
+	}
+
+	void SetTopAndBotSort(TopAndBotSort _value)
+	{
+		tb_ = _value;
+	}
+
 protected:
 	virtual void Start() override;
 	virtual void Render(float _deltaTime) override;
@@ -56,4 +80,7 @@ private:
 	float fontSize_;
 	float4 fontColor_;
 	float4 screenPosition_;
+
+	LeftAndRightSort lr_;
+	TopAndBotSort tb_;
 };

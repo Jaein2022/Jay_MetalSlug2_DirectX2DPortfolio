@@ -44,7 +44,7 @@ public:
 			inst_->deltaTime_ = 0.05f;
 		}
 
-		return inst_->deltaTime_;
+		return inst_->deltaTime_ * inst_->globalScale_;
 	}
 
 	static float GetDeltaTime(int _index)
@@ -77,6 +77,11 @@ public:
 		return timeScale_[_index];
 	}
 
+	void SetGlobalScale(float _globalScale)
+	{
+		globalScale_ = _globalScale;
+	}
+
 private:
 
 	std::chrono::steady_clock::time_point prev_;	//이전 루프 시작 시간.
@@ -96,6 +101,8 @@ private:
 	//성능에 반비례해서 델타타임 값이 작게 잡히고, 그로 인해 컴퓨터 성능 상관없이 같은 시간 같은 게임 진행속도를 보여주게 된다.
 
 	std::map<int, float> timeScale_;
+
+	float globalScale_;			//게임 전체 속도 조정용 배수.
 
 };
 

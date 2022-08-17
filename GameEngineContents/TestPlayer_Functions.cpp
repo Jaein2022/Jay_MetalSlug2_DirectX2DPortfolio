@@ -77,37 +77,37 @@ void TestPlayer::CreatePlayerAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_Downward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 90, 90, 1.f, true));
 
-	//topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_DownwardToForward",
-	//	FrameAnimation_Desc("Tarma_Top_Pistol.png", , , 0.05f, true));
-	//topPistolRenderer_->AnimationBindEnd("Jumping_Aiming_DownwardToForward",
-	//	[this](const FrameAnimation_Desc& _desc)->void {
-	//		direction_ = AimingDirection::Forward;
-	//	}
-	//);
+	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_DownwardToForward",
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 100, 101, 0.05f, true));
+	topPistolRenderer_->AnimationBindEnd("Jumping_Aiming_DownwardToForward",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			direction_ = AimingDirection::Forward;
+		}
+	);
 
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_Firing_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 100, 105, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 110, 114, 0.05f, true));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_Firing_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::FiringToAiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_FiringToAiming_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 110, 113, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 115, 119, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_FiringToAiming_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_Firing_Upward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 120, 125, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 120, 124, 0.05f, true));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_Firing_Upward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::FiringToAiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_FiringToAiming_Upward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 130, 133, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 125, 129, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_FiringToAiming_Upward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
@@ -188,15 +188,16 @@ void TestPlayer::CreatePlayerAnimations()
 
 	if (0 == GameEngineTexture::Find("Tarma_Whole_Pistol.png")->GetCutCount())
 	{
-		GameEngineTexture::Cut("Tarma_Whole_Pistol.png", 10, 10);
+		GameEngineTexture::Cut("Tarma_Whole_Pistol.png", 10, 11);
 	}
 	wholePistolRenderer_->SetTexture("Tarma_Whole_Pistol.png");
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Running, JumpingToStanding",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 0, 3, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 0, 3, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Running, JumpingToStanding",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			leg_ = PlayerLegState::Standing;
+			wholePistolRenderer_->CurAnimationReset();
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("StandingToDucking",
@@ -211,21 +212,21 @@ void TestPlayer::CreatePlayerAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Ducksteping_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 30, 36, 0.05f, true));
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Firing_Forward",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 40, 45, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 40, 44, 0.05f, true));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_Firing_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::FiringToAiming;
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_FiringToAiming_Forward",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 50, 53, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 45, 49, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_FiringToAiming_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Aiming2_Forward",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 60, 63, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 50, 53, 0.05f, true));
 
 	wholePistolRenderer_->SetPivot(PivotMode::Center);
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
@@ -565,19 +566,19 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	//playerStateManager_.CreateState(	
-	//	"Pistol_VerticalJumping_Aiming_DownwardToForward",
-	//	[this](float _deltaTime, const StateInfo& _info)->void {
-	//		legRenderer_->On();
-	//		topPistolRenderer_->On();
-	//		wholePistolRenderer_->Off();
-	//		//topWeaponRenderer_->Off();
-	//		//wholeWeaponRenderer_->Off();
-	//
-	//		legRenderer_->ChangeFrameAnimation("VerticalJumping");
-	//		topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
-	//	}
-	//);
+	playerStateManager_.CreateState(	
+		"Pistol_VerticalJumping_Aiming_DownwardToForward",
+		[this](float _deltaTime, const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+	
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
+		}
+	);
 
 	playerStateManager_.CreateState(	
 		"Pistol_VerticalJumping_Firing_Forward",

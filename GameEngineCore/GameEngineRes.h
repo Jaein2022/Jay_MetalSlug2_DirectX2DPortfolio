@@ -19,7 +19,6 @@ protected:
 	GameEngineRes& operator=(GameEngineRes&& _other) = delete;
 
 public:
-
 	static ResType* Find(const std::string& _resName)
 	{
 		std::string uppercaseResName = GameEngineString::ToUpperReturn(_resName);
@@ -59,7 +58,6 @@ public:
 		//사실 리소스를 프로그램 끝날때까지 안 지워도 해결되는 문제지만,
 		//그래도 막을 수 있는건 최대한 다 막아둔다.
 	}
-
 
 protected:
 	static std::map<std::string, ResType*> namedRes_;

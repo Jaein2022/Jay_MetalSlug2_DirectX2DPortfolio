@@ -229,23 +229,49 @@ void TestPlayer::ConvertInputToPlayerStates()
 		
 	if (true == isUpKeyPressed_)
 	{
-		if (PlayerLegState::Ducking != leg_)
+		if (AimingDirection::Upward != direction_ && AimingDirection::ForwardToUpward != direction_)
 		{
-			if (AimingDirection::Upward != direction_)
+			if (PlayerTopState::Aiming == top_)
 			{
-
-				if ( (PlayerTopState::Aiming == top_ 
-					&& PlayerLegState::VerticalJumping != leg_ && PlayerLegState::ForwardJumping != leg_)
-					|| (PlayerWeaponType::HeavyMachineGun == weapon_ && PlayerTopState::Firing == top_))
+				if (PlayerLegState::Running == leg_ || PlayerLegState::Standing == leg_)
 				{
 					direction_ = AimingDirection::ForwardToUpward;
 				}
-				else
+			}
+			else if (PlayerTopState::Firing == top_)
+			{
+				if (PlayerLegState::Ducking != leg_)
 				{
-					direction_ = AimingDirection::Upward;
+					if (PlayerWeaponType::HeavyMachineGun == weapon_)
+					{
+						direction_ = AimingDirection::ForwardToUpward;
+					}
+					else
+					{
+						direction_ = AimingDirection::Upward;
+					}
 				}
 			}
 		}
+
+
+		//if (PlayerLegState::Ducking != leg_)
+		//{
+		//	if (AimingDirection::Upward != direction_)
+		//	{
+
+		//		if ( (PlayerTopState::Aiming == top_ 
+		//			&& PlayerLegState::VerticalJumping != leg_ && PlayerLegState::ForwardJumping != leg_)
+		//			|| (PlayerWeaponType::HeavyMachineGun == weapon_ && PlayerTopState::Firing == top_))
+		//		{
+		//			direction_ = AimingDirection::ForwardToUpward;
+		//		}
+		//		else
+		//		{
+		//			direction_ = AimingDirection::Upward;
+		//		}
+		//	}
+		//}
 	}
 	else
 	{
@@ -387,6 +413,8 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 	}
 
+	//1631 해결할 것.
+	//1731 해결할 것.
 }
 
 void TestPlayer::UpdatePlayerState(float _deltaTime)

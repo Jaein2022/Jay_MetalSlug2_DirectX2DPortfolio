@@ -1,6 +1,7 @@
 #pragma once
-#include "GameEngineCamera.h"
 
+class GameEngineCamera;
+class GameEngineTexture;
 namespace GameEngineDebug
 {
 
@@ -16,13 +17,25 @@ namespace GameEngineDebug
 	void DrawTexture(
 		const std::string& _textureName,
 		const float4& _position,
-		const float4& _rotation,
+		const float4& _rotation = float4::Zero,
 		const float4& _scale = float4::Zero);
 	void DrawTexture(
 		const std::string& _textureName,
 		GameEngineCamera* _camera,
 		const float4& _position,
-		const float4& _rotation,
+		const float4& _rotation = float4::Zero,
+		const float4& _scale = float4::Zero);
+
+	void DrawTexture(
+		GameEngineTexture* _texture,
+		const float4& _position,
+		const float4& _rotation = float4::Zero,
+		const float4& _scale = float4::Zero);
+	void DrawTexture(
+		GameEngineTexture* _texture,
+		GameEngineCamera* _camera,
+		const float4& _position,
+		const float4& _rotation = float4::Zero,
 		const float4& _scale = float4::Zero);
 
 

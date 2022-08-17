@@ -7,6 +7,8 @@ void FrameAnimation::Reset()
 {
 	info_.frameTime_ = 0.f;
 	info_.curFrame_ = 0;
+	bOnceStart_ = false;	//무허가 마개조.
+	bOnceEnd_ = false;		//무허가 마개조.
 }
 
 void FrameAnimation::Update(float _deltaTime)
@@ -35,9 +37,9 @@ void FrameAnimation::Update(float _deltaTime)
 		if (info_.curFrame_ == info_.frames_.size() - 1 
 			&& false == bOnceEnd_ && nullptr != end_)
 		{
-			end_(info_);
 			bOnceStart_ = false;
 			bOnceEnd_ = true;
+			end_(info_);			//무허가 마개조.
 		}
 
 		++info_.curFrame_;
@@ -57,48 +59,46 @@ void FrameAnimation::Update(float _deltaTime)
 				info_.curFrame_ = static_cast<UINT>(info_.frames_.size() - 1);
 			}
 		}
+		info_.frameTime_ -= info_.interval_;
+	}
 
-		if (nullptr != cutTexture_)
+	if (nullptr != cutTexture_)
+	{
+		parentRenderer_->currentTexture_ = cutTexture_;
+		parentRenderer_->SetTexture(cutTexture_, info_.frames_[info_.curFrame_]);
+		parentRenderer_->SetPivot();
+
+		if (0 != cutTexture_->GetCutCount())
 		{
-			parentRenderer_->currentTexture_ = cutTexture_;
-			parentRenderer_->SetTexture(cutTexture_, info_.frames_[info_.curFrame_]);		
-			parentRenderer_->SetPivot();
-
-			if (0 != cutTexture_->GetCutCount())
+			if (ScaleMode::Image == parentRenderer_->scaleMode_)
 			{
-				if (ScaleMode::Image == parentRenderer_->scaleMode_)
-				{
-					parentRenderer_->ScaleToCutTexture(info_.frames_[info_.curFrame_]);
-				}
-			}
-			else
-			{
-				if (ScaleMode::Image == parentRenderer_->scaleMode_)
-				{
-					parentRenderer_->ScaleToTexture();
-				}
+				parentRenderer_->ScaleToCutTexture(info_.frames_[info_.curFrame_]);
 			}
 		}
-		else if (nullptr != folderTexture_)
+		else
 		{
-			parentRenderer_->FrameDataReset();
-			parentRenderer_->currentTexture_ = folderTexture_->GetTexture(info_.frames_[info_.curFrame_]);
-			parentRenderer_->SetTexture(folderTexture_->GetTexture(info_.frames_[info_.curFrame_]));
-			parentRenderer_->SetPivot();
 			if (ScaleMode::Image == parentRenderer_->scaleMode_)
 			{
 				parentRenderer_->ScaleToTexture();
 			}
 		}
-		else
-		{
-			MsgBoxAssert("텍스쳐가 준비되지 않았습니다.");
-			return;
-		}
-
-		info_.frameTime_ -= info_.interval_;
 	}
-
+	else if (nullptr != folderTexture_)
+	{
+		parentRenderer_->FrameDataReset();
+		parentRenderer_->currentTexture_ = folderTexture_->GetTexture(info_.frames_[info_.curFrame_]);
+		parentRenderer_->SetTexture(folderTexture_->GetTexture(info_.frames_[info_.curFrame_]));
+		parentRenderer_->SetPivot();
+		if (ScaleMode::Image == parentRenderer_->scaleMode_)
+		{
+			parentRenderer_->ScaleToTexture();
+		}
+	}
+	else
+	{
+		MsgBoxAssert("텍스쳐가 준비되지 않았습니다.");
+		return;
+	}
 }
 
 GameEngineTextureRenderer::GameEngineTextureRenderer()
@@ -178,7 +178,6 @@ void GameEngineTextureRenderer::SetPivot(PivotMode _pivot)
 	case PivotMode::Custom:
 		//_pivot == Custom일때는 아무것도 하지 않는다.
 		break;
-
 
 
 	default:
@@ -268,7 +267,7 @@ void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animati
 				currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
 			if (ScaleMode::Image == this->scaleMode_)
 			{
-				ScaleToCutTexture(currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
+				ScaleToCutTexture(currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);	//무허가 마개조.
 			}
 		}
 		else if (nullptr != currentAnimation_->folderTexture_)
@@ -320,7 +319,7 @@ void GameEngineTextureRenderer::ScaleToCutTexture(int _index)
 
 void GameEngineTextureRenderer::CurAnimationReset()
 {
-	CurAnimationSetStartPivotFrame(0);
+	currentAnimation_->Reset();
 }
 
 void GameEngineTextureRenderer::CurAnimationSetStartPivotFrame(int _setFrame)

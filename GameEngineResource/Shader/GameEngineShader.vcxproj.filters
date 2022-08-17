@@ -13,6 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="TransformHeader.hlsli" />
+    <None Include="RenderOption.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Debug">
