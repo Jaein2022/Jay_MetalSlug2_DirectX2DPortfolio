@@ -30,6 +30,7 @@ struct RenderOption
     int option20_;
 };
 
+class GameEngineRenderingPipeLine;
 class GameEngineRenderer : public GameEngineTransformComponent
 {
 	friend class GameEngineCamera;
@@ -47,6 +48,7 @@ public:
 
 public:
 	void ChangeCamera(CameraOrder _order);
+    GameEngineRenderingPipeLine* GetClonePipeLine(GameEngineRenderingPipeLine* _renderingPipeLine);
 
 
 protected:

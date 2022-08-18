@@ -29,18 +29,14 @@ private:
 	void CreatePlayerAnimations();
 	void CreatePlayerStates();
 
-	//void UpdateContactObject();	//플레이어가 접촉한 오브젝트(아이템, NPC, 적 무기 등) 정보 업데이트.
-
 	void UpdateInputInfo();	//키입력 업데이트.
 	void ConvertInputToPlayerStates();
 
 	void UpdatePlayerState(float _deltaTime);	//플레이어 전체 상태 업데이트.
 
-	//void Move(float _deltaTime);	//좌우 트랜스폼 변화 담당 함수.
-	//void Jump(float _deltaTime);	//상하 트랜스폼 변화 담당 함수.
-	//void Fire();					//플레이어 조준각도에 맞는 원거리무기 투사체 생성 발사 함수.
-	//void ThrowGrenade();			//수류탄 오브젝트 생성 발사 함수.	
-	//void MeleeAttack();			//근접공격 함수.
+	void Move(float _deltaTime);	//좌우 트랜스폼 변화 담당 함수.
+	void Jump(float _deltaTime);	//상하 트랜스폼 변화 담당 함수.
+
 
 
 

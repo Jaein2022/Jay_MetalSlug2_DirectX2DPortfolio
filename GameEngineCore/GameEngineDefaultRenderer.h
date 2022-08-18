@@ -25,12 +25,8 @@ private:
 public:
 	virtual void Render(float _deltaTime) override;
 	void SetPipeLine(const std::string& _name);
+	GameEngineRenderingPipeLine* GetPipeLine();
 
-public:
-	GameEngineRenderingPipeLine* GetPipeLine()
-	{
-		return renderingPipeLine_;
-	}
 
 protected:
 	virtual void Start();

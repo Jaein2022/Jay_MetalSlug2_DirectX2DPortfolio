@@ -76,7 +76,6 @@ void TestPlayer::CreatePlayerAnimations()
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_Downward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 90, 90, 1.f, true));
-
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_DownwardToForward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 100, 101, 0.05f, true));
 	topPistolRenderer_->AnimationBindEnd("Jumping_Aiming_DownwardToForward",
@@ -86,43 +85,61 @@ void TestPlayer::CreatePlayerAnimations()
 	);
 
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_Firing_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 110, 114, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 110, 113, 0.03f, true));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_Firing_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::FiringToAiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_FiringToAiming_Forward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 115, 119, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 114, 119, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_FiringToAiming_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_Firing_Upward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 120, 124, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 120, 123, 0.03f, true));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_Firing_Upward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::FiringToAiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_FiringToAiming_Upward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 125, 129, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 124, 129, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_FiringToAiming_Upward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
+			if (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_)
+			{
+				direction_ = AimingDirection::Forward;
+			}
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Firing_Downward",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 140, 145, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 140, 143, 0.03f, true));
 	topPistolRenderer_->AnimationBindEnd("Jumping_Firing_Downward",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::FiringToAiming;
+		}
+	);
+	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_FiringToAiming_Downward",
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 144, 145, 0.05f, false));
+	topPistolRenderer_->AnimationBindEnd("Jumping_FiringToAiming_Downward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_ThrowingGrenade",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 150, 155, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 150, 152, 0.02f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_ThrowingGrenade",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::ThrowingGrenadeToAiming;
+		}
+	);
+	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_ThrowingGrenadeToAiming",
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 153, 155, 0.2f, false));
+	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_ThrowingGrenadeToAiming",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
 		}
@@ -212,21 +229,40 @@ void TestPlayer::CreatePlayerAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Ducksteping_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 30, 36, 0.05f, true));
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Firing_Forward",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 40, 44, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 40, 43, 0.03f, true));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_Firing_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::FiringToAiming;
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_FiringToAiming_Forward",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 45, 49, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 44, 49, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_FiringToAiming_Forward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
+			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming2_Forward");
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Aiming2_Forward",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 50, 53, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 50, 53, 0.2f, true));
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_ThrowingGrenade",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 60, 62, 0.03f, false));
+	wholePistolRenderer_->AnimationBindEnd("Ducking_ThrowingGrenade",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::ThrowingGrenadeToAiming;
+		}
+	);
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_ThrowingGrenadeToAiming",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 63, 65, 0.2f, false));
+	wholePistolRenderer_->AnimationBindEnd("Ducking_ThrowingGrenadeToAiming",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::Aiming;
+			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming3_Forward");
+		}
+	);
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Aiming3_Forward",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 70, 73, 0.2f, true));
+
 
 	wholePistolRenderer_->SetPivot(PivotMode::Center);
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
@@ -235,16 +271,18 @@ void TestPlayer::CreatePlayerAnimations()
 
 void TestPlayer::CreatePlayerStates()
 {
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1000
 		"Dead",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1111
 		"Pistol_Standing_Aiming_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -253,13 +291,13 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
-
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1112
 		"Pistol_Standing_Aiming_Upward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -271,9 +309,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1114
 		"Pistol_Standing_Aiming_ForwardToUpward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -285,9 +324,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1115
 		"Pistol_Standing_Aiming_UpwardToForward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -299,9 +339,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1121
 		"Pistol_Standing_Firing_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr, 
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -313,9 +354,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1122
 		"Pistol_Standing_Firing_Upward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -327,9 +369,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1131
 		"Pistol_Standing_FiringToAiming_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -341,9 +384,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1132
 		"Pistol_Standing_FiringToAiming_Upward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -354,10 +398,64 @@ void TestPlayer::CreatePlayerStates()
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 		}
 	);	
-	
-	playerStateManager_.CreateState(	
+
+
+	playerStateManager_.CreateState(		//1141
+		"Pistol_Standing_ThrowingGrenade",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Standing");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+		}
+	);	
+
+	playerStateManager_.CreateState(		//1151
+		"Pistol_Standing_ThrowingGrenadeToAiming",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Standing");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+		}
+	);	
+
+
+
+
+
+
+
+
+
+
+
+	//Pistol_Standing_MeleeAttack = 1171,
+
+
+
+
+
+
+
+
+
+
+
+	playerStateManager_.CreateState(		//1211
 		"Pistol_Running_Aiming_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -369,9 +467,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1212
 		"Pistol_Running_Aiming_Upward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -383,9 +482,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1214
 		"Pistol_Running_Aiming_ForwardToUpward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -397,9 +497,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1215
 		"Pistol_Running_Aiming_UpwardToForward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -411,9 +512,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
  
-	playerStateManager_.CreateState(
+	playerStateManager_.CreateState(		//1221
 		"Pistol_Running_Firing_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -425,9 +527,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 		
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1222	
 		"Pistol_Running_Firing_Upward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -439,9 +542,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1231
 		"Pistol_Running_FiringToAiming_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -453,9 +557,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1232
 		"Pistol_Running_FiringToAiming_Upward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -467,23 +572,89 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
+	playerStateManager_.CreateState(		//1241
+		"Pistol_Running_ThrowingGrenade",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
 
-	playerStateManager_.CreateState(	
+			legRenderer_->ChangeFrameAnimation("Running");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1251
+		"Pistol_Running_ThrowingGrenadeToAiming",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Running");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+		}
+	);
+
+
+
+
+
+
+
+
+
+
+	//Pistol_Running_MeleeAttack = 1271,
+
+
+
+
+
+
+
+
+
+
+
+
+
+	playerStateManager_.CreateState(		//1311
 		"Pistol_Ducking_Aiming",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
 
-			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
+
+			if ("Pistol_Ducking_ThrowingGrenadeToAiming" == _info.prevState_)
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming3_Forward");
+			}
+			else if ("Pistol_Ducking_FiringToAiming" == _info.prevState_)
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming2_Forward");
+			}
+			else
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
+			}
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1321
 		"Pistol_Ducking_Firing",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -494,22 +665,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
-		"Pistol_Ducking_DuckStepping",
-		[this](float _deltaTime, const StateInfo& _info)->void {
-			legRenderer_->Off();
-			topPistolRenderer_->Off();
-			wholePistolRenderer_->On();
-			//topWeaponRenderer_->Off();
-			//wholeWeaponRenderer_->Off();
-
-			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Ducksteping_Forward");
-		}
-	);
-
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1331
 		"Pistol_Ducking_FiringToAiming",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -520,13 +679,72 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	//case PlayerState::Pistol_Ducking_ThrowingGrenade:
+	playerStateManager_.CreateState(		//1341
+		"Pistol_Ducking_ThrowingGrenade",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->On();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenade");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1351
+		"Pistol_Ducking_ThrowingGrenadeToAiming",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->On();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenadeToAiming");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1361
+		"Pistol_Ducking_DuckStepping",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->On();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Ducksteping_Forward");
+		}
+	);
 
 
 
-	playerStateManager_.CreateState(	
+
+
+
+
+
+
+
+	//Pistol_Ducking_MeleeAttack = 1371,
+
+
+
+
+
+
+
+
+
+
+	playerStateManager_.CreateState(		//1411
 		"Pistol_VerticalJumping_Aiming_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -538,23 +756,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(
-		"Pistol_VerticalJumping_Aiming_ForwardToDownward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
-			legRenderer_->On();
-			topPistolRenderer_->On();
-			wholePistolRenderer_->Off();
-			//topWeaponRenderer_->Off();
-			//wholeWeaponRenderer_->Off();
-
-			legRenderer_->ChangeFrameAnimation("VerticalJumping");
-			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
-		}
-	);
-
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1413
 		"Pistol_VerticalJumping_Aiming_Downward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -566,9 +771,25 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1416
+		"Pistol_VerticalJumping_Aiming_ForwardToDownward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1417
 		"Pistol_VerticalJumping_Aiming_DownwardToForward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -580,9 +801,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1421
 		"Pistol_VerticalJumping_Firing_Forward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -594,9 +816,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1422
 		"Pistol_VerticalJumping_Firing_Upward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -608,9 +831,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1423
 		"Pistol_VerticalJumping_Firing_Downward",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -621,25 +845,302 @@ void TestPlayer::CreatePlayerStates()
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
 		}
 	);	
+
+	playerStateManager_.CreateState(		//1431
+		"Pistol_VerticalJumping_FiringToAiming_Forward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+		}
+	);	
+
+	playerStateManager_.CreateState(		//1432
+		"Pistol_VerticalJumping_FiringToAiming_Upward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+		}
+	);	
+
+	playerStateManager_.CreateState(		//1433
+		"Pistol_VerticalJumping_FiringToAiming_Downward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
+		}
+	);	
+
+	playerStateManager_.CreateState(		//1441
+		"Pistol_VerticalJumping_ThrowingGrenade",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+		}
+	);	
+
+	playerStateManager_.CreateState(		//1451
+		"Pistol_VerticalJumping_ThrowingGrenadeToAiming",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+		}
+	);	
 	
-	
-
-	//case PlayerState::Pistol_ForwardJumping_Aiming_Forward:
-	//	break;
-	//case PlayerState::Pistol_ForwardJumping_Aiming_Downward:
-	//	break;
-	//case PlayerState::Pistol_ForwardJumping_Firing_Forward:
-	//	break;
-	//case PlayerState::Pistol_ForwardJumping_Firing_Upward:
-	//	break;
-	//case PlayerState::Pistol_ForwardJumping_Firing_Downward:
-	//	break;
 
 
 
-	playerStateManager_.CreateState(	
+
+
+
+	//	Pistol_VerticalJumping_MeleeAttack = 1471,
+
+
+
+
+
+
+
+
+	playerStateManager_.CreateState(		//1511
+		"Pistol_ForwardJumping_Aiming_Forward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("VerticalJumping_Aiming_Forward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1513
+		"Pistol_ForwardJumping_Aiming_Downward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1516
+		"Pistol_ForwardJumping_Aiming_ForwardToDownward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1517
+		"Pistol_ForwardJumping_Aiming_DownwardToForward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1521
+		"Pistol_ForwardJumping_Firing_Forward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1522
+		"Pistol_ForwardJumping_Firing_Upward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1523
+		"Pistol_ForwardJumping_Firing_Downward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1531
+		"Pistol_ForwardJumping_FiringToAiming_Forward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1532
+		"Pistol_ForwardJumping_FiringToAiming_Upward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1533
+		"Pistol_ForwardJumping_FiringToAiming_Downward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1541
+		"Pistol_ForwardJumping_ThrowingGrenade",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1551
+		"Pistol_ForwardJumping_ThrowingGrenadeToAiming",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+		}
+	);
+
+
+
+
+
+
+
+
+
+
+	//	Pistol_ForwardJumping_MeleeAttack = 1571,
+
+
+
+
+
+
+
+
+
+
+
+	playerStateManager_.CreateState(		//1611
 		"Pistol_StandingToDucking",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -650,9 +1151,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1711
 		"Pistol_RunningToStanding",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -663,9 +1165,10 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(	
+	playerStateManager_.CreateState(		//1811
 		"Pistol_JumpingToStanding",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		nullptr,
+		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -693,5 +1196,5 @@ void TestPlayer::CreatePlayerStates()
 		);
 	}
 
-	
+	playerStateManager_.ChangeState(allPlayerStates_.find(1111)->second.second);
 }

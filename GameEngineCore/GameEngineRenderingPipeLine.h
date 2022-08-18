@@ -31,7 +31,7 @@ private:
 public:
 
 	static GameEngineRenderingPipeLine* Create(const std::string& _name);
-
+	static GameEngineRenderingPipeLine* Create();
 	static void AllShaderReset();
 
 public:
@@ -49,6 +49,7 @@ public:
 	void SetDepthStencil_OutputMerger(const std::string& _name);
 
 	void Rendering();
+	void Copy(GameEngineRenderingPipeLine* _original);
 
 public:
 	inline GameEngineVertexShader* GetVertexShader()

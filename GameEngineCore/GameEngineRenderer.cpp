@@ -1,8 +1,9 @@
 #include "PreCompile.h"
 #include "GameEngineRenderer.h"
 #include "GameEngineActor.h"
+#include "GameEngineRenderingPipeLine.h"
 
-GameEngineRenderer::GameEngineRenderer(): cameraOrder_(CameraOrder::UICamera)
+GameEngineRenderer::GameEngineRenderer(): cameraOrder_(CameraOrder::UICamera), renderOption_()
 {
 }
 
@@ -13,6 +14,13 @@ GameEngineRenderer::~GameEngineRenderer()
 void GameEngineRenderer::ChangeCamera(CameraOrder _order)
 {
 	this->GetActor()->GetLevel()->PushRenderer(this, _order);
+}
+
+GameEngineRenderingPipeLine* GameEngineRenderer::GetClonePipeLine(GameEngineRenderingPipeLine* _renderingPipeLine)
+{
+	GameEngineRenderingPipeLine* clone = GameEngineRenderingPipeLine::Create();
+	clone->Copy(_renderingPipeLine);
+	return clone;
 }
 
 void GameEngineRenderer::Start()

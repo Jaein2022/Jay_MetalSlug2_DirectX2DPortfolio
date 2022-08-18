@@ -53,6 +53,17 @@ void GameEngineDefaultRenderer::SetPipeLine(const std::string& _name)
 	}
 }
 
+GameEngineRenderingPipeLine* GameEngineDefaultRenderer::GetPipeLine()
+{
+	if (false == renderingPipeLine_->IsOriginal())
+	{
+		return renderingPipeLine_;
+	}
+
+	renderingPipeLine_ = GetClonePipeLine(renderingPipeLine_);
+	return renderingPipeLine_;
+}
+
 void GameEngineDefaultRenderer::Start()
 {
 	GameEngineRenderer::Start();

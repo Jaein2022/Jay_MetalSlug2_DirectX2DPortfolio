@@ -12,8 +12,6 @@ class GameEngineInputLayout : public GameEngineRes<GameEngineInputLayout>
 	friend GameEngineRes<GameEngineInputLayout>;
 	friend class GameEngineRenderingPipeLine;
 	//GameEngineInputLayout 클래스의 프라이빗 소멸자를 GameEngineRes클래스에서 호출하기 위한 방법.
-	//그런데 이제 CreateNameRes()함수로 생성하는것이 아니라 게임엔진렌더링파이프라인이 new연산자로 직접 생성하므로
-	// 의미가 없어졌지만 그래도 일단 유지는 한다.
 
 
 private:
@@ -27,12 +25,15 @@ private:
 
 
 public:
+	void Setting();	//해당 리소스를 렌더링 파이프라인에 연결하는 함수.
+	static GameEngineInputLayout* Create(
+		const GameEngineInputLayoutInfo& _info,
+		GameEngineVertexShader* _vertexShader);
+
+private:
 	void CreateInputLayout(
 		const GameEngineInputLayoutInfo& _info,
-		GameEngineVertexShader* _vertexShader
-	);
-
-	void Setting();	//해당 리소스를 렌더링 파이프라인에 연결하는 함수.
+		GameEngineVertexShader* _vertexShader);
 
 
 private:

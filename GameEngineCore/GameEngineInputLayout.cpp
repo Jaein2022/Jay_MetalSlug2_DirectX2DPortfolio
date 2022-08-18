@@ -46,3 +46,13 @@ void GameEngineInputLayout::Setting()
 
     GameEngineDevice::GetContext()->IASetInputLayout(inputLayout_);
 }
+
+GameEngineInputLayout* GameEngineInputLayout::Create(
+    const GameEngineInputLayoutInfo& _info,
+    GameEngineVertexShader* _vertexShader
+)
+{
+    GameEngineInputLayout* newRes = CreateUnnamedRes();
+    newRes->CreateInputLayout(_info, _vertexShader);
+    return newRes;
+}

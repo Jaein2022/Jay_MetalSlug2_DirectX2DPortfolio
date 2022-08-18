@@ -25,18 +25,16 @@ GameEngineRenderingPipeLine::GameEngineRenderingPipeLine()
 
 GameEngineRenderingPipeLine::~GameEngineRenderingPipeLine()
 {
-	//다른 리소스들은 포인터만 가져다 쓰기 때문에 직접 삭제하면 안되지만, 
-	//인풋레이아웃은 렌더링 파이프라인이 직접 생성하므로 삭제도 직접 해야한다.
-	if (nullptr != inputLayout_)
-	{
-		delete inputLayout_;
-		inputLayout_ = nullptr;
-	}
 }
 
 GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Create(const std::string& _name)
 {
 	return CreateNamedRes(_name);
+}
+
+GameEngineRenderingPipeLine* GameEngineRenderingPipeLine::Create()
+{
+	return CreateUnnamedRes();
 }
 
 void GameEngineRenderingPipeLine::AllShaderReset()
@@ -58,21 +56,10 @@ void GameEngineRenderingPipeLine::SetVertexBuffer_InputAssembler1(const std::str
 		return;
 	}
 
-	if (nullptr != inputLayout_)
-	{
-		delete inputLayout_;
-		inputLayout_ = nullptr;
-	}
-
 	if (nullptr == inputLayout_ && nullptr != vertexShader_)
 		//버텍스버퍼와 버텍스셰이더가 준비된 상태에서 인풋레이아웃이 없다면 그 때 생성한다.
 	{
-		//inputLayout_ = GameEngineInputLayout::CreateNamedRes("");
-		//게임엔진인풋레이아웃이 이 클래스를 프렌드로 두면 이렇게도 가능하긴 하다.
-		//만약 그렇게 바뀐다면 직접 삭제해선 안된다.
-
-		inputLayout_ = new GameEngineInputLayout();
-		inputLayout_->CreateInputLayout(*(vertexBuffer_->GetInputLayoutInfo()), vertexShader_);
+		inputLayout_ = GameEngineInputLayout::Create(*vertexBuffer_->GetInputLayoutInfo(), vertexShader_);
 	}
 }
 
@@ -86,21 +73,10 @@ void GameEngineRenderingPipeLine::SetVertexShader(const std::string& _name)
 		return;
 	}
 
-	if (nullptr != inputLayout_)
-	{
-		delete inputLayout_;
-		inputLayout_ = nullptr;
-	}
-
 	if (nullptr == inputLayout_ && nullptr != vertexBuffer_)
 		//버텍스버퍼와 버텍스셰이더가 준비된 상태에서 인풋레이아웃이 없다면 그 떄 생성한다.
 	{
-		//inputLayout_ = GameEngineInputLayout::CreateNamedRes("");
-		//게임엔진인풋레이아웃이 이 클래스를 프렌드로 두면 이렇게도 가능하긴 하다.
-		//만약 그렇게 바뀐다면 직접 삭제해선 안된다.
-
-		inputLayout_ = new GameEngineInputLayout();
-		inputLayout_->CreateInputLayout(*(vertexBuffer_->GetInputLayoutInfo()), vertexShader_);
+		inputLayout_ = GameEngineInputLayout::Create(*vertexBuffer_->GetInputLayoutInfo(), vertexShader_);
 	}
 }
 
@@ -171,6 +147,19 @@ void GameEngineRenderingPipeLine::Rendering()
 
 	//모든 렌더링 리소스 세팅이 끝난 후에 렌더링을 한다.
 	this->Draw();
+}
+
+void GameEngineRenderingPipeLine::Copy(GameEngineRenderingPipeLine* _original)
+{
+	this->vertexBuffer_ = _original->vertexBuffer_;
+	this->inputLayout_ = _original->inputLayout_;
+	this->vertexShader_ = _original->vertexShader_;
+	this->indexBuffer_ = _original->indexBuffer_;
+	this->topology_ = _original->topology_;
+	this->rasterizer_ = _original->rasterizer_;
+	this->pixelShader_ = _original->pixelShader_;
+	this->depthStencil_ = _original->depthStencil_;
+	this->blend_ = _original->blend_;
 }
 
 void GameEngineRenderingPipeLine::InputAssembler1_VertexBufferSetting()

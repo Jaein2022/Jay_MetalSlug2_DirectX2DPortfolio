@@ -22,7 +22,11 @@ GameEngineConstantBuffer::~GameEngineConstantBuffer()
 
 
 
-GameEngineConstantBuffer* GameEngineConstantBuffer::Create(const std::string& _name, const D3D11_SHADER_BUFFER_DESC& _desc, ID3D11ShaderReflectionConstantBuffer* _cBufferPtr)
+GameEngineConstantBuffer* GameEngineConstantBuffer::Create(
+	const std::string& _name,
+	const D3D11_SHADER_BUFFER_DESC& _desc,
+	ID3D11ShaderReflectionConstantBuffer* _cBufferPtr
+)
 {
 	GameEngineConstantBuffer* newBuffer = GameEngineConstantBuffer::CreateNamedRes(_name, _desc.Size);
 

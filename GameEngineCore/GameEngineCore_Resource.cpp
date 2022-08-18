@@ -11,6 +11,7 @@
 
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineVertexBuffer.h"
+#include "GameEngineInputLayout.h"
 #include "GameEngineVertexShader.h"
 #include "GameEngineIndexBuffer.h"
 #include "GameEngineRasterizer.h"
@@ -93,6 +94,46 @@ void EngineSubSetting()
 	//이 세 줄만 주석처리해 볼 것.->하면 블렌드 스테이트 생성 실패.
 
 	GameEngineBlend::Create("AlphaBlend", blendDesc);
+
+
+
+
+
+	D3D11_BLEND_DESC transparentBlendDesc = { 0 };
+
+	transparentBlendDesc.AlphaToCoverageEnable = false;		//알파투커버리지 비적용.
+	transparentBlendDesc.IndependentBlendEnable = false;		//0번 렌더타겟의 알파블렌딩 설정값을 모든 렌더타겟에 적용.
+	transparentBlendDesc.RenderTarget[0].BlendEnable = true;	//알파블렌딩 함.
+	transparentBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	//D3D11_COLOR_WRITE_ENABLE_ALL: RGBA 모든 색상에 블렌딩 적용.
+
+	//알파블렌딩 공식.
+	//output: 최종 결과물.
+	//dest: 백버퍼의 현재 색상.
+	//src: 백버퍼의 색상과 블렌드할 원본의 색상.
+	//옵션: BlendOp으로 지정하는 블렌드 연산 방식.
+	//outputColor = (srcColor * srcFactor) 옵션 (destColor * destFactor)
+
+	transparentBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_MAX;
+	//??
+
+	transparentBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	//??
+
+	transparentBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_DEST_COLOR;
+	//??
+
+	//알파쪽은 따로 처리.
+	transparentBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	transparentBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	transparentBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	//이 세 줄만 주석처리해 볼 것.->하면 블렌드 스테이트 생성 실패.
+
+	GameEngineBlend::Create("TransparentBlend", transparentBlendDesc);
+
+
+
+
 
 
 
@@ -443,7 +484,7 @@ void GameEngineCore::EngineResourceDestroy()
 	//사각형, 육면체, 에러텍스쳐 등등, 엔진 수준에서 기본적으로 지원되어야 하는 리소스를 삭제하는 함수.
 	GameEngineRenderingPipeLine::ResourceDestroy();
 
-	//GameEngineInputLayout::ResourceDestroy();
+	GameEngineInputLayout::ResourceDestroy();
 	GameEngineVertexBuffer::ResourceDestroy();
 	GameEngineVertexShader::ResourceDestroy();
 	GameEngineIndexBuffer::ResourceDestroy();

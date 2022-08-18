@@ -10,9 +10,10 @@ class GameEngineRes : public GameEngineNameObject
 
 
 protected:
-	GameEngineRes() {}
+	GameEngineRes(): isOriginal_(true) {}
 	~GameEngineRes() {}	//ResourceDestroy()함수에서 각 리소스클래스 소멸자들을 직접 호출하므로 virtual을 붙이지 않아도 문제 없다.
 
+	//GameEngineRes(const GameEngineRes& _other) : isOriginal_(false) {};
 	GameEngineRes(const GameEngineRes& _other) = delete;
 	GameEngineRes(GameEngineRes&& _other) noexcept = delete;
 	GameEngineRes& operator=(const GameEngineRes& _other) = delete;
@@ -59,9 +60,16 @@ public:
 		//그래도 막을 수 있는건 최대한 다 막아둔다.
 	}
 
+	bool IsOriginal()
+	{
+		return isOriginal_;
+	}
+
+
 protected:
 	static std::map<std::string, ResType*> namedRes_;
 	static std::list<ResType*> unnamedRes_;
+	bool isOriginal_;
 
 protected:
 	static ResType* CreateNamedRes(const std::string& _resName = "")
