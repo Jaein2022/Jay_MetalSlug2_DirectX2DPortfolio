@@ -7,8 +7,6 @@ void FrameAnimation::Reset()
 {
 	info_.frameTime_ = 0.f;
 	info_.curFrame_ = 0;
-	bOnceStart_ = false;	//무허가 마개조.
-	bOnceEnd_ = false;		//무허가 마개조.
 }
 
 void FrameAnimation::Update(float _deltaTime)
@@ -37,9 +35,9 @@ void FrameAnimation::Update(float _deltaTime)
 		if (info_.curFrame_ == info_.frames_.size() - 1 
 			&& false == bOnceEnd_ && nullptr != end_)
 		{
+			end_(info_);
 			bOnceStart_ = false;
 			bOnceEnd_ = true;
-			end_(info_);			//무허가 마개조.
 		}
 
 		++info_.curFrame_;
@@ -99,6 +97,11 @@ void FrameAnimation::Update(float _deltaTime)
 		MsgBoxAssert("텍스쳐가 준비되지 않았습니다.");
 		return;
 	}
+}
+
+void FrameAnimation::PauseSwitch()
+{
+	isPaused_ = !isPaused_;
 }
 
 GameEngineTextureRenderer::GameEngineTextureRenderer()
@@ -267,7 +270,8 @@ void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animati
 				currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);
 			if (ScaleMode::Image == this->scaleMode_)
 			{
-				ScaleToCutTexture(currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);	//무허가 마개조.
+				ScaleToCutTexture(
+					currentAnimation_->info_.frames_[currentAnimation_->info_.curFrame_]);	//무허가 마개조.
 			}
 		}
 		else if (nullptr != currentAnimation_->folderTexture_)
@@ -279,6 +283,11 @@ void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animati
 			{
 				ScaleToTexture();
 			}
+		}
+		else
+		{
+			MsgBoxAssertString(_animationName + ": 텍스처가 없는 애니메이션입니다.");
+			return;
 		}
 	}
 }
@@ -325,6 +334,11 @@ void GameEngineTextureRenderer::CurAnimationReset()
 void GameEngineTextureRenderer::CurAnimationSetStartPivotFrame(int _setFrame)
 {
 	currentAnimation_->info_.curFrame_ = _setFrame;
+}
+
+void GameEngineTextureRenderer::CurAnimationPauseSwitch()
+{
+	currentAnimation_->PauseSwitch();
 }
 
 GameEngineTexture* GameEngineTextureRenderer::GetCurrentTexture() const

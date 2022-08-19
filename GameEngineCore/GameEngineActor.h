@@ -1,5 +1,6 @@
 #pragma once
 #include "GameEngineTransformBase.h"
+#include "GameEngineUpdateObject.h"
 
 class GameEngineTransformComponent;
 class GameEngineComponent;

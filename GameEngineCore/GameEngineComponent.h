@@ -1,4 +1,5 @@
 #pragma once
+#include "GameEngineUpdateObject.h"
 
 class GameEngineComponent : public GameEngineNameObject, public GameEngineUpdateObject
 {

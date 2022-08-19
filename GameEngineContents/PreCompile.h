@@ -3,6 +3,7 @@
 #include <GameEngineCore\PreCompile.h>
 
 #include <GameEngineCore\GameEngineCore.h>
+#include <GameEngineCore\GameEngineUpdateObject.h>
 #include <GameEngineCore\GameEngineLevel.h>
 #include <GameEngineCore\GameEngineActor.h>
 

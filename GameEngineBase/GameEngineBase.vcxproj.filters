@@ -75,9 +75,6 @@
     <ClCompile Include="GameEngineDebugObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="GameEngineUpdateObject.cpp">
-      <Filter>Object</Filter>
-    </ClCompile>
     <ClCompile Include="GameEngineNameObject.cpp">
       <Filter>Object</Filter>
     </ClCompile>
@@ -126,9 +123,6 @@
       <Filter>Mathmatics</Filter>
     </ClInclude>
     <ClInclude Include="GameEngineDebugObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="GameEngineUpdateObject.h">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="GameEngineNameObject.h">

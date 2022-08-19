@@ -99,6 +99,7 @@ class FrameAnimation
 
 	bool bOnceStart_;
 	bool bOnceEnd_;
+	bool isPaused_;
 
 	std::function<void(const FrameAnimation_Desc&)> start_;		//애니메이션 재생 시작시 호출되는 함수들.
 	std::function<void(const FrameAnimation_Desc&)> frame_;		//애니메이션 재생중 매 프레임마다 호출되는 함수들.
@@ -107,6 +108,7 @@ class FrameAnimation
 
 	void Reset();
 	void Update(float _deltaTime);
+	void PauseSwitch();
 
 public:
 	FrameAnimation()
@@ -114,7 +116,8 @@ public:
 		cutTexture_(nullptr),
 		folderTexture_(nullptr),
 		bOnceStart_(false),
-		bOnceEnd_(false)
+		bOnceEnd_(false),
+		isPaused_(false)
 	{
 	}
 
@@ -171,6 +174,7 @@ public:
 
 	void CurAnimationReset();	
 	void CurAnimationSetStartPivotFrame(int _setFrame);	//애니메이션 중 내가 원하는 프레임으로 옮기는 함수.
+	void CurAnimationPauseSwitch();
 
 	GameEngineTexture* GetCurrentTexture() const;
 

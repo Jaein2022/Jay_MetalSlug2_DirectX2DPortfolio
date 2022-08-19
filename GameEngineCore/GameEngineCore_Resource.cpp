@@ -114,13 +114,13 @@ void EngineSubSetting()
 	//옵션: BlendOp으로 지정하는 블렌드 연산 방식.
 	//outputColor = (srcColor * srcFactor) 옵션 (destColor * destFactor)
 
-	transparentBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_MAX;
+	transparentBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	//??
 
 	transparentBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 	//??
 
-	transparentBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_DEST_COLOR;
+	transparentBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_ALPHA;
 	//??
 
 	//알파쪽은 따로 처리.

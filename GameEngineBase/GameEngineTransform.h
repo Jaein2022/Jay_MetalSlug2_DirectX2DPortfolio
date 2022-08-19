@@ -1,6 +1,6 @@
 #pragma once
 #include "GameEngineMath.h"
-#include "GameEngineUpdateObject.h"
+#include "GameEngineDebugObject.h"
 
 enum class CollisionBodyType
 {

@@ -14,7 +14,6 @@
 #include <GameEngineBase\GameEngineTransform.h>
 
 #include <GameEngineBase\GameEngineNameObject.h>
-#include <GameEngineBase\GameEngineUpdateObject.h>
 
 #include <GameEngineBase\GameEngineSound.h>
 

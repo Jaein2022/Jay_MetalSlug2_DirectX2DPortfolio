@@ -1,4 +1,5 @@
 #pragma once
+#include "GameEngineUpdateObject.h"
 
 enum class CameraOrder
 {
@@ -133,8 +134,8 @@ private:
 	void PushCamera(GameEngineCamera* _camera, int _cameraOrder);	//해당 레벨의 메인카메라를 등록하는 함수.
 	void PushCollision(GameEngineCollision* _collision, int _collisionOrder);
 	void OverChildMove(GameEngineLevel* _nextLevel);	//오브젝트를 다음 레벨로 이전시키는 함수.
-	void ActorOnEvent();
-	void ActorOffEvent();
+	void ActorLevelStartEvent();
+	void ActorLevelEndEvent();
 
 private:
 	void PushCamera(GameEngineCamera* _camera, CameraOrder _order)

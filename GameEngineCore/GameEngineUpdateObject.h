@@ -1,5 +1,4 @@
 #pragma once
-#include "GameEngineDebugObject.h"
 
 class GameEngineUpdateObject : public GameEngineDebugObject
 {
@@ -25,8 +24,9 @@ public:
 	virtual void Update(float _deltaTime) = 0;
 
 	void AllUpdate(float _deltaTime);
-	void AllOnEvent();
-	void AllOffEvent();
+
+	virtual void LevelStartEvent() {};
+	virtual void LevelEndEvent() {};
 
 public:
 	inline void On()
@@ -176,6 +176,11 @@ protected:
 	// 이 오브젝트가 메모리가 삭제될 때 거치는 절차들을 실행하는 함수.
 	virtual void End() = 0;
 
+	void AllLevelStartEvent();
+	void AllLevelEndEvent();
+
+	void AllOnEvent();
+	void AllOffEvent();
 
 	void ReleaseObject(std::list<GameEngineUpdateObject*>& _releaseList);
 	//사망판정받은 오브젝트와 그 자식들을 업데이트 루프에서 떼어내 삭제 대상 리스트에 등록하는 함수.

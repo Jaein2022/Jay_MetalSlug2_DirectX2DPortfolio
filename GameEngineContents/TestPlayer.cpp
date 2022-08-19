@@ -355,13 +355,14 @@ void TestPlayer::ConvertInputToPlayerStates()
 	{
 		if (PlayerTopState::ThrowingGrenade != top_)
 		{
-			if (true)
+			if (true /*근접공격 발동조건 설정은 여기에*/)
 			{
 				top_ = PlayerTopState::Firing;
 			}
 			else
 			{
-				//근접공격 관련 코드는 여기에.
+				top_ = PlayerTopState::MeleeAttack;
+				direction_ = AimingDirection::Forward;
 			}
 		}
 	}
@@ -376,13 +377,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 
 
-
-
-
-
-
-
-
+	//공격중일때 다른 부위 스테이트 강제변경 코드.
 	if (PlayerTopState::Firing == top_ 
 		|| PlayerTopState::ThrowingGrenade == top_ 
 		|| PlayerTopState::MeleeAttack == top_)
@@ -416,12 +411,13 @@ void TestPlayer::ConvertInputToPlayerStates()
 			}
 		}
 
-		if (PlayerTopState::ThrowingGrenade == top_)
+		if (PlayerTopState::ThrowingGrenade == top_ || PlayerTopState::MeleeAttack == top_)
 		{
 			direction_ = AimingDirection::Forward;
 		}
 	}
 
+	//중간동작들끼리 겹칠때 대응하는 코드.
 	if ( (PlayerTopState::FiringToAiming == top_ || PlayerTopState::ThrowingGrenadeToAiming == top_)
 		&& (PlayerLegState::RunningToStanding == leg_ 
 			|| PlayerLegState::JumpingToStanding == leg_

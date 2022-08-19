@@ -352,7 +352,7 @@ void GameEngineLevel::OverChildMove(GameEngineLevel* _nextLevel)
 	}
 }
 
-void GameEngineLevel::ActorOnEvent()
+void GameEngineLevel::ActorLevelStartEvent()
 {
 	for (const std::pair<int, std::list<GameEngineActor*>>& actorListPair : allActors_)
 	{
@@ -362,13 +362,13 @@ void GameEngineLevel::ActorOnEvent()
 		{
 			if (true == actor->IsUpdate())
 			{
-				actor->AllOnEvent();
+				actor->AllLevelStartEvent();
 			}
 		}
 	}
 }
 
-void GameEngineLevel::ActorOffEvent()
+void GameEngineLevel::ActorLevelEndEvent()
 {
 	for (const std::pair<int, std::list<GameEngineActor*>>& actorListPair : allActors_)
 	{
@@ -378,7 +378,7 @@ void GameEngineLevel::ActorOffEvent()
 		{
 			if (true == actor->IsUpdate())
 			{
-				actor->AllOffEvent();
+				actor->AllLevelEndEvent();
 			}
 		}
 	}

@@ -83,14 +83,14 @@ void GameEngineCore::CoreUpdate(GameEngineCore* _userCore)
 	{
 		if (nullptr != currentLevel_)
 		{
-			currentLevel_->ActorOffEvent();
-			currentLevel_->OffEvent();
+			currentLevel_->ActorLevelEndEvent();
+			currentLevel_->LevelEndEvent();
 			currentLevel_->OverChildMove(nextLevel_);	//원하는 오브젝트를 다음 레벨로 넘긴다. 
 		}
 		currentLevel_ = nextLevel_;
 		nextLevel_ = nullptr;
-		currentLevel_->OnEvent();
-		currentLevel_->ActorOnEvent();
+		currentLevel_->LevelStartEvent();
+		currentLevel_->ActorLevelStartEvent();
 
 		currentLevel_->ResetAccTime();
 		GameEngineTime::GetInst()->Reset();
