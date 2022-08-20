@@ -17,9 +17,12 @@ public:
 public:
 
 public:
+	float4 StartWindowSize() override { return float4{ 1280, 720 }; };
+	float4 StartWindowPosition() override { return { 100, 100 }; };
+
 	std::string GetWindowTitle() override
 	{
-		return "MetalSlug2_DirectX2DPortFolio";
+		return "Jay_MetalSlug2_DirectX2DPortFolio";
 	}
 
 	void Start() override;

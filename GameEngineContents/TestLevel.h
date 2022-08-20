@@ -1,5 +1,6 @@
 #pragma once
 
+class TestBackground;
 class TestPlayer;
 class TestLevel: public GameEngineLevel
 {
@@ -21,9 +22,21 @@ public:
 	void Start() override;
 	void Update(float _deltaTime) override;
 	void End() override;
+	PixelColor GetPixelColor(int _x, int _y);
+
+public:
+
+
+
+public:
+	static const float gravity_;
+	static const float playSpeed_;
 
 private:
+	
+	
 	TestPlayer* testPlayer_;
+	TestBackground* testBackground_;
 
 };
 

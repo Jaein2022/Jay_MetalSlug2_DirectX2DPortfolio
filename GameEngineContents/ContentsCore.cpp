@@ -1,6 +1,7 @@
 #include "PreCompile.h"
 #include "ContentsCore.h"
 #include "TestLevel.h"
+#include "TestBackground.h"
 
 ContentsCore::ContentsCore()
 {
@@ -27,6 +28,23 @@ void ContentsCore::Start()
 	ChangeLevel("TestLevel");
 
 	//GameEngineDebug::ConsoleOpen(); 콘솔창이 필요하면 복원.
+
+
+	if (false == GameEngineInput::GetInst()->IsKey("Left"))
+	{
+		GameEngineInput::GetInst()->CreateKey("Left", 'J');
+		GameEngineInput::GetInst()->CreateKey("Right", 'L');
+		GameEngineInput::GetInst()->CreateKey("Up", 'I');
+		GameEngineInput::GetInst()->CreateKey("Down", 'K');
+
+		GameEngineInput::GetInst()->CreateKey("Attack", 'X');
+		GameEngineInput::GetInst()->CreateKey("Jump", 'Z');
+		GameEngineInput::GetInst()->CreateKey("Special", 'S');
+
+		GameEngineInput::GetInst()->CreateKey("Test", 'T');
+	}
+
+
 }
 
 void ContentsCore::Update(float _deltaTime)

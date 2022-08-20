@@ -2,7 +2,7 @@
 #include "GameEngineMath.h"
 #include "GameEngineDebugObject.h"
 
-enum class CollisionBodyType
+enum class CollisionType
 {
 	CT_Point2D,
 	CT_Sphere2D,

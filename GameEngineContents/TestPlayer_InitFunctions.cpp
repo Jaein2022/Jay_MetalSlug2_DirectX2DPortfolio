@@ -5,6 +5,12 @@ void TestPlayer::CreatePlayerAnimations()
 {
 	legRenderer_ = CreateComponent<GameEngineTextureRenderer>("RegRenderer");
 	legRenderer_->GetTransform().SetLocalScale(300, 300, 1);
+	legRenderer_->SetPivot(PivotMode::Custom);
+	legRenderer_->GetTransform().SetLocalPosition(
+		playerRenderPivotX_,
+		playerRenderPivotY_,
+		playerRenderPivotZ_ + 5
+	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Leg.png")->GetCutCount())
 	{
@@ -21,8 +27,6 @@ void TestPlayer::CreatePlayerAnimations()
 	legRenderer_->CreateFrameAnimation_CutTexture("ForwardJumping",
 		FrameAnimation_Desc("Tarma_Leg.png", 24, 29, 0.05f, false));
 
-	legRenderer_->SetPivot(PivotMode::Custom);
-	legRenderer_->GetTransform().SetLocalPosition(0, 0, 10);
 	legRenderer_->ChangeFrameAnimation("Standing");
 	legRenderer_->Off();
 
@@ -35,7 +39,12 @@ void TestPlayer::CreatePlayerAnimations()
 
 	topPistolRenderer_ = CreateComponent<GameEngineTextureRenderer>("TopPistolRenderer");
 	topPistolRenderer_->GetTransform().SetLocalScale(300, 300, 1);
-
+	topPistolRenderer_->SetPivot(PivotMode::Custom);
+	topPistolRenderer_->GetTransform().SetLocalPosition(
+		playerRenderPivotX_,
+		playerRenderPivotY_,
+		playerRenderPivotZ_
+	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Top_Pistol.png")->GetCutCount())
 	{
@@ -130,14 +139,14 @@ void TestPlayer::CreatePlayerAnimations()
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_ThrowingGrenade",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 140, 142, 0.03f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 140, 143, 0.03f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_ThrowingGrenade",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::ThrowingGrenadeToAiming;
 		}
 	);
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_ThrowingGrenadeToAiming",
-		FrameAnimation_Desc("Tarma_Top_Pistol.png", 143, 145, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 144, 145, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_ThrowingGrenadeToAiming",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
@@ -148,7 +157,7 @@ void TestPlayer::CreatePlayerAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack2",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 160, 165, 0.05f, false));
 
-	topPistolRenderer_->SetPivot(PivotMode::Center);
+
 	topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
 	topPistolRenderer_->Off();
 
@@ -201,6 +210,12 @@ void TestPlayer::CreatePlayerAnimations()
 
 	wholePistolRenderer_ = CreateComponent<GameEngineTextureRenderer>("WholePistolRenderer");
 	wholePistolRenderer_->GetTransform().SetLocalScale(300, 300, 1);
+	wholePistolRenderer_->SetPivot(PivotMode::Custom);
+	wholePistolRenderer_->GetTransform().SetLocalPosition(
+		playerRenderPivotX_,
+		playerRenderPivotY_,
+		playerRenderPivotZ_
+	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Whole_Pistol.png")->GetCutCount())
 	{
@@ -243,14 +258,14 @@ void TestPlayer::CreatePlayerAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Aiming2_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 50, 53, 0.2f, true));
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_ThrowingGrenade",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 60, 62, 0.03f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 60, 63, 0.03f, false));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_ThrowingGrenade",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::ThrowingGrenadeToAiming;
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_ThrowingGrenadeToAiming",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 63, 65, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 64, 65, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_ThrowingGrenadeToAiming",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
@@ -260,7 +275,6 @@ void TestPlayer::CreatePlayerAnimations()
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 70, 73, 0.2f, true));
 
 
-	wholePistolRenderer_->SetPivot(PivotMode::Center);
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
 	wholePistolRenderer_->Off();
 }

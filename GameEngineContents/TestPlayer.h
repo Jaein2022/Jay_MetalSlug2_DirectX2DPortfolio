@@ -1,5 +1,7 @@
 #pragma once
+#include "TestPlayer_Header.h"
 
+class TestBackground;
 class TestPlayer : public GameEngineActor
 {
 	//이 클래스의 존재 이유: 
@@ -34,21 +36,12 @@ private:
 
 	void UpdatePlayerState(float _deltaTime);	//플레이어 전체 상태 업데이트.
 
-	void Move(float _deltaTime);	//좌우 트랜스폼 변화 담당 함수.
-	void Jump(float _deltaTime);	//상하 트랜스폼 변화 담당 함수.
+	void FallAndLand(float _deltaTime);
 
 
 
 
 private:
-	GameEngineStateManager playerStateManager_;
-
-	GameEngineTextureRenderer* legRenderer_;
-	GameEngineTextureRenderer* topPistolRenderer_;
-	GameEngineTextureRenderer* wholePistolRenderer_;
-	GameEngineTextureRenderer* topWeaponRenderer_;
-	GameEngineTextureRenderer* wholeWeaponRenderer_;
-
 	PlayerState currentState_;
 
 	PlayerWeaponType weapon_;
@@ -56,15 +49,39 @@ private:
 	PlayerTopState top_;
 	AimingDirection direction_;
 
+	GameEngineStateManager playerStateManager_;
+
 	std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
 
-	char movingDirection_;	//-1: 좌측으로 이동, 0: 정지, 1: 우측으로 이동.
 	bool isJumping_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
-	bool isUpKeyPressed_;
-	bool isDownKeyPressed_;
+
+
+	const int playerRenderPivotX_;
+	const int playerRenderPivotY_;
+	const int playerRenderPivotZ_;
+
+
+	GameEngineTextureRenderer* legRenderer_;
+	GameEngineTextureRenderer* topPistolRenderer_;
+	GameEngineTextureRenderer* wholePistolRenderer_;
+	GameEngineTextureRenderer* topWeaponRenderer_;
+	GameEngineTextureRenderer* wholeWeaponRenderer_;
+
+
+	char horizontalInputValue_;	//-1: 좌측 입력, 0: 중립, 1: 우측 입력.
+	char verticalInputValue_;	//-1: 하단 입력, 0, 중립, 1: 상단 입력.
 	bool isJumpKeyDown_;
 	bool isAttackKeyDowned_;
 	bool isSpecialKeyDowned_;
+	bool isTestKeyDowned_;
+
+	GameEngineCollision* renderPivotPointer_;		//렌더피봇 표시기.
+	GameEngineCollision* playerWorldPosPointer_;			//액터의 월드포지션 표시.
+	GameEngineCollision* frontCollision_;			//전방 콜리전. 경사지형 이동각도 판정.
+
+
+	const float initialJumpSpeed_;
+	float fallingSpeed_;
 
 	float playerSpeed_;
 

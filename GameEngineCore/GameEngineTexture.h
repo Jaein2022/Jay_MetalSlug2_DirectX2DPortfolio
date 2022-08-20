@@ -20,6 +20,14 @@ struct PixelColor
 	PixelColor() : color_(0)
 	{
 	}
+
+	PixelColor(unsigned int _color) : color_(_color)
+	{
+	}
+
+	PixelColor(const PixelColor& _other) : color_(_other.color_)
+	{
+	}
 };
 
 class GameEngineTexture : public GameEngineRes<GameEngineTexture>

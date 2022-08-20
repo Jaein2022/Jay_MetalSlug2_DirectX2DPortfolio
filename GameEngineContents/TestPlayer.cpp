@@ -1,26 +1,34 @@
 #include "PreCompile.h"
 #include "TestPlayer.h"
-
-
+#include "TestLevel.h"
+#include "TestBackground.h"
 
 TestPlayer::TestPlayer()
-	: legRenderer_(nullptr),
-	topPistolRenderer_(nullptr),
-	wholePistolRenderer_(nullptr),
-	topWeaponRenderer_(nullptr),
-	wholeWeaponRenderer_(nullptr),
-	currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
+	: currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
 	weapon_(PlayerWeaponType::Pistol),
 	leg_(PlayerLegState::Standing),
 	top_(PlayerTopState::Aiming),
 	direction_(AimingDirection::Forward),
-	movingDirection_(0),
 	isJumping_(false),
-	isUpKeyPressed_(false),
-	isDownKeyPressed_(false),
+	playerRenderPivotX_(2),
+	playerRenderPivotY_(38),
+	playerRenderPivotZ_(0),
+	legRenderer_(nullptr),
+	topPistolRenderer_(nullptr),
+	wholePistolRenderer_(nullptr),
+	topWeaponRenderer_(nullptr),
+	wholeWeaponRenderer_(nullptr),
+	horizontalInputValue_(0),
+	verticalInputValue_(0),
 	isJumpKeyDown_(false),
 	isAttackKeyDowned_(false),
 	isSpecialKeyDowned_(false),
+	isTestKeyDowned_(false),
+	renderPivotPointer_(nullptr),
+	playerWorldPosPointer_(nullptr),
+	frontCollision_(nullptr),
+	initialJumpSpeed_(2.75f),
+	fallingSpeed_(0.f),
 	playerSpeed_(100.f),
 	bulletCount_(-1),
 	grenadeCount_(0)
@@ -33,25 +41,34 @@ TestPlayer::~TestPlayer()
 
 void TestPlayer::Start()
 {
-
-	this->GetTransform().SetWorldPosition(0, 0, 1);
+	//플레이어 크기: 44, 78.
+	this->GetTransform().SetWorldPosition(0, 0, 0);
 	this->GetTransform().SetWorldScale(1, 1, 1);
-
-	if (false == GameEngineInput::GetInst()->IsKey("Left"))
-	{
-		GameEngineInput::GetInst()->CreateKey("Left", 'J');
-		GameEngineInput::GetInst()->CreateKey("Right", 'L');
-		GameEngineInput::GetInst()->CreateKey("Up", 'I');
-		GameEngineInput::GetInst()->CreateKey("Down", 'K');
-
-		GameEngineInput::GetInst()->CreateKey("Attack", 'X');
-		GameEngineInput::GetInst()->CreateKey("Jump", 'Z');
-		GameEngineInput::GetInst()->CreateKey("Special", 'S');
-		GameEngineInput::GetInst()->CreateKey("Test", 'A');
-	}
 
 	CreatePlayerAnimations();
 	CreatePlayerStates();
+
+	renderPivotPointer_ = CreateComponent<GameEngineCollision>("RenderPivotPointer");
+	renderPivotPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Cyan);
+	renderPivotPointer_->GetTransform().SetLocalScale(5, 5, 10);
+	renderPivotPointer_->GetTransform().SetLocalPosition(
+		playerRenderPivotX_,
+		playerRenderPivotY_,
+		playerRenderPivotZ_ - 5
+	);
+
+	playerWorldPosPointer_ = CreateComponent<GameEngineCollision>("PlayerWorldPosPointer");
+	playerWorldPosPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
+	playerWorldPosPointer_->GetTransform().SetLocalScale(5, 5, 10);
+	playerWorldPosPointer_->GetTransform().SetLocalPosition(0, 0, -5);
+
+	frontCollision_ = CreateComponent<GameEngineCollision>("FrontCollision");
+	frontCollision_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
+	frontCollision_->GetTransform().SetLocalScale(5, 5, 10);
+	frontCollision_->GetTransform().SetLocalPosition(22, 10, -5);
+
+
+
 
 
 }
@@ -61,8 +78,16 @@ void TestPlayer::Update(float _deltaTime)
 	UpdateInputInfo();
 	ConvertInputToPlayerStates();
 
+
+
+
 	UpdatePlayerState(_deltaTime);
 	
+	FallAndLand(_deltaTime);
+
+	GameEngineDebug::DrawBox(renderPivotPointer_->GetTransform(), float4::Cyan);
+	GameEngineDebug::DrawBox(playerWorldPosPointer_->GetTransform(), float4::Red);
+	GameEngineDebug::DrawBox(frontCollision_->GetTransform(), float4::Red);
 }
 
 void TestPlayer::End()
@@ -73,33 +98,28 @@ void TestPlayer::UpdateInputInfo()
 {
 	if (true == GameEngineInput::GetInst()->IsPressed("Right"))
 	{
-		movingDirection_ = 1;
+		horizontalInputValue_ = 1;
 	}
 	else if (true == GameEngineInput::GetInst()->IsPressed("Left"))
 	{
-		movingDirection_ = -1;
+		horizontalInputValue_ = -1;
 	}
 	else
 	{
-		movingDirection_ = 0;
+		horizontalInputValue_ = 0;
 	}
 
 	if (true == GameEngineInput::GetInst()->IsPressed("Up"))
 	{
-		isUpKeyPressed_ = true;
+		verticalInputValue_ = 1;
+	}
+	else if (true == GameEngineInput::GetInst()->IsPressed("Down"))
+	{
+		verticalInputValue_ = -1;
 	}
 	else 
 	{
-		isUpKeyPressed_ = false;
-	}
-
-	if (true == GameEngineInput::GetInst()->IsPressed("Down"))
-	{
-		isDownKeyPressed_ = true;
-	}
-	else 
-	{
-		isDownKeyPressed_ = false;
+		verticalInputValue_ = 0;
 	}
 
 	if (true == GameEngineInput::GetInst()->IsDown("Attack"))
@@ -117,7 +137,6 @@ void TestPlayer::UpdateInputInfo()
 	}
 	else
 	{
-		//점프체계 완성되면 제거.
 		isJumpKeyDown_ = false;
 	}
 
@@ -129,13 +148,28 @@ void TestPlayer::UpdateInputInfo()
 	{
 		isSpecialKeyDowned_ = false;
 	}
+
+	if (true == GameEngineInput::GetInst()->IsDown("Test"))
+	{
+		isTestKeyDowned_ = true;
+	}
+	else
+	{
+		isTestKeyDowned_ = false;
+	}
 }
 
 void TestPlayer::ConvertInputToPlayerStates()
 {
-	if (true == isDownKeyPressed_)
+
+
+
+	//상하방향 입력 반응.
+	switch (verticalInputValue_)
 	{
-		if (true == isJumping_ )
+	case -1:	//아랫방향 입력.
+	{
+		if (true == isJumping_)
 		{
 			if (AimingDirection::ForwardToDownward != direction_ && AimingDirection::Downward != direction_)
 			{
@@ -158,7 +192,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else
 		{
-			if (PlayerLegState::Standing == leg_ 
+			if (PlayerLegState::Standing == leg_
 				|| PlayerLegState::Running == leg_
 				|| PlayerLegState::RunningToStanding == leg_
 				|| PlayerLegState::JumpingToStanding == leg_)
@@ -166,35 +200,10 @@ void TestPlayer::ConvertInputToPlayerStates()
 				leg_ = PlayerLegState::StandingToDucking;
 			}
 		}
+		break;
 	}
-	else 
-	{
-		if (true == isJumping_ && AimingDirection::Downward == direction_)
-		{
-			if (top_ == PlayerTopState::Aiming 
-				|| (weapon_ == PlayerWeaponType::HeavyMachineGun && top_ == PlayerTopState::Firing))
-			{
-				direction_ = AimingDirection::DownwardToForward;
-			}
-			else
-			{
-				direction_ = AimingDirection::Forward;
-			}
-		}
-		else if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
-		{
-			leg_ = PlayerLegState::Standing;
-			if (PlayerTopState::DuckStepping == top_ 
-				|| PlayerTopState::FiringToAiming == top_
-				|| PlayerTopState::ThrowingGrenadeToAiming == top_)
-			{
-				top_ = PlayerTopState::Aiming;
-			}
-		}
-	}
-		
-		
-	if (true == isUpKeyPressed_)
+
+	case 1:		//윗방향 입력.
 	{
 		if (AimingDirection::Upward != direction_ && AimingDirection::ForwardToUpward != direction_)
 		{
@@ -220,8 +229,10 @@ void TestPlayer::ConvertInputToPlayerStates()
 				}
 			}
 		}
+		break;
 	}
-	else
+
+	case 0:		//중립.
 	{
 		if (AimingDirection::Upward == direction_)
 		{
@@ -241,12 +252,50 @@ void TestPlayer::ConvertInputToPlayerStates()
 				}
 			}
 		}
+		else if (AimingDirection::Downward == direction_)
+		{
+			if (PlayerTopState::Aiming == top_)
+			{
+				direction_ = AimingDirection::DownwardToForward;
+			}
+			else if (PlayerTopState::Firing == top_)
+			{
+				if (PlayerWeaponType::HeavyMachineGun == weapon_)
+				{
+					direction_ = AimingDirection::DownwardToForward;
+				}
+				else
+				{
+					direction_ = AimingDirection::Forward;
+				}
+			}
+		}
+		
+		if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
+		{
+			leg_ = PlayerLegState::Standing;
+			if (PlayerTopState::DuckStepping == top_
+				|| PlayerTopState::FiringToAiming == top_
+				|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+			{
+				top_ = PlayerTopState::Aiming;
+			}
+		}
+
+		break;
 	}
 
-	switch (movingDirection_)
+	default:
+		MsgBoxAssert("불가능한 입력 방향입니다.");
+		return;
+	}
+
+
+	//좌우방향 입력 반응.
+	switch (horizontalInputValue_)
 	{
 
-	case -1:
+	case -1:	//좌측 입력.
 	{
 		if ( (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
 			&& (PlayerTopState::Firing != top_ && PlayerTopState::ThrowingGrenade != top_) )
@@ -266,7 +315,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		break;
 	}
 
-	case 1:
+	case 1:		//우측 입력.
 	{
 		if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
 		{
@@ -288,7 +337,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		break;
 	}
 
-	case 0:
+	case 0:		//중립.
 	{
 		if (PlayerLegState::Ducking == leg_ && PlayerTopState::DuckStepping == top_)
 		{
@@ -296,22 +345,32 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else if (PlayerLegState::Running == leg_ )
 		{
-			leg_ = PlayerLegState::RunningToStanding;
+			if (0 == verticalInputValue_)
+			{
+				leg_ = PlayerLegState::RunningToStanding;
+				direction_ = AimingDirection::Forward;
+			}
+			else if (1 == verticalInputValue_)
+			{
+				leg_ = PlayerLegState::Standing;
+			}
 		}
 		break;
 	}
 
 	default:
-		MsgBoxAssert("불가능한 이동 방향입니다.");
+		MsgBoxAssert("불가능한 입력 방향입니다.");
 		return;
 	}
 
+	//점프키 입력 반응.
 	if (true == isJumpKeyDown_)
 	{
 		if (false == isJumping_)
 		{
 			isJumping_ = true;
-			if (0 == movingDirection_)
+			fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			if (0 == horizontalInputValue_)
 			{
 				leg_ = PlayerLegState::VerticalJumping;
 			}
@@ -334,23 +393,26 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else
 		{
-			//착지시 스테이트 변화. 점프/픽셀충돌 완성되면 이전 혹은 삭제.
-			if (true == isJumping_)
-			{
-				isJumping_ = false;
-				if (PlayerLegState::VerticalJumping == leg_
-					|| PlayerLegState::ForwardJumping == leg_)
-				{
-					leg_ = PlayerLegState::JumpingToStanding;
-					if (AimingDirection::Downward == direction_)
-					{
-						direction_ = AimingDirection::Forward;
-					}
-				}
-			}
+			////착지시 스테이트 변화. 점프&픽셀충돌 완성되면 이전 혹은 삭제.
+			//if (true == isJumping_)
+			//{
+			//	isJumping_ = false;
+			//	if (PlayerLegState::VerticalJumping == leg_
+			//		|| PlayerLegState::ForwardJumping == leg_)
+			//	{
+			//		leg_ = PlayerLegState::JumpingToStanding;
+
+			//		if (AimingDirection::Downward == direction_ 
+			//			|| AimingDirection::DownwardToForward == direction_)
+			//		{
+			//			direction_ = AimingDirection::Forward;
+			//		}
+			//	}
+			//}
 		}
 	}
 
+	//공격키 입력 반응.
 	if (true == isAttackKeyDowned_)
 	{
 		if (PlayerTopState::ThrowingGrenade != top_)
@@ -367,6 +429,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 	}
 	
+	//특수공격 키 입력 반응.
 	if (true == isSpecialKeyDowned_)
 	{
 		if (PlayerTopState::Firing != top_)
@@ -377,7 +440,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 
 
-	//공격중일때 다른 부위 스테이트 강제변경 코드.
+	//공격중일때 다른 부위 스테이트 강제변경.
 	if (PlayerTopState::Firing == top_ 
 		|| PlayerTopState::ThrowingGrenade == top_ 
 		|| PlayerTopState::MeleeAttack == top_)
@@ -418,12 +481,14 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 
 	//중간동작들끼리 겹칠때 대응하는 코드.
-	if ( (PlayerTopState::FiringToAiming == top_ || PlayerTopState::ThrowingGrenadeToAiming == top_)
-		&& (PlayerLegState::RunningToStanding == leg_ 
-			|| PlayerLegState::JumpingToStanding == leg_
-			|| PlayerLegState::StandingToDucking == leg_))
+	if (PlayerLegState::RunningToStanding == leg_
+		|| PlayerLegState::JumpingToStanding == leg_
+		|| PlayerLegState::StandingToDucking == leg_)
 	{
-		top_ = PlayerTopState::Aiming;
+		if (PlayerTopState::FiringToAiming == top_ || PlayerTopState::ThrowingGrenadeToAiming == top_)
+		{
+			top_ = PlayerTopState::Aiming;
+		}
 	}
 }
 
@@ -451,10 +516,44 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 	playerStateManager_.Update(_deltaTime);
 }
 
-void TestPlayer::Move(float _deltaTime)
+void TestPlayer::FallAndLand(float _deltaTime)
 {
-}
+	if (true == isJumping_)
+	{
+		fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
+	}
+	else
+	{
+		fallingSpeed_ = 0.f;
 
-void TestPlayer::Jump(float _deltaTime)
-{
+		if (PlayerLegState::VerticalJumping == leg_
+			|| PlayerLegState::ForwardJumping == leg_)
+		{
+			leg_ = PlayerLegState::JumpingToStanding;
+
+			if (AimingDirection::Downward == direction_
+				|| AimingDirection::DownwardToForward == direction_)
+			{
+				direction_ = AimingDirection::Forward;
+			}
+		}
+	}
+
+	this->GetTransform().SetWorldMove(float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
+
+	PixelColor magenta;
+	magenta.r = 255;
+	magenta.g = 0;
+	magenta.b = 255;
+	magenta.a = 255;
+
+	float4 playerWorldPos = float4(this->GetTransform().GetWorldPosition().x, this->GetTransform().GetWorldPosition().y);
+
+
+	if (magenta.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(playerWorldPos.IX(), playerWorldPos.IY()).color_)
+	{
+		isJumping_ = false;
+	}
+
+
 }

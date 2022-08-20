@@ -7,9 +7,6 @@
     <Filter Include="Core">
       <UniqueIdentifier>{ed68ba18-bbcb-4c7a-b813-1e22e2cc7a61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{8d96ce6f-0a7a-4496-b4ab-a6800dee117f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Test">
       <UniqueIdentifier>{33c83817-a0e9-4a85-8277-950290f42c2a}</UniqueIdentifier>
     </Filter>
@@ -27,8 +24,11 @@
     <ClInclude Include="TestPlayer.h">
       <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="Enums.h">
-      <Filter>Common</Filter>
+    <ClInclude Include="TestBackground.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPlayer_Header.h">
+      <Filter>Test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -44,7 +44,10 @@
     <ClCompile Include="TestPlayer.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="TestPlayer_Functions.cpp">
+    <ClCompile Include="TestPlayer_InitFunctions.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBackground.cpp">
       <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>

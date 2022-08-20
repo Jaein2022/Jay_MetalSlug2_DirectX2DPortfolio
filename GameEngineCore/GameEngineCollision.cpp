@@ -3,7 +3,7 @@
 #include "GameEngineLevel.h"
 #include "GameEngineCoreDebug.h"
 
-bool (*GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_Max)][static_cast<int>(CollisionBodyType::CT_Max)])
+bool (*GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_Max)][static_cast<int>(CollisionType::CT_Max)])
 (const GameEngineTransform& _transformA, const GameEngineTransform& _transformB);
 
 class GameEngineCollisionFunctionInit
@@ -17,24 +17,24 @@ public:
 			0,
 			sizeof(GameEngineCollision::collisionFunctions_));
 
-		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_Sphere)][static_cast<int>(CollisionBodyType::CT_Sphere)]
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_Sphere)][static_cast<int>(CollisionType::CT_Sphere)]
 			= &GameEngineTransform::SphereToSphere;
 
-		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_AABB)][static_cast<int>(CollisionBodyType::CT_AABB)]
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_AABB)][static_cast<int>(CollisionType::CT_AABB)]
 			= &GameEngineTransform::AABBToAABB;
 
-		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_OBB)][static_cast<int>(CollisionBodyType::CT_OBB)]
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_OBB)][static_cast<int>(CollisionType::CT_OBB)]
 			= &GameEngineTransform::OBBToOBB;
 
 
 
-		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_Sphere2D)][static_cast<int>(CollisionBodyType::CT_Sphere2D)]
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_Sphere2D)][static_cast<int>(CollisionType::CT_Sphere2D)]
 			= &GameEngineTransform::Sphere2DToSphere2D;
 
-		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_AABB2D)][static_cast<int>(CollisionBodyType::CT_AABB2D)]
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_AABB2D)][static_cast<int>(CollisionType::CT_AABB2D)]
 			= &GameEngineTransform::AABB2DToAABB2D;
 
-		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionBodyType::CT_OBB2D)][static_cast<int>(CollisionBodyType::CT_OBB2D)]
+		GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_OBB2D)][static_cast<int>(CollisionType::CT_OBB2D)]
 			= &GameEngineTransform::OBB2DToOBB2D;
 
 		//추가 함수가 필요하다면 그때그때 만들어서 추가할 것.
@@ -47,7 +47,7 @@ public:
 
 GameEngineCollisionFunctionInit inst_;
 
-GameEngineCollision::GameEngineCollision() : debugType_(CollisionBodyType::CT_Max), color_(1.f, 0.f, 0.f, 0.5f)
+GameEngineCollision::GameEngineCollision() : debugType_(CollisionType::CT_Max), color_(1.f, 0.f, 0.f, 0.5f)
 {
 }
 
@@ -61,9 +61,9 @@ void GameEngineCollision::ChangeOrder(int _collisionOrder)
 }
 
 bool GameEngineCollision::IsCollision(
-	CollisionBodyType _thisType,
+	CollisionType _thisType,
 	int _collisionOrder,
-	CollisionBodyType _otherType,
+	CollisionType _otherType,
 	std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function /*= nullptr*/
 )
 {
@@ -120,15 +120,15 @@ void GameEngineCollision::DebugRender()
 		//case CollisionType::CT_Point2D:
 		//	break;
 
-	case CollisionBodyType::CT_Sphere2D:
+	case CollisionType::CT_Sphere2D:
 		GameEngineDebug::DrawSphere(GetTransform(), color_);
 		break;
 
-	case CollisionBodyType::CT_AABB2D:
+	case CollisionType::CT_AABB2D:
 		GameEngineDebug::DrawBox(GetTransform(), color_);
 		break;
 
-	case CollisionBodyType::CT_OBB2D:
+	case CollisionType::CT_OBB2D:
 		GameEngineDebug::DrawBox(GetTransform(), color_);
 		break;
 
@@ -137,15 +137,15 @@ void GameEngineCollision::DebugRender()
 		//case CollisionType::CT_Point:
 		//	break;
 
-	case CollisionBodyType::CT_Sphere:
+	case CollisionType::CT_Sphere:
 		GameEngineDebug::DrawSphere(GetTransform(), color_);
 		break;
 
-	case CollisionBodyType::CT_AABB:
+	case CollisionType::CT_AABB:
 		GameEngineDebug::DrawBox(GetTransform(), color_);
 		break;
 
-	case CollisionBodyType::CT_OBB:
+	case CollisionType::CT_OBB:
 		GameEngineDebug::DrawBox(GetTransform(), color_);
 		break;
 

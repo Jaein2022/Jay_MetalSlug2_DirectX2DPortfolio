@@ -153,8 +153,12 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="Enums.h" />
+    <ClInclude Include="TestPlayer_Header.h" />
     <ClInclude Include="PreCompile.h" />
+    <ClInclude Include="TestBackground.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="TestPlayer.h">
       <SubType>
       </SubType>
@@ -173,6 +177,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TestBackground.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="TestPlayer.cpp">
       <SubType>
       </SubType>
@@ -181,7 +189,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestPlayer_Functions.cpp" />
+    <ClCompile Include="TestPlayer_InitFunctions.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
