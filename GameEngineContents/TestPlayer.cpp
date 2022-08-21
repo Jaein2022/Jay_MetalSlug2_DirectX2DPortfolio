@@ -21,15 +21,17 @@ TestPlayer::TestPlayer()
 	horizontalInputValue_(0),
 	verticalInputValue_(0),
 	isJumpKeyDown_(false),
-	isAttackKeyDowned_(false),
-	isSpecialKeyDowned_(false),
-	isTestKeyDowned_(false),
+	isAttackKeyDown_(false),
+	isSpecialKeyDown_(false),
+	isTestKeyDown_(false),
 	renderPivotPointer_(nullptr),
+	upperMidfootPointer_(nullptr),
 	playerWorldPosPointer_(nullptr),
-	frontCollision_(nullptr),
-	initialJumpSpeed_(2.75f),
+	lowerMidfootPointer_(nullptr),
+	frontPointer_(nullptr),
+	initialJumpSpeed_(4.f),
 	fallingSpeed_(0.f),
-	playerSpeed_(100.f),
+	runningSpeed_(100.f),
 	bulletCount_(-1),
 	grenadeCount_(0)
 {
@@ -45,6 +47,11 @@ void TestPlayer::Start()
 	this->GetTransform().SetWorldPosition(0, 0, 0);
 	this->GetTransform().SetWorldScale(1, 1, 1);
 
+	magenta_.r = 255;
+	magenta_.g = 0;
+	magenta_.b = 255;
+	magenta_.a = 255;
+
 	CreatePlayerAnimations();
 	CreatePlayerStates();
 
@@ -57,15 +64,24 @@ void TestPlayer::Start()
 		playerRenderPivotZ_ - 5
 	);
 
+	upperMidfootPointer_ = CreateComponent<GameEngineCollision>("UpperMidfootPointer");
+	upperMidfootPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
+	upperMidfootPointer_->GetTransform().SetLocalScale(5, 5, 10);
+	upperMidfootPointer_->GetTransform().SetLocalPosition(0, 5, -5);
 	playerWorldPosPointer_ = CreateComponent<GameEngineCollision>("PlayerWorldPosPointer");
-	playerWorldPosPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
+	playerWorldPosPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Black);
 	playerWorldPosPointer_->GetTransform().SetLocalScale(5, 5, 10);
 	playerWorldPosPointer_->GetTransform().SetLocalPosition(0, 0, -5);
+	lowerMidfootPointer_ = CreateComponent<GameEngineCollision>("LowerMidfootPointer");
+	lowerMidfootPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
+	lowerMidfootPointer_->GetTransform().SetLocalScale(5, 5, 10);
+	lowerMidfootPointer_->GetTransform().SetLocalPosition(0, -5, -5);
 
-	frontCollision_ = CreateComponent<GameEngineCollision>("FrontCollision");
-	frontCollision_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
-	frontCollision_->GetTransform().SetLocalScale(5, 5, 10);
-	frontCollision_->GetTransform().SetLocalPosition(22, 10, -5);
+	frontPointer_ = CreateComponent<GameEngineCollision>("FrontPointer1");
+	frontPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
+	frontPointer_->GetTransform().SetLocalScale(5, 5, 10);
+	frontPointer_->GetTransform().SetLocalPosition(22, 0, -5);	
+
 
 
 
@@ -79,15 +95,20 @@ void TestPlayer::Update(float _deltaTime)
 	ConvertInputToPlayerStates();
 
 
+	FallAndLand(_deltaTime);
 
 
 	UpdatePlayerState(_deltaTime);
 	
-	FallAndLand(_deltaTime);
 
 	GameEngineDebug::DrawBox(renderPivotPointer_->GetTransform(), float4::Cyan);
-	GameEngineDebug::DrawBox(playerWorldPosPointer_->GetTransform(), float4::Red);
-	GameEngineDebug::DrawBox(frontCollision_->GetTransform(), float4::Red);
+
+	GameEngineDebug::DrawBox(upperMidfootPointer_->GetTransform(), float4::Red);
+	GameEngineDebug::DrawBox(playerWorldPosPointer_->GetTransform(), float4::Black);
+	GameEngineDebug::DrawBox(lowerMidfootPointer_->GetTransform(), float4::Red);
+
+	GameEngineDebug::DrawBox(frontPointer_->GetTransform(), float4::Red);
+
 }
 
 void TestPlayer::End()
@@ -124,11 +145,11 @@ void TestPlayer::UpdateInputInfo()
 
 	if (true == GameEngineInput::GetInst()->IsDown("Attack"))
 	{
-		isAttackKeyDowned_ = true;
+		isAttackKeyDown_ = true;
 	}
 	else
 	{
-		isAttackKeyDowned_ = false;
+		isAttackKeyDown_ = false;
 	}
 
 	if (true == GameEngineInput::GetInst()->IsDown("Jump"))
@@ -142,26 +163,26 @@ void TestPlayer::UpdateInputInfo()
 
 	if (true == GameEngineInput::GetInst()->IsDown("Special"))
 	{
-		isSpecialKeyDowned_ = true;
+		isSpecialKeyDown_ = true;
 	}
 	else
 	{
-		isSpecialKeyDowned_ = false;
+		isSpecialKeyDown_ = false;
 	}
 
 	if (true == GameEngineInput::GetInst()->IsDown("Test"))
 	{
-		isTestKeyDowned_ = true;
+		isTestKeyDown_ = true;
 	}
 	else
 	{
-		isTestKeyDowned_ = false;
+		isTestKeyDown_ = false;
 	}
 }
 
 void TestPlayer::ConvertInputToPlayerStates()
 {
-
+	//1922
 
 
 	//상하방향 입력 반응.
@@ -370,6 +391,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		{
 			isJumping_ = true;
 			fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+
 			if (0 == horizontalInputValue_)
 			{
 				leg_ = PlayerLegState::VerticalJumping;
@@ -413,7 +435,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 
 	//공격키 입력 반응.
-	if (true == isAttackKeyDowned_)
+	if (true == isAttackKeyDown_)
 	{
 		if (PlayerTopState::ThrowingGrenade != top_)
 		{
@@ -430,7 +452,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 	
 	//특수공격 키 입력 반응.
-	if (true == isSpecialKeyDowned_)
+	if (true == isSpecialKeyDown_)
 	{
 		if (PlayerTopState::Firing != top_)
 		{
@@ -488,6 +510,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		if (PlayerTopState::FiringToAiming == top_ || PlayerTopState::ThrowingGrenadeToAiming == top_)
 		{
 			top_ = PlayerTopState::Aiming;
+			direction_ = AimingDirection::Forward;
 		}
 	}
 }
@@ -526,34 +549,81 @@ void TestPlayer::FallAndLand(float _deltaTime)
 	{
 		fallingSpeed_ = 0.f;
 
+		//착지시 스테이트 변화.
 		if (PlayerLegState::VerticalJumping == leg_
-			|| PlayerLegState::ForwardJumping == leg_)
+			|| PlayerLegState::ForwardJumping == leg_
+			|| PlayerLegState::Falling == leg_)
 		{
-			leg_ = PlayerLegState::JumpingToStanding;
+			if (PlayerTopState::Firing == top_
+				|| PlayerTopState::ThrowingGrenade == top_)
+			{
+				leg_ = PlayerLegState::Standing;
+			}
+			else
+			{
+				leg_ = PlayerLegState::JumpingToStanding;
+			}
 
 			if (AimingDirection::Downward == direction_
 				|| AimingDirection::DownwardToForward == direction_)
 			{
 				direction_ = AimingDirection::Forward;
 			}
+
+			if (PlayerTopState::FiringToAiming == top_ 
+				|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+			{
+				top_ = PlayerTopState::Aiming;
+			}
 		}
 	}
 
 	this->GetTransform().SetWorldMove(float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
 
-	PixelColor magenta;
-	magenta.r = 255;
-	magenta.g = 0;
-	magenta.b = 255;
-	magenta.a = 255;
 
-	float4 playerWorldPos = float4(this->GetTransform().GetWorldPosition().x, this->GetTransform().GetWorldPosition().y);
+	float4 upperMidfootPos 
+		= float4(upperMidfootPointer_->GetTransform().GetWorldPosition().x, upperMidfootPointer_->GetTransform().GetWorldPosition().y);
+	float4 playerWorldPos 
+		= float4(playerWorldPosPointer_->GetTransform().GetWorldPosition().x, playerWorldPosPointer_->GetTransform().GetWorldPosition().y);
+	float4 lowerMidfootPos 
+		= float4(lowerMidfootPointer_->GetTransform().GetWorldPosition().x, lowerMidfootPointer_->GetTransform().GetWorldPosition().y);
 
-
-	if (magenta.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(playerWorldPos.IX(), playerWorldPos.IY()).color_)
+	if (0 <= fallingSpeed_)
 	{
-		isJumping_ = false;
+		if (0 < fallingSpeed_ 
+			&& (PlayerLegState::Standing == leg_
+			|| PlayerLegState::Running == leg_
+			|| PlayerLegState::Ducking == leg_))
+		{
+			leg_ = PlayerLegState::Falling;
+		}
+
+		if ((magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
+			playerWorldPos.IX(), playerWorldPos.IY()).color_)
+			&& (magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
+				lowerMidfootPos.IX(), lowerMidfootPos.IY()).color_)
+			&& (magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
+				upperMidfootPos.IX(), upperMidfootPos.IY()).color_))
+		{
+			this->GetTransform().SetWorldMove(float4::Up * 5.0f);
+			isJumping_ = false;
+		}
+		else if ((magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
+			playerWorldPos.IX(), playerWorldPos.IY()).color_)
+			&& (magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
+				lowerMidfootPos.IX(), lowerMidfootPos.IY()).color_))
+		{
+			isJumping_ = false;
+		}
+		else if ((magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
+			lowerMidfootPos.IX(), lowerMidfootPos.IY()).color_))
+		{
+			this->GetTransform().SetWorldMove(float4::Down * 5.f);
+			isJumping_ = false;
+		}
+		else
+		{
+			isJumping_ = true;
+		}
 	}
-
-
 }

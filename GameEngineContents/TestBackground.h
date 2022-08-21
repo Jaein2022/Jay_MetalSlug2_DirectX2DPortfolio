@@ -28,7 +28,8 @@ public:
 		return pixelCollisionBGRenderer_->GetCurrentTexture()->GetPixelToPixelColor(
 			GameEngineWindow::GetScale().HIX() + _x,
 			(GameEngineWindow::GetScale().IY() - (_y + GameEngineWindow::GetScale().HIY())
-			- (GameEngineWindow::GetScale().IY() - pixelCollisionBGRenderer_->GetCurrentTexture()->GetScale().IY()))
+			- (GameEngineWindow::GetScale().IY() 
+				- pixelCollisionBGRenderer_->GetCurrentTexture()->GetScale().IY()))
 		);
 	}
 

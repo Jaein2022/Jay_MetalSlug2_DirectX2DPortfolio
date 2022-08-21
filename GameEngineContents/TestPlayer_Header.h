@@ -64,10 +64,23 @@ enum class PlayerState
 	Pistol_ForwardJumping_ThrowingGrenadeToAiming				= 1551,
 	Pistol_ForwardJumping_MeleeAttack							= 1571,
 
-	Pistol_StandingToDucking									= 1611,
-	Pistol_RunningToStanding									= 1711,
-	Pistol_JumpingToStanding									= 1811,
+	Pistol_Falling_Aiming_Forward								= 1611,
+	Pistol_Falling_Aiming_Downward								= 1613,
+	Pistol_Falling_Aiming_ForwardToDownward						= 1616,
+	Pistol_Falling_Aiming_DownwardToForward						= 1617,
+	Pistol_Falling_Firing_Forward								= 1621,
+	Pistol_Falling_Firing_Upward								= 1622,
+	Pistol_Falling_Firing_Downward								= 1623,
+	Pistol_Falling_FiringToAiming_Forward						= 1631,
+	Pistol_Falling_FiringToAiming_Upward						= 1632,
+	Pistol_Falling_FiringToAiming_Downward						= 1633,
+	Pistol_Falling_ThrowingGrenade								= 1641,
+	Pistol_Falling_ThrowingGrenadeToAiming						= 1651,
+	Pistol_Falling_MeleeAttack									= 1671,
 
+	Pistol_StandingToDucking									= 1711,
+	Pistol_RunningToStanding									= 1811,
+	Pistol_JumpingToStanding									= 1911,
 
 
 
@@ -135,9 +148,23 @@ enum class PlayerState
 	HeavyMachineGun_ForwardJumping_ThrowingGrenadeToAiming		= 2551,
 	HeavyMachineGun_ForwardJumping_MeleeAttack					= 2571,
 
-	HeavyMachineGun_StandingToDucking							= 2611,
-	HeavyMachineGun_RunningToStanding							= 2711,
-	HeavyMachineGun_JumpingToStanding							= 2811,
+	HeavyMachineGun_Falling_Aiming_Forward						= 2611,
+	HeavyMachineGun_Falling_Aiming_Downward						= 2613,
+	HeavyMachineGun_Falling_Aiming_ForwardToDownward			= 2616,
+	HeavyMachineGun_Falling_Aiming_DownwardToForward			= 2617,
+	HeavyMachineGun_Falling_Firing_Forward						= 2621,
+	HeavyMachineGun_Falling_Firing_Upward						= 2622,
+	HeavyMachineGun_Falling_Firing_Downward						= 2623,
+	HeavyMachineGun_Falling_FiringToAiming_Forward				= 2631,
+	HeavyMachineGun_Falling_FiringToAiming_Upward				= 2632,
+	HeavyMachineGun_Falling_FiringToAiming_Downward				= 2633,
+	HeavyMachineGun_Falling_ThrowingGrenade						= 2641,
+	HeavyMachineGun_Falling_ThrowingGrenadeToAiming				= 2651,
+	HeavyMachineGun_Falling_MeleeAttack							= 2671,
+
+	HeavyMachineGun_StandingToDucking							= 2711,
+	HeavyMachineGun_RunningToStanding							= 2811,
+	HeavyMachineGun_JumpingToStanding							= 2911,
 
 
 };
@@ -165,9 +192,10 @@ enum class PlayerLegState
 	Ducking				= 300,
 	VerticalJumping		= 400,
 	ForwardJumping		= 500,
-	StandingToDucking	= 600,
-	RunningToStanding	= 700,
-	JumpingToStanding	= 800,
+	Falling				= 600,
+	StandingToDucking	= 700,
+	RunningToStanding	= 800,
+	JumpingToStanding	= 900,
 };
 
 enum class PlayerTopState

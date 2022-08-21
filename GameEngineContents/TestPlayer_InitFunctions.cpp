@@ -14,18 +14,25 @@ void TestPlayer::CreatePlayerAnimations()
 
 	if (0 == GameEngineTexture::Find("Tarma_Leg.png")->GetCutCount())
 	{
-		GameEngineTexture::Cut("Tarma_Leg.png", 6, 5);
+		GameEngineTexture::Cut("Tarma_Leg.png", 10, 6);
 	}
 	legRenderer_->SetTexture("Tarma_Leg.png");
 
 	legRenderer_->CreateFrameAnimation_CutTexture("Standing",
-		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 1.f, true));
+		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 0.5f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("Running",
-		FrameAnimation_Desc("Tarma_Leg.png", 6, 17, 0.05f, true));
+		FrameAnimation_Desc("Tarma_Leg.png", 10, 21, 0.05f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping",
-		FrameAnimation_Desc("Tarma_Leg.png", 18, 23, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Leg.png", 30, 40, 0.05f, false));
+	legRenderer_->AnimationBindEnd("VerticalJumping",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			leg_ = PlayerLegState::Falling;
+		}
+	);
+	legRenderer_->CreateFrameAnimation_CutTexture("Falling",
+		FrameAnimation_Desc("Tarma_Leg.png", 40, 40, 0.5f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("ForwardJumping",
-		FrameAnimation_Desc("Tarma_Leg.png", 24, 29, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Leg.png", 50, 55, 0.05f, false));
 
 	legRenderer_->ChangeFrameAnimation("Standing");
 	legRenderer_->Off();
@@ -58,6 +65,8 @@ void TestPlayer::CreatePlayerAnimations()
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 10, 21, 0.05f, true));
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping_Aiming_Forward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 30, 35, 0.05f, false));
+	topPistolRenderer_->CreateFrameAnimation_CutTexture("Falling_Aiming_Forward",
+		FrameAnimation_Desc("Tarma_Top_Pistol.png", 35, 35, 0.5f, true));
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("ForwardJumping_Aiming_Forward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 40, 45, 0.05f, false));
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Aiming_ForwardToUpward",
@@ -1145,9 +1154,202 @@ void TestPlayer::CreatePlayerStates()
 
 
 
-
-
 	playerStateManager_.CreateState(		//1611
+		"Pistol_Falling_Aiming_Forward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Falling_Aiming_Forward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1613
+		"Pistol_Falling_Aiming_Downward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1616
+		"Pistol_Falling_Aiming_ForwardToDownward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1617
+		"Pistol_Falling_Aiming_DownwardToForward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1617
+		"Pistol_Falling_Firing_Forward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1622
+		"Pistol_Falling_Firing_Upward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1623
+		"Pistol_Falling_Firing_Downward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1631
+		"Pistol_Falling_FiringToAiming_Forward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1632
+		"Pistol_Falling_FiringToAiming_Upward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1633
+		"Pistol_Falling_FiringToAiming_Downward",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1641
+		"Pistol_Falling_ThrowingGrenade",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+		}
+	);
+
+	playerStateManager_.CreateState(		//1651
+		"Pistol_Falling_ThrowingGrenadeToAiming",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("Falling");
+			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+		}
+	);
+
+
+
+
+
+
+
+//	Pistol_Falling_MeleeAttack = 1671,
+
+
+
+
+
+
+
+
+	playerStateManager_.CreateState(		//1711
 		"Pistol_StandingToDucking",
 		nullptr,
 		[this](const StateInfo& _info)->void {
@@ -1161,7 +1363,7 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(		//1711
+	playerStateManager_.CreateState(		//1811
 		"Pistol_RunningToStanding",
 		nullptr,
 		[this](const StateInfo& _info)->void {
@@ -1178,7 +1380,7 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
-	playerStateManager_.CreateState(		//1811
+	playerStateManager_.CreateState(		//1911
 		"Pistol_JumpingToStanding",
 		nullptr,
 		[this](const StateInfo& _info)->void {
@@ -1194,6 +1396,8 @@ void TestPlayer::CreatePlayerStates()
 			wholePistolRenderer_->CurAnimationReset();
 		}
 	);
+
+
 
 
 

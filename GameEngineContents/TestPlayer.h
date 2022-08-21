@@ -71,19 +71,25 @@ private:
 	char horizontalInputValue_;	//-1: 좌측 입력, 0: 중립, 1: 우측 입력.
 	char verticalInputValue_;	//-1: 하단 입력, 0, 중립, 1: 상단 입력.
 	bool isJumpKeyDown_;
-	bool isAttackKeyDowned_;
-	bool isSpecialKeyDowned_;
-	bool isTestKeyDowned_;
+	bool isAttackKeyDown_;
+	bool isSpecialKeyDown_;
+	bool isTestKeyDown_;
 
 	GameEngineCollision* renderPivotPointer_;		//렌더피봇 표시기.
-	GameEngineCollision* playerWorldPosPointer_;			//액터의 월드포지션 표시.
-	GameEngineCollision* frontCollision_;			//전방 콜리전. 경사지형 이동각도 판정.
 
+
+	GameEngineCollision* upperMidfootPointer_;		//액터의 월드포지션 표시.
+	GameEngineCollision* playerWorldPosPointer_;	//액터의 월드포지션 표시.
+	GameEngineCollision* lowerMidfootPointer_;		//액터의 월드포지션 표시.
+
+	GameEngineCollision* frontPointer_;			//전방 콜리전. 경사지형 이동각도 판정.
+
+	PixelColor magenta_;
 
 	const float initialJumpSpeed_;
 	float fallingSpeed_;
 
-	float playerSpeed_;
+	float runningSpeed_;
 
 	int bulletCount_;
 	int grenadeCount_;

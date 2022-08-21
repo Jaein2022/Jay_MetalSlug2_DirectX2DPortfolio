@@ -21,7 +21,7 @@ void TestBackground::Start()
 
 	//테스트BG 절반 크기: 1176x224.
 
-	firstBGRenderer_ = CreateComponent<GameEngineTextureRenderer>("BaseBGRenderer");
+	firstBGRenderer_ = CreateComponent<GameEngineTextureRenderer>("FirstBGRenderer");
 	firstBGRenderer_->SetTexture("TestBg.png");
 	firstBGRenderer_->ScaleToTexture();
 	firstBGRenderer_->SetPivot(PivotMode::Custom);
