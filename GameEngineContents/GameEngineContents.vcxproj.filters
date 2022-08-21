@@ -30,6 +30,9 @@
     <ClInclude Include="TestPlayer_Header.h">
       <Filter>Test</Filter>
     </ClInclude>
+    <ClInclude Include="TestIndicator.h">
+      <Filter>Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -48,6 +51,9 @@
       <Filter>Test</Filter>
     </ClCompile>
     <ClCompile Include="TestBackground.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndicator.cpp">
       <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>

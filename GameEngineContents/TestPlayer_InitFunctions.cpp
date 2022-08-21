@@ -473,7 +473,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1211
 		"Pistol_Running_Aiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -762,7 +762,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1411
 		"Pistol_VerticalJumping_Aiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -777,7 +777,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1413
 		"Pistol_VerticalJumping_Aiming_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -792,7 +792,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1416
 		"Pistol_VerticalJumping_Aiming_ForwardToDownward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -807,7 +807,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1417
 		"Pistol_VerticalJumping_Aiming_DownwardToForward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -822,7 +822,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1421
 		"Pistol_VerticalJumping_Firing_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -837,7 +837,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1422
 		"Pistol_VerticalJumping_Firing_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -852,7 +852,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1423
 		"Pistol_VerticalJumping_Firing_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -867,7 +867,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1431
 		"Pistol_VerticalJumping_FiringToAiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -882,7 +882,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1432
 		"Pistol_VerticalJumping_FiringToAiming_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -897,7 +897,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1433
 		"Pistol_VerticalJumping_FiringToAiming_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -912,7 +912,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1441
 		"Pistol_VerticalJumping_ThrowingGrenade",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -927,7 +927,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1451
 		"Pistol_VerticalJumping_ThrowingGrenadeToAiming",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -957,7 +957,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1511
 		"Pistol_ForwardJumping_Aiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -972,7 +972,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1513
 		"Pistol_ForwardJumping_Aiming_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -987,7 +987,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1516
 		"Pistol_ForwardJumping_Aiming_ForwardToDownward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1002,7 +1002,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1517
 		"Pistol_ForwardJumping_Aiming_DownwardToForward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1017,7 +1017,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1521
 		"Pistol_ForwardJumping_Firing_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1032,7 +1032,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1522
 		"Pistol_ForwardJumping_Firing_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1047,7 +1047,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1523
 		"Pistol_ForwardJumping_Firing_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1062,7 +1062,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1531
 		"Pistol_ForwardJumping_FiringToAiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1077,7 +1077,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1532
 		"Pistol_ForwardJumping_FiringToAiming_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1092,7 +1092,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1533
 		"Pistol_ForwardJumping_FiringToAiming_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1107,7 +1107,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1541
 		"Pistol_ForwardJumping_ThrowingGrenade",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1122,7 +1122,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1551
 		"Pistol_ForwardJumping_ThrowingGrenadeToAiming",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1156,7 +1156,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1611
 		"Pistol_Falling_Aiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1171,7 +1171,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1613
 		"Pistol_Falling_Aiming_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1186,7 +1186,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1616
 		"Pistol_Falling_Aiming_ForwardToDownward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1201,7 +1201,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1617
 		"Pistol_Falling_Aiming_DownwardToForward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1216,7 +1216,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1617
 		"Pistol_Falling_Firing_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1231,7 +1231,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1622
 		"Pistol_Falling_Firing_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1246,7 +1246,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1623
 		"Pistol_Falling_Firing_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1261,7 +1261,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1631
 		"Pistol_Falling_FiringToAiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1276,7 +1276,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1632
 		"Pistol_Falling_FiringToAiming_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1291,7 +1291,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1633
 		"Pistol_Falling_FiringToAiming_Downward",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1306,7 +1306,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1641
 		"Pistol_Falling_ThrowingGrenade",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1321,7 +1321,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1651
 		"Pistol_Falling_ThrowingGrenadeToAiming",
-		nullptr,
+		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();

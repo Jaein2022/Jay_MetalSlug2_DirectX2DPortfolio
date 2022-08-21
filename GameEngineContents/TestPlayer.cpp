@@ -2,6 +2,7 @@
 #include "TestPlayer.h"
 #include "TestLevel.h"
 #include "TestBackground.h"
+#include "TestIndicator.h"
 
 TestPlayer::TestPlayer()
 	: currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
@@ -23,15 +24,14 @@ TestPlayer::TestPlayer()
 	isJumpKeyDown_(false),
 	isAttackKeyDown_(false),
 	isSpecialKeyDown_(false),
-	isTestKeyDown_(false),
 	renderPivotPointer_(nullptr),
-	upperMidfootPointer_(nullptr),
+	upperLandingChecker_(nullptr),
 	playerWorldPosPointer_(nullptr),
-	lowerMidfootPointer_(nullptr),
-	frontPointer_(nullptr),
+	lowerLandingChecker_(nullptr),
+	slopeChecker_(nullptr),
 	initialJumpSpeed_(4.f),
 	fallingSpeed_(0.f),
-	runningSpeed_(100.f),
+	runningSpeed_(4.f),
 	bulletCount_(-1),
 	grenadeCount_(0)
 {
@@ -55,32 +55,46 @@ void TestPlayer::Start()
 	CreatePlayerAnimations();
 	CreatePlayerStates();
 
-	renderPivotPointer_ = CreateComponent<GameEngineCollision>("RenderPivotPointer");
-	renderPivotPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Cyan);
-	renderPivotPointer_->GetTransform().SetLocalScale(5, 5, 10);
-	renderPivotPointer_->GetTransform().SetLocalPosition(
-		playerRenderPivotX_,
-		playerRenderPivotY_,
-		playerRenderPivotZ_ - 5
+	renderPivotPointer_ = TestIndicator::CreateIndicator(
+		"RenderPivotPointer",
+		this,
+		float4::Cyan,
+		float4(playerRenderPivotX_, playerRenderPivotY_, -5),
+		float4(5, 5, 1)
 	);
 
-	upperMidfootPointer_ = CreateComponent<GameEngineCollision>("UpperMidfootPointer");
-	upperMidfootPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
-	upperMidfootPointer_->GetTransform().SetLocalScale(5, 5, 10);
-	upperMidfootPointer_->GetTransform().SetLocalPosition(0, 5, -5);
-	playerWorldPosPointer_ = CreateComponent<GameEngineCollision>("PlayerWorldPosPointer");
-	playerWorldPosPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Black);
-	playerWorldPosPointer_->GetTransform().SetLocalScale(5, 5, 10);
-	playerWorldPosPointer_->GetTransform().SetLocalPosition(0, 0, -5);
-	lowerMidfootPointer_ = CreateComponent<GameEngineCollision>("LowerMidfootPointer");
-	lowerMidfootPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
-	lowerMidfootPointer_->GetTransform().SetLocalScale(5, 5, 10);
-	lowerMidfootPointer_->GetTransform().SetLocalPosition(0, -5, -5);
+	upperLandingChecker_ = TestIndicator::CreateIndicator(
+		"UpperLandingCheck",
+		this,
+		float4::Red,
+		float4(0, 5, -5),
+		float4(5, 5, 1)
+	);
 
-	frontPointer_ = CreateComponent<GameEngineCollision>("FrontPointer1");
-	frontPointer_->SetDebugSetting(CollisionType::CT_AABB, float4::Red);
-	frontPointer_->GetTransform().SetLocalScale(5, 5, 10);
-	frontPointer_->GetTransform().SetLocalPosition(22, 0, -5);	
+	playerWorldPosPointer_ = TestIndicator::CreateIndicator(
+		"PlayerWorldPosPointer",
+		this,
+		float4::Black,
+		float4(0, 0, -5),
+		float4(5, 5, 1)
+	);	
+	
+	lowerLandingChecker_ = TestIndicator::CreateIndicator(
+		"LowerLandingChecker",
+		this,
+		float4::Red,
+		float4(0, -5, -5),
+		float4(5, 5, 1)
+	);
+
+	slopeChecker_ = TestIndicator::CreateIndicator(
+		"SlopeChecker",
+		this,
+		float4::Red,
+		float4(5, 0, -5),
+		float4(5, 5, 1)
+	);
+
 
 
 
@@ -91,23 +105,14 @@ void TestPlayer::Start()
 
 void TestPlayer::Update(float _deltaTime)
 {
+	CheckFalling();
 	UpdateInputInfo();
 	ConvertInputToPlayerStates();
 
-
-	FallAndLand(_deltaTime);
-
+	//FallAndLand(_deltaTime);
 
 	UpdatePlayerState(_deltaTime);
-	
 
-	GameEngineDebug::DrawBox(renderPivotPointer_->GetTransform(), float4::Cyan);
-
-	GameEngineDebug::DrawBox(upperMidfootPointer_->GetTransform(), float4::Red);
-	GameEngineDebug::DrawBox(playerWorldPosPointer_->GetTransform(), float4::Black);
-	GameEngineDebug::DrawBox(lowerMidfootPointer_->GetTransform(), float4::Red);
-
-	GameEngineDebug::DrawBox(frontPointer_->GetTransform(), float4::Red);
 
 }
 
@@ -172,18 +177,12 @@ void TestPlayer::UpdateInputInfo()
 
 	if (true == GameEngineInput::GetInst()->IsDown("Test"))
 	{
-		isTestKeyDown_ = true;
-	}
-	else
-	{
-		isTestKeyDown_ = false;
+		TestIndicator::RenderingOnOffSwitch();
 	}
 }
 
 void TestPlayer::ConvertInputToPlayerStates()
 {
-	//1922
-
 
 	//상하방향 입력 반응.
 	switch (verticalInputValue_)
@@ -219,6 +218,11 @@ void TestPlayer::ConvertInputToPlayerStates()
 				|| PlayerLegState::JumpingToStanding == leg_)
 			{
 				leg_ = PlayerLegState::StandingToDucking;
+			}
+
+			if (AimingDirection::Forward != direction_)
+			{
+				direction_ = AimingDirection::Forward;
 			}
 		}
 		break;
@@ -325,7 +329,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 			top_ = PlayerTopState::DuckStepping;
 		}
 		else if (true == isJumping_ 
-			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_))
+			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
 		}
@@ -347,7 +351,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 			}
 		}
 		else if (true == isJumping_
-			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_))
+			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
 		}
@@ -513,6 +517,15 @@ void TestPlayer::ConvertInputToPlayerStates()
 			direction_ = AimingDirection::Forward;
 		}
 	}
+
+	//아래방향 조준은 공중에서만.
+	if (false == isJumping_ && (AimingDirection::Downward == direction_
+		|| AimingDirection::DownwardToForward == direction_
+		|| AimingDirection::ForwardToDownward == direction_))
+	{
+		direction_ = AimingDirection::Forward;
+	}
+	
 }
 
 void TestPlayer::UpdatePlayerState(float _deltaTime)
@@ -539,91 +552,137 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 	playerStateManager_.Update(_deltaTime);
 }
 
-void TestPlayer::FallAndLand(float _deltaTime)
+void TestPlayer::Run(float _deltaTime)
 {
-	if (true == isJumping_)
+	this->GetTransform().SetWorldMove(
+		float4::Right * horizontalInputValue_ * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
+
+	if (false == isJumping_)
 	{
-		fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
+
 	}
-	else
-	{
-		fallingSpeed_ = 0.f;
+}
 
-		//착지시 스테이트 변화.
-		if (PlayerLegState::VerticalJumping == leg_
-			|| PlayerLegState::ForwardJumping == leg_
-			|| PlayerLegState::Falling == leg_)
-		{
-			if (PlayerTopState::Firing == top_
-				|| PlayerTopState::ThrowingGrenade == top_)
-			{
-				leg_ = PlayerLegState::Standing;
-			}
-			else
-			{
-				leg_ = PlayerLegState::JumpingToStanding;
-			}
+void TestPlayer::Fall(float _deltaTime)
+{
+	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
 
-			if (AimingDirection::Downward == direction_
-				|| AimingDirection::DownwardToForward == direction_)
-			{
-				direction_ = AimingDirection::Forward;
-			}
+	this->GetTransform().SetWorldMove(
+		float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
 
-			if (PlayerTopState::FiringToAiming == top_ 
-				|| PlayerTopState::ThrowingGrenadeToAiming == top_)
-			{
-				top_ = PlayerTopState::Aiming;
-			}
-		}
-	}
+	this->GetTransform().SetWorldMove(
+		float4::Right * horizontalInputValue_ * _deltaTime * TestLevel::playSpeed_);
+}
 
-	this->GetTransform().SetWorldMove(float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
-
-
-	float4 upperMidfootPos 
-		= float4(upperMidfootPointer_->GetTransform().GetWorldPosition().x, upperMidfootPointer_->GetTransform().GetWorldPosition().y);
-	float4 playerWorldPos 
-		= float4(playerWorldPosPointer_->GetTransform().GetWorldPosition().x, playerWorldPosPointer_->GetTransform().GetWorldPosition().y);
-	float4 lowerMidfootPos 
-		= float4(lowerMidfootPointer_->GetTransform().GetWorldPosition().x, lowerMidfootPointer_->GetTransform().GetWorldPosition().y);
-
+void TestPlayer::CheckFalling()
+{
 	if (0 <= fallingSpeed_)
 	{
-		if (0 < fallingSpeed_ 
-			&& (PlayerLegState::Standing == leg_
-			|| PlayerLegState::Running == leg_
-			|| PlayerLegState::Ducking == leg_))
+		if ((magenta_.color_ == upperLandingChecker_->GetColorValue_UINT())
+			&& (magenta_.color_ == lowerLandingChecker_->GetColorValue_UINT())
+			&& (magenta_.color_ == playerWorldPosPointer_->GetColorValue_UINT()))
 		{
-			leg_ = PlayerLegState::Falling;
-		}
+			if (true == isJumping_)
+			{
+				this->GetTransform().SetWorldMove(float4::Up * 5.f);
+				isJumping_ = false;
+				fallingSpeed_ = 0.f;
 
-		if ((magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
-			playerWorldPos.IX(), playerWorldPos.IY()).color_)
-			&& (magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
-				lowerMidfootPos.IX(), lowerMidfootPos.IY()).color_)
-			&& (magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
-				upperMidfootPos.IX(), upperMidfootPos.IY()).color_))
-		{
-			this->GetTransform().SetWorldMove(float4::Up * 5.0f);
-			isJumping_ = false;
+				if (PlayerTopState::Firing == top_
+					|| PlayerTopState::ThrowingGrenade == top_)
+				{
+					leg_ = PlayerLegState::Standing;
+				}
+				else
+				{
+					leg_ = PlayerLegState::JumpingToStanding;
+				}
+
+				if (AimingDirection::Downward == direction_
+					|| AimingDirection::DownwardToForward == direction_
+					|| AimingDirection::ForwardToDownward == direction_)
+				{
+					direction_ = AimingDirection::Forward;
+				}
+
+				if (PlayerTopState::FiringToAiming == top_
+					|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+				{
+					top_ = PlayerTopState::Aiming;
+				}
+			}
 		}
-		else if ((magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
-			playerWorldPos.IX(), playerWorldPos.IY()).color_)
-			&& (magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
-				lowerMidfootPos.IX(), lowerMidfootPos.IY()).color_))
+		else if (magenta_.color_ == playerWorldPosPointer_->GetColorValue_UINT()
+			&& magenta_.color_ == lowerLandingChecker_->GetColorValue_UINT())
 		{
-			isJumping_ = false;
+			if (true == isJumping_)
+			{
+				isJumping_ = false;
+				fallingSpeed_ = 0.f;
+
+				if (PlayerTopState::Firing == top_
+					|| PlayerTopState::ThrowingGrenade == top_)
+				{
+					leg_ = PlayerLegState::Standing;
+				}
+				else
+				{
+					leg_ = PlayerLegState::JumpingToStanding;
+				}
+
+				if (AimingDirection::Downward == direction_
+					|| AimingDirection::DownwardToForward == direction_
+					|| AimingDirection::ForwardToDownward == direction_)
+				{
+					direction_ = AimingDirection::Forward;
+				}
+
+				if (PlayerTopState::FiringToAiming == top_
+					|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+				{
+					top_ = PlayerTopState::Aiming;
+				}
+			}
 		}
-		else if ((magenta_.color_ == reinterpret_cast<TestLevel*>(this->GetLevel())->GetPixelColor(
-			lowerMidfootPos.IX(), lowerMidfootPos.IY()).color_))
+		else if (magenta_.color_ == lowerLandingChecker_->GetColorValue_UINT())
 		{
-			this->GetTransform().SetWorldMove(float4::Down * 5.f);
-			isJumping_ = false;
+			if (true == isJumping_)
+			{
+				this->GetTransform().SetWorldMove(float4::Down * 5.f);
+				isJumping_ = false;
+				fallingSpeed_ = 0.f;
+
+				if (PlayerTopState::Firing == top_
+					|| PlayerTopState::ThrowingGrenade == top_)
+				{
+					leg_ = PlayerLegState::Standing;
+				}
+				else
+				{
+					leg_ = PlayerLegState::JumpingToStanding;
+				}
+
+				if (AimingDirection::Downward == direction_
+					|| AimingDirection::DownwardToForward == direction_
+					|| AimingDirection::ForwardToDownward == direction_)
+				{
+					direction_ = AimingDirection::Forward;
+				}
+	
+				if (PlayerTopState::FiringToAiming == top_ 
+					|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+				{
+					top_ = PlayerTopState::Aiming;
+				}
+			}
 		}
 		else
 		{
-			isJumping_ = true;
+			if (false == isJumping_)
+			{
+				leg_ = PlayerLegState::Falling;
+				isJumping_ = true;
+			}
 		}
 	}
 }

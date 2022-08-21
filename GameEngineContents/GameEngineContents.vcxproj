@@ -153,6 +153,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="TestIndicator.h" />
     <ClInclude Include="TestPlayer_Header.h" />
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="TestBackground.h">
@@ -181,6 +182,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="TestIndicator.cpp" />
     <ClCompile Include="TestPlayer.cpp">
       <SubType>
       </SubType>

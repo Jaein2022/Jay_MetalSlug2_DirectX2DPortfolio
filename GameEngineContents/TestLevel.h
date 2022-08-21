@@ -22,7 +22,6 @@ public:
 	void Start() override;
 	void Update(float _deltaTime) override;
 	void End() override;
-	PixelColor GetPixelColor(int _x, int _y);
 
 public:
 

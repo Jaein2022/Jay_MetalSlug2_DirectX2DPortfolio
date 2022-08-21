@@ -1,6 +1,7 @@
 #pragma once
 #include "TestPlayer_Header.h"
 
+class TestIndicator;
 class TestBackground;
 class TestPlayer : public GameEngineActor
 {
@@ -36,7 +37,9 @@ private:
 
 	void UpdatePlayerState(float _deltaTime);	//플레이어 전체 상태 업데이트.
 
-	void FallAndLand(float _deltaTime);
+	void Run(float _deltaTime);
+	void Fall(float _deltaTime);
+	void CheckFalling();
 
 
 
@@ -73,16 +76,15 @@ private:
 	bool isJumpKeyDown_;
 	bool isAttackKeyDown_;
 	bool isSpecialKeyDown_;
-	bool isTestKeyDown_;
 
-	GameEngineCollision* renderPivotPointer_;		//렌더피봇 표시기.
+	TestIndicator* renderPivotPointer_;		//렌더피봇 표시.
 
 
-	GameEngineCollision* upperMidfootPointer_;		//액터의 월드포지션 표시.
-	GameEngineCollision* playerWorldPosPointer_;	//액터의 월드포지션 표시.
-	GameEngineCollision* lowerMidfootPointer_;		//액터의 월드포지션 표시.
+	TestIndicator* upperLandingChecker_;		
+	TestIndicator* playerWorldPosPointer_;	//액터의 월드포지션 표시.
+	TestIndicator* lowerLandingChecker_;		
 
-	GameEngineCollision* frontPointer_;			//전방 콜리전. 경사지형 이동각도 판정.
+	TestIndicator* slopeChecker_;			//전방 콜리전. 경사지형 이동각도 판정.
 
 	PixelColor magenta_;
 

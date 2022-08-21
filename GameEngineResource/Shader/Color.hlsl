@@ -27,21 +27,12 @@ struct Output
 
 Output Color_VS(Input _input)
 {
-    Output newOutput = (Output)0;  //Output타입 변수 newOutput을 0으로 초기화.
-    
-    //HLSL의 경우에는 대부분의 상황에서 형변환이 가능하다.
+    Output newOutput = (Output)0;  //Output타입 변수 newOutput을 0으로 초기화. HLSL의 경우에는 대부분의 상황에서 형변환이 가능하다.
 
     newOutput.pos_ = mul(_input.pos_, worldViewProjectionMatrix_);  //WVP행렬 적용.
-    //왜 이 부분을 주석처리하면 상수버퍼가 사라지는거지??
-    //예상 이유 1: 이 부분이 주석처리되면 상수버퍼를 사용하지 않고, 사용하지 않는 상수버퍼는 컴파일되지 않아서 없어지는 것.
-    //->해결 방안: 어떤 식으로든 상수버퍼를 사용해본다.
-    
-    //newOutput.pos_.w = 1.f;     <- 이게 있으면 투영행렬의 결과값이 왜곡되어 어떤 오브젝트든 화면 전체를 뒤덮는다.
-    //이유가 뭘까?? 반드시 직접 계산해볼 것.
     
     newOutput.posLocal_ = _input.pos_; //WVP행렬 비적용. 최초 정점좌표(-0.5~0.5 사이 좌표) 유지.
     
-
 	return newOutput;
 }
 
