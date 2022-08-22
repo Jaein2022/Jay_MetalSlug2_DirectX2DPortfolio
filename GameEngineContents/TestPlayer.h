@@ -38,6 +38,7 @@ private:
 	void UpdatePlayerState(float _deltaTime);	//플레이어 전체 상태 업데이트.
 
 	void Run(float _deltaTime);
+	float CheckSlope();
 	void Fall(float _deltaTime);
 	void CheckFalling();
 
@@ -84,9 +85,14 @@ private:
 	TestIndicator* playerWorldPosPointer_;	//액터의 월드포지션 표시.
 	TestIndicator* lowerLandingChecker_;		
 
-	TestIndicator* slopeChecker_;			//전방 콜리전. 경사지형 이동각도 판정.
 
-	PixelColor magenta_;
+	TestIndicator* slopeChecker_;		
+	TestIndicator* ascendingSlopeChecker_;			
+	TestIndicator* flatSlopeChecker_;
+	TestIndicator* descendingSlopeChecker_;
+
+
+	const PixelColor magenta_;
 
 	const float initialJumpSpeed_;
 	float fallingSpeed_;

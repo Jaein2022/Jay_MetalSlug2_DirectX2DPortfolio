@@ -29,6 +29,7 @@ public:
 		const float4& _localScale = float4(5, 5, 1)
 	);
 	UINT GetColorValue_UINT();
+	
 
 public:
 	static void RenderingOnOffSwitch()

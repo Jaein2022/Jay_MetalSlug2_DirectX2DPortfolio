@@ -29,9 +29,13 @@ TestPlayer::TestPlayer()
 	playerWorldPosPointer_(nullptr),
 	lowerLandingChecker_(nullptr),
 	slopeChecker_(nullptr),
+	ascendingSlopeChecker_(nullptr),
+	flatSlopeChecker_(nullptr),
+	descendingSlopeChecker_(nullptr),
+	magenta_(255, 0, 255, 255),
 	initialJumpSpeed_(4.f),
 	fallingSpeed_(0.f),
-	runningSpeed_(4.f),
+	runningSpeed_(3.7f),
 	bulletCount_(-1),
 	grenadeCount_(0)
 {
@@ -47,21 +51,21 @@ void TestPlayer::Start()
 	this->GetTransform().SetWorldPosition(0, 0, 0);
 	this->GetTransform().SetWorldScale(1, 1, 1);
 
-	magenta_.r = 255;
-	magenta_.g = 0;
-	magenta_.b = 255;
-	magenta_.a = 255;
+	//magenta_.r = 255;
+	//magenta_.g = 0;
+	//magenta_.b = 255;
+	//magenta_.a = 255;
 
 	CreatePlayerAnimations();
 	CreatePlayerStates();
 
-	renderPivotPointer_ = TestIndicator::CreateIndicator(
-		"RenderPivotPointer",
-		this,
-		float4::Cyan,
-		float4(playerRenderPivotX_, playerRenderPivotY_, -5),
-		float4(5, 5, 1)
-	);
+	//renderPivotPointer_ = TestIndicator::CreateIndicator(
+	//	"RenderPivotPointer",
+	//	this,
+	//	float4::Cyan,
+	//	float4(playerRenderPivotX_, playerRenderPivotY_, -5),
+	//	float4(5, 5, 1)
+	//);
 
 	upperLandingChecker_ = TestIndicator::CreateIndicator(
 		"UpperLandingCheck",
@@ -90,12 +94,34 @@ void TestPlayer::Start()
 	slopeChecker_ = TestIndicator::CreateIndicator(
 		"SlopeChecker",
 		this,
-		float4::Red,
-		float4(5, 0, -5),
+		float4::Black,
+		float4(10, 0, -5),
 		float4(5, 5, 1)
 	);
 
+	ascendingSlopeChecker_ = TestIndicator::CreateIndicator(
+		"AscendingSlopeChecker",
+		this,
+		float4::Red,
+		float4(10, 10, -5),
+		float4(5, 5, 1)
+	);
 
+	flatSlopeChecker_ = TestIndicator::CreateIndicator(
+		"FlatSlopeChecker_",
+		this,
+		float4::Red,
+		float4(10, 0, -5),
+		float4(5, 5, 1)
+	);
+
+	descendingSlopeChecker_ = TestIndicator::CreateIndicator(
+		"DescendingSlopeChecker",
+		this,
+		float4::Red,
+		float4(10, -10, -5),
+		float4(5, 5, 1)
+	);
 
 
 
@@ -108,8 +134,6 @@ void TestPlayer::Update(float _deltaTime)
 	CheckFalling();
 	UpdateInputInfo();
 	ConvertInputToPlayerStates();
-
-	//FallAndLand(_deltaTime);
 
 	UpdatePlayerState(_deltaTime);
 
@@ -177,7 +201,10 @@ void TestPlayer::UpdateInputInfo()
 
 	if (true == GameEngineInput::GetInst()->IsDown("Test"))
 	{
-		TestIndicator::RenderingOnOffSwitch();
+		//TestIndicator::RenderingOnOffSwitch();
+
+		//this->GetTransform().PixLocalNegativeX();
+
 	}
 }
 
@@ -322,6 +349,8 @@ void TestPlayer::ConvertInputToPlayerStates()
 
 	case -1:	//좌측 입력.
 	{
+		this->GetTransform().PixLocalNegativeX();
+
 		if ( (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
 			&& (PlayerTopState::Firing != top_ && PlayerTopState::ThrowingGrenade != top_) )
 		{
@@ -342,6 +371,8 @@ void TestPlayer::ConvertInputToPlayerStates()
 
 	case 1:		//우측 입력.
 	{
+		this->GetTransform().PixLocalPositiveX();
+
 		if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
 		{
 			leg_ = PlayerLegState::Ducking;
@@ -419,22 +450,23 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else
 		{
-			////착지시 스테이트 변화. 점프&픽셀충돌 완성되면 이전 혹은 삭제.
+			////착지시 스테이트 변화. 점프 텍스처 피벗 맞출때만 복원.
 			//if (true == isJumping_)
 			//{
 			//	isJumping_ = false;
 			//	if (PlayerLegState::VerticalJumping == leg_
-			//		|| PlayerLegState::ForwardJumping == leg_)
+			//		|| PlayerLegState::ForwardJumping == leg_
+			//		|| PlayerLegState::Falling == leg_)
 			//	{
 			//		leg_ = PlayerLegState::JumpingToStanding;
-
+			//
 			//		if (AimingDirection::Downward == direction_ 
 			//			|| AimingDirection::DownwardToForward == direction_)
 			//		{
 			//			direction_ = AimingDirection::Forward;
 			//		}
 			//	}
-			//}
+			//} 
 		}
 	}
 
@@ -557,19 +589,72 @@ void TestPlayer::Run(float _deltaTime)
 	this->GetTransform().SetWorldMove(
 		float4::Right * horizontalInputValue_ * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
 
+	this->GetTransform().SetWorldMove(
+		float4::Up * CheckSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
+}
+
+float TestPlayer::CheckSlope()
+{
 	if (false == isJumping_)
 	{
+		int beginPosY = 0;
+		int endPosY = 0;
+		int slopeCheckPosY = 0;
 
+		if (magenta_.color_ == ascendingSlopeChecker_->GetColorValue_UINT()
+			&& magenta_.color_ == flatSlopeChecker_->GetColorValue_UINT()
+			&& magenta_.color_ == descendingSlopeChecker_->GetColorValue_UINT())
+		{
+			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY() + 5;
+			endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+		}
+		else if (magenta_.color_ == flatSlopeChecker_->GetColorValue_UINT()
+			&& magenta_.color_ == descendingSlopeChecker_->GetColorValue_UINT())
+		{
+			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
+		}
+		else if (magenta_.color_ == descendingSlopeChecker_->GetColorValue_UINT())
+		{
+			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
+			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+		}
+		else
+		{
+			beginPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY() - 5;
+		}
+
+		for (slopeCheckPosY = beginPosY; slopeCheckPosY >= endPosY; slopeCheckPosY--)
+		{
+			slopeChecker_->GetTransform().SetLocalPosition(
+				slopeChecker_->GetTransform().GetLocalPosition().IX(),
+				slopeCheckPosY,
+				-5
+			);
+			if (magenta_.color_ == slopeChecker_->GetColorValue_UINT())
+			{
+				break;
+			}
+		}
+		
+		return static_cast<float>(slopeCheckPosY) / abs(slopeChecker_->GetTransform().GetLocalPosition().x);
+		//플레이어가 앞으로 1픽셀 전진했을때 위로는 몇픽셀 이동해야하는지에 대한 값 반환.
+	}
+	else
+	{
+		MsgBoxAssert("점프중일때는 의미 없는 기능입니다.");
+		return 0.f;
 	}
 }
 
 void TestPlayer::Fall(float _deltaTime)
 {
 	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
-
+	
 	this->GetTransform().SetWorldMove(
 		float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
-
+	
 	this->GetTransform().SetWorldMove(
 		float4::Right * horizontalInputValue_ * _deltaTime * TestLevel::playSpeed_);
 }

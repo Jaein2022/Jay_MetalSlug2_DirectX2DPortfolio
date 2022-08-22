@@ -488,7 +488,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1212
 		"Pistol_Running_Aiming_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -503,7 +503,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1214
 		"Pistol_Running_Aiming_ForwardToUpward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -518,7 +518,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1215
 		"Pistol_Running_Aiming_UpwardToForward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -533,7 +533,7 @@ void TestPlayer::CreatePlayerStates()
  
 	playerStateManager_.CreateState(		//1221
 		"Pistol_Running_Firing_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -548,7 +548,7 @@ void TestPlayer::CreatePlayerStates()
 		
 	playerStateManager_.CreateState(		//1222	
 		"Pistol_Running_Firing_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -563,7 +563,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1231
 		"Pistol_Running_FiringToAiming_Forward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -578,7 +578,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1232
 		"Pistol_Running_FiringToAiming_Upward",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -593,7 +593,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1241
 		"Pistol_Running_ThrowingGrenade",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -608,7 +608,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1251
 		"Pistol_Running_ThrowingGrenadeToAiming",
-		nullptr,
+		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
