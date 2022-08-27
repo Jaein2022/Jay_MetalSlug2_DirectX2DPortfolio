@@ -293,7 +293,7 @@ public:
 		float4 newLocalPosition = _worldPosition;
 		if (nullptr != parentTransform_)
 		{
-			newLocalPosition *= float4x4::InverseReturn(parentTransform_->data_.worldWorldMatrix_);
+			newLocalPosition *= parentTransform_->data_.worldWorldMatrix_.InverseReturn();
 		}
 
 		CalculateWorldPosition(newLocalPosition);
@@ -303,7 +303,7 @@ public:
 		float4 newLocalPosition = float4( _worldPositionX, _worldPositionY, _worldPositionZ );
 		if (nullptr != parentTransform_)
 		{
-			newLocalPosition *= float4x4::InverseReturn(parentTransform_->data_.worldWorldMatrix_);
+			newLocalPosition *= parentTransform_->data_.worldWorldMatrix_.InverseReturn();
 		}
 
 		CalculateWorldPosition(newLocalPosition);
@@ -313,7 +313,7 @@ public:
 		float4 newLocalPosition = float4( _worldPositionX, _worldPositionY, _worldPositionZ );
 		if (nullptr != parentTransform_)
 		{
-			newLocalPosition *= float4x4::InverseReturn(parentTransform_->data_.worldWorldMatrix_);
+			newLocalPosition *= parentTransform_->data_.worldWorldMatrix_.InverseReturn();
 		}
 
 		CalculateWorldPosition(newLocalPosition);
@@ -400,28 +400,28 @@ public:
 
 	inline float4 GetForwardVector() const
 	{
-		return float4::NormalizeReturn(data_.worldWorldMatrix_.arrVector[2]);
+		return data_.worldWorldMatrix_.arrVector[2].NormalizeReturn();
 	}
 	inline float4 GetUpVector() const
 	{
-		return float4::NormalizeReturn(data_.worldWorldMatrix_.arrVector[1]);
+		return data_.worldWorldMatrix_.arrVector[1].NormalizeReturn();
 	}
 	inline float4 GetRightVector() const
 	{
-		return float4::NormalizeReturn(data_.worldWorldMatrix_.arrVector[0]);
+		return data_.worldWorldMatrix_.arrVector[0].NormalizeReturn();
 	}
 
 	inline float4 GetBackVector() const
 	{
-		return -(float4::NormalizeReturn(data_.worldWorldMatrix_.arrVector[2]));
+		return -(data_.worldWorldMatrix_.arrVector[2].NormalizeReturn());
 	}
 	inline float4 GetDownVector() const
 	{
-		return -(float4::NormalizeReturn(data_.worldWorldMatrix_.arrVector[1]));
+		return -(data_.worldWorldMatrix_.arrVector[1].NormalizeReturn());
 	}
 	inline float4 GetLeftVector() const
 	{
-		return -(float4::NormalizeReturn(data_.worldWorldMatrix_.arrVector[0]));
+		return -(data_.worldWorldMatrix_.arrVector[0].NormalizeReturn());
 	}
 
 	void SetViewMatrix(const float4x4& _viewMatrix)

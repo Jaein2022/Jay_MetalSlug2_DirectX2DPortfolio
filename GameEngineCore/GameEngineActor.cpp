@@ -66,14 +66,14 @@ void GameEngineActor::SetParent(GameEngineUpdateObject* _newParent)
 	}
 }
 
-void GameEngineActor::Start()
-{
-}
-
-void GameEngineActor::Update(float _deltaTime)
-{
-}
-
-void GameEngineActor::End()
-{
-}
+//void GameEngineActor::Start()
+//{
+//}
+//
+//void GameEngineActor::Update(float _deltaTime)
+//{
+//}
+//
+//void GameEngineActor::End()
+//{
+//}

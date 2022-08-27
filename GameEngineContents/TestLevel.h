@@ -1,5 +1,7 @@
 #pragma once
 
+class TestPointer;
+class TestPointerBase;
 class TestBackground;
 class TestPlayer;
 class TestLevel: public GameEngineLevel
@@ -31,11 +33,15 @@ public:
 	static const float gravity_;
 	static const float playSpeed_;
 
+
 private:
-	
-	
+	void UpdateCameraActorMovement(float _deltaTime);
+
+private:
 	TestPlayer* testPlayer_;
 	TestBackground* testBackground_;
 
+	TestPointer* currentFocusPointer_;
+	TestPointerBase* destFocus_;
 };
 

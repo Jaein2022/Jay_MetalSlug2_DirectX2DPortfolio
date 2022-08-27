@@ -446,13 +446,17 @@ public:
 	}
 
 	//정규화: 벡터의 방향은 그대로 유지하면서 길이만 1로 줄이는 것.
-	const float4& Normalize()
+	void Normalize()
 	{
 		this->directXVector_ = DirectX::XMVector3Normalize(this->directXVector_);
-		return *this;
 	}
 
 	//정규화: 벡터의 방향은 그대로 유지하면서 길이만 1로 줄이는 것.
+	float4 NormalizeReturn() const 
+	{
+		return DirectX::XMVector3Normalize(this->directXVector_);
+	}
+
 	static float4 NormalizeReturn(const float4& _vector)
 	{
 		return DirectX::XMVector3Normalize(_vector.directXVector_);
@@ -765,7 +769,6 @@ public:
 	{
 		float4 determinantVector = DirectX::XMMatrixDeterminant(_matrix.directXMatrix_);
 
-
 		float4x4 invertedMatrix = DirectX::XMMatrixInverse(
 			&determinantVector.directXVector_,	//대상 행렬의 행렬식.
 			_matrix.directXMatrix_					//역행렬을 구할 대상 행렬.
@@ -778,11 +781,10 @@ public:
 	{
 		float4 determinantVector = DirectX::XMMatrixDeterminant(this->directXMatrix_);
 
-		float4x4 invertedMatrix = DirectX::XMMatrixInverse(
+		return DirectX::XMMatrixInverse(
 			&determinantVector.directXVector_,	//대상 행렬의 행렬식.
 			this->directXMatrix_					//역행렬을 구할 대상 행렬.
 		);								//행렬식이 0이라서 역행렬이 없거나 무한개라면 무한행렬을 반환한다.
-		return invertedMatrix;
 	}
 
 	//크기 변환.

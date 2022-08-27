@@ -2,7 +2,7 @@
 #include "TestPlayer.h"
 #include "TestLevel.h"
 #include "TestBackground.h"
-#include "TestIndicator.h"
+#include "TestPointer.h"
 
 TestPlayer::TestPlayer()
 	: currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
@@ -65,7 +65,7 @@ void TestPlayer::Start()
 	CreatePlayerAnimations();
 	CreatePlayerStates();
 
-	//renderPivotPointer_ = TestIndicator::CreateIndicator(
+	//renderPivotPointer_ = TestPointer::CreatePointer(
 	//	"RenderPivotPointer",
 	//	this,
 	//	float4::Cyan,
@@ -73,7 +73,7 @@ void TestPlayer::Start()
 	//	float4(5, 5, 1)
 	//);
 
-	upperLandingChecker_ = TestIndicator::CreateIndicator(
+	upperLandingChecker_ = TestPointer::CreatePointer(
 		"UpperLandingCheck",
 		this,
 		float4::Black,
@@ -81,7 +81,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	playerWorldPosPointer_ = TestIndicator::CreateIndicator(
+	playerWorldPosPointer_ = TestPointer::CreatePointer(
 		"PlayerWorldPosPointer",
 		this,
 		float4::Red,
@@ -89,7 +89,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);	
 	
-	lowerLandingChecker_ = TestIndicator::CreateIndicator(
+	lowerLandingChecker_ = TestPointer::CreatePointer(
 		"LowerLandingChecker",
 		this,
 		float4::Black,
@@ -97,7 +97,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	slopeChecker_ = TestIndicator::CreateIndicator(
+	slopeChecker_ = TestPointer::CreatePointer(
 		"SlopeChecker",
 		this,
 		float4::Red,
@@ -105,7 +105,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	ascendingSlopeChecker_ = TestIndicator::CreateIndicator(
+	ascendingSlopeChecker_ = TestPointer::CreatePointer(
 		"AscendingSlopeChecker",
 		this,
 		float4::Black,
@@ -113,7 +113,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	flatSlopeChecker_ = TestIndicator::CreateIndicator(
+	flatSlopeChecker_ = TestPointer::CreatePointer(
 		"FlatSlopeChecker_",
 		this,
 		float4::Black,
@@ -121,7 +121,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	descendingSlopeChecker_ = TestIndicator::CreateIndicator(
+	descendingSlopeChecker_ = TestPointer::CreatePointer(
 		"DescendingSlopeChecker",
 		this,
 		float4::Black,
@@ -213,7 +213,7 @@ void TestPlayer::UpdateInputInfo()
 
 	if (true == GameEngineInput::GetInst()->IsDown("Test"))
 	{
-		//TestIndicator::RenderingOnOffSwitch();
+		//TestPointer::RenderingOnOffSwitch();
 
 		//this->GetTransform().PixLocalNegativeX();
 

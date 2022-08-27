@@ -56,9 +56,9 @@ public:
 
 
 protected:
-	virtual void Start() override;
-	virtual void Update(float _deltaTime) override;
-	virtual void End() override;
+	//virtual void Start() override;
+	//virtual void Update(float _deltaTime) override;
+	//virtual void End() override;
 
 protected:
 	template<typename ComponentType>

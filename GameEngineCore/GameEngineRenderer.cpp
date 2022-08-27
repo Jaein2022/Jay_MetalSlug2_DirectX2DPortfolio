@@ -5,7 +5,8 @@
 #include "GameEngineCamera.h"
 
 GameEngineRenderer::GameEngineRenderer()
-	: cameraOrder_(CameraOrder::UICamera),
+	: camera_(nullptr),
+	cameraOrder_(CameraOrder::UICamera),
 	renderOption_(),
 	renderingOrder_(0)
 {
