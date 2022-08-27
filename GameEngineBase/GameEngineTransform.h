@@ -135,6 +135,12 @@ public:
 
 
 public:
+	//점차적으로 특정 오브젝트의 크기를 변화시키는 함수.
+	inline void AddLocalScale(const float4& _scaleValue)
+	{
+		SetLocalScale(data_.localScaleVector_ + _scaleValue);
+	}
+
 	inline void SetLocalScale(const float4& _localScale)
 	{
 		CalculateWorldScale(_localScale);
@@ -233,6 +239,24 @@ public:
 			newLocalScaleZ
 		);
 	}
+	inline void SetWorldScale(int _worldScaleX, int _worldScaleY, int _worldScaleZ)
+	{
+		float newLocalScaleX = static_cast<float>(_worldScaleX);
+		float newLocalScaleY = static_cast<float>(_worldScaleY);
+		float newLocalScaleZ = static_cast<float>(_worldScaleZ);
+		if (nullptr != parentTransform_)
+		{
+			newLocalScaleX /= parentTransform_->data_.worldScaleVector_.x;
+			newLocalScaleY /= parentTransform_->data_.worldScaleVector_.y;
+			newLocalScaleZ /= parentTransform_->data_.worldScaleVector_.z;
+		}
+
+		CalculateWorldScale(
+			newLocalScaleX,
+			newLocalScaleY,
+			newLocalScaleZ
+		);
+	}
 
 	inline void SetWorldRotation(const float4& _worldRotation)
 	{
@@ -276,7 +300,17 @@ public:
 	}
 	inline void SetWorldPosition(float _worldPositionX, float _worldPositionY, float _worldPositionZ)
 	{
-		float4 newLocalPosition = { _worldPositionX, _worldPositionY, _worldPositionZ };
+		float4 newLocalPosition = float4( _worldPositionX, _worldPositionY, _worldPositionZ );
+		if (nullptr != parentTransform_)
+		{
+			newLocalPosition *= float4x4::InverseReturn(parentTransform_->data_.worldWorldMatrix_);
+		}
+
+		CalculateWorldPosition(newLocalPosition);
+	}
+	inline void SetWorldPosition(int _worldPositionX, int _worldPositionY, int _worldPositionZ)
+	{
+		float4 newLocalPosition = float4( _worldPositionX, _worldPositionY, _worldPositionZ );
 		if (nullptr != parentTransform_)
 		{
 			newLocalPosition *= float4x4::InverseReturn(parentTransform_->data_.worldWorldMatrix_);

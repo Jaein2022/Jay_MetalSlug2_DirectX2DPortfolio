@@ -37,18 +37,6 @@ public:
 
 public:
 
-	template<typename ComponentType>
-	ComponentType* CreateComponent(const std::string& _componentName = "")
-	{
-		GameEngineComponent* newComponent = new ComponentType();
-
-		newComponent->SetParent(this);
-		newComponent->SetName(_componentName);
-		newComponent->Start();
-
-		return dynamic_cast<ComponentType*>(newComponent);
-	}
-
 	inline GameEngineLevel* GetLevel()
 	{
 		return parentLevel_;
@@ -71,6 +59,20 @@ protected:
 	virtual void Start() override;
 	virtual void Update(float _deltaTime) override;
 	virtual void End() override;
+
+protected:
+	template<typename ComponentType>
+	ComponentType* CreateComponent(const std::string& _componentName = "")
+	{
+		GameEngineComponent* newComponent = new ComponentType();
+
+		newComponent->SetParent(this);
+		newComponent->SetName(_componentName);
+		newComponent->Start();
+
+		return dynamic_cast<ComponentType*>(newComponent);
+	}
+
 
 private:
 	void SetLevel(GameEngineLevel* _level)

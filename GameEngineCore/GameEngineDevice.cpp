@@ -11,7 +11,7 @@ GameEngineRenderTarget* GameEngineDevice::backBufferRenderTarget_ = nullptr;
 void GameEngineDevice::Initialize()
 {
 	CreateDevice();
-	CreateSwapChain();
+	//CreateSwapChain();
 }
 
 void GameEngineDevice::CreateDevice()

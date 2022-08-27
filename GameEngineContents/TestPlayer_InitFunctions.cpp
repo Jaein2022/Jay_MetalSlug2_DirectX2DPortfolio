@@ -4,12 +4,15 @@
 void TestPlayer::CreatePlayerAnimations()
 {
 	legRenderer_ = CreateComponent<GameEngineTextureRenderer>("RegRenderer");
-	legRenderer_->GetTransform().SetLocalScale(300, 300, 1);
-	legRenderer_->SetPivot(PivotMode::Custom);
+	legRenderer_->GetTransform().SetLocalScale(600, 600, 1);
+	legRenderer_->SetPivot(PivotMode::Center);
+	//legRenderer_->SetPivot(PivotMode::Custom);
+	//legRenderer_->SetPivotToVector(float4(0.0f, 0.0f, 0.f, 0.0f));
+
 	legRenderer_->GetTransform().SetLocalPosition(
-		playerRenderPivotX_,
-		playerRenderPivotY_,
-		playerRenderPivotZ_ + 5
+		playerRendererLocalPosX_,
+		playerRendererLocalPosY_,
+		playerRendererLocalPosZ_ + 5
 	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Leg.png")->GetCutCount())
@@ -19,7 +22,7 @@ void TestPlayer::CreatePlayerAnimations()
 	legRenderer_->SetTexture("Tarma_Leg.png");
 
 	legRenderer_->CreateFrameAnimation_CutTexture("Standing",
-		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 0.5f, true));
+		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 1.f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("Running",
 		FrameAnimation_Desc("Tarma_Leg.png", 10, 21, 0.05f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping",
@@ -45,12 +48,12 @@ void TestPlayer::CreatePlayerAnimations()
 
 
 	topPistolRenderer_ = CreateComponent<GameEngineTextureRenderer>("TopPistolRenderer");
-	topPistolRenderer_->GetTransform().SetLocalScale(300, 300, 1);
-	topPistolRenderer_->SetPivot(PivotMode::Custom);
+	topPistolRenderer_->GetTransform().SetLocalScale(600, 600, 1);
+	topPistolRenderer_->SetPivot(PivotMode::Center);
 	topPistolRenderer_->GetTransform().SetLocalPosition(
-		playerRenderPivotX_,
-		playerRenderPivotY_,
-		playerRenderPivotZ_
+		playerRendererLocalPosX_,
+		playerRendererLocalPosY_,
+		playerRendererLocalPosZ_
 	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Top_Pistol.png")->GetCutCount())
@@ -218,12 +221,12 @@ void TestPlayer::CreatePlayerAnimations()
 
 
 	wholePistolRenderer_ = CreateComponent<GameEngineTextureRenderer>("WholePistolRenderer");
-	wholePistolRenderer_->GetTransform().SetLocalScale(300, 300, 1);
-	wholePistolRenderer_->SetPivot(PivotMode::Custom);
+	wholePistolRenderer_->GetTransform().SetLocalScale(600, 600, 1);
+	wholePistolRenderer_->SetPivot(PivotMode::Center);
 	wholePistolRenderer_->GetTransform().SetLocalPosition(
-		playerRenderPivotX_,
-		playerRenderPivotY_,
-		playerRenderPivotZ_
+		playerRendererLocalPosX_,
+		playerRendererLocalPosY_,
+		playerRendererLocalPosZ_
 	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Whole_Pistol.png")->GetCutCount())

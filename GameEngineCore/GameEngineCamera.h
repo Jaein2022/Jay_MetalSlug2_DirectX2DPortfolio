@@ -11,11 +11,12 @@ enum class CameraProjectionMode
 class GameEngineCamera : public GameEngineTransformComponent
 {
 	//카메라. 
-	//월드공간에 배치된 오브젝트들이 뷰 스페이스라고 하는 가상의 카메라 시야범위 안에 들어 왔을때, 
+	//월드공간의 오브젝트들이 뷰 스페이스라고 하는 가상의 카메라 시야범위 안에 들어 왔을때, 
 	// 오브젝트들을 구성하는 정점들을 뷰행렬에 맞춰서 재배치하고 투영행렬에 맞춰서 축소한 후
-	// 뷰포트행렬대로 다시 확대한 만큼의 정점 좌표를 계산해서 렌더러에게 그리게 하는 컴포넌트.
+	// 뷰포트행렬대로 다시 확대한 만큼의 정점 좌표를 계산해서 변형된 대로 그리는 컴포넌트.
 
 	friend GameEngineLevel;
+	friend GameEngineRenderer;
 
 public:
 
@@ -66,6 +67,10 @@ public:
 		return projectionMatrix_;
 	}
 
+	inline class GameEngineRenderTarget* GetCameraRenderTarget()
+	{
+		return cameraRenderTarget_;
+	}
 
 protected:
 	void Start();
@@ -76,7 +81,7 @@ private:
 	void ReleaseRenderer(float _deltaTime);
 	void Update(float _dletaTime) override;
 	void OverRenderer(GameEngineCamera* _nextCamera);		//렌더러를 다음 레벨의 카메라로 옮기는 함수.
-
+	void ChangeRenderingOrder(GameEngineRenderer* _renderer, int _newRenderingOrder);
 
 private:
 	std::map<int, std::list<class GameEngineRenderer*>> allRenderers_;
@@ -139,6 +144,6 @@ private:
 	float4 prevMousePosition_;	//이전 마우스포인터 위치.
 	float4 mouseDirection_;		//마우스포인터가 이동한 방향.
 
-
+	class GameEngineRenderTarget* cameraRenderTarget_;
 };
 

@@ -3,9 +3,15 @@
 
 enum class PivotMode
 {
+	Top,		//상단중앙.
 	Center,		//중심.
-	LeftTop,	//좌상단.
 	Bot,		//하단중앙.
+	Left,		//좌측중앙.
+	Right,		//우측중앙.
+	LeftTop,	//좌상단.
+	RightTop,	//우상단.
+	LeftBot,	//좌하단.
+	RightBot,	//우하단.
 	Custom,		//임의지점.
 	None
 };
@@ -16,14 +22,21 @@ enum class ScaleMode
 	Custom,
 };
 
-struct ColorData
+struct PixelData
 {
 	float4 mulColor_;
 	float4 plusColor_;
+	float4 slice_;
 
-	ColorData() : mulColor_(float4::White), plusColor_(float4::Zero)
+	PixelData() : mulColor_(float4::White), plusColor_(float4::Zero), slice_(float4::Zero)
 	{
 	}
+};
+
+struct AtlasData
+{
+	float4 frameData_;
+	float4 pivotPos_;
 };
 
 class FrameAnimation_Desc
@@ -40,11 +53,14 @@ public:
 
 	std::vector<UINT> frames_;
 
+	class GameEngineTextureRenderer* renderer_;
+
 	FrameAnimation_Desc()
 		: isLoop_(false),
-		interval_(0.1f),
+		interval_(1.0f),
 		curFrame_(-1),
-		frameTime_(0.f)
+		frameTime_(0.f),
+		renderer_(nullptr)
 	{
 	}
 
@@ -53,7 +69,8 @@ public:
 		isLoop_(_isLoop),
 		interval_(_interval),
 		curFrame_(_start),
-		frameTime_(0.f)
+		frameTime_(0.f),
+		renderer_(nullptr)
 	{
 		for (UINT frameIndex = _start; frameIndex <= _end; frameIndex++)
 		{
@@ -67,7 +84,8 @@ public:
 		interval_(_interval),
 		curFrame_(0),
 		frames_(_frames),
-		frameTime_(0.f)
+		frameTime_(0.f),
+		renderer_(nullptr)
 	{
 	}
 
@@ -76,7 +94,8 @@ public:
 		isLoop_(_isLoop),
 		interval_(_interval),
 		curFrame_(0),
-		frameTime_(0.f)
+		frameTime_(0.f),
+		renderer_(nullptr)
 	{
 	}
 };
@@ -148,6 +167,7 @@ private:
 public:
 	void SetTexture(const std::string& _textureName);	//폴더텍스처용.
 	void SetTexture(GameEngineTexture* _texture);		//폴더텍스처용.
+	void SetFolderTextureToIndex(const std::string& _textureName, UINT _index);
 	void SetTexture(const std::string& _textureName, int _index);	//아틀라스텍스처용.
 	void SetTexture(GameEngineTexture* _texture, int _index);		//아틀라스텍스처용.
 
@@ -174,7 +194,11 @@ public:
 
 	void CurAnimationReset();	
 	void CurAnimationSetStartPivotFrame(int _setFrame);	//애니메이션 중 내가 원하는 프레임으로 옮기는 함수.
+	
 	void CurAnimationPauseSwitch();
+	void CurAnimationPauseOn();
+	void CurAnimationPauseOff();
+	bool IsCurAnimationPaused();
 
 	GameEngineTexture* GetCurrentTexture() const;
 
@@ -255,9 +279,18 @@ public:
 		return scaleRatio_;
 	}
 
-	ColorData& GetColorData()
+	PixelData& GetPixelData()
 	{
-		return colorData_;
+		return pixelDataInst_;
+	}
+
+	bool IsCurAnimation()
+	{
+		if (nullptr == currentAnimation_)
+		{
+			return false;
+		}
+		return true;
 	}
 
 
@@ -272,7 +305,6 @@ private:
 private:
 	PivotMode pivotMode_;				//현재 사용중인 텍스처의 렌더링 기준점.
 	GameEngineTexture* currentTexture_;	//현재 사용중인 텍스처.
-	float4 frameData_;					//현재 사용중인 텍스처에서 렌더링되는 범위 정보.
 
 	std::map<std::string, FrameAnimation> allAnimations_;	//<-왜 값형??
 	FrameAnimation* currentAnimation_;
@@ -280,6 +312,7 @@ private:
 	ScaleMode scaleMode_;
 	float scaleRatio_;
 
-	ColorData colorData_;
+	PixelData pixelDataInst_;
+	AtlasData atlasDataInst_;
 };
 

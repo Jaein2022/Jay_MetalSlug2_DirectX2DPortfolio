@@ -17,6 +17,12 @@ GameEngineShaderResourceHelper::~GameEngineShaderResourceHelper()
 
 void GameEngineShaderResourceHelper::ResourceCheck(GameEngineRenderingPipeLine* _pipeLine)
 {
+	if (nullptr == _pipeLine)
+	{
+		MsgBoxAssert("렌더링 파이프라인이 없습니다.");
+		return;
+	}
+
 	ShaderCheck(_pipeLine->GetVertexShader());
 	ShaderCheck(_pipeLine->GetPixelShader());
 }
@@ -94,11 +100,10 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_Link(
 
 	for (; nameStartIter != nameEndIter; ++nameStartIter)
 	{
-		//트랜스폼이 바뀌면 변경된 정보가 자동 갱신된다.
-
 		nameStartIter->second.setData_ = _data;
 		nameStartIter->second.size_ = _size;
-		//얕은복사
+		//상수버퍼의 주소값과 크기를 얕은 복사로 셰이더리소스헬퍼에게 넘겨 저장하게 한다.
+		//상수버퍼의 정보가 바뀌면 변경된 정보가 자동 갱신된다.
 	}
 
 }
@@ -127,8 +132,6 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_New(const std::string& _n
 
 	for (; nameStartIter != nameEndIter; ++nameStartIter)
 	{
-		//트랜스폼이 바뀌면?? 바뀌면 뭐??
-
 		if (0 == nameStartIter->second.originalData_.size()
 			|| nameStartIter->second.originalData_.size() != _size)
 		{
@@ -172,7 +175,7 @@ GameEngineTexture* GameEngineShaderResourceHelper::SetTexture(
 {
 	std::string uppercaseTextureSetterName = GameEngineString::ToUpperReturn(_textureSetterName);
 
-	if (false == IsTexture(uppercaseTextureSetterName))
+	if (false == this->IsTexture(uppercaseTextureSetterName))
 	{
 		MsgBoxAssertString(_textureSetterName + ": 이런 이름의 텍스쳐 세터가 없습니다.");
 		return nullptr;
@@ -228,7 +231,6 @@ GameEngineSampler* GameEngineShaderResourceHelper::SetSampler(const std::string&
 
 
 	return SetSampler(_samplerSetterName, GameEngineSampler::Find(_samplerName));
-
 }
 
 void GameEngineShaderResourceHelper::AllResourcesSetting()
@@ -293,7 +295,6 @@ void GameEngineShaderResourceHelper::BindConstantBuffer(GameEngineConstantBuffer
 		MsgBoxAssert("상수버퍼가 존재하지 않습니다.");
 		return;
 	}
-
 
 	switch (_cBufferSetter.parentShaderType_)
 	{
@@ -360,8 +361,6 @@ void GameEngineShaderResourceHelper::BindTexture(GameEngineTextureSetter& _textu
 		MsgBoxAssert("아직 준비되지 않은 셰이더 타입입니다.");
 		return;
 	}
-
-
 }
 
 void GameEngineShaderResourceHelper::BindSampler(GameEngineSamplerSetter& _samplerSetter, GameEngineSampler* _sampler)

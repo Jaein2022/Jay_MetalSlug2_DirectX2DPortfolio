@@ -36,13 +36,19 @@ private:
 	GameEngineStatusWindow& operator=(const GameEngineStatusWindow& _other) = delete;
 	GameEngineStatusWindow& operator=(const GameEngineStatusWindow&& _other) = delete;
 
+public:
+	static void AddDebugRenderTarget(
+		const std::string& _renderTargetName,
+		class GameEngineRenderTarget* _renderTarget);
+
+
 private:
 	void Initialize(class GameEngineLevel* _level) override;
 	void OnGUI(class GameEngineLevel* _level, float _deltaTime) override;
 
 private:
 	std::list<GameEngineImageShotWindow*> imageshotWindows_;
-
+	static std::map<std::string, class GameEngineRenderTarget*> debugRenderTargets_;
 };
 
 

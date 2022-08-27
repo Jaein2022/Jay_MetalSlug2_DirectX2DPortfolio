@@ -2,7 +2,7 @@
 
 class TestBackground: public GameEngineActor
 {
-	//이 클래스의 존재 이유: 픽셀충돌 테스트.
+	//이 클래스의 존재 이유:
 
 public:
 	TestBackground();

@@ -1,7 +1,18 @@
 #pragma once
 #include "GameEngineRes.h"
+#include "GameEngineShaderResourceHelper.h"
 
-class GameEngineDepthStencilTexture;
+class GameEnginePostEffect
+{
+public:
+	virtual void EffectInit() = 0;
+	virtual void Effect(class GameEngineRenderTarget* _renderTarget) = 0;
+
+	virtual ~GameEnginePostEffect()
+	{
+	};
+};
+
 class GameEngineTexture;
 class GameEngineRenderTarget : public GameEngineRes<GameEngineRenderTarget>
 {
@@ -31,36 +42,56 @@ private:
 	GameEngineRenderTarget& operator=(const GameEngineRenderTarget& _other) = delete;
 	GameEngineRenderTarget& operator=(const GameEngineRenderTarget&& _other) = delete;
 
-
 public:
 	static GameEngineRenderTarget* Create(const std::string& _name);
 	static GameEngineRenderTarget* Create();
 
 	void CreateRenderTargetTexture(	//렌더타겟으로 쓸 게임엔진텍스처 객체를 생성, 저장하는 함수.
 		ID3D11Texture2D* _texture,
-		const float4& _clearColor
-	);
+		const float4& _clearColor);
 	void CreateRenderTargetTexture(
 		const float4& _size,
-		const float4& _color
-	);
+		const float4& _color);
 	void CreateRenderTargetTexture(
 		const float4& _size,
 		DXGI_FORMAT _format,
-		const float4& _color
-	);
+		const float4& _color);
 	void CreateRenderTargetTexture(
 		D3D11_TEXTURE2D_DESC _desc,
-		const float4& _color
-	);
+		const float4& _color);
 	void CreateRenderTargetTexture(
 		GameEngineTexture* _texture,
-		const float4& _color
-	);
+		const float4& _color);
+	GameEngineTexture* GetRenderTargetTexture(size_t _index);
 
 	void CreateDepthTexture(int _index);
+	void SetDepthTexture(GameEngineTexture* _depthTexture);
+
 	void Clear();	//교체된 전면버퍼 렌더타겟뷰를 한 색상으로 덮어서 초기화하는 함수.
 	void Setting();	//해당 리소스를 렌더링 파이프라인에 연결하는 함수.
+
+	void Copy(GameEngineRenderTarget* _otherRenderTarget, int _index = 0);
+	void Merge(GameEngineRenderTarget* _otherRenderTarget, int _index = 0);
+	void Effect(	//기존 렌더타겟에, 다른 렌더타겟에 있던 픽셀정보들을 옮겨붙이는 함수. 
+		GameEngineRenderingPipeLine* _otherPipeLine,
+		GameEngineShaderResourceHelper* _shaderResourceHelper);
+	void Effect(class GameEngineRenderSet& _renderSet);
+	void EffectProcess();
+
+
+public:
+	GameEngineTexture* GetDepthTexture()
+	{
+		return depthTexture_;
+	}
+
+	template<typename EffectType>
+	void AddEffect()
+	{
+		EffectType* newEffect = new EffectType();
+		newEffect->EffectInit();
+		allEffects_.push_back(newEffect);
+	}
 
 private:
 	std::vector<GameEngineTexture*> renderTargets_;
@@ -80,7 +111,11 @@ private:
 	ID3D11DepthStencilView* depthStencilView_;
 	//
 
-	GameEngineDepthStencilTexture* depthTexture_;
-	//
+	GameEngineTexture* depthTexture_;
+
+	GameEngineShaderResourceHelper mergeShaderResourceHelper_;
+	GameEngineRenderingPipeLine* mergePipeLine_;
+
+	std::list<GameEnginePostEffect*> allEffects_;
 
 };

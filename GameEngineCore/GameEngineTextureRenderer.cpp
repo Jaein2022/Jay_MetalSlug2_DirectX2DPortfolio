@@ -11,53 +11,56 @@ void FrameAnimation::Reset()
 
 void FrameAnimation::Update(float _deltaTime)
 {
-	info_.frameTime_ += _deltaTime;
-
-	if (nullptr != time_)
+	if (false == isPaused_)
 	{
-		this->time_(info_, _deltaTime);
-	}
+		info_.frameTime_ += _deltaTime;
 
-	if (false == bOnceStart_
-		&& info_.curFrame_ == 0)
-	{
-		if (nullptr != start_)
+		if (nullptr != time_)
 		{
-			this->start_(info_);
+			this->time_(info_, _deltaTime);
 		}
 
-		bOnceStart_ = true;
-		bOnceEnd_ = false;
-	}
-
-	if (info_.interval_ <= info_.frameTime_)
-	{
-		if (info_.curFrame_ == info_.frames_.size() - 1 
-			&& false == bOnceEnd_ && nullptr != end_)
+		if (false == bOnceStart_
+			&& info_.curFrame_ == 0)
 		{
-			end_(info_);
-			bOnceStart_ = false;
-			bOnceEnd_ = true;
-		}
-
-		++info_.curFrame_;
-		if (nullptr != frame_)
-		{
-			frame_(info_);
-		}
-
-		if (info_.curFrame_ >= info_.frames_.size())
-		{
-			if (true == info_.isLoop_)
+			if (nullptr != start_)
 			{
-				info_.curFrame_ = 0;
+				this->start_(info_);
 			}
-			else
-			{
-				info_.curFrame_ = static_cast<UINT>(info_.frames_.size() - 1);
-			}
+
+			bOnceStart_ = true;
+			bOnceEnd_ = false;
 		}
-		info_.frameTime_ -= info_.interval_;
+
+		if (info_.interval_ <= info_.frameTime_)
+		{
+			if (info_.curFrame_ == info_.frames_.size() - 1
+				&& false == bOnceEnd_ && nullptr != end_)
+			{
+				end_(info_);
+				bOnceStart_ = false;
+				bOnceEnd_ = true;
+			}
+
+			++info_.curFrame_;
+			if (nullptr != frame_)
+			{
+				frame_(info_);
+			}
+
+			if (info_.curFrame_ >= info_.frames_.size())
+			{
+				if (true == info_.isLoop_)
+				{
+					info_.curFrame_ = 0;
+				}
+				else
+				{
+					info_.curFrame_ = static_cast<UINT>(info_.frames_.size() - 1);
+				}
+			}
+			info_.frameTime_ -= info_.interval_;
+		}
 	}
 
 	if (nullptr != cutTexture_)
@@ -107,8 +110,8 @@ void FrameAnimation::PauseSwitch()
 GameEngineTextureRenderer::GameEngineTextureRenderer()
 	: currentTexture_(nullptr),
 	currentAnimation_(nullptr),
-	pivotMode_(PivotMode::Center),
-	scaleMode_(ScaleMode::Image),
+	pivotMode_(PivotMode::Custom),
+	scaleMode_(ScaleMode::Custom),
 	scaleRatio_(1.f)
 {
 }
@@ -119,13 +122,30 @@ GameEngineTextureRenderer::~GameEngineTextureRenderer()
 
 void GameEngineTextureRenderer::SetTexture(const std::string& _textureName)
 {
-	this->currentTexture_ = this->shaderResources_.SetTexture("Tex", _textureName);
+	this->currentTexture_ = this->shaderResourceHelper_.SetTexture("Tex", _textureName);
 }
 
 void GameEngineTextureRenderer::SetTexture(GameEngineTexture* _texture)
 {
 	currentTexture_ = _texture;
-	this->shaderResources_.SetTexture("Tex", _texture);
+	this->shaderResourceHelper_.SetTexture("Tex", _texture);
+}
+
+void GameEngineTextureRenderer::SetFolderTextureToIndex(const std::string& _textureName, UINT _index)
+{
+	GameEngineFolderTexture* folderTexture = GameEngineFolderTexture::Find(_textureName);
+	if (nullptr == folderTexture)
+	{
+		MsgBoxAssertString(_textureName + ": 그런 이름의 폴더 텍스처가 없습니다.");
+		return;
+	}
+
+	SetTexture(folderTexture->GetTexture(_index));
+
+	atlasDataInst_.frameData_.posX = 0.f;
+	atlasDataInst_.frameData_.posY = 0.f;
+	atlasDataInst_.frameData_.sizeX = 1.f;
+	atlasDataInst_.frameData_.sizeY = 1.f;
 }
 
 void GameEngineTextureRenderer::SetTexture(const std::string& _textureName, int _index)
@@ -148,7 +168,7 @@ void GameEngineTextureRenderer::SetTexture(GameEngineTexture* _texture, int _ind
 
 void GameEngineTextureRenderer::SetFrame(int _index)
 {
-	this->frameData_ = currentTexture_->GetFrameData(_index);
+	this->atlasDataInst_.frameData_ = currentTexture_->GetFrameData(_index);
 }
 
 void GameEngineTextureRenderer::SetPivot()
@@ -160,32 +180,40 @@ void GameEngineTextureRenderer::SetPivot(PivotMode _pivot)
 {
 	switch (_pivot)
 	{
+	case PivotMode::Top:
+		atlasDataInst_.pivotPos_ = float4(0.f, -0.5f, 0.f, 0.f);
+		break;
 	case PivotMode::Center:
-		SetPivotToVector(float4::Zero);
+		atlasDataInst_.pivotPos_ = float4::Zero;
 		break;
-
-
-	case PivotMode::LeftTop:
-		SetPivotToVector(
-			float4(this->GetTransform().GetWorldScale().HX(), -this->GetTransform().GetWorldScale().HY())
-		);
-		break;
-
-
 	case PivotMode::Bot:
-		SetPivotToVector(
-			float4(0.f, this->GetTransform().GetWorldScale().HY())
-		);
+		atlasDataInst_.pivotPos_ = float4(0.f, 0.5f, 0.f, 0.f);
 		break;
-
+	case PivotMode::Left:
+		atlasDataInst_.pivotPos_ = float4(0.5f, 0.f, 0.f, 0.f);
+		break;
+	case PivotMode::Right:
+		atlasDataInst_.pivotPos_ = float4(-0.5f, 0.f, 0.f, 0.f);
+		break;
+	case PivotMode::LeftTop:
+		atlasDataInst_.pivotPos_ = float4(0.5f, -0.5f, 0.f, 0.f);
+		break;
+	case PivotMode::RightTop:
+		atlasDataInst_.pivotPos_ = float4(-0.5f, -0.5f, 0.f, 0.f);
+		break;
+	case PivotMode::LeftBot:
+		atlasDataInst_.pivotPos_ = float4(0.5f, 0.5f, 0.f, 0.f);
+		break;
+	case PivotMode::RightBot:
+		atlasDataInst_.pivotPos_ = float4(-0.5f, 0.5f, 0.f, 0.f);
+		break;
 	case PivotMode::Custom:
 		//_pivot == Custom일때는 아무것도 하지 않는다.
 		break;
 
-
 	default:
-		MsgBoxAssert("피봇모드가 없습니다.");
-		break;
+		MsgBoxAssert("존재할 수 없는 피봇모드입니다.");
+		return;
 	}
 
 	pivotMode_ = _pivot;
@@ -194,16 +222,20 @@ void GameEngineTextureRenderer::SetPivot(PivotMode _pivot)
 void GameEngineTextureRenderer::SetPivotToVector(const float4& _localPos)
 {
 	this->GetTransform().SetLocalPosition(_localPos);
+
+
+
+	this->atlasDataInst_.pivotPos_ = _localPos;
 }
 
 void GameEngineTextureRenderer::SetSamplingMode_Point()
 {
-	this->shaderResources_.SetSampler("Smp", "EngineSampler_Point");
+	this->shaderResourceHelper_.SetSampler("Smp", "EngineSampler_Point");
 }
 
 void GameEngineTextureRenderer::SetSamplingMode_Linear()
 {
-	this->shaderResources_.SetSampler("Smp", "EngineSampler_Linear");
+	this->shaderResourceHelper_.SetSampler("Smp", "EngineSampler_Linear");
 }
 
 void GameEngineTextureRenderer::CreateFrameAnimation_CutTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc)
@@ -218,6 +250,7 @@ void GameEngineTextureRenderer::CreateFrameAnimation_CutTexture(const std::strin
 
 	FrameAnimation& newAnimation = allAnimations_[uppercaseAnimationName];	//생성과 동시에 삽입.
 	newAnimation.info_ = _desc;
+	newAnimation.info_.renderer_ = this;
 	newAnimation.parentRenderer_ = this;
 	newAnimation.cutTexture_ = GameEngineTexture::Find(newAnimation.info_.textureName_);
 	newAnimation.folderTexture_ = nullptr;
@@ -235,6 +268,7 @@ void GameEngineTextureRenderer::CreateFrameAnimation_FolderTexture(const std::st
 
 	FrameAnimation& newAnimation = allAnimations_[uppercaseAnimationName];	//생성과 동시에 삽입.
 	newAnimation.info_ = _desc;
+	newAnimation.info_.renderer_ = this;
 	newAnimation.parentRenderer_ = this;
 	newAnimation.cutTexture_ = nullptr;
 	newAnimation.folderTexture_ = GameEngineFolderTexture::Find(newAnimation.info_.textureName_);
@@ -306,7 +340,8 @@ void GameEngineTextureRenderer::ScaleToTexture()
 		scale.y = -scale.y;
 	}
 
-	this->GetTransform().SetLocalScale(scale * scaleRatio_);
+	this->GetTransform().SetWorldScale(scale * scaleRatio_);
+	//this->GetTransform().SetLocalScale(scale * scaleRatio_);
 }
 
 void GameEngineTextureRenderer::ScaleToCutTexture(int _index)
@@ -323,7 +358,8 @@ void GameEngineTextureRenderer::ScaleToCutTexture(int _index)
 		scale.y = -scale.y;
 	}
 
-	this->GetTransform().SetLocalScale(scale * scaleRatio_);
+	this->GetTransform().SetWorldScale(scale * scaleRatio_);
+	//this->GetTransform().SetLocalScale(scale * scaleRatio_);
 }
 
 void GameEngineTextureRenderer::CurAnimationReset()
@@ -339,6 +375,21 @@ void GameEngineTextureRenderer::CurAnimationSetStartPivotFrame(int _setFrame)
 void GameEngineTextureRenderer::CurAnimationPauseSwitch()
 {
 	currentAnimation_->PauseSwitch();
+}
+
+void GameEngineTextureRenderer::CurAnimationPauseOn()
+{
+	currentAnimation_->isPaused_ = true;
+}
+
+void GameEngineTextureRenderer::CurAnimationPauseOff()
+{
+	currentAnimation_->isPaused_ = false;
+}
+
+bool GameEngineTextureRenderer::IsCurAnimationPaused()
+{
+	return currentAnimation_->isPaused_;
 }
 
 GameEngineTexture* GameEngineTextureRenderer::GetCurrentTexture() const
@@ -367,19 +418,20 @@ void GameEngineTextureRenderer::SetTextureRendererSetting()
 {
 	this->SetPipeLine("TextureAtlas");
 
-	frameData_.posX = 0.f;
-	frameData_.posY = 0.f;
-	frameData_.sizeX = 1.f;
-	frameData_.sizeY = 1.f;
+	this->atlasDataInst_.frameData_.posX = 0.f;
+	this->atlasDataInst_.frameData_.posY = 0.f;
+	this->atlasDataInst_.frameData_.sizeX = 1.f;
+	this->atlasDataInst_.frameData_.sizeY = 1.f;
+	this->atlasDataInst_.pivotPos_ = float4::Zero;
 
-	this->shaderResources_.SetConstantBuffer_Link("AtlasData", frameData_);
-	this->shaderResources_.SetConstantBuffer_Link("ColorData", colorData_);
+	this->shaderResourceHelper_.SetConstantBuffer_Link("AtlasData", atlasDataInst_);
+	this->shaderResourceHelper_.SetConstantBuffer_Link("PixelData", pixelDataInst_);
 }
 
 void GameEngineTextureRenderer::FrameDataReset()
 {
-	this->frameData_.posX = 0.f;
-	this->frameData_.posY = 0.f;
-	this->frameData_.sizeX = 1.f;
-	this->frameData_.sizeY = 1.f;
+	this->atlasDataInst_.frameData_.posX = 0.f;
+	this->atlasDataInst_.frameData_.posY = 0.f;
+	this->atlasDataInst_.frameData_.sizeX = 1.f;
+	this->atlasDataInst_.frameData_.sizeY = 1.f;
 }

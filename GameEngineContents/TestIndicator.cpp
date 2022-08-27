@@ -27,7 +27,7 @@ TestIndicator* TestIndicator::CreateIndicator(
 	newIndicator->GetTransform().SetLocalPosition(_localPos);
 	newIndicator->color_ = _color;
 	newIndicator->Start();
-
+	newIndicator->SetRenderingOrder(5);
 	return newIndicator;
 }
 
@@ -43,24 +43,29 @@ UINT TestIndicator::GetColorValue_UINT()
 
 void TestIndicator::Start()
 {
-	GameEngineDefaultRenderer::Start();
+	GameEngineRenderer::Start();
 	SetPipeLine("Color");
 
-	if (true == shaderResources_.IsConstantBuffer("ResultColor"))
+	if (true == shaderResourceHelper_.IsConstantBuffer("ResultColor"))
 	{
-		this->shaderResources_.SetConstantBuffer_Link("ResultColor", this->color_);
+		this->shaderResourceHelper_.SetConstantBuffer_Link("ResultColor", this->color_);
+		GameEngineRenderer::PushRendererToMainCamera();
 	}
 	else
 	{
 		MsgBoxAssert("ResultColor: 그런 이름의 상수 버퍼가 없습니다.");
 		return;
 	}
-
-	GameEngineRenderer::PushRendererToMainCamera();
 }
 
 void TestIndicator::Update(float _deltaTime)
 {
+	float4 test = GetTransform().GetWorldPosition();
+
+	if (0.f <= test.x)
+	{
+		int i = 0;
+	}
 }
 
 void TestIndicator::End()

@@ -23,6 +23,7 @@ void GameEngineImageShotWindow::OnGUI(GameEngineLevel* _level, float _deltaTime)
 	}
 }
 
+std::map<std::string, GameEngineRenderTarget*> GameEngineStatusWindow::debugRenderTargets_;
 
 GameEngineStatusWindow::GameEngineStatusWindow()
 {
@@ -30,6 +31,20 @@ GameEngineStatusWindow::GameEngineStatusWindow()
 
 GameEngineStatusWindow::~GameEngineStatusWindow()
 {
+}
+
+void GameEngineStatusWindow::AddDebugRenderTarget(
+	const std::string& _renderTargetName,
+	GameEngineRenderTarget* _renderTarget
+)
+{
+	if (debugRenderTargets_.end() != debugRenderTargets_.find(_renderTargetName))
+	{
+		MsgBoxAssertString(_renderTargetName + ": 이미 같은 이름의 렌더타겟이 존재합니다.");
+		return;
+	}
+
+	debugRenderTargets_.insert(std::make_pair(_renderTargetName, _renderTarget));
 }
 
 void GameEngineStatusWindow::Initialize(GameEngineLevel* _level)
@@ -71,7 +86,7 @@ void GameEngineStatusWindow::OnGUI(GameEngineLevel* _level, float _deltaTime)
 
 	ImGui::Text("All RenderTargets");
 
-	for (std::pair<std::string, GameEngineRenderTarget*> renderTargetPair : GameEngineRenderTarget::namedRes_)
+	for (std::pair<std::string, GameEngineRenderTarget*> renderTargetPair : debugRenderTargets_)
 	{
 		if (true == ImGui::TreeNodeEx(renderTargetPair.first.c_str(), 0))
 		{
@@ -82,8 +97,8 @@ void GameEngineStatusWindow::OnGUI(GameEngineLevel* _level, float _deltaTime)
 				float4 renderTargetScale = GameEngineWindow::GetScale() * 0.2f;
 
 				if (true == ImGui::ImageButton(static_cast<ImTextureID>(shaderResourceView),
-					{ renderTargetScale.x, renderTargetScale.y }
-				))
+					{ renderTargetScale.x, renderTargetScale.y })
+				)
 				{
 					GameEngineImageShotWindow* newImageShotWindow
 						= GameEngineGUI::CreateGUIWindow<GameEngineImageShotWindow>("Image Shot", nullptr);

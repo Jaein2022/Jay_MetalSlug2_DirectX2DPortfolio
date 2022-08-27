@@ -2,6 +2,8 @@
 #include "GameEngineFontRenderer.h"
 #include "GameEngineFont.h"
 #include "GameEngineRenderTarget.h"
+#include "GameEngineBlend.h"
+#include "GameEngineCamera.h"
 
 GameEngineRenderTarget* GameEngineFontRenderer::fontTarget_ = nullptr;
 
@@ -9,7 +11,10 @@ GameEngineFontRenderer::GameEngineFontRenderer()
 	:font_(nullptr),
 	fontSize_(20.f),
 	fontColor_(float4::White),
-	screenPosition_(float4::Zero)
+	screenPosition_(float4::Zero),
+	lr_(LeftAndRightSort::Left),
+	tb_(TopAndBotSort::Top)
+
 {
 }
 
@@ -47,7 +52,13 @@ void GameEngineFontRenderer::Render(float _deltaTime)
 		return;
 	}
 
+	fontTarget_->Clear();
+	fontTarget_->Setting();
+
+
 	font_->FontDraw(text_, fontSize_, screenPosition_, fontColor_,
 		static_cast<int>(lr_) | static_cast<int>(tb_));
 	GameEngineRenderingPipeLine::AllShaderReset();
+
+	camera_->GetCameraRenderTarget()->Merge(fontTarget_);
 }

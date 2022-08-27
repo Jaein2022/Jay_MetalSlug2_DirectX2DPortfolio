@@ -5,8 +5,9 @@
 class GameEngineShaderResourceHelper
 {
 	//이 클래스의 존재 이유는 무엇?? 리소스 세팅함수들 정리?? 반드시 정리해둘 것.
-	//ID3D11Resource의 자식 리소스들이 한두개가 아닌데 왜 셰이더  관련된 리소스들만 이런식으로 특별 관리하는 이유는??
-	// 
+	//ID3D11Resource의 자식 리소스들이 한두개가 아닌데 왜 셰이더 관련된 리소스들만 이런식으로 특별 관리하는 이유는??
+	//->
+
 	//같은 셰이더가 다른 리소스, 다른 세팅을 사용하는 경우를 대비.
 
 	friend GameEngineShader;
@@ -28,18 +29,20 @@ private:
 
 
 public:
+	//리소스 준비 단계에 외부 렌더링 파이프라인의 셰이더들이 가진 셰이더리소스들을 셰이더리소스헬퍼에 등록하고, 렌더링 파이프라인에 연결하는 함수.
 	void ResourceCheck(GameEngineRenderingPipeLine* _pipeLine);
 
-	bool IsConstantBuffer(const std::string& _name);
 	//이 셰이더 리소스 세터가 주어진 이름의 상수버퍼를 가지고 있는가를 외부에서 확인하는 함수.
+	bool IsConstantBuffer(const std::string& _name);
 
-	bool IsTexture(const std::string& _name);
 	//이 셰이더 리소스 세터가 주어진 이름의 텍스처를 가지고 있는가를 외부에서 확인하는 함수.
+	bool IsTexture(const std::string& _name);
 
-	bool IsSampler(const std::string& _name);
 	//이 셰이더 리소스 세터가 주어진 이름의 샘플러를 가지고 있는가를 외부에서 확인하는 함수.
+	bool IsSampler(const std::string& _name);
 
 	void SetConstantBuffer_Link(const std::string& _name, const void* _data, UINT _size);	//참조로 연결.
+
 	void SetConstantBuffer_New(const std::string& _name, const void* _data, UINT _size);	//깊은 복사.
 	//외부 데이타를 복사받아야 하는 등의 SetConstantBufferLink()를 사용할 수 없는 예외적인 상황에만 사용할 것.
 
@@ -50,7 +53,10 @@ public:
 	GameEngineSampler* SetSampler(const std::string& _samplerSetterName, const std::string& _samplerName);
 
 
+	//해당 셰이더리소스헬퍼가 가진 모든 상수버퍼, 텍스처, 샘플러를 매 루프마다 갱신하고 정점셰이더나 픽셀셰이더에 연결하는 함수.
 	void AllResourcesSetting();
+
+	
 
 
 
@@ -70,6 +76,7 @@ public:
 
 
 protected:
+	//셰이더가 가진 셰이더리소스들을 셰이더리소스헬퍼에 등록하고, 렌더링 파이프라인에 해당 셰이더에 연결하는 함수. 
 	void ShaderCheck(GameEngineShader* _shader);
 
 

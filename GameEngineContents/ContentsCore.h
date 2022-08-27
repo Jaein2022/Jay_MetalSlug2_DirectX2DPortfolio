@@ -17,8 +17,8 @@ public:
 public:
 
 public:
-	float4 StartWindowSize() override { return float4{ 1280, 720 }; };
-	float4 StartWindowPosition() override { return { 100, 100 }; };
+	float4 StartWindowSize() override { return float4( 1200, 900 ); };
+	float4 StartWindowPosition() override { return float4( 150, 25 ); };
 
 	std::string GetWindowTitle() override
 	{

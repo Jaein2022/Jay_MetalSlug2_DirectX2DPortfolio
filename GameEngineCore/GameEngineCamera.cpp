@@ -3,13 +3,15 @@
 #include "GameEngineRenderer.h"
 #include "GameEngineActor.h"
 #include "GameEngineDevice.h"
+#include "GameEngineRenderTarget.h"
 
 GameEngineCamera::GameEngineCamera()
 	: size_(GameEngineWindow::GetScale()),
 	projectionMode_(CameraProjectionMode::Perspective),
 	nearZ_(0.1f),
 	farZ_(1000.f),
-	fovAngleY_(60.f)
+	fovAngleY_(60.f),
+	cameraRenderTarget_(nullptr)
 {
 	viewportDesc_.TopLeftX = 0;
 	viewportDesc_.TopLeftY = 0;
@@ -90,6 +92,14 @@ void GameEngineCamera::SetCameraOrder(CameraOrder _order)
 
 void GameEngineCamera::Start()
 {
+	cameraRenderTarget_ = GameEngineRenderTarget::Create();
+	cameraRenderTarget_->CreateRenderTargetTexture(
+		GameEngineWindow::GetScale(),
+		DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT,
+		float4::Zero	//float4::Black
+	);
+
+	cameraRenderTarget_->SetDepthTexture(GameEngineDevice::GetBackBuffer()->GetDepthTexture());
 }
 
 bool ZSort(GameEngineRenderer* _rendererA, GameEngineRenderer* _rendererB)
@@ -100,6 +110,9 @@ bool ZSort(GameEngineRenderer* _rendererA, GameEngineRenderer* _rendererB)
 
 void GameEngineCamera::Render(float _deltaTime)
 {
+	cameraRenderTarget_->Clear();
+	cameraRenderTarget_->Setting();
+
 	GameEngineDevice::GetContext()->RSSetViewports(//파이프라인에 뷰포트들을 세팅하는 함수.
 		1,					//설정할 뷰포트 개수.
 		&viewportDesc_		//뷰포트 구조체 배열의 주소값.
@@ -159,20 +172,18 @@ void GameEngineCamera::Render(float _deltaTime)
 			//이 위치의 const는 renderer가 가리키는 메모리 위치를 변경할 수 없게 하겠다는 의미이다. 
 			//하지만 renderer가 가리키는 메모리가 가진 값은 얼마든지 변경 가능하다.
 		{
-			if (false == renderer->IsUpdate())
+			if (true == renderer->IsUpdate())
 			{
-				continue;
+				renderer->GetTransform().SetViewMatrix(viewMatrix_);
+				renderer->GetTransform().SetProjectionMatrix(projectionMatrix_);
+				//카메라에 저장된 뷰행렬과 투영행렬을 렌더러의 트랜스폼에 저장한다.
+
+				renderer->GetTransform().CalculateWorldViewProjection();
+				//크자이공부 변환을 거친 월드행렬에 뷰행렬과 투영행렬까지 계산한다.
+
+				renderer->Render(scaleTime);
+				//뷰포트행렬을 포함한 모든 행렬 계산을 거친 결과대로 메쉬를 화면에 그린다.
 			}
-
-			renderer->GetTransform().SetViewMatrix(viewMatrix_);
-			renderer->GetTransform().SetProjectionMatrix(projectionMatrix_);
-			//카메라에 저장된 뷰행렬과 투영행렬을 렌더러의 트랜스폼에 저장한다.
-
-			renderer->GetTransform().CalculateWorldViewProjection();
-			//크자이공부 변환을 거친 월드행렬에 뷰행렬과 투영행렬까지 계산한다.
-
-			renderer->Render(scaleTime);
-			//뷰포트행렬을 포함한 모든 행렬 계산을 거친 결과대로 메쉬를 화면에 그린다.
 		}
 	}
 }
@@ -257,4 +268,13 @@ void GameEngineCamera::OverRenderer(GameEngineCamera* _nextCamera)
 			}
 		}
 	}
+}
+
+void GameEngineCamera::ChangeRenderingOrder(GameEngineRenderer* _renderer, int _newRenderingOrder)
+{
+	this->allRenderers_[_renderer->GetRenderingOrder()].remove(_renderer);
+
+	_renderer->renderingOrder_ = _newRenderingOrder;
+
+	this->allRenderers_[_renderer->GetRenderingOrder()].push_back(_renderer);
 }

@@ -10,6 +10,7 @@ namespace GameEngineDebug
 
 	void DrawBox(const GameEngineTransform& _transform, const float4& _color);
 	void DrawBox(const GameEngineTransform& _transform, GameEngineCamera* _camera, const float4& _color);
+	void DrawBox(const float4& _position, const float4& _scale, const float4& _rotation, const float4& _color);
 	
 	void DrawSphere(const GameEngineTransform& _transform, const float4& _color);
 	void DrawSphere(const GameEngineTransform& _transform, GameEngineCamera* _camera, const float4& _color);

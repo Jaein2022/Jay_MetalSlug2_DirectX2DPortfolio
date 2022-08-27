@@ -47,10 +47,15 @@ public:
 
 
 
-	void ChangeData(const void* _data, size_t _size) const;		//실질적인 상수버퍼의 데이타세팅은 여기에서 한다.
+	//매 루프마다 바뀌는 트랜스폼 데이터 등의 상수버퍼가 가진 정보를 그래픽카드의 메모리로 전달하는 함수.
+	void ChangeData(const void* _data, size_t _size) const;		
+	//실질적인 상수버퍼의 데이타세팅은 여기에서 한다.
 	//맵, 언맵 함수를 호출하므로 최소한으로 사용할 것.
 
+	//상수버퍼를 렌더링 파이프라인의 정점셰이더에 연결하는 함수.
 	void VSSetting(int _bindPoint);
+
+	//상수버퍼를 렌더링 파이프라인의 픽셀셰이더에 연결하는 함수.
 	void PSSetting(int _bindPoint);
 
 	static void ResourceDestroy();
@@ -79,7 +84,7 @@ private:
 	//	UINT                    uFlags;		상수버퍼가 연결될 슬롯을 지정하는 플래그. 
 	//} D3D11_SHADER_BUFFER_DESC;
 	D3D11_SHADER_BUFFER_DESC shaderBufferDesc_;
-	D3D11_BUFFER_DESC bufferDesc_;
+	D3D11_BUFFER_DESC cBufferDesc_;
 
 
 	ID3D11Buffer* constantBuffer_;

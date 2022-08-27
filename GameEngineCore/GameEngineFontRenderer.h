@@ -21,8 +21,6 @@ class GameEngineFontRenderer : public GameEngineDefaultRenderer
 {
 	//이 클래스의 존재 이유:
 
-	static GameEngineRenderTarget* fontTarget_;
-
 public:
 	GameEngineFontRenderer();
 	~GameEngineFontRenderer();
@@ -75,6 +73,8 @@ protected:
 	virtual void Render(float _deltaTime) override;
 
 private:
+	static GameEngineRenderTarget* fontTarget_;
+
 	std::string text_;
 	GameEngineFont* font_;
 	float fontSize_;

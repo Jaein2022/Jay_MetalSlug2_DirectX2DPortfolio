@@ -60,9 +60,9 @@ private:
 	bool isJumping_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 
 
-	const int playerRenderPivotX_;
-	const int playerRenderPivotY_;
-	const int playerRenderPivotZ_;
+	const int playerRendererLocalPosX_;
+	const int playerRendererLocalPosY_;
+	const int playerRendererLocalPosZ_;
 
 
 	GameEngineTextureRenderer* legRenderer_;
@@ -85,7 +85,8 @@ private:
 	TestIndicator* playerWorldPosPointer_;	//액터의 월드포지션 표시.
 	TestIndicator* lowerLandingChecker_;		
 
-
+	const int slopeCheckerLocalPosX_Int_;		//경사체커들의 로컬포스 int X값.
+	const float slopeCheckerLocalPosX_Float_;	//경사체커들의 로컬포스 float X값.
 	TestIndicator* slopeChecker_;		
 	TestIndicator* ascendingSlopeChecker_;			
 	TestIndicator* flatSlopeChecker_;

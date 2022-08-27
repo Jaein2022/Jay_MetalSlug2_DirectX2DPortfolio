@@ -5,6 +5,7 @@
 #include "GameEngineCamera.h"
 #include "GameEngineCameraActor.h"
 #include "GameEngineDevice.h"
+#include "GameEngineRenderTarget.h"
 #include "GameEngineGUI.h"
 #include "GameEngineCollision.h"
 #include "GameEngineCoreDebug.h"
@@ -142,13 +143,31 @@ void GameEngineLevel::Render(float _deltaTime)
 
 	for (size_t i = 0; i < cameras_.size(); i++)
 	{
-		if (nullptr == cameras_[i])
+		if (nullptr != cameras_[i])
 		{
-			continue;
+			cameras_[i]->Render(_deltaTime);
 		}
-
-		cameras_[i]->Render(_deltaTime);
 	}
+
+	for (size_t i = 0; i < cameras_.size(); i++)
+	{
+		if (nullptr != cameras_[i])
+		{
+			cameras_[i]->GetCameraRenderTarget()->EffectProcess();
+		}
+	}
+
+	for (size_t i = 0; i < cameras_.size(); i++)
+	{
+		if (nullptr != cameras_[i])
+		{
+			GameEngineDevice::GetBackBuffer()->Merge(cameras_[i]->cameraRenderTarget_, 0);
+			//다른 카메라들이 가진 렌더타겟들을 백버퍼 렌더타겟으로 합친다.
+		}
+	}
+
+	GameEngineDevice::GetBackBuffer()->EffectProcess();
+
 	GameEngineDebug::Debug3DRender();
 
 	GameEngineGUI::Render(this, _deltaTime);
@@ -181,13 +200,11 @@ void GameEngineLevel::Release(float _deltaTime)
 
 	for (size_t i = 0; i < cameras_.size(); i++)
 	{
-		if (nullptr == cameras_[i])
+		if (nullptr != cameras_[i])
 		{
-			continue;
+			cameras_[i]->ReleaseRenderer(_deltaTime);	//i번째 카메라에서 사망 판정된 렌더러들 등록 해제.
+			//렌더러 삭제가 아니라 i번째 카메라의 allRenderers_리스트에서 빼는 등록해제인 것에 유의.
 		}
-
-		cameras_[i]->ReleaseRenderer(_deltaTime);	//i번째 카메라에서 사망 판정된 렌더러들 등록 해제.
-		//렌더러 삭제가 아니라 i번째 카메라의 allRenderers_리스트에서 빼는 등록해제인 것에 유의.
 	}
 
 	for (std::map<int, std::list<GameEngineCollision*>>::iterator collisionGroupIter = allCollisions_.begin();
@@ -237,20 +254,18 @@ void GameEngineLevel::Release(float _deltaTime)
 
 void GameEngineLevel::PushRenderer(GameEngineRenderer* _renderer, int _cameraOrder)
 {
-	if (static_cast<int>(CameraOrder::UICamera) < _cameraOrder
-		|| static_cast<int>(CameraOrder::MainCamera) > _cameraOrder)
-	{
-		MsgBoxAssert("카메라 오더가 허용 범위를 넘어섰습니다.");
-		return;
-	}
+	GameEngineCamera* prevCamera = cameras_[static_cast<UINT>(_renderer->cameraOrder_)];
 
-	cameras_[static_cast<int>(_renderer->cameraOrder_)]->allRenderers_[_renderer->GetOrder()].remove(_renderer);
-	//
+	prevCamera->allRenderers_[_renderer->GetRenderingOrder()].remove(_renderer);
 
 	_renderer->cameraOrder_ = static_cast<CameraOrder>(_cameraOrder);
 
 
+	GameEngineCamera* nextCamera = cameras_[_cameraOrder];
+
 	cameras_[_cameraOrder]->PushRenderer(_renderer);
+
+	_renderer->camera_ = nextCamera;
 }
 
 void GameEngineLevel::PushCamera(GameEngineCamera* _camera, int _cameraOrder)

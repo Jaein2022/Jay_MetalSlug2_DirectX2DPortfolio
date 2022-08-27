@@ -46,13 +46,13 @@ public:
 	GameEngineConstantBuffer* constantBuffer_;
 	//
 
+	//각각의 상수버퍼들이 가진 데이터의 주소값.
 	const void* setData_;
-	//각자가 가진 정보에 대한 주소.
 
-	UINT size_;
+	UINT size_;	//상수버퍼 크기.
 
 	std::vector<char> originalData_;
-	// 아예 자기 메모리로 만든다.
+	// 아예 자기 메모리로 만든다??
 
 	void Setting() const;
 

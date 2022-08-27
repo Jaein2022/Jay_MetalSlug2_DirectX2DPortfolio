@@ -10,6 +10,8 @@ class GameEngineDevice
 
 	//여기저기 쓸 곳이 많으므로 변수, 함수 전부 스태틱으로 한다.
 
+	friend class GameEngineCore;
+
 private:
 	GameEngineDevice() {};
 	~GameEngineDevice() {};

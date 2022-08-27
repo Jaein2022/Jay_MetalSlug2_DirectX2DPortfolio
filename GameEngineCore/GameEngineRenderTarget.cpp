@@ -2,14 +2,25 @@
 #include "GameEngineRenderTarget.h"
 #include "GameEngineDevice.h"
 #include "GameEngineTexture.h"
-#include "GameEngineDepthStencilTexture.h"
+#include "GameEngineRenderSet.h"
 
-GameEngineRenderTarget::GameEngineRenderTarget() : depthStencilView_(nullptr), depthTexture_(nullptr)
+GameEngineRenderTarget::GameEngineRenderTarget() 
+	: depthStencilView_(nullptr),
+	depthTexture_(nullptr),
+	mergePipeLine_(GameEngineRenderingPipeLine::Find("TargetMerge"))
 {
+	mergeShaderResourceHelper_.ResourceCheck(mergePipeLine_);
 }
 
 GameEngineRenderTarget::~GameEngineRenderTarget()
 {
+	for (GameEnginePostEffect* effect : allEffects_)
+	{
+		delete effect;
+		effect = nullptr;
+	}
+
+	allEffects_.clear();
 }
 
 GameEngineRenderTarget* GameEngineRenderTarget::Create(const std::string& _name)
@@ -88,9 +99,39 @@ void GameEngineRenderTarget::CreateRenderTargetTexture(
 	//_color도 저장한다.
 }
 
+GameEngineTexture* GameEngineRenderTarget::GetRenderTargetTexture(size_t _index)
+{
+	if (renderTargets_.size() <= _index)
+	{
+		MsgBoxAssert("렌더타겟의 개수를 초과한 인덱스를 입력하였습니다.");
+		return nullptr;
+	}
+
+	return renderTargets_[_index];
+}
+
 void GameEngineRenderTarget::CreateDepthTexture(int _index)
 {
-	depthTexture_ = GameEngineDepthStencilTexture::Create(renderTargets_[_index]->GetScale());
+	D3D11_TEXTURE2D_DESC depthTextureDesc = { 0 };
+	depthTextureDesc.Width = renderTargets_[_index]->GetScale().UIX();
+	depthTextureDesc.Height = renderTargets_[_index]->GetScale().UIY();
+	depthTextureDesc.MipLevels = 1;
+	depthTextureDesc.ArraySize = 1;
+	depthTextureDesc.Format = DXGI_FORMAT::DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthTextureDesc.SampleDesc.Count = 1;
+	depthTextureDesc.SampleDesc.Quality = 0;
+	depthTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthTextureDesc.CPUAccessFlags = 0;
+	depthTextureDesc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_DEPTH_STENCIL;
+
+	depthTexture_ = GameEngineTexture::Create(depthTextureDesc);
+
+	depthStencilView_ = depthTexture_->CreateDepthStencilView();
+}
+
+void GameEngineRenderTarget::SetDepthTexture(GameEngineTexture* _depthTexture)
+{
+	depthTexture_ = _depthTexture;
 	depthStencilView_ = depthTexture_->CreateDepthStencilView();
 }
 
@@ -128,5 +169,37 @@ void GameEngineRenderTarget::Setting()
 		&renderTargetViews_[0],			//렌더타겟뷰 배열 주소.
 		depthStencilView_
 	);
+}
 
+void GameEngineRenderTarget::Copy(GameEngineRenderTarget* _otherRenderTarget, int _index /*= 0*/)
+{
+	this->Clear();
+	mergeShaderResourceHelper_.SetTexture("Tex", _otherRenderTarget->GetRenderTargetTexture(_index));
+	Effect(GameEngineRenderingPipeLine::Find("TargetMerge"), &mergeShaderResourceHelper_);
+}
+
+void GameEngineRenderTarget::Merge(GameEngineRenderTarget* _otherRenderTarget, int _index /*= 0*/)
+{
+	mergeShaderResourceHelper_.SetTexture("Tex", _otherRenderTarget->GetRenderTargetTexture(_index));
+	Effect(GameEngineRenderingPipeLine::Find("TargetMerge"), &mergeShaderResourceHelper_);
+}
+
+void GameEngineRenderTarget::Effect(GameEngineRenderingPipeLine* _otherPipeLine, GameEngineShaderResourceHelper* _shaderResourceHelper)
+{
+	this->Setting();
+	_shaderResourceHelper->AllResourcesSetting();
+	_otherPipeLine->Rendering();
+}
+
+void GameEngineRenderTarget::Effect(GameEngineRenderSet& _renderSet)
+{
+	Effect(_renderSet.renderingPipeLine_, &_renderSet.shaderResourceHelper_);
+}
+
+void GameEngineRenderTarget::EffectProcess()
+{
+	for (GameEnginePostEffect* effect : allEffects_)
+	{
+		effect->Effect(this);
+	}
 }

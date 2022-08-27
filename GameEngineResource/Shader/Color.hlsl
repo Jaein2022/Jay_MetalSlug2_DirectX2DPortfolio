@@ -27,13 +27,13 @@ struct Output
 
 Output Color_VS(Input _input)
 {
-    Output newOutput = (Output)0;  //Output타입 변수 newOutput을 0으로 초기화. HLSL의 경우에는 대부분의 상황에서 형변환이 가능하다.
+    Output result = (Output)0;  //Output타입 변수 newOutput을 0으로 초기화. HLSL의 경우에는 대부분의 상황에서 형변환이 가능하다.
 
-    newOutput.pos_ = mul(_input.pos_, worldViewProjectionMatrix_);  //WVP행렬 적용.
+    result.pos_ = mul(_input.pos_, worldViewProjectionMatrix_);  //WVP행렬 적용.
     
-    newOutput.posLocal_ = _input.pos_; //WVP행렬 비적용. 최초 정점좌표(-0.5~0.5 사이 좌표) 유지.
+    result.posLocal_ = _input.pos_; //WVP행렬 비적용. 최초 정점좌표(-0.5~0.5 사이 좌표) 유지.
     
-	return newOutput;
+	return result;
 }
 
 cbuffer ResultColor : register(b8)

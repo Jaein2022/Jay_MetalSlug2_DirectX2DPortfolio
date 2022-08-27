@@ -17,6 +17,7 @@
 #include <GameEngineCore\GameEngineTextureRenderer.h>
 #include <GameEngineCore\GameEngineUIRenderer.h>
 #include <GameEngineCore\GameEngineFontRenderer.h>
+#include <GameEngineCore\GameEngineRenderSet.h>
 
 #include <GameEngineCore\GameEngineFont.h>
 #include <GameEngineCore\GameEngineTexture.h>
@@ -25,5 +26,6 @@
 #include <GameEngineCore\GameEngineStatusWindow.h>
 #include <GameEngineCore\GameEngineCollision.h>
 #include <GameEngineCore\GameEngineCoreDebug.h>
+#include <GameEngineCore\GameEngineBlur.h>
 
 #include <GameEngineCore\GameEngineStateManager.h>

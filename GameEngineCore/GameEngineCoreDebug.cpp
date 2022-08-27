@@ -106,7 +106,27 @@ namespace GameEngineDebug
 		debugTransform.SetProjectionMatrix(_camera->GetProjectionMatrix());
 		debugTransform.CalculateWorldViewProjection();
 
-		debugData_.push_back(DebugRenderData(DebugInfo(DebugRenderType::Box, _color), debugTransform.GetTransformData()));
+		debugData_.push_back(
+			DebugRenderData(
+				DebugInfo(DebugRenderType::Box, _color),
+				debugTransform.GetTransformData()
+			)
+		);
+	}
+
+	void DrawBox(const float4& _position, const float4& _scale, const float4& _rotation, const float4& _color)
+	{
+		static GameEngineTransform debugTransform;
+		debugTransform.SetLocalScale(_scale);
+		debugTransform.SetLocalRotation(_rotation);
+		debugTransform.SetLocalPosition(_position);
+		debugData_.push_back(
+			DebugRenderData(
+				DebugInfo(DebugRenderType::Box, _color),
+				debugTransform.GetTransformData(),
+				nullptr
+			)
+		);
 	}
 
 	void DrawSphere(const GameEngineTransform& _transform, const float4& _color)
@@ -134,7 +154,13 @@ namespace GameEngineDebug
 		const float4& _scale /*= float4::Zero*/
 	)
 	{
-		DrawTexture(_textureName, GameEngineCore::GetCurrentLevel()->GetMainCamera(), _position, _rotation, _scale);
+		DrawTexture(
+			_textureName,
+			GameEngineCore::GetCurrentLevel()->GetMainCamera(),
+			_position,
+			_rotation,
+			_scale
+		);
 	}
 
 	void DrawTexture(
@@ -172,7 +198,9 @@ namespace GameEngineDebug
 			DebugRenderData(
 				DebugInfo(DebugRenderType::Box, float4::White),
 				debugTransform.GetTransformData(),
-				findTexture));
+				findTexture
+			)
+		);
 	}
 	void DrawTexture(
 		GameEngineTexture* _texture,
@@ -217,6 +245,8 @@ namespace GameEngineDebug
 			DebugRenderData(
 				DebugInfo(DebugRenderType::Box, float4::White),
 				debugTransform.GetTransformData(),
-				_texture));
+				_texture
+			)
+		);
 	}
 }

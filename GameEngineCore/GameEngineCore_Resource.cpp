@@ -2,7 +2,6 @@
 #include "GameEngineCore.h"
 #include "GameEngineDevice.h"
 #include "GameEngineTexture.h"
-#include "GameEngineDepthStencilTexture.h"
 #include "GameEngineFolderTexture.h"
 #include "GameEngineSampler.h"
 #include "GameEngineRenderTarget.h"
@@ -107,27 +106,19 @@ void EngineSubSetting()
 	transparentBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	//D3D11_COLOR_WRITE_ENABLE_ALL: RGBA 모든 색상에 블렌딩 적용.
 
-	//알파블렌딩 공식.
-	//output: 최종 결과물.
-	//dest: 백버퍼의 현재 색상.
-	//src: 백버퍼의 색상과 블렌드할 원본의 색상.
-	//옵션: BlendOp으로 지정하는 블렌드 연산 방식.
-	//outputColor = (srcColor * srcFactor) 옵션 (destColor * destFactor)
-
-	transparentBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	transparentBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_MAX;
 	//??
 
 	transparentBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 	//??
 
-	transparentBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_SRC_ALPHA;
+	transparentBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
 	//??
 
 	//알파쪽은 따로 처리.
 	transparentBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	transparentBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	transparentBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	transparentBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
-	//이 세 줄만 주석처리해 볼 것.->하면 블렌드 스테이트 생성 실패.
 
 	GameEngineBlend::Create("TransparentBlend", transparentBlendDesc);
 
@@ -149,22 +140,42 @@ void EngineSubSetting()
 	//	D3D11_DEPTH_STENCILOP_DESC BackFace;	???
 	//} 	D3D11_DEPTH_STENCIL_DESC;
 
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = { 0 };
+	D3D11_DEPTH_STENCIL_DESC engineBaseDepthStencilDesc = { 0 };
 
-	depthStencilDesc.DepthEnable = true;
+	engineBaseDepthStencilDesc.DepthEnable = true;
 	//true: 깊이테스트 함.
 
-	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+	engineBaseDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
 	//D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL: 기존 깊이데이타와 비교 함.
 	//이걸 제로로 바꾸면 왜 깊이테스트가 제대로 안 되는 걸까??
 
-	depthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
+	engineBaseDepthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
 	//D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS: 비교했을때 값이 작은것을 통과시킴.
 
-	depthStencilDesc.StencilEnable = false;
+	engineBaseDepthStencilDesc.StencilEnable = false;
 	//false: 스텐실 테스트 안함.
 
-	GameEngineDepthStencil::Create("EngineBaseDepth", depthStencilDesc);
+	GameEngineDepthStencil::Create("EngineBaseDepth", engineBaseDepthStencilDesc);
+
+
+
+
+	D3D11_DEPTH_STENCIL_DESC alwaysDepthStencilDesc = { 0 };
+
+	alwaysDepthStencilDesc.DepthEnable = true;
+	//true: 깊이테스트 함.
+
+	alwaysDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+	//D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL: 기존 깊이데이타와 비교 함.
+	//이걸 제로로 바꾸면 왜 깊이테스트가 제대로 안 되는 걸까??
+
+	alwaysDepthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
+	//D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS: 비교했을때 값이 작은것을 통과시킴.
+
+	alwaysDepthStencilDesc.StencilEnable = false;
+	//false: 스텐실 테스트 안함.
+
+	GameEngineDepthStencil::Create("AlwaysDepth", alwaysDepthStencilDesc);
 }
 
 void EngineTextureLoad()
@@ -299,7 +310,8 @@ void EngineTextureLoad()
 void EngineRenderingPipeLine()
 {
 
-	GameEngineRenderingPipeLine* newRenderingPipeLine1 = GameEngineRenderingPipeLine::Create("Color");
+	GameEngineRenderingPipeLine* newRenderingPipeLine1 
+		= GameEngineRenderingPipeLine::Create("Color");
 	newRenderingPipeLine1->SetVertexBuffer_InputAssembler1("RectVertex");
 	newRenderingPipeLine1->SetVertexShader("Color.hlsl");
 	newRenderingPipeLine1->SetIndexBuffer_InputAssembler2("RectIndex");
@@ -309,7 +321,8 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine1->SetDepthStencil_OutputMerger("EngineBaseDepth");
 
 
-	GameEngineRenderingPipeLine* newRenderingPipeLine2 = GameEngineRenderingPipeLine::Create("Texture");
+	GameEngineRenderingPipeLine* newRenderingPipeLine2 
+		= GameEngineRenderingPipeLine::Create("Texture");
 	newRenderingPipeLine2->SetVertexBuffer_InputAssembler1("RectVertex");
 	newRenderingPipeLine2->SetVertexShader("Texture.hlsl");
 	newRenderingPipeLine2->SetIndexBuffer_InputAssembler2("RectIndex");
@@ -319,7 +332,8 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine2->SetDepthStencil_OutputMerger("EngineBaseDepth");
 
 
-	GameEngineRenderingPipeLine* newRenderingPipeLine3 = GameEngineRenderingPipeLine::Create("TextureAtlas");
+	GameEngineRenderingPipeLine* newRenderingPipeLine3 
+		= GameEngineRenderingPipeLine::Create("TextureAtlas");
 	newRenderingPipeLine3->SetVertexBuffer_InputAssembler1("RectVertex");
 	newRenderingPipeLine3->SetVertexShader("TextureAtlas.hlsl");
 	newRenderingPipeLine3->SetIndexBuffer_InputAssembler2("RectIndex");
@@ -329,24 +343,50 @@ void EngineRenderingPipeLine()
 	newRenderingPipeLine3->SetDepthStencil_OutputMerger("EngineBaseDepth");
 
 
-	GameEngineRenderingPipeLine* newRenderingPipeLine4 = GameEngineRenderingPipeLine::Create("3DDebug");
+	GameEngineRenderingPipeLine* newRenderingPipeLine4 
+		= GameEngineRenderingPipeLine::Create("3DDebug");
 	newRenderingPipeLine4->SetVertexBuffer_InputAssembler1("BoxVertex");
 	newRenderingPipeLine4->SetVertexShader("Debug3D.hlsl");
 	newRenderingPipeLine4->SetIndexBuffer_InputAssembler2("BoxIndex");
 	newRenderingPipeLine4->SetPixelShader("Debug3D.hlsl");
 	newRenderingPipeLine4->SetRasterizer("EngineRasterizer");
 	newRenderingPipeLine4->SetBlend_OutputMerger("AlphaBlend");
-	newRenderingPipeLine4->SetDepthStencil_OutputMerger("EngineBaseDepth"); 
+	newRenderingPipeLine4->SetDepthStencil_OutputMerger("AlwaysDepth"); 
 	
 	
-	GameEngineRenderingPipeLine* newRenderingPipeLine5 = GameEngineRenderingPipeLine::Create("DebugTexture");
+	GameEngineRenderingPipeLine* newRenderingPipeLine5 
+		= GameEngineRenderingPipeLine::Create("DebugTexture");
 	newRenderingPipeLine5->SetVertexBuffer_InputAssembler1("RectVertex");
 	newRenderingPipeLine5->SetVertexShader("DebugTexture.hlsl");
 	newRenderingPipeLine5->SetIndexBuffer_InputAssembler2("RectIndex");
 	newRenderingPipeLine5->SetPixelShader("DebugTexture.hlsl");
 	newRenderingPipeLine5->SetRasterizer("EngineRasterizer");
 	newRenderingPipeLine5->SetBlend_OutputMerger("AlphaBlend");
-	newRenderingPipeLine5->SetDepthStencil_OutputMerger("EngineBaseDepth");
+	newRenderingPipeLine5->SetDepthStencil_OutputMerger("EngineBaseDepth");	
+	
+	
+	
+	GameEngineRenderingPipeLine* newRenderingPipeLine6 
+		= GameEngineRenderingPipeLine::Create("TargetMerge");
+	newRenderingPipeLine6->SetVertexBuffer_InputAssembler1("FullrectVertex");
+	newRenderingPipeLine6->SetVertexShader("TargetMerge.hlsl");
+	newRenderingPipeLine6->SetIndexBuffer_InputAssembler2("FullrectIndex");
+	newRenderingPipeLine6->SetPixelShader("TargetMerge.hlsl");
+	newRenderingPipeLine6->SetRasterizer("EngineRasterizer");
+	newRenderingPipeLine6->SetBlend_OutputMerger("AlphaBlend");
+	newRenderingPipeLine6->SetDepthStencil_OutputMerger("AlwaysDepth");
+
+
+
+	GameEngineRenderingPipeLine* newRenderingPipeLine7
+		= GameEngineRenderingPipeLine::Create("Blur");
+	newRenderingPipeLine7->SetVertexBuffer_InputAssembler1("FullrectVertex");
+	newRenderingPipeLine7->SetVertexShader("Blur.hlsl");
+	newRenderingPipeLine7->SetIndexBuffer_InputAssembler2("FullrectIndex");
+	newRenderingPipeLine7->SetPixelShader("Blur.hlsl");
+	newRenderingPipeLine7->SetRasterizer("EngineRasterizer");
+	newRenderingPipeLine7->SetBlend_OutputMerger("AlphaBlend");
+	newRenderingPipeLine7->SetDepthStencil_OutputMerger("EngineBaseDepth");
 
 }
 
@@ -373,6 +413,29 @@ void EngineMesh()
 	rectIndex.push_back(3);
 	GameEngineIndexBuffer::Create("RectIndex", rectIndex);
 
+
+
+
+	//윈도우 전체 크기 사각형.
+	std::vector<GameEngineVertex> fullrectVertex;
+	fullrectVertex.reserve(4);
+	fullrectVertex.push_back({ float4(-1.f, 1.f), float4(), float4(0, 0) });	//0번 점.
+	fullrectVertex.push_back({ float4(1.f, 1.f), float4(), float4(1, 0) });		//1번 점.
+	fullrectVertex.push_back({ float4(1.f, -1.f), float4(), float4(1, 1) });	//2번 점.
+	fullrectVertex.push_back({ float4(-1.f, -1.f), float4(), float4(0, 1) });	//3번 점.
+	GameEngineVertexBuffer::Create("FullrectVertex", fullrectVertex);
+
+	std::vector<int> fullrectIndex;
+	fullrectIndex.reserve(6);
+	//1번 삼각형.
+	fullrectIndex.push_back(0);
+	fullrectIndex.push_back(1);
+	fullrectIndex.push_back(2);
+	//2번 삼각형.
+	fullrectIndex.push_back(0);
+	fullrectIndex.push_back(2);
+	fullrectIndex.push_back(3);
+	GameEngineIndexBuffer::Create("FullrectIndex", fullrectIndex);
 
 
 
@@ -446,6 +509,11 @@ void EngineMesh()
 
 	GameEngineIndexBuffer::Create("BoxIndex", boxIndex);
 
+
+
+
+
+
 	GameEngineFont::Load("돋움");
 }
 
@@ -493,7 +561,6 @@ void GameEngineCore::EngineResourceDestroy()
 	GameEngineDepthStencil::ResourceDestroy();
 	GameEngineBlend::ResourceDestroy();
 
-	GameEngineDepthStencilTexture::ResourceDestroy();
 	GameEngineConstantBuffer::ResourceDestroy();
 
 	GameEngineRenderTarget::ResourceDestroy();
