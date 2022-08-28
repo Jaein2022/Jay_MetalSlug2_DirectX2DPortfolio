@@ -30,10 +30,13 @@
     <ClInclude Include="TestPlayer_Header.h">
       <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="TestPointer.h">
+    <ClInclude Include="TestIndicator.h">
       <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="TestPointerBase.h">
+    <ClInclude Include="TestIndicatorBase.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPixelIndicator.h">
       <Filter>Test</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,10 +59,13 @@
     <ClCompile Include="TestBackground.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="TestPointer.cpp">
+    <ClCompile Include="TestIndicator.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="TestPointerBase.cpp">
+    <ClCompile Include="TestIndicatorBase.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPixelIndicator.cpp">
       <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,7 +2,8 @@
 #include "TestPlayer.h"
 #include "TestLevel.h"
 #include "TestBackground.h"
-#include "TestPointer.h"
+#include "TestIndicator.h"
+#include "TestPixelIndicator.h"
 
 TestPlayer::TestPlayer()
 	: currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
@@ -24,18 +25,17 @@ TestPlayer::TestPlayer()
 	isJumpKeyDown_(false),
 	isAttackKeyDown_(false),
 	isSpecialKeyDown_(false),
-	renderPivotPointer_(nullptr),
+	//renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
 	playerWorldPosPointer_(nullptr),
 	lowerLandingChecker_(nullptr),
-	slopeCheckerLocalPosX_Int_(10),		//두 숫자는 반드시 같아야 한다.
-	slopeCheckerLocalPosX_Float_(10.f),	//두 숫자는 반드시 같아야 한다.
+	slopeCheckerLocalPosX_(10),	//0 금지!	
 	slopeChecker_(nullptr),
 	ascendingSlopeChecker_(nullptr),
 	flatSlopeChecker_(nullptr),
 	descendingSlopeChecker_(nullptr),
 	magenta_(255, 0, 255, 255),
-	initialJumpSpeed_(6.f),
+	initialJumpSpeed_(4.5f),
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
 	bulletCount_(-1),
@@ -57,15 +57,16 @@ void TestPlayer::Start()
 		0
 	);
 
-	//magenta_.r = 255;
-	//magenta_.g = 0;
-	//magenta_.b = 255;
-	//magenta_.a = 255;
+	if (0 == slopeCheckerLocalPosX_)
+	{
+		MsgBoxAssert("slopeCheckerLocalPosX_에 0 넣지 말 것!");
+		return;
+	}
 
 	CreatePlayerAnimations();
 	CreatePlayerStates();
 
-	//renderPivotPointer_ = TestPointer::CreatePointer(
+	//renderPivotPointer_ = TestIndicator::CreatePointer(
 	//	"RenderPivotPointer",
 	//	this,
 	//	float4::Cyan,
@@ -73,7 +74,7 @@ void TestPlayer::Start()
 	//	float4(5, 5, 1)
 	//);
 
-	upperLandingChecker_ = TestPointer::CreatePointer(
+	upperLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"UpperLandingCheck",
 		this,
 		float4::Black,
@@ -81,7 +82,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	playerWorldPosPointer_ = TestPointer::CreatePointer(
+	playerWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"PlayerWorldPosPointer",
 		this,
 		float4::Red,
@@ -89,7 +90,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);	
 	
-	lowerLandingChecker_ = TestPointer::CreatePointer(
+	lowerLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"LowerLandingChecker",
 		this,
 		float4::Black,
@@ -97,35 +98,35 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	slopeChecker_ = TestPointer::CreatePointer(
+	slopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"SlopeChecker",
 		this,
 		float4::Red,
-		float4(slopeCheckerLocalPosX_Int_, 0, -5),
+		float4(slopeCheckerLocalPosX_, 0, -5),
 		float4(5, 5, 1)
 	);
 
-	ascendingSlopeChecker_ = TestPointer::CreatePointer(
+	ascendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"AscendingSlopeChecker",
 		this,
 		float4::Black,
-		float4(slopeCheckerLocalPosX_Int_, 10, -5),
+		float4(slopeCheckerLocalPosX_, 10, -5),
 		float4(5, 5, 1)
 	);
 
-	flatSlopeChecker_ = TestPointer::CreatePointer(
+	flatSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"FlatSlopeChecker_",
 		this,
 		float4::Black,
-		float4(slopeCheckerLocalPosX_Int_, 0, -5),
+		float4(slopeCheckerLocalPosX_, 0, -5),
 		float4(5, 5, 1)
 	);
 
-	descendingSlopeChecker_ = TestPointer::CreatePointer(
+	descendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"DescendingSlopeChecker",
 		this,
 		float4::Black,
-		float4(slopeCheckerLocalPosX_Int_, -10, -5),
+		float4(slopeCheckerLocalPosX_, -10, -5),
 		float4(5, 5, 1)
 	);
 
@@ -213,10 +214,7 @@ void TestPlayer::UpdateInputInfo()
 
 	if (true == GameEngineInput::GetInst()->IsDown("Test"))
 	{
-		//TestPointer::RenderingOnOffSwitch();
-
-		//this->GetTransform().PixLocalNegativeX();
-
+		TestIndicator::RenderingOnOffSwitch();
 	}
 }
 
@@ -605,11 +603,28 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 
 void TestPlayer::Run(float _deltaTime)
 {
+	if (this->GetTransform().GetWorldPosition().x - 50.f/*캐릭터 좌우크기 절반*/
+			< (- GameEngineWindow::GetInst()->GetScale().HX() 
+				+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
+		&& -1 == horizontalInputValue_)
+	{
+		return;		//플레이어는 윈도우 좌측경계를 넘어갈 수 없음.
+	}
+
+	if (this->GetTransform().GetWorldPosition().x + 50.f/*캐릭터 좌우크기 절반*/
+			> (GameEngineWindow::GetInst()->GetScale().HX()
+				+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
+		&& 1 == horizontalInputValue_)
+	{
+		return;		//플레이어는 윈도우 우측경계를 넘어갈 수 없음.
+	}
+
 	this->GetTransform().SetWorldMove(
 		float4::Right * horizontalInputValue_ * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
 
 	this->GetTransform().SetWorldMove(
 		float4::Up * CheckSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
+	
 }
 
 float TestPlayer::CheckSlope()
@@ -625,14 +640,14 @@ float TestPlayer::CheckSlope()
 			&& magenta_.color_ == descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
-				slopeCheckerLocalPosX_Int_,
+				slopeCheckerLocalPosX_,
 				ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY() + 5,
 				-5
 			);
 
 			if (magenta_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
-				//절벽.
+				//절벽의 경우엔 0 반환.
 				return 0.f;
 			}
 			else
@@ -661,7 +676,7 @@ float TestPlayer::CheckSlope()
 		for (slopeCheckPosY = beginPosY; slopeCheckPosY >= endPosY; slopeCheckPosY--)
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
-				slopeCheckerLocalPosX_Int_,
+				slopeCheckerLocalPosX_,
 				slopeCheckPosY,
 				-5
 			);
@@ -671,7 +686,7 @@ float TestPlayer::CheckSlope()
 			}
 		}
 		
-		return static_cast<float>(slopeCheckPosY) / slopeCheckerLocalPosX_Float_;
+		return static_cast<float>(slopeCheckPosY) / static_cast<float>(slopeCheckerLocalPosX_);
 		//플레이어가 앞으로 1픽셀 전진했을때 위로는 몇픽셀 이동해야하는지에 대한 값 반환.
 	}
 	else

@@ -1,7 +1,8 @@
 #pragma once
 #include "TestPlayer_Header.h"
 
-class TestPointer;
+class TestPixelIndicator;
+class TestIndicator;
 class TestBackground;
 class TestPlayer : public GameEngineActor
 {
@@ -78,19 +79,18 @@ private:
 	bool isAttackKeyDown_;
 	bool isSpecialKeyDown_;
 
-	TestPointer* renderPivotPointer_;		//렌더피봇 표시.
+	//TestIndicator* renderPivotPointer_;		//플레이어의 렌더피봇 표시.
 
 
-	TestPointer* upperLandingChecker_;		
-	TestPointer* playerWorldPosPointer_;	//액터의 월드포지션 표시.
-	TestPointer* lowerLandingChecker_;		
+	TestPixelIndicator* upperLandingChecker_;		
+	TestPixelIndicator* playerWorldPosPointer_;	//액터의 월드포지션 표시.
+	TestPixelIndicator* lowerLandingChecker_;		
 
-	const int slopeCheckerLocalPosX_Int_;		//경사체커들의 로컬포스 int X값.
-	const float slopeCheckerLocalPosX_Float_;	//경사체커들의 로컬포스 float X값.
-	TestPointer* slopeChecker_;		
-	TestPointer* ascendingSlopeChecker_;			
-	TestPointer* flatSlopeChecker_;
-	TestPointer* descendingSlopeChecker_;
+	const int slopeCheckerLocalPosX_;		//경사체커들의 로컬포스 X값. 0 넣지 말 것!
+	TestPixelIndicator* slopeChecker_;		
+	TestPixelIndicator* ascendingSlopeChecker_;			
+	TestPixelIndicator* flatSlopeChecker_;
+	TestPixelIndicator* descendingSlopeChecker_;
 
 
 	const PixelColor magenta_;

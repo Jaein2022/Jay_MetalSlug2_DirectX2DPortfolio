@@ -153,7 +153,11 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestPointer.h" />
+    <ClInclude Include="TestIndicator.h" />
+    <ClInclude Include="TestPixelIndicator.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="TestPlayer_Header.h" />
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="TestBackground.h">
@@ -168,7 +172,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestPointerBase.h">
+    <ClInclude Include="TestIndicatorBase.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -186,7 +190,11 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestPointer.cpp" />
+    <ClCompile Include="TestIndicator.cpp" />
+    <ClCompile Include="TestPixelIndicator.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="TestPlayer.cpp">
       <SubType>
       </SubType>
@@ -196,7 +204,7 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="TestPlayer_InitFunctions.cpp" />
-    <ClCompile Include="TestPointerBase.cpp">
+    <ClCompile Include="TestIndicatorBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>

@@ -2,8 +2,9 @@
 #include "TestLevel.h"
 #include "TestPlayer.h"
 #include "TestBackground.h"
-#include "TestPointer.h"
-#include "TestPointerBase.h"
+#include "TestIndicator.h"
+#include "TestIndicatorBase.h"
+#include "TestPixelIndicator.h"
 
 //#include <GameEngineCore\GameEngineDevice.h>
 
@@ -24,7 +25,7 @@ TestLevel::~TestLevel()
 
 void TestLevel::Start()
 {
-	TestPointer::SetTexture("TestBG_PC.png");
+	TestPixelIndicator::SetTexture("TestBG_PC.png");
 
 	testPlayer_ = CreateActor<TestPlayer>(0, "TestPlayer");
 
@@ -35,7 +36,7 @@ void TestLevel::Start()
 		GameEngineInput::GetInst()->CreateKey("FreeCameraOnOff", 'O');
 	}
 
-	currentFocusPointer_ = TestPointer::CreatePointer(
+	currentFocusPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
 		"CurrentFocusPointer",
 		this->GetMainCameraActor(),
 		float4::Black,
@@ -43,7 +44,7 @@ void TestLevel::Start()
 		float4(15, 15, 1)
 	);
 
-	destFocus_ = CreateActor<TestPointerBase>(0, "DestFocus");
+	destFocus_ = CreateActor<TestIndicatorBase>(0, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
 		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
@@ -67,13 +68,14 @@ void TestLevel::Update(float _deltaTime)
 		return;
 	}
 
-	if (destFocus_->GetTransform().GetWorldPosition().x
-		<= testPlayer_->GetTransform().GetWorldPosition().x + 75.f)
+	if (destFocus_->GetTransform().GetWorldPosition().x 
+			<= testPlayer_->GetTransform().GetWorldPosition().x + 75.f
+		&& GameEngineTexture::Find("TestBG_PC.png")->GetScale().x - GameEngineWindow::GetScale().x
+			>= destFocus_->GetTransform().GetWorldPosition().x)
 	{
 		destFocus_->GetTransform().SetWorldMove(
 			float4::Right * _deltaTime * 3.f * TestLevel::playSpeed_);
 	}
-
 
 	UpdateCameraActorMovement(_deltaTime);
 

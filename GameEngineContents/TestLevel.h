@@ -1,7 +1,7 @@
 #pragma once
 
-class TestPointer;
-class TestPointerBase;
+class TestIndicator;
+class TestIndicatorBase;
 class TestBackground;
 class TestPlayer;
 class TestLevel: public GameEngineLevel
@@ -41,7 +41,7 @@ private:
 	TestPlayer* testPlayer_;
 	TestBackground* testBackground_;
 
-	TestPointer* currentFocusPointer_;
-	TestPointerBase* destFocus_;
+	TestIndicator* currentFocusPointer_;
+	TestIndicatorBase* destFocus_;
 };
 
