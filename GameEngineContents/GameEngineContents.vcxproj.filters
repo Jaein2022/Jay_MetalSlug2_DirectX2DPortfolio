@@ -39,6 +39,9 @@
     <ClInclude Include="TestPixelIndicator.h">
       <Filter>Test</Filter>
     </ClInclude>
+    <ClInclude Include="TestPistolBullet.h">
+      <Filter>Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -66,6 +69,9 @@
       <Filter>Test</Filter>
     </ClCompile>
     <ClCompile Include="TestPixelIndicator.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPistolBullet.cpp">
       <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>

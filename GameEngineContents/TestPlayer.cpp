@@ -4,6 +4,7 @@
 #include "TestBackground.h"
 #include "TestIndicator.h"
 #include "TestPixelIndicator.h"
+#include "TestPistolBullet.h"
 
 TestPlayer::TestPlayer()
 	: currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
@@ -34,12 +35,17 @@ TestPlayer::TestPlayer()
 	ascendingSlopeChecker_(nullptr),
 	flatSlopeChecker_(nullptr),
 	descendingSlopeChecker_(nullptr),
+	muzzleIndicator_(nullptr),
+	pistolForwardMuzzlePosition_(100, 105, -5),
+	pistolUpwardMuzzlePosition_(-10, 220, -5),
+	pistolDownwardMuzzlePosition_(15, -5, -5),
+	pistolDuckingMuzzlePosition_(95, 65, -5),
 	magenta_(255, 0, 255, 255),
-	initialJumpSpeed_(4.5f),
+	initialJumpSpeed_(5.f),
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
-	bulletCount_(-1),
-	grenadeCount_(0)
+	duckStepSpeed_(1.f),
+	aimingAngle_(0.f)
 {
 }
 
@@ -53,7 +59,7 @@ void TestPlayer::Start()
 	this->GetTransform().SetWorldScale(1, 1, 1);
 	this->GetTransform().SetWorldPosition(
 		500 - GameEngineWindow::GetInst()->GetScale().HIX(),
-		0,
+		200,
 		0
 	);
 
@@ -63,8 +69,6 @@ void TestPlayer::Start()
 		return;
 	}
 
-	CreatePlayerAnimations();
-	CreatePlayerStates();
 
 	//renderPivotPointer_ = TestIndicator::CreatePointer(
 	//	"RenderPivotPointer",
@@ -130,10 +134,18 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
+	muzzleIndicator_ = TestIndicator::CreateIndicator<TestIndicator>(
+		"MuzzleIndicator",
+		this,
+		float4::Red,
+		pistolForwardMuzzlePosition_,
+		float4(5, 5, 1)
+	);
 
 
 
-
+	CreatePlayerAnimations();
+	CreatePlayerStates();
 }
 
 void TestPlayer::Update(float _deltaTime)
@@ -141,15 +153,9 @@ void TestPlayer::Update(float _deltaTime)
 	CheckFalling();
 	UpdateInputInfo();
 	ConvertInputToPlayerStates();
-
+	ControlMuzzle();
 	UpdatePlayerState(_deltaTime);
 
-	if (0 <= this->GetTransform().GetWorldPosition().x)
-	{
-		float4 test2 = this->GetTransform().GetWorldPosition();
-		float4 test = playerWorldPosPointer_->GetTransform().GetWorldPosition();
-		int i = 0;
-	}
 
 }
 
@@ -462,7 +468,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else
 		{
-			////착지시 스테이트 변화. 점프 텍스처 피벗 맞출때만 복원.
+			////착지시 스테이트 변화. 점프 텍스처 피봇 맞출때만 복원.
 			//if (true == isJumping_)
 			//{
 			//	isJumping_ = false;
@@ -558,13 +564,9 @@ void TestPlayer::ConvertInputToPlayerStates()
 		if (PlayerTopState::FiringToAiming == top_ || PlayerTopState::ThrowingGrenadeToAiming == top_)
 		{
 			top_ = PlayerTopState::Aiming;
-			direction_ = AimingDirection::Forward;
 		}
 
-		if (AimingDirection::UpwardToForward == direction_)
-		{
-			direction_ = AimingDirection::Forward;
-		}
+		direction_ = AimingDirection::Forward;		
 	}
 
 	//아래방향 조준은 공중에서만.
@@ -624,7 +626,31 @@ void TestPlayer::Run(float _deltaTime)
 
 	this->GetTransform().SetWorldMove(
 		float4::Up * CheckSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
-	
+}
+
+void TestPlayer::DuckStep(float _deltaTime)
+{
+	if (this->GetTransform().GetWorldPosition().x - 50.f/*캐릭터 좌우크기 절반*/
+		< (-GameEngineWindow::GetInst()->GetScale().HX()
+			+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
+		&& -1 == horizontalInputValue_)
+	{
+		return;		//플레이어는 윈도우 좌측경계를 넘어갈 수 없음.
+	}
+
+	if (this->GetTransform().GetWorldPosition().x + 50.f/*캐릭터 좌우크기 절반*/
+		> (GameEngineWindow::GetInst()->GetScale().HX()
+			+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
+		&& 1 == horizontalInputValue_)
+	{
+		return;		//플레이어는 윈도우 우측경계를 넘어갈 수 없음.
+	}
+
+	this->GetTransform().SetWorldMove(
+		float4::Right * horizontalInputValue_ * _deltaTime * duckStepSpeed_ * TestLevel::playSpeed_);
+
+	this->GetTransform().SetWorldMove(
+		float4::Up * CheckSlope() * _deltaTime * duckStepSpeed_ * TestLevel::playSpeed_);
 }
 
 float TestPlayer::CheckSlope()
@@ -817,5 +843,75 @@ void TestPlayer::CheckFalling()
 				isJumping_ = true;
 			}
 		}
+	}
+}
+
+void TestPlayer::ControlMuzzle()
+{
+	switch (direction_)
+	{
+	case AimingDirection::Forward:
+	{
+		aimingAngle_ = 90 - (90 * this->GetTransform().GetLocalScale().x) ;
+
+		if (PlayerLegState::Ducking == leg_)
+		{
+			muzzleIndicator_->GetTransform().SetLocalPosition(pistolDuckingMuzzlePosition_);
+		}
+		else
+		{
+			muzzleIndicator_->GetTransform().SetLocalPosition(pistolForwardMuzzlePosition_);
+		}
+		break;
+	}
+	case AimingDirection::Upward:
+	{
+		aimingAngle_ = 90;
+		muzzleIndicator_->GetTransform().SetLocalPosition(pistolUpwardMuzzlePosition_);
+		break;
+	}
+	case AimingDirection::Downward:
+	{
+		aimingAngle_ = -90;
+		muzzleIndicator_->GetTransform().SetLocalPosition(pistolDownwardMuzzlePosition_);
+		break;
+	}
+	case AimingDirection::ForwardToUpward:
+		break;
+	case AimingDirection::UpwardToForward:
+		break;
+	case AimingDirection::ForwardToDownward:
+		break;
+	case AimingDirection::DownwardToForward:
+		break;
+	default:
+		break;
+	}
+
+	muzzleIndicator_->GetTransform().SetLocalRotation(0.f, 0.f, aimingAngle_);
+
+}
+
+void TestPlayer::Fire()
+{
+	switch (weapon_)
+	{
+	case PlayerWeaponType::Pistol:
+	{
+		TestPistolBullet* newBullet = this->GetLevel<TestLevel>()->GetPistolBullet();
+		newBullet->GetTransform().SetWorldPosition(muzzleIndicator_->GetTransform().GetWorldPosition());
+		newBullet->GetTransform().SetWorldRotation(muzzleIndicator_->GetTransform().GetWorldRotation());
+		newBullet->SetFiringDirection(aimingAngle_);
+		break;
+	}
+	case PlayerWeaponType::HeavyMachineGun:
+	{
+		MsgBoxAssert("아직 준비되지 않은 무기 타입입니다.");
+		break;
+	}
+
+	default:
+		MsgBoxAssert("아직 준비되지 않은 무기 타입입니다.");
+		break;
 	}
 }

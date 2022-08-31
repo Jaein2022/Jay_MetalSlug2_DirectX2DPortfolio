@@ -32,16 +32,19 @@ public:
 	inline void On()
 	{
 		this->isUpdate_ = true;
+		AllOnEvent();
 	}
 
 	inline void Off()
 	{
 		this->isUpdate_ = false;
+		AllOffEvent();
 	}
 
 	inline void OnOffSwitch()
 	{
 		this->isUpdate_ = !this->isUpdate_;
+		isUpdate_ == true ? OnEvent() : OffEvent();
 	}
 
 	inline bool IsUpdate()

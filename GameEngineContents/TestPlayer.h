@@ -39,11 +39,12 @@ private:
 	void UpdatePlayerState(float _deltaTime);	//플레이어 전체 상태 업데이트.
 
 	void Run(float _deltaTime);
+	void DuckStep(float _deltaTime);
 	float CheckSlope();
 	void Fall(float _deltaTime);
 	void CheckFalling();
-
-
+	void ControlMuzzle();
+	void Fire();
 
 
 private:
@@ -93,15 +94,22 @@ private:
 	TestPixelIndicator* descendingSlopeChecker_;
 
 
+	TestIndicator* muzzleIndicator_;		//총구 표시기.
+	const float4 pistolForwardMuzzlePosition_;
+	const float4 pistolUpwardMuzzlePosition_;
+	const float4 pistolDownwardMuzzlePosition_;
+	const float4 pistolDuckingMuzzlePosition_;
+
+
 	const PixelColor magenta_;
 
 	const float initialJumpSpeed_;
 	float fallingSpeed_;
 
 	float runningSpeed_;
+	float duckStepSpeed_;
 
-	int bulletCount_;
-	int grenadeCount_;
+	float aimingAngle_;
 
 };
 

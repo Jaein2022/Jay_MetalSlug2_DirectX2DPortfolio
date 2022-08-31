@@ -5,8 +5,11 @@ class TestPixelIndicator: public TestIndicator
 {
 	//이 클래스의 존재 이유: 인디케이터에 픽셀충돌 보조기능 추가.
 
-	static GameEngineTexture* pcTexture_;	//픽셀충돌판정용 텍스처. 
+	static GameEngineTexture* pcTexture_;	//픽셀충돌판정용 텍스처.
 	//모든 픽셀인디케이터가 공유해야하는 텍스처이므로 정적변수로 만든다.
+
+public:
+	static const PixelColor magenta_;	
 
 public:
 	TestPixelIndicator();

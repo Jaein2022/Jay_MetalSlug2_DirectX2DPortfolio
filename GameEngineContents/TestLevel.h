@@ -1,5 +1,16 @@
 #pragma once
 
+enum class ActorGroup
+{
+	Player,
+	PistolBullet,
+	//HeavyMachineGunBullet,
+	//Rebel,
+	UI,
+	Background
+};
+
+class TestPistolBullet;
 class TestIndicator;
 class TestIndicatorBase;
 class TestBackground;
@@ -26,7 +37,7 @@ public:
 	void End() override;
 
 public:
-
+	TestPistolBullet* GetPistolBullet();
 
 
 public:

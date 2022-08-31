@@ -6,7 +6,7 @@
 
 GameEngineRenderer::GameEngineRenderer()
 	: camera_(nullptr),
-	cameraOrder_(CameraOrder::UICamera),
+	cameraOrder_(CameraOrder::MainCamera),
 	renderOption_(),
 	renderingOrder_(0)
 {

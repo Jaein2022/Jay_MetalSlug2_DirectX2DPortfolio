@@ -38,7 +38,6 @@ public:
 		newIndicator->GetTransform().SetLocalScale(_localScale);
 		newIndicator->GetTransform().SetLocalPosition(_localPosition);
 		newIndicator->Start();
-		//newPointer->SetRenderingOrder(5);
 		return dynamic_cast<PointerType*>(newIndicator);
 	}
 

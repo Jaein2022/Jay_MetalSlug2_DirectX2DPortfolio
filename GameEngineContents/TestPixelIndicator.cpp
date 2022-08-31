@@ -2,6 +2,7 @@
 #include "TestPixelIndicator.h"
 
 GameEngineTexture* TestPixelIndicator::pcTexture_ = nullptr;
+const PixelColor TestPixelIndicator::magenta_ = PixelColor(255, 0, 255, 255);
 
 TestPixelIndicator::TestPixelIndicator()
 {

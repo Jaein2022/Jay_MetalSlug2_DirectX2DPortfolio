@@ -5,6 +5,7 @@
 #include "TestIndicator.h"
 #include "TestIndicatorBase.h"
 #include "TestPixelIndicator.h"
+#include "TestPistolBullet.h"
 
 //#include <GameEngineCore\GameEngineDevice.h>
 
@@ -27,9 +28,16 @@ void TestLevel::Start()
 {
 	TestPixelIndicator::SetTexture("TestBG_PC.png");
 
-	testPlayer_ = CreateActor<TestPlayer>(0, "TestPlayer");
+	testPlayer_ = CreateActor<TestPlayer>(ActorGroup::Player, "TestPlayer");
 
-	testBackground_ = CreateActor<TestBackground>(0, "TestBackground");
+	testBackground_ = CreateActor<TestBackground>(ActorGroup::Background, "TestBackground");
+
+	//for (int i = 0; i < pistolMagazineSize_; i++)
+	//{
+	//	TestPistolBullet* newBullet = CreateActor<TestPistolBullet>(ActorGroup::PistolBullet, "TestPistolBullet");
+	//	newBullet->Off();
+	//}
+
 
 	if (false == GameEngineInput::GetInst()->IsKey("FreeCameraOnOff"))
 	{
@@ -49,7 +57,7 @@ void TestLevel::Start()
 	destFocus_->GetTransform().SetWorldPosition(
 		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
 
-
+	
 	//GameEngineStatusWindow::AddDebugRenderTarget("TestLevel MainCamera", GetMainCamera()->GetCameraRenderTarget());
 	//GameEngineStatusWindow::AddDebugRenderTarget("BackBuffer", GameEngineDevice::GetBackBuffer());
 
@@ -85,6 +93,11 @@ void TestLevel::End()
 {
 }
 
+TestPistolBullet* TestLevel::GetPistolBullet()
+{
+	return CreateActor<TestPistolBullet>(ActorGroup::PistolBullet, "TestPistolBullet");
+}
+
 void TestLevel::UpdateCameraActorMovement(float _deltaTime)
 {
 	GetMainCameraActor()->GetTransform().SetWorldPosition(
@@ -94,8 +107,4 @@ void TestLevel::UpdateCameraActorMovement(float _deltaTime)
 			_deltaTime * 10.0f
 		)
 	);
-
-	
-
-
 }
