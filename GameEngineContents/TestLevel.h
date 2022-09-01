@@ -3,11 +3,11 @@
 enum class ActorGroup
 {
 	Player,
+	Background,
 	PistolBullet,
 	//HeavyMachineGunBullet,
 	//Rebel,
 	UI,
-	Background
 };
 
 class TestPistolBullet;
@@ -43,6 +43,7 @@ public:
 public:
 	static const float gravity_;
 	static const float playSpeed_;
+	static const PixelColor groundColor_;	//cyan(0, 255, 255, 255) = 4294967040(UINT)
 
 
 private:

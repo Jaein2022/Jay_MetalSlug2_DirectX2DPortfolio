@@ -100,9 +100,6 @@ private:
 	const float4 pistolDownwardMuzzlePosition_;
 	const float4 pistolDuckingMuzzlePosition_;
 
-
-	const PixelColor magenta_;
-
 	const float initialJumpSpeed_;
 	float fallingSpeed_;
 

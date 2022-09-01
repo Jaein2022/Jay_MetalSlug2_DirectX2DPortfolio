@@ -4,7 +4,7 @@
 #include "TestLevel.h"
 
 TestPistolBullet::TestPistolBullet()
-	: bulletSpeed_(10.f),
+	: bulletSpeed_(12.f),
 	pistolBulletCollision_(nullptr),
 	pistolBulletRenderer_(nullptr),
 	effectiveHitSparkRenderer_(nullptr),
@@ -43,7 +43,12 @@ void TestPistolBullet::Start()
 	}
 	effectiveHitSparkRenderer_->SetTexture("Spark_EffectiveHit.png");
 	effectiveHitSparkRenderer_->CreateFrameAnimation_CutTexture("EffectiveHitSpark", 
-		FrameAnimation_Desc("Spark_EffectiveHit.png", 0, 9, 0.2f, false));
+		FrameAnimation_Desc("Spark_EffectiveHit.png", 0, 9, 0.02f, false));
+	effectiveHitSparkRenderer_->AnimationBindEnd("EffectiveHitSpark",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			this->Death();
+		}
+	);
 	effectiveHitSparkRenderer_->GetTransform().SetLocalScale(68, 64, 1);
 	effectiveHitSparkRenderer_->SetPivot(PivotMode::Center);
 	effectiveHitSparkRenderer_->ChangeFrameAnimation("EffectiveHitSpark");
@@ -58,8 +63,13 @@ void TestPistolBullet::Start()
 	}
 	glancingHitSparkRenderer_->SetTexture("Spark_GlancingHit.png");
 	glancingHitSparkRenderer_->CreateFrameAnimation_CutTexture("GlancingHitSpark", 
-		FrameAnimation_Desc("Spark_GlancingHit.png", 0, 11, 0.2f, false));
-	glancingHitSparkRenderer_->GetTransform().SetLocalScale(150, 250, 1);
+		FrameAnimation_Desc("Spark_GlancingHit.png", 0, 11, 0.02f, false));
+	glancingHitSparkRenderer_->AnimationBindEnd("GlancingHitSpark",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			this->Death();
+		}
+	);
+	glancingHitSparkRenderer_->GetTransform().SetLocalScale(100, 167, 1);
 	glancingHitSparkRenderer_->GetTransform().SetLocalRotation(0, 0, 90);
 	glancingHitSparkRenderer_->SetPivot(PivotMode::Bot);
 	glancingHitSparkRenderer_->ChangeFrameAnimation("GlancingHitSpark");
@@ -70,7 +80,7 @@ void TestPistolBullet::Start()
 		"GroundChecker",
 		this,
 		float4::Black,
-		float4(0, 0, -5),
+		float4(0, 0, -15),
 		float4(5, 5, 1)
 	);
 
@@ -82,11 +92,15 @@ void TestPistolBullet::Update(float _deltaTime)
 {
 	this->GetTransform().SetWorldMove(firingDirection_ * bulletSpeed_ * _deltaTime * TestLevel::playSpeed_);
 
-	GameEngineDebug::DrawBox(pistolBulletCollision_->GetTransform(), float4(1.f, 0.f, 0.f, 0.5f));
+	//GameEngineDebug::DrawBox(pistolBulletCollision_->GetTransform(), float4::Red);
 
 	if (true == CheckGroundHit())
 	{
-		this->Death();
+		pistolBulletRenderer_->Off();
+		//effectiveHitSparkRenderer_->On();
+		glancingHitSparkRenderer_->On();
+		glancingHitSparkRenderer_->GetTransform().SetWorldRotation(0, 0, 0);
+		firingDirection_ = float4::Zero;
 	}
 }
 
@@ -97,7 +111,7 @@ void TestPistolBullet::End()
 
 bool TestPistolBullet::CheckGroundHit()
 {
-	if (TestPixelIndicator::magenta_.color_ ==  groundChecker_->GetColorValue_UINT())
+	if (TestLevel::groundColor_.color_ <=  groundChecker_->GetColorValue_UINT())
 	{
 		return true;
 	}

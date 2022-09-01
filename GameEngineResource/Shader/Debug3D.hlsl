@@ -16,6 +16,7 @@ Output Debug3D_VS(Input _input)
     Output newOutput = (Output) 0;
     newOutput.pos_ = mul(_input.pos_, worldViewProjectionMatrix_);
     newOutput.posWorld_.xyz = _input.pos_.xyz;
+    newOutput.posWorld_.w = 1.f;
     return newOutput;
 }
 
@@ -33,4 +34,18 @@ float4 Debug3D_PS(Output _input): SV_Target0
     }
     
     return color_;
+    
+    //float4 resultColor = color_;
+    //
+    //if (resultColor.a <= 0.f)
+    //{
+    //    clip(-1);
+    //}
+    //
+    //if (resultColor.a >= 1.f)
+    //{
+    //    resultColor.a = 1.f;
+    //}
+    //
+    //return resultColor;
 }

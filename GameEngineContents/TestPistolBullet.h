@@ -25,7 +25,6 @@ public:
 public:
 	void SetFiringDirection(float _direction)
 	{
-
 		firingDirection_ = float4::DegreeToDirection2D(_direction);
 	}
 

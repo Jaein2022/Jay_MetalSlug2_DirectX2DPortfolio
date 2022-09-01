@@ -1,7 +1,6 @@
 #include "PreCompile.h"
 #include "ContentsCore.h"
 #include "TestLevel.h"
-//#include "TestBackground.h"
 
 ContentsCore::ContentsCore()
 {

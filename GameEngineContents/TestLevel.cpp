@@ -11,6 +11,7 @@
 
 const float TestLevel::gravity_ = 9.80665f;
 const float TestLevel::playSpeed_ = 100.f;
+const PixelColor TestLevel::groundColor_(0, 255, 255, 255);
 
 TestLevel::TestLevel()
 	: testPlayer_(nullptr),
@@ -31,13 +32,6 @@ void TestLevel::Start()
 	testPlayer_ = CreateActor<TestPlayer>(ActorGroup::Player, "TestPlayer");
 
 	testBackground_ = CreateActor<TestBackground>(ActorGroup::Background, "TestBackground");
-
-	//for (int i = 0; i < pistolMagazineSize_; i++)
-	//{
-	//	TestPistolBullet* newBullet = CreateActor<TestPistolBullet>(ActorGroup::PistolBullet, "TestPistolBullet");
-	//	newBullet->Off();
-	//}
-
 
 	if (false == GameEngineInput::GetInst()->IsKey("FreeCameraOnOff"))
 	{

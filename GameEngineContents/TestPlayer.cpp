@@ -36,11 +36,10 @@ TestPlayer::TestPlayer()
 	flatSlopeChecker_(nullptr),
 	descendingSlopeChecker_(nullptr),
 	muzzleIndicator_(nullptr),
-	pistolForwardMuzzlePosition_(100, 105, -5),
-	pistolUpwardMuzzlePosition_(-10, 220, -5),
-	pistolDownwardMuzzlePosition_(15, -5, -5),
-	pistolDuckingMuzzlePosition_(95, 65, -5),
-	magenta_(255, 0, 255, 255),
+	pistolForwardMuzzlePosition_(100, 105, 10),
+	pistolUpwardMuzzlePosition_(-10, 220, 10),
+	pistolDownwardMuzzlePosition_(15, -5, 10),
+	pistolDuckingMuzzlePosition_(95, 65, 10),
 	initialJumpSpeed_(5.f),
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
@@ -89,7 +88,7 @@ void TestPlayer::Start()
 	playerWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"PlayerWorldPosPointer",
 		this,
-		float4::Red,
+		float4::Blue,
 		float4(0, 0, -5),
 		float4(5, 5, 1)
 	);	
@@ -105,7 +104,7 @@ void TestPlayer::Start()
 	slopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"SlopeChecker",
 		this,
-		float4::Red,
+		float4::Blue,
 		float4(slopeCheckerLocalPosX_, 0, -5),
 		float4(5, 5, 1)
 	);
@@ -661,9 +660,9 @@ float TestPlayer::CheckSlope()
 		int endPosY = 0;
 		int slopeCheckPosY = 0;
 
-		if (magenta_.color_ == ascendingSlopeChecker_->GetColorValue_UINT()
-			&& magenta_.color_ == flatSlopeChecker_->GetColorValue_UINT()
-			&& magenta_.color_ == descendingSlopeChecker_->GetColorValue_UINT())
+		if (TestLevel::groundColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
 				slopeCheckerLocalPosX_,
@@ -671,7 +670,7 @@ float TestPlayer::CheckSlope()
 				-5
 			);
 
-			if (magenta_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				//절벽의 경우엔 0 반환.
 				return 0.f;
@@ -682,13 +681,13 @@ float TestPlayer::CheckSlope()
 				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			}
 		}
-		else if (magenta_.color_ == flatSlopeChecker_->GetColorValue_UINT()
-			&& magenta_.color_ == descendingSlopeChecker_->GetColorValue_UINT())
+		else if (TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 		}
-		else if (magenta_.color_ == descendingSlopeChecker_->GetColorValue_UINT())
+		else if (TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
@@ -706,7 +705,7 @@ float TestPlayer::CheckSlope()
 				slopeCheckPosY,
 				-5
 			);
-			if (magenta_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				break;
 			}
@@ -737,10 +736,18 @@ void TestPlayer::CheckFalling()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((magenta_.color_ == upperLandingChecker_->GetColorValue_UINT())
-			&& (magenta_.color_ == lowerLandingChecker_->GetColorValue_UINT())
-			&& (magenta_.color_ == playerWorldPosPointer_->GetColorValue_UINT()))
+		if ((TestLevel::groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
+			&& (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+			&& (TestLevel::groundColor_.color_ <= playerWorldPosPointer_->GetColorValue_UINT()))
 		{
+			//PixelColor magenta = PixelColor(255, 0, 255, 255);
+			//magenta.color_;		//4294902015
+			//PixelColor yellow = PixelColor(255, 255, 0, 255);
+			//yellow.color_;		//4278255615
+			//PixelColor cyan = PixelColor(0, 255, 255, 255);
+			//cyan.color_;		//4294967040
+
+
 			if (true == isJumping_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
@@ -771,8 +778,8 @@ void TestPlayer::CheckFalling()
 				}
 			}
 		}
-		else if (magenta_.color_ == playerWorldPosPointer_->GetColorValue_UINT()
-			&& magenta_.color_ == lowerLandingChecker_->GetColorValue_UINT())
+		else if (TestLevel::groundColor_.color_ <= playerWorldPosPointer_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isJumping_)
 			{
@@ -803,7 +810,7 @@ void TestPlayer::CheckFalling()
 				}
 			}
 		}
-		else if (magenta_.color_ == lowerLandingChecker_->GetColorValue_UINT())
+		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isJumping_)
 			{

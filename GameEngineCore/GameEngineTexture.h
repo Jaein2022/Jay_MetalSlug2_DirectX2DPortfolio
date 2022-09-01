@@ -26,6 +26,14 @@ struct PixelColor
 	{
 	}
 
+	PixelColor(int _r, int _g, int _b, int _a) 
+		: r(static_cast<unsigned char>(_r)),
+		g(static_cast<unsigned char>(_g)),
+		b(static_cast<unsigned char>(_b)),
+		a(static_cast<unsigned char>(_a))
+	{
+	}
+
 	PixelColor(unsigned int _color) : color_(_color)
 	{
 	}

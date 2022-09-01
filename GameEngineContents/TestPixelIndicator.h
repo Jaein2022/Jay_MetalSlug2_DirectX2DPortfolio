@@ -9,9 +9,6 @@ class TestPixelIndicator: public TestIndicator
 	//모든 픽셀인디케이터가 공유해야하는 텍스처이므로 정적변수로 만든다.
 
 public:
-	static const PixelColor magenta_;	
-
-public:
 	TestPixelIndicator();
 	~TestPixelIndicator();
 
