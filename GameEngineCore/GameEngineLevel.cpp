@@ -189,12 +189,12 @@ void GameEngineLevel::RemoveActor(GameEngineActor* _rootActor)
 
 void GameEngineLevel::Release(float _deltaTime)
 {
-	for (GameEngineUpdateObject* object : deleteObjects)
+	for (GameEngineUpdateObject* object : deleteObjects_)
 	{
 		object->ReleaseHierarchy();
 		//이전 루프에서 사망판정되서 objectsInDeletion_에 저장된 모든 오브젝트들과 그 자식들을 전부 삭제한다.
 	}
-	deleteObjects.clear();
+	deleteObjects_.clear();
 	//오브젝트들을 전부 삭제했다면 objectsInDeletion_리스트를 비운다.
 
 
@@ -233,9 +233,9 @@ void GameEngineLevel::Release(float _deltaTime)
 		for (std::list<GameEngineActor*>::iterator actorIter = actorGroupIter->second.begin();
 			actorIter != actorGroupIter->second.end(); /*listIter++*/)
 		{
-			(*actorIter)->ReleaseObject(deleteObjects);
+			(*actorIter)->ReleaseObject(deleteObjects_);
 			//액터와 그 자식 컴포넌트들이 사망 판정을 받았는지 확인하고, 
-			//사망 판정받았다면 부모 오브젝트의 children_리스트에서 떼어내 objectsInDeletion_에 넣는다.
+			//사망 판정받았다면 부모 오브젝트의 children_리스트에서 떼어내 deleteObjects_에 넣는다.
 
 			if (true == (*actorIter)->IsDead())
 			{

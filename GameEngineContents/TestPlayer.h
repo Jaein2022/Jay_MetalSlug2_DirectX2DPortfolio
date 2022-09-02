@@ -94,7 +94,7 @@ private:
 	TestPixelIndicator* descendingSlopeChecker_;
 
 
-	TestIndicator* muzzleIndicator_;		//총구 표시기.
+	TestIndicator* muzzleIndicator_;		//총구위치 표시기.
 	const float4 pistolForwardMuzzlePosition_;
 	const float4 pistolUpwardMuzzlePosition_;
 	const float4 pistolDownwardMuzzlePosition_;
@@ -108,5 +108,8 @@ private:
 
 	float aimingAngle_;
 
+
+	GameEngineCollision* playerCollision_;
+	GameEngineCollision* playerDuckingCollision_;
 };
 

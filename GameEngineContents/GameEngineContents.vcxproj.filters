@@ -42,6 +42,9 @@
     <ClInclude Include="TestPistolBullet.h">
       <Filter>Test</Filter>
     </ClInclude>
+    <ClInclude Include="TestArabian.h">
+      <Filter>Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -72,6 +75,9 @@
       <Filter>Test</Filter>
     </ClCompile>
     <ClCompile Include="TestPistolBullet.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArabian.cpp">
       <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>

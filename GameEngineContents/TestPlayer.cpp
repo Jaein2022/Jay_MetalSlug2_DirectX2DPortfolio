@@ -44,7 +44,9 @@ TestPlayer::TestPlayer()
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
 	duckStepSpeed_(1.f),
-	aimingAngle_(0.f)
+	aimingAngle_(0.f),
+	playerCollision_(nullptr),
+	playerDuckingCollision_(nullptr)
 {
 }
 
@@ -140,6 +142,18 @@ void TestPlayer::Start()
 		pistolForwardMuzzlePosition_,
 		float4(5, 5, 1)
 	);
+
+	playerCollision_ = CreateComponent<GameEngineCollision>("PlayerCollision");
+	playerCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
+	playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+	playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+	playerDuckingCollision_ = CreateComponent<GameEngineCollision>("PlayerDuckingCollision");
+	playerDuckingCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
+	playerDuckingCollision_->GetTransform().SetLocalScale(100, 100, 10);
+	playerDuckingCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+	playerDuckingCollision_->Off();
+	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 
 
@@ -745,7 +759,7 @@ void TestPlayer::CheckFalling()
 			//PixelColor yellow = PixelColor(255, 255, 0, 255);
 			//yellow.color_;		//4278255615
 			//PixelColor cyan = PixelColor(0, 255, 255, 255);
-			//cyan.color_;		//4294967040
+			//cyan.color_;			//4294967040
 
 
 			if (true == isJumping_)

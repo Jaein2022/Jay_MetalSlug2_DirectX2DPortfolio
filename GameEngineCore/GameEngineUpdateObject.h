@@ -176,7 +176,7 @@ protected:
 	//이 오브젝트가 생성될때 거치는 절차들을 실행하는 함수.
 	virtual void Start() = 0;
 
-	// 이 오브젝트가 메모리가 삭제될 때 거치는 절차들을 실행하는 함수.
+	// 이 오브젝트가 메모리가 삭제될 때 거치는 절차들을 실행하는 함수. 현재 유저코어의 End()외엔 호출되지 않음.
 	virtual void End() = 0;
 
 	void AllLevelStartEvent();

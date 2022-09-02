@@ -4,7 +4,7 @@
 #include "GameEngineActor.h"
 #include "GameEngineCameraActor.h"
 
-bool GEngine::isCollisionDebug_ = false;
+bool GEngine::isCollisionDebug_ = true;
 
 GEngine::GEngine()
 {

@@ -358,6 +358,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -373,6 +376,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Aiming_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -388,6 +394,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_ForwardToUpward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -403,6 +412,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_UpwardToForward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -419,6 +431,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -434,6 +449,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -449,6 +467,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -464,6 +485,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -480,6 +504,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -495,6 +522,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -532,6 +562,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Running_Aiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -547,6 +580,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Aiming_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -562,6 +598,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_ForwardToUpward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -577,6 +616,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_UpwardToForward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
  
@@ -592,6 +634,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 		
@@ -607,6 +652,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -622,6 +670,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -637,6 +688,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -652,6 +706,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -667,6 +724,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -716,6 +776,9 @@ void TestPlayer::CreatePlayerStates()
 			{
 				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
 			}
+
+			playerCollision_->Off();
+			playerDuckingCollision_->On();
 		}
 	);
 
@@ -730,6 +793,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Firing_Forward");
+
+			playerCollision_->Off();
+			playerDuckingCollision_->On();
 		}
 	);
 
@@ -744,6 +810,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_FiringToAiming_Forward");
+
+			playerCollision_->Off();
+			playerDuckingCollision_->On();
 		}
 	);
 
@@ -758,6 +827,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenade");
+
+			playerCollision_->Off();
+			playerDuckingCollision_->On();
 		}
 	);
 
@@ -772,6 +844,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenadeToAiming");
+
+			playerCollision_->Off();
+			playerDuckingCollision_->On();
 		}
 	);
 
@@ -786,6 +861,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Ducksteping_Forward");
+
+			playerCollision_->Off();
+			playerDuckingCollision_->On();
 		}
 	);
 
@@ -821,6 +899,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("VerticalJumping_Aiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -836,6 +917,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -851,6 +935,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -866,6 +953,9 @@ void TestPlayer::CreatePlayerStates()
 	
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -881,6 +971,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -896,6 +989,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -911,6 +1007,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -926,6 +1025,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -941,6 +1043,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -956,6 +1061,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -971,6 +1079,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 
@@ -986,6 +1097,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);	
 	
@@ -1016,6 +1130,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("VerticalJumping_Aiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1031,6 +1148,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1046,6 +1166,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1061,6 +1184,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1076,6 +1202,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1091,6 +1220,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1106,6 +1238,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1121,6 +1256,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1136,6 +1274,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1151,6 +1292,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1166,6 +1310,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1181,6 +1328,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1215,6 +1365,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Falling_Aiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1230,6 +1383,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1245,6 +1401,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1260,6 +1419,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1275,6 +1437,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1290,6 +1455,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1305,6 +1473,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1320,6 +1491,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1335,6 +1509,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1350,6 +1527,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1365,6 +1545,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1380,6 +1563,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		}
 	);
 
@@ -1409,6 +1595,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("StandingToDucking");
+
+			playerCollision_->Off();
+			playerDuckingCollision_->On();
 		}
 	);
 
@@ -1423,6 +1612,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("Running, JumpingToStanding");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		},
 		[this](const StateInfo& _info)->void {
 			wholePistolRenderer_->CurAnimationReset();
@@ -1440,6 +1632,9 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 			wholePistolRenderer_->ChangeFrameAnimation("Running, JumpingToStanding");
+
+			playerCollision_->On();
+			playerDuckingCollision_->Off();
 		},
 		[this](const StateInfo& _info)->void {
 			wholePistolRenderer_->CurAnimationReset();

@@ -168,7 +168,7 @@ private:
 	std::map<int, std::list<GameEngineActor*>> allActors_;
 	//이 레벨의 모든 액터들이 저장된 맵.
 
-	std::list<GameEngineUpdateObject*> deleteObjects;
+	std::list<GameEngineUpdateObject*> deleteObjects_;
 	//삭제 예정인 모든 오브젝트들이 종류 불문하고 잠시 저장되는 일종의 휴지통.
 
 
