@@ -283,9 +283,9 @@ public:
 		CalculateWorldRotation(newLocalRotationX, newLocalRotationY, newLocalRotationZ);
 	}
 
-	inline void SetAddWorldRotation(const float4& _world)
+	inline void SetAddWorldRotation(const float4& _worldRotation)
 	{
-		SetWorldRotation(data_.worldRotationVector_ + _world);
+		SetWorldRotation(data_.worldRotationVector_ + _worldRotation);
 	}
 
 	inline void SetWorldPosition(const float4& _worldPosition)

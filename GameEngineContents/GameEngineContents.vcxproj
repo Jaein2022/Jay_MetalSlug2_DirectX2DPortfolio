@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GlobalHeader.h" />
     <ClInclude Include="ContentsCore.h">
       <SubType>
       </SubType>

@@ -723,7 +723,7 @@ float TestPlayer::CheckSlope()
 		}
 		
 		return static_cast<float>(slopeCheckPosY) / static_cast<float>(slopeCheckerLocalPosX_);
-		//플레이어가 앞으로 1픽셀 전진했을때 위로는 몇픽셀 이동해야하는지에 대한 값 반환.
+		//액터가 수평방향으로 1픽셀 전진했을때 수직으로는 몇픽셀 이동해야하는지에 대한 값 반환.
 	}
 	else
 	{

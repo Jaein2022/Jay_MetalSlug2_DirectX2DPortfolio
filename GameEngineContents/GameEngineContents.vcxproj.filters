@@ -10,6 +10,9 @@
     <Filter Include="Test">
       <UniqueIdentifier>{33c83817-a0e9-4a85-8277-950290f42c2a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ContentsGlobal">
+      <UniqueIdentifier>{69a828a1-0ef3-4e8d-bc9f-21ee9a6ed471}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -47,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="TestSword.h">
       <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalHeader.h">
+      <Filter>ContentsGlobal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

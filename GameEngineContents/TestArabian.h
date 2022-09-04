@@ -40,7 +40,7 @@ public:
 
 
 private:
-	void ReactToPlayerDistance();	
+	void ReactToPlayerPosition();	
 	void Shuffle(float _deltaTime);
 	void UpdateArabianState(float _deltaTime);
 	void Run(float _deltaTime);
@@ -87,6 +87,12 @@ private:
 	float fallingSpeed_;
 
 	float runningSpeed_;
+
+	float shufflingSpeed_;
+
+	bool isLeft_;
+
+	char localDirection_;		//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
 
 	float aimingAngle_;
 

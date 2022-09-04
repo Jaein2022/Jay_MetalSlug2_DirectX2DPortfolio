@@ -37,7 +37,7 @@ void TestLevel::Start()
 	testBackground_ = CreateActor<TestBackground>(ActorGroup::Background, "TestBackground");
 
 	testArabian_ = CreateActor<TestArabian>(ActorGroup::Rebel, "TestArabian");
-	testArabian_->GetTransform().SetWorldPosition(450, 0, 0);
+	testArabian_->GetTransform().SetWorldPosition(950, 0, 0);
 
 	if (false == GameEngineInput::GetInst()->IsKey("FreeCameraOnOff"))
 	{
