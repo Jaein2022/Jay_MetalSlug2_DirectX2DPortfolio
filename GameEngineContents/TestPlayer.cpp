@@ -7,12 +7,12 @@
 #include "TestPistolBullet.h"
 
 TestPlayer::TestPlayer()
-	: currentState_(PlayerState::Pistol_Standing_Aiming_Forward),
+	: currentPlayerState_(PlayerState::Pistol_Standing_Aiming_Forward),
 	weapon_(PlayerWeaponType::Pistol),
 	leg_(PlayerLegState::Standing),
 	top_(PlayerTopState::Aiming),
 	direction_(AimingDirection::Forward),
-	isJumping_(false),
+	isFalling_(false),
 	playerRendererLocalPosX_(4),
 	playerRendererLocalPosY_(76),
 	playerRendererLocalPosZ_(0),
@@ -45,8 +45,7 @@ TestPlayer::TestPlayer()
 	runningSpeed_(3.f),
 	duckStepSpeed_(1.f),
 	aimingAngle_(0.f),
-	playerCollision_(nullptr),
-	playerDuckingCollision_(nullptr)
+	playerCollision_(nullptr)
 {
 }
 
@@ -58,6 +57,7 @@ void TestPlayer::Start()
 {
 	this->GetTransform().SetLocalScale(1, 1, 1);
 	this->GetTransform().SetWorldScale(1, 1, 1);
+
 	this->GetTransform().SetWorldPosition(
 		500 - GameEngineWindow::GetInst()->GetScale().HIX(),
 		200,
@@ -120,7 +120,7 @@ void TestPlayer::Start()
 	);
 
 	flatSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"FlatSlopeChecker_",
+		"FlatSlopeChecker",
 		this,
 		float4::Black,
 		float4(slopeCheckerLocalPosX_, 0, -5),
@@ -148,11 +148,9 @@ void TestPlayer::Start()
 	playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 	playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 
-	playerDuckingCollision_ = CreateComponent<GameEngineCollision>("PlayerDuckingCollision");
-	playerDuckingCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
-	playerDuckingCollision_->GetTransform().SetLocalScale(100, 100, 10);
-	playerDuckingCollision_->GetTransform().SetLocalPosition(0, 50, 10);
-	playerDuckingCollision_->Off();
+	//playerDuckingCollision_->GetTransform().SetLocalScale(100, 100, 10);
+	//playerDuckingCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 
@@ -163,7 +161,7 @@ void TestPlayer::Start()
 
 void TestPlayer::Update(float _deltaTime)
 {
-	CheckFalling();
+	CheckGround();
 	UpdateInputInfo();
 	ConvertInputToPlayerStates();
 	ControlMuzzle();
@@ -245,7 +243,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	{
 	case -1:	//아랫방향 입력.
 	{
-		if (true == isJumping_)
+		if (true == isFalling_)
 		{
 			if (AimingDirection::ForwardToDownward != direction_ && AimingDirection::Downward != direction_)
 			{
@@ -387,7 +385,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 			leg_ = PlayerLegState::Ducking;
 			top_ = PlayerTopState::DuckStepping;
 		}
-		else if (true == isJumping_ 
+		else if (true == isFalling_
 			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
@@ -412,7 +410,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 				top_ = PlayerTopState::DuckStepping;
 			}
 		}
-		else if (true == isJumping_
+		else if (true == isFalling_
 			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
@@ -453,9 +451,9 @@ void TestPlayer::ConvertInputToPlayerStates()
 	//점프키 입력 반응.
 	if (true == isJumpKeyDown_)
 	{
-		if (false == isJumping_)
+		if (false == isFalling_)
 		{
-			isJumping_ = true;
+			isFalling_ = true;
 			fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 
 			if (0 == horizontalInputValue_)
@@ -583,7 +581,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 
 	//아래방향 조준은 공중에서만.
-	if (false == isJumping_ && (AimingDirection::Downward == direction_
+	if (false == isFalling_ && (AimingDirection::Downward == direction_
 		|| AimingDirection::DownwardToForward == direction_
 		|| AimingDirection::ForwardToDownward == direction_))
 	{
@@ -607,9 +605,9 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 		return;
 	}
 
-	if (allPlayerStates_.find(intNewState)->second.first != currentState_)
+	if (allPlayerStates_.find(intNewState)->second.first != currentPlayerState_)
 	{
-		currentState_ = allPlayerStates_.find(intNewState)->second.first;
+		currentPlayerState_ = allPlayerStates_.find(intNewState)->second.first;
 		playerStateManager_.ChangeState(allPlayerStates_.find(intNewState)->second.second);
 	}
 
@@ -668,7 +666,7 @@ void TestPlayer::DuckStep(float _deltaTime)
 
 float TestPlayer::CheckSlope()
 {
-	if (false == isJumping_)
+	if (false == isFalling_)
 	{
 		int beginPosY = 0;
 		int endPosY = 0;
@@ -686,7 +684,6 @@ float TestPlayer::CheckSlope()
 
 			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
-				//절벽의 경우엔 0 반환.
 				return 0.f;
 			}
 			else
@@ -746,7 +743,7 @@ void TestPlayer::Fall(float _deltaTime)
 		float4::Right * horizontalInputValue_ * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
 }
 
-void TestPlayer::CheckFalling()
+void TestPlayer::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
@@ -762,10 +759,10 @@ void TestPlayer::CheckFalling()
 			//cyan.color_;			//4294967040
 
 
-			if (true == isJumping_)
+			if (true == isFalling_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
-				isJumping_ = false;
+				isFalling_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -795,9 +792,9 @@ void TestPlayer::CheckFalling()
 		else if (TestLevel::groundColor_.color_ <= playerWorldPosPointer_->GetColorValue_UINT()
 			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isJumping_)
+			if (true == isFalling_)
 			{
-				isJumping_ = false;
+				isFalling_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -826,10 +823,10 @@ void TestPlayer::CheckFalling()
 		}
 		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isJumping_)
+			if (true == isFalling_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
-				isJumping_ = false;
+				isFalling_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -858,10 +855,10 @@ void TestPlayer::CheckFalling()
 		}
 		else
 		{
-			if (false == isJumping_)
+			if (false == isFalling_)
 			{
 				leg_ = PlayerLegState::Falling;
-				isJumping_ = true;
+				isFalling_ = true;
 			}
 		}
 	}

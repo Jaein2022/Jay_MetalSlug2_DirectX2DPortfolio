@@ -35,9 +35,12 @@ void FrameAnimation::Update(float _deltaTime)
 		if (info_.interval_ <= info_.frameTime_)
 		{
 			if (info_.curFrame_ == info_.frames_.size() - 1
-				&& false == bOnceEnd_ && nullptr != end_)
+				&& false == bOnceEnd_)
 			{
-				end_(info_);
+				if (nullptr != end_)
+				{
+					end_(info_);
+				}
 				bOnceStart_ = false;
 				bOnceEnd_ = true;
 			}

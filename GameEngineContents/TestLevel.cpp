@@ -6,6 +6,8 @@
 #include "TestIndicatorBase.h"
 #include "TestPixelIndicator.h"
 #include "TestPistolBullet.h"
+#include "TestArabian.h"
+#include "TestSword.h"
 
 //#include <GameEngineCore\GameEngineDevice.h>
 
@@ -16,6 +18,7 @@ const PixelColor TestLevel::groundColor_(0, 255, 255, 255);
 TestLevel::TestLevel()
 	: testPlayer_(nullptr),
 	testBackground_(nullptr),
+	testArabian_(nullptr),
 	currentFocusPointer_(nullptr),
 	destFocus_(nullptr)
 {
@@ -32,6 +35,9 @@ void TestLevel::Start()
 	testPlayer_ = CreateActor<TestPlayer>(ActorGroup::Player, "TestPlayer");
 
 	testBackground_ = CreateActor<TestBackground>(ActorGroup::Background, "TestBackground");
+
+	testArabian_ = CreateActor<TestArabian>(ActorGroup::Rebel, "TestArabian");
+	testArabian_->GetTransform().SetWorldPosition(450, 0, 0);
 
 	if (false == GameEngineInput::GetInst()->IsKey("FreeCameraOnOff"))
 	{
@@ -90,6 +96,16 @@ void TestLevel::End()
 TestPistolBullet* TestLevel::GetPistolBullet()
 {
 	return CreateActor<TestPistolBullet>(ActorGroup::PistolBullet, "TestPistolBullet");
+}
+
+TestSword* TestLevel::GetSword()
+{
+	return CreateActor<TestSword>(ActorGroup::Sword, "TestSword");
+}
+
+const float4& TestLevel::GetPlayerWorldPosition()
+{
+	return testPlayer_->GetTransform().GetWorldPosition();
 }
 
 void TestLevel::UpdateCameraActorMovement(float _deltaTime)

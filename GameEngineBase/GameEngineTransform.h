@@ -467,7 +467,7 @@ private:
 		data_.localScaleMatrix_.Scale(data_.localScaleVector_);
 		CalculateWorldMatrix();
 
-		for (GameEngineTransform* child : childTranforms_)
+		for (GameEngineTransform* child : childrenTranforms_)
 		{
 			child->CalculateWorldScale(child->data_.localScaleVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
@@ -498,7 +498,7 @@ private:
 		);
 		CalculateWorldMatrix();
 
-		for (GameEngineTransform* child : childTranforms_)
+		for (GameEngineTransform* child : childrenTranforms_)
 		{
 			child->CalculateWorldScale(child->data_.localScaleVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
@@ -523,7 +523,7 @@ private:
 		data_.localRotationMatrix_.Rotate3AxisByDegree(data_.localRotationVector_);
 		CalculateWorldMatrix();
 
-		for (GameEngineTransform* child : childTranforms_)
+		for (GameEngineTransform* child : childrenTranforms_)
 		{
 			child->CalculateWorldRotation(child->data_.localRotationVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
@@ -554,7 +554,7 @@ private:
 		);
 		CalculateWorldMatrix();
 
-		for (GameEngineTransform* child : childTranforms_)
+		for (GameEngineTransform* child : childrenTranforms_)
 		{
 			child->CalculateWorldRotation(child->data_.localRotationVector_);
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
@@ -579,7 +579,7 @@ private:
 		data_.localPositionMatrix_.Position(data_.localPositionVector_);
 		CalculateWorldMatrix();
 
-		for (GameEngineTransform* child : childTranforms_)
+		for (GameEngineTransform* child : childrenTranforms_)
 		{
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
@@ -609,7 +609,7 @@ private:
 		);
 		CalculateWorldMatrix();
 
-		for (GameEngineTransform* child : childTranforms_)
+		for (GameEngineTransform* child : childrenTranforms_)
 		{
 			child->CalculateWorldPosition(child->data_.localPositionVector_);
 		}
@@ -622,7 +622,7 @@ private:
 
 	GameEngineTransform* parentTransform_;	//부모 오브젝트의 트랜스폼.
 
-	std::list<GameEngineTransform*> childTranforms_;	//자식 컴포넌트들의 트랜스폼들.
+	std::list<GameEngineTransform*> childrenTranforms_;	//자식 컴포넌트들의 트랜스폼들.
 
 	CollisionData collisionDataObject_;
 

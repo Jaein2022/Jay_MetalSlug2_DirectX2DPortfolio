@@ -25,16 +25,7 @@ void TestBackground::Start()
 	firstBGRenderer_->ScaleToTexture();
 	firstBGRenderer_->GetTransform().SetLocalPosition(float4::Zero);
 	firstBGRenderer_->SetPivot(PivotMode::LeftBot);
-	//firstBGRenderer_->Off();
-
-	//firstBGRenderer_->SetPivot(PivotMode::Custom);
-	//firstBGRenderer_->GetTransform().SetLocalPosition(
-	//	float4(
-	//		firstBGRenderer_->GetTransform().GetLocalScale().HX(),
-	//		firstBGRenderer_->GetTransform().GetLocalScale().HY(),
-	//		0.f
-	//	)
-	//);
+	firstBGRenderer_->Off();
 
 	pixelCollisionBGRenderer_ = CreateComponent<GameEngineTextureRenderer>("PixelCollisionBGRenderer");
 	pixelCollisionBGRenderer_->SetTexture("TestBG_PC.png");
@@ -43,16 +34,8 @@ void TestBackground::Start()
 	pixelCollisionBGRenderer_->SetPivot(PivotMode::LeftBot);
 	//pixelCollisionBGRenderer_->SetRenderingOrder(2);
 	//pixelCollisionBGRenderer_->DebugOn();
-	pixelCollisionBGRenderer_->Off();		//이렇게 해야 콜리전들이 보임. 이유는 불명.
+	//pixelCollisionBGRenderer_->Off();		
 	
-	//pixelCollisionBGRenderer_->SetPivot(PivotMode::Custom);
-	//pixelCollisionBGRenderer_->GetTransform().SetLocalPosition(
-	//	float4(
-	//		pixelCollisionBGRenderer_->GetTransform().GetWorldScale().HX(),
-	//		pixelCollisionBGRenderer_->GetTransform().GetWorldScale().HY(),
-	//		30.f
-	//	)
-	//);
 
 	
 

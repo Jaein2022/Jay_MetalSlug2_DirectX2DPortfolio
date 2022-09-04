@@ -4,7 +4,7 @@
 GameEngineTransform::GameEngineTransform()
 	: data_(),
 	parentTransform_(nullptr),
-	childTranforms_(),
+	childrenTranforms_(),
 	collisionDataObject_()
 {
 	CollisionDataSetting();
@@ -33,7 +33,7 @@ void GameEngineTransform::CalculateWorldMatrix()
 	}
 
 	//자식의 자식 트랜스폼들도 월드행렬 계산을 해준다.
-	for (GameEngineTransform* const child : childTranforms_)
+	for (GameEngineTransform* const child : childrenTranforms_)
 	{
 		child->CalculateWorldMatrix();
 	}
@@ -49,12 +49,12 @@ void GameEngineTransform::SetParentTransform(GameEngineTransform& _newParent)
 {
 	if (nullptr != parentTransform_)
 	{
-		parentTransform_->childTranforms_.remove(this);
+		parentTransform_->childrenTranforms_.remove(this);
 		parentTransform_ = nullptr;
 	}
 
 	parentTransform_ = &_newParent;
-	parentTransform_->childTranforms_.push_back(this);
+	parentTransform_->childrenTranforms_.push_back(this);
 
 	SetLocalScale(this->data_.localScaleVector_);
 	SetLocalRotation(this->data_.localRotationVector_);
@@ -68,7 +68,7 @@ void GameEngineTransform::DetachTransform()
 		return;
 	}
 
-	parentTransform_->childTranforms_.remove(this);
+	parentTransform_->childrenTranforms_.remove(this);
 	parentTransform_ = nullptr;
 }
 
@@ -101,7 +101,7 @@ void GameEngineTransform::Copy(const GameEngineTransform& _transform)
 	this->data_ = _transform.data_;
 	this->collisionDataObject_ = _transform.collisionDataObject_;
 	this->parentTransform_ = _transform.parentTransform_;
-	this->childTranforms_ = _transform.childTranforms_;
+	this->childrenTranforms_ = _transform.childrenTranforms_;
 
 	CalculateWorldScale(this->data_.localScaleVector_);
 	CalculateWorldRotation(this->data_.localRotationVector_);

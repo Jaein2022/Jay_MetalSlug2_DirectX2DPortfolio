@@ -1,7 +1,7 @@
 #include "PreCompile.h"
 #include "GameEngineCollision.h"
-#include "GameEngineLevel.h"
 #include "GameEngineCoreDebug.h"
+#include "GameEngineCore.h"
 
 bool (*GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::CT_Max)][static_cast<int>(CollisionType::CT_Max)])
 (const GameEngineTransform& _transformA, const GameEngineTransform& _transformB);
@@ -47,7 +47,11 @@ public:
 
 GameEngineCollisionFunctionInit inst_;
 
-GameEngineCollision::GameEngineCollision() : debugType_(CollisionType::CT_Max), color_(1.f, 0.f, 0.f, 0.5f)
+GameEngineCollision::GameEngineCollision() 
+	: debugType_(CollisionType::CT_Max),
+	color_(1.f, 0.f, 0.f, 0.5f),
+	debugCameraOrder_(CameraOrder::MainCamera)	//기본 디버그카메라 세팅: 메인카메라.
+	//메인카메라는 엔진 기본제공 카메라이므로 엔진 수준에서 이런 편의기능을 제공할 수 있다.
 {
 }
 
@@ -115,21 +119,24 @@ bool GameEngineCollision::IsCollision(
 
 void GameEngineCollision::DebugRender()
 {
+	GameEngineCamera* debugCamera
+		= this->GetActor()->GetLevel()->cameras_[static_cast<UINT>(debugCameraOrder_)];
+
 	switch (this->debugType_)
 	{
 		//case CollisionType::CT_Point2D:
 		//	break;
 
 	case CollisionType::CT_Sphere2D:
-		GameEngineDebug::DrawSphere(GetTransform(), color_);
+		GameEngineDebug::DrawSphere(GetTransform(), debugCamera, color_);
 		break;
 
 	case CollisionType::CT_AABB2D:
-		GameEngineDebug::DrawBox(GetTransform(), color_);
+		GameEngineDebug::DrawBox(GetTransform(), debugCamera, color_);
 		break;
 
 	case CollisionType::CT_OBB2D:
-		GameEngineDebug::DrawBox(GetTransform(), color_);
+		GameEngineDebug::DrawBox(GetTransform(), debugCamera, color_);
 		break;
 
 
@@ -138,15 +145,15 @@ void GameEngineCollision::DebugRender()
 		//	break;
 
 	case CollisionType::CT_Sphere:
-		GameEngineDebug::DrawSphere(GetTransform(), color_);
+		GameEngineDebug::DrawSphere(GetTransform(), debugCamera, color_);
 		break;
 
 	case CollisionType::CT_AABB:
-		GameEngineDebug::DrawBox(GetTransform(), color_);
+		GameEngineDebug::DrawBox(GetTransform(), debugCamera, color_);
 		break;
 
 	case CollisionType::CT_OBB:
-		GameEngineDebug::DrawBox(GetTransform(), color_);
+		GameEngineDebug::DrawBox(GetTransform(), debugCamera, color_);
 		break;
 
 
@@ -154,6 +161,11 @@ void GameEngineCollision::DebugRender()
 		MsgBoxAssert("지원되지 않는 콜리전 타입입니다. 콜리전타입이 Max가 아닌지 확인하십시오.");
 		break;
 	}
+}
+
+void GameEngineCollision::SetUIDebugCamera()
+{
+	debugCameraOrder_ = CameraOrder::UICamera;
 }
 
 void GameEngineCollision::Start()

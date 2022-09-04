@@ -43,9 +43,14 @@ public:
 		return text_;
 	}
 
-	void SetScreenPosition(const float4& _pos)
+	void SetScreenPosition(const float4& _position)
 	{
-		screenPosition_ = _pos;
+		screenPosition_ = _position;
+	}
+
+	float4 GetScreenPostion()
+	{
+		return screenPosition_;
 	}
 
 	void SetColor(const float4& _color)

@@ -1,5 +1,20 @@
 #pragma once
 
+enum class ArabianState
+{
+	Idling,
+	Shuffling,
+	PreparingToAttack,
+	Running,
+	Jumping, 
+	Falling,
+	FallingToIdling,
+	ThrowingSword,
+	MeleeAttack,
+	Death
+};
+
+
 class TestIndicator;
 class TestPixelIndicator;
 class TestArabian: public GameEngineActor
@@ -25,20 +40,30 @@ public:
 
 
 private:
-
+	void ReactToPlayerDistance();	
+	void Shuffle(float _deltaTime);
+	void UpdateArabianState(float _deltaTime);
+	void Run(float _deltaTime);
+	float CheckSlope();
+	void Fall(float _deltaTime);
+	void CheckFalling();
+	void ThrowSword();
 
 
 
 private:
 	GameEngineStateManager arabianStateManager_;
 
-	//std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
+	std::map<const ArabianState, const char*> allArabianStates_;
 
-	bool isJumping_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
+	ArabianState currentArabianState_;
 
-	//const int arabianRendererLocalPosX_;
-	//const int arabianRendererLocalPosY_;
-	//const int arabianRendererLocalPosZ_;
+	bool isFalling_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
+	//bool isEngaging_;
+
+	const int arabianRendererLocalPosX_;
+	const int arabianRendererLocalPosY_;
+	const int arabianRendererLocalPosZ_;
 
 
 	GameEngineTextureRenderer* arabianRenderer_;
@@ -51,19 +76,24 @@ private:
 	TestPixelIndicator* arabianWorldPosPointer_;	//액터의 월드포지션 표시.
 	TestPixelIndicator* lowerLandingChecker_;
 
-	//const int slopeCheckerLocalPosX_;		//경사체커들의 로컬포스 X값. 0 넣지 말 것!
+	const int slopeCheckerLocalPosX_;		//경사체커들의 로컬포스 X값. 0 넣지 말 것!
 	TestPixelIndicator* slopeChecker_;
 	TestPixelIndicator* ascendingSlopeChecker_;
 	TestPixelIndicator* flatSlopeChecker_;
 	TestPixelIndicator* descendingSlopeChecker_;
 
 
-	//const float initialJumpSpeed_;
+	const float initialJumpSpeed_;
 	float fallingSpeed_;
 
 	float runningSpeed_;
 
 	float aimingAngle_;
+
+	const float recognitionDistance_;	//인식거리.
+	const float engagementDistance_;	//교전거리.
+	const float chargeDistance_;		//돌진거리.
+
 
 	GameEngineCollision* arabianCollision_;
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.

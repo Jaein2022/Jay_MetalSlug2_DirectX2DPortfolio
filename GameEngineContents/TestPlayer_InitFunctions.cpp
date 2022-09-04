@@ -358,9 +358,9 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
-
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -377,8 +377,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Aiming_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -395,8 +395,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_ForwardToUpward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -413,8 +413,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_UpwardToForward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -432,8 +432,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -450,8 +450,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -468,8 +468,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -486,8 +486,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -505,8 +505,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -523,8 +523,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -563,8 +563,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Running_Aiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -581,8 +581,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Aiming_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -599,8 +599,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_ForwardToUpward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -617,8 +617,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_UpwardToForward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
  
@@ -635,8 +635,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 		
@@ -653,8 +653,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -671,8 +671,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -689,8 +689,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -707,8 +707,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -725,8 +725,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -777,8 +777,8 @@ void TestPlayer::CreatePlayerStates()
 				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
 			}
 
-			playerCollision_->Off();
-			playerDuckingCollision_->On();
+			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
 		}
 	);
 
@@ -794,8 +794,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Firing_Forward");
 
-			playerCollision_->Off();
-			playerDuckingCollision_->On();
+			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
 		}
 	);
 
@@ -811,8 +811,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_FiringToAiming_Forward");
 
-			playerCollision_->Off();
-			playerDuckingCollision_->On();
+			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
 		}
 	);
 
@@ -828,8 +828,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenade");
 
-			playerCollision_->Off();
-			playerDuckingCollision_->On();
+			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
 		}
 	);
 
@@ -845,8 +845,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenadeToAiming");
 
-			playerCollision_->Off();
-			playerDuckingCollision_->On();
+			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
 		}
 	);
 
@@ -862,8 +862,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Ducksteping_Forward");
 
-			playerCollision_->Off();
-			playerDuckingCollision_->On();
+			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
 		}
 	);
 
@@ -900,8 +900,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("VerticalJumping_Aiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -918,8 +918,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -936,8 +936,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -954,8 +954,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -972,8 +972,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -990,8 +990,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1008,8 +1008,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -1026,8 +1026,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -1044,8 +1044,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -1062,8 +1062,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -1080,8 +1080,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 
@@ -1098,8 +1098,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);	
 	
@@ -1131,8 +1131,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("VerticalJumping_Aiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1149,8 +1149,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1167,8 +1167,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1185,8 +1185,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1203,8 +1203,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1221,8 +1221,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1239,8 +1239,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1257,8 +1257,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1275,8 +1275,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1293,8 +1293,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1311,8 +1311,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1329,8 +1329,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1366,8 +1366,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Falling_Aiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1384,8 +1384,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1402,8 +1402,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1420,8 +1420,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1438,8 +1438,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1456,8 +1456,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1474,8 +1474,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1492,8 +1492,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1510,8 +1510,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1528,8 +1528,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1546,8 +1546,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1564,8 +1564,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1596,8 +1596,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("StandingToDucking");
 
-			playerCollision_->Off();
-			playerDuckingCollision_->On();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -1613,8 +1613,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Running, JumpingToStanding");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		},
 		[this](const StateInfo& _info)->void {
 			wholePistolRenderer_->CurAnimationReset();
@@ -1633,8 +1633,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Running, JumpingToStanding");
 
-			playerCollision_->On();
-			playerDuckingCollision_->Off();
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		},
 		[this](const StateInfo& _info)->void {
 			wholePistolRenderer_->CurAnimationReset();
@@ -1644,14 +1644,17 @@ void TestPlayer::CreatePlayerStates()
 
 
 
-
-
-
 	constexpr auto playerStateEntries = magic_enum::enum_entries<PlayerState>();
-	const size_t playerStatesSize = playerStateEntries.size();
+	const size_t playerStateSize = playerStateEntries.size();
 
-	for (size_t i = 0; i < playerStatesSize; i++)
+	for (size_t i = 0; i < playerStateSize; i++)
 	{
+		if (allPlayerStates_.end() != allPlayerStates_.find(static_cast<int>(playerStateEntries[i].first)))
+		{
+			MsgBoxAssertString(std::string(playerStateEntries[i].second) + std::string(": 이미 존재하는 플레이어 스테이트입니다."));
+			return;
+		}
+		
 		allPlayerStates_.insert(
 			std::make_pair(
 				magic_enum::enum_integer<PlayerState>(playerStateEntries[i].first),

@@ -2,14 +2,17 @@
 
 enum class ActorGroup
 {
+	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
 	Player,
-	Background,
 	PistolBullet,
-	//HeavyMachineGunBullet,
-	//Rebel,
+	Rebel,
+	Sword,
+	Background,
 	UI,
 };
 
+class TestSword;
+class TestArabian;
 class TestPistolBullet;
 class TestIndicator;
 class TestIndicatorBase;
@@ -38,12 +41,16 @@ public:
 
 public:
 	TestPistolBullet* GetPistolBullet();
-
+	TestSword* GetSword();
+	const float4& GetPlayerWorldPosition();
 
 public:
+
+	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
 	static const float gravity_;
 	static const float playSpeed_;
 	static const PixelColor groundColor_;	//cyan(0, 255, 255, 255) = 4294967040(UINT)
+	
 
 
 private:
@@ -52,6 +59,7 @@ private:
 private:
 	TestPlayer* testPlayer_;
 	TestBackground* testBackground_;
+	TestArabian* testArabian_;
 
 	TestIndicator* currentFocusPointer_;
 	TestIndicatorBase* destFocus_;

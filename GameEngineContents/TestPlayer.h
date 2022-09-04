@@ -3,7 +3,6 @@
 
 class TestPixelIndicator;
 class TestIndicator;
-class TestBackground;
 class TestPlayer : public GameEngineActor
 {
 	//이 클래스의 존재 이유: 
@@ -42,13 +41,15 @@ private:
 	void DuckStep(float _deltaTime);
 	float CheckSlope();
 	void Fall(float _deltaTime);
-	void CheckFalling();
+	void CheckGround();
 	void ControlMuzzle();
 	void Fire();
 
 
 private:
-	PlayerState currentState_;
+	//TestLevel* testLevel_;
+
+	PlayerState currentPlayerState_;
 
 	PlayerWeaponType weapon_;
 	PlayerLegState leg_;
@@ -59,7 +60,7 @@ private:
 
 	std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
 
-	bool isJumping_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
+	bool isFalling_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 
 
 	const int playerRendererLocalPosX_;
@@ -103,13 +104,12 @@ private:
 	const float initialJumpSpeed_;
 	float fallingSpeed_;
 
-	float runningSpeed_;
-	float duckStepSpeed_;
+	const float runningSpeed_;
+	const float duckStepSpeed_;
 
 	float aimingAngle_;
 
 
 	GameEngineCollision* playerCollision_;
-	GameEngineCollision* playerDuckingCollision_;
 };
 
