@@ -44,17 +44,14 @@ private:
 	void Shuffle(float _deltaTime);
 	void UpdateArabianState(float _deltaTime);
 	void Run(float _deltaTime);
-	float CheckSlope();
+	float GetSlope();
 	void Fall(float _deltaTime);
-	void CheckFalling();
+	void CheckGround();
 	void ThrowSword();
 
 
 
 private:
-	GameEngineStateManager arabianStateManager_;
-
-	std::map<const ArabianState, const char*> allArabianStates_;
 
 	ArabianState currentArabianState_;
 
@@ -68,6 +65,8 @@ private:
 
 	GameEngineTextureRenderer* arabianRenderer_;
 
+	GameEngineCollision* arabianCollision_;
+	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 	TestIndicator* renderPivotPointer_;		//액터의 렌더피봇 표시.
 
@@ -82,6 +81,9 @@ private:
 	TestPixelIndicator* flatSlopeChecker_;
 	TestPixelIndicator* descendingSlopeChecker_;
 
+	GameEngineStateManager arabianStateManager_;
+
+	std::map<const ArabianState, const char*> allArabianStates_;
 
 	const float initialJumpSpeed_;
 	float fallingSpeed_;
@@ -94,15 +96,16 @@ private:
 
 	char localDirection_;		//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
 
-	float aimingAngle_;
+
+	TestIndicator* releasePoint_;
+	float releaseAngle_;
+	float releaseVelocity_;
 
 	const float recognitionDistance_;	//인식거리.
 	const float engagementDistance_;	//교전거리.
 	const float chargeDistance_;		//돌진거리.
 
 
-	GameEngineCollision* arabianCollision_;
-	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 };
 

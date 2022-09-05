@@ -3,15 +3,17 @@
 #include "TestIndicator.h"
 #include "TestPixelIndicator.h"
 #include "TestLevel.h"
+#include "TestSword.h"
 
 TestArabian::TestArabian()
 	: currentArabianState_(ArabianState::Idling),
 	isFalling_(false),
 	//isEngaging_(false),
 	arabianRendererLocalPosX_(0),
-	arabianRendererLocalPosY_(80),
+	arabianRendererLocalPosY_(75),
 	arabianRendererLocalPosZ_(0),
 	arabianRenderer_(nullptr),
+	arabianCollision_(nullptr),
 	renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
 	arabianWorldPosPointer_(nullptr),
@@ -27,11 +29,12 @@ TestArabian::TestArabian()
 	shufflingSpeed_(0.5f),
 	isLeft_(false),
 	localDirection_(1),
-	aimingAngle_(45.f),
+	releasePoint_(nullptr),
+	releaseAngle_(60.f),
+	releaseVelocity_(5.f),
 	recognitionDistance_(800.f),
 	engagementDistance_(500.f),
-	chargeDistance_(150.f),
-	arabianCollision_(nullptr)
+	chargeDistance_(150.f)
 {
 }
 
@@ -49,71 +52,6 @@ void TestArabian::Start()
 		MsgBoxAssert("slopeCheckerLocalPosX_에 0 넣지 말 것!");
 		return;
 	}
-
-	renderPivotPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
-		"RenderPivotPointer",
-		this,
-		float4::Cyan,
-		float4(arabianRendererLocalPosX_, arabianRendererLocalPosY_, -5),
-		float4(5, 5, 1)
-	);
-
-	upperLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"UpperLandingCheck",
-		this,
-		float4::Black,
-		float4(0, 5, -5),
-		float4(5, 5, 1)
-		);
-
-	arabianWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"PlayerWorldPosPointer",
-		this,
-		float4::Blue,
-		float4(0, 0, -5),
-		float4(5, 5, 1)
-		);
-
-	lowerLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"LowerLandingChecker",
-		this,
-		float4::Black,
-		float4(0, -5, -5),
-		float4(5, 5, 1)
-		);
-
-	slopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"SlopeChecker",
-		this,
-		float4::Blue,
-		float4(slopeCheckerLocalPosX_, 0, -5),
-		float4(5, 5, 1)
-		);
-
-	ascendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"AscendingSlopeChecker",
-		this,
-		float4::Black,
-		float4(slopeCheckerLocalPosX_, 10, -5),
-		float4(5, 5, 1)
-		);
-
-	flatSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"FlatSlopeChecker",
-		this,
-		float4::Black,
-		float4(slopeCheckerLocalPosX_, 0, -5),
-		float4(5, 5, 1)
-		);
-
-	descendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"DescendingSlopeChecker",
-		this,
-		float4::Black,
-		float4(slopeCheckerLocalPosX_, -10, -5),
-		float4(5, 5, 1)
-		);
-
 
 	arabianCollision_ = CreateComponent<GameEngineCollision>("ArabianCollision");
 	arabianCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
@@ -172,11 +110,11 @@ void TestArabian::Start()
 		FrameAnimation_Desc("Rebel_Arabian.png", 70, 73, 0.1f, false)
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("ThrowingSword&Reloading",
-		FrameAnimation_Desc("Rebel_Arabian.png", 80, 98, 0.1f, false)
+		FrameAnimation_Desc("Rebel_Arabian.png", 80, 98, 0.1f, true)
 	);
 	arabianRenderer_->AnimationBindFrame("ThrowingSword&Reloading",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			if (6 == _desc.curFrame_)
+			if (7 == _desc.curFrame_)
 			{
 				ThrowSword();
 			}
@@ -193,7 +131,7 @@ void TestArabian::Start()
 	);
 	arabianRenderer_->AnimationBindEnd("MeleeAttack",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			currentArabianState_ = ArabianState::Shuffling;
+			//currentArabianState_ = ArabianState::Shuffling;
 		}
 	);
 
@@ -211,6 +149,78 @@ void TestArabian::Start()
 	arabianRenderer_->ChangeFrameAnimation("Idling");
 
 
+
+	renderPivotPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
+		"RenderPivotPointer",
+		this,
+		float4::Cyan,
+		float4(arabianRendererLocalPosX_, arabianRendererLocalPosY_, -5),
+		float4(5, 5, 1)
+		);
+
+	upperLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"UpperLandingCheck",
+		this,
+		float4::Black,
+		float4(0, 5, -5),
+		float4(5, 5, 1)
+		);
+
+	arabianWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"PlayerWorldPosPointer",
+		this,
+		float4::Red,
+		float4(0, 0, -5),
+		float4(5, 5, 1)
+		);
+
+	lowerLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"LowerLandingChecker",
+		this,
+		float4::Black,
+		float4(0, -5, -5),
+		float4(5, 5, 1)
+		);
+
+	slopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"SlopeChecker",
+		this,
+		float4::Blue,
+		float4(slopeCheckerLocalPosX_, 0, -5),
+		float4(5, 5, 1)
+		);
+
+	ascendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"AscendingSlopeChecker",
+		this,
+		float4::Black,
+		float4(slopeCheckerLocalPosX_, 10, -5),
+		float4(5, 5, 1)
+		);
+
+	flatSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"FlatSlopeChecker",
+		this,
+		float4::Black,
+		float4(slopeCheckerLocalPosX_, 0, -5),
+		float4(5, 5, 1)
+		);
+
+	descendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"DescendingSlopeChecker",
+		this,
+		float4::Black,
+		float4(slopeCheckerLocalPosX_, -10, -5),
+		float4(5, 5, 1)
+		);
+
+	releasePoint_ = TestIndicator::CreateIndicator<TestIndicator>(
+		"ReleasePoint",
+		this,
+		float4::Red,
+		float4(100, 115, 10),
+		float4(5, 5, 1)
+	);
 
 
 	arabianStateManager_.CreateState(
@@ -269,7 +279,7 @@ void TestArabian::Start()
 		"ThrowingSword",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			arabianRenderer_->ChangeFrameAnimation("ThrowingSword");
+			arabianRenderer_->ChangeFrameAnimation("ThrowingSword&Reloading");
 		}
 	);	
 	arabianStateManager_.CreateState(
@@ -310,7 +320,7 @@ void TestArabian::Start()
 
 void TestArabian::Update(float _deltaTime)
 {
-	CheckFalling();
+	CheckGround();
 	ReactToPlayerPosition();
 
 
@@ -350,7 +360,7 @@ void TestArabian::ReactToPlayerPosition()
 	}
 	else if (engagementDistance_ > horizontalDistance)
 	{
-		currentArabianState_ = ArabianState::Shuffling;
+		currentArabianState_ = ArabianState::ThrowingSword;
 	}
 	else if (recognitionDistance_ > horizontalDistance)
 	{
@@ -392,7 +402,7 @@ void TestArabian::Shuffle(float _deltaTime)
 	);
 
 	this->GetTransform().SetWorldMove(
-		float4::Up * CheckSlope() * _deltaTime * shufflingSpeed_ * TestLevel::playSpeed_);
+		float4::Up * GetSlope() * _deltaTime * shufflingSpeed_ * TestLevel::playSpeed_);
 }
 
 void TestArabian::UpdateArabianState(float _deltaTime)
@@ -413,10 +423,10 @@ void TestArabian::Run(float _deltaTime)
 		float4::Right * GetTransform().GetWorldScale().x * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
 
 	this->GetTransform().SetWorldMove(
-		float4::Up * CheckSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
+		float4::Up * GetSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
 }
 
-float TestArabian::CheckSlope()
+float TestArabian::GetSlope()
 {
 	if (false == isFalling_)
 	{
@@ -493,7 +503,7 @@ void TestArabian::Fall(float _deltaTime)
 		float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
 }
 
-void TestArabian::CheckFalling()
+void TestArabian::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
@@ -553,4 +563,11 @@ void TestArabian::CheckFalling()
 
 void TestArabian::ThrowSword()
 {
+	TestSword* newSword = this->GetLevel<TestLevel>()->GetSword();
+	newSword->GetTransform().SetWorldPosition(releasePoint_->GetTransform().GetWorldPosition());
+
+	newSword->SetReleaseSpeed(
+		abs((90.f - releaseAngle_) - (GetTransform().GetWorldScale().x * 90.f)),
+		releaseVelocity_
+	);
 }

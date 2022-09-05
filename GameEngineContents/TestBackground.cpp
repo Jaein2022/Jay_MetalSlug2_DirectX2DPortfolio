@@ -25,7 +25,7 @@ void TestBackground::Start()
 	firstBGRenderer_->ScaleToTexture();
 	firstBGRenderer_->GetTransform().SetLocalPosition(float4::Zero);
 	firstBGRenderer_->SetPivot(PivotMode::LeftBot);
-	firstBGRenderer_->Off();
+	//firstBGRenderer_->Off();
 
 	pixelCollisionBGRenderer_ = CreateComponent<GameEngineTextureRenderer>("PixelCollisionBGRenderer");
 	pixelCollisionBGRenderer_->SetTexture("TestBG_PC.png");

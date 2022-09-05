@@ -90,7 +90,7 @@ void TestPlayer::Start()
 	playerWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
 		"PlayerWorldPosPointer",
 		this,
-		float4::Blue,
+		float4::Red,
 		float4(0, 0, -5),
 		float4(5, 5, 1)
 	);	
@@ -636,7 +636,7 @@ void TestPlayer::Run(float _deltaTime)
 		float4::Right * horizontalInputValue_ * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
 
 	this->GetTransform().SetWorldMove(
-		float4::Up * CheckSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
+		float4::Up * GetSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
 }
 
 void TestPlayer::DuckStep(float _deltaTime)
@@ -661,10 +661,10 @@ void TestPlayer::DuckStep(float _deltaTime)
 		float4::Right * horizontalInputValue_ * _deltaTime * duckStepSpeed_ * TestLevel::playSpeed_);
 
 	this->GetTransform().SetWorldMove(
-		float4::Up * CheckSlope() * _deltaTime * duckStepSpeed_ * TestLevel::playSpeed_);
+		float4::Up * GetSlope() * _deltaTime * duckStepSpeed_ * TestLevel::playSpeed_);
 }
 
-float TestPlayer::CheckSlope()
+float TestPlayer::GetSlope()
 {
 	if (false == isFalling_)
 	{

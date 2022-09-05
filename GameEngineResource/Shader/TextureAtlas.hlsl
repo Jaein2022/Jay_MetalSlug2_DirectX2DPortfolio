@@ -62,20 +62,12 @@ float4 TextureAtlas_PS(Output _input) : SV_Target0 //SV_Target[n]: n번 렌더타겟�
     {
         clip(-1);
     }
-    
-    //return (Tex.Sample(Smp, _input.texcoord_.xy) * mulColor_) + plusColor_;
-    
-    //이 아래 부분이 없으면 후순위 렌더링오더로 그려지는 것들이 투명 텍스처에 가려서 그려지지 않는다.
+
     float4 resultColor = (Tex.Sample(Smp, _input.texcoord_.xy) * mulColor_) + plusColor_;
     
     if (resultColor.a <= 0.f)
     {
         clip(-1);
-    }
-    
-    if (resultColor.a >= 1.f)
-    {
-        resultColor.a = 1.f;
     }
     
     return resultColor;

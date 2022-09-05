@@ -1,7 +1,24 @@
 #include "PreCompile.h"
 #include "TestSword.h"
+#include "TestLevel.h"
+#include "TestIndicator.h"
+#include "TestPixelIndicator.h"
 
 TestSword::TestSword()
+	: swordRendererLocalPosX_(0),
+	swordRendererLocalPosY_(55),
+	swordRendererLocalPosZ_(0),
+	flyingSwordRenderer_(nullptr),
+	stuckSwordRenderer_(nullptr),
+	swordCollision_(nullptr),
+	isFalling_(true),
+	renderPivotPointer_(nullptr),
+	upperLandingChecker_(nullptr),
+	swordWorldPosPointer_(nullptr),
+	lowerLandingChecker_(nullptr),
+	//fallingSpeed_(0.f),
+	rotationSpeed_(0.f),
+	releaseSpeed_(float4::Zero)
 {
 }
 
@@ -11,12 +28,173 @@ TestSword::~TestSword()
 
 void TestSword::Start()
 {
+	this->GetTransform().SetLocalScale(1, 1, 1);
+	this->GetTransform().SetWorldScale(1, 1, 1);
+
+
+	flyingSwordRenderer_ = CreateComponent<GameEngineTextureRenderer>("FlyingSwordRenderer");
+	flyingSwordRenderer_->SetTexture("FlyingSword.png");
+	flyingSwordRenderer_->ScaleToTexture();
+	flyingSwordRenderer_->SetPivot(PivotMode::Center);
+	flyingSwordRenderer_->GetTransform().SetLocalPosition(
+		swordRendererLocalPosX_,
+		swordRendererLocalPosY_,
+		swordRendererLocalPosZ_ 
+	);
+
+	stuckSwordRenderer_ = CreateComponent<GameEngineTextureRenderer>("StuckSwordRenderer");
+	stuckSwordRenderer_->SetTexture("StuckSword.png");
+	stuckSwordRenderer_->ScaleToTexture();
+	stuckSwordRenderer_->SetPivot(PivotMode::Center);
+	stuckSwordRenderer_->GetTransform().SetLocalPosition(
+		swordRendererLocalPosX_,
+		swordRendererLocalPosY_,
+		swordRendererLocalPosZ_
+	);
+	stuckSwordRenderer_->Off();
+
+	swordCollision_ = CreateComponent<GameEngineCollision>("SwordCollision");
+	swordCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
+	swordCollision_->GetTransform().SetLocalScale(88, 100, 10);
+	swordCollision_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
+
+
+	renderPivotPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
+		"RenderPivotPointer",
+		this,
+		float4::Cyan,
+		float4(swordRendererLocalPosX_, swordRendererLocalPosY_, -5),
+		float4(5, 5, 1)
+		);
+
+	upperLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"UpperLandingCheck",
+		this,
+		float4::Black,
+		float4(0, 5, -5),
+		float4(5, 5, 1)
+		);
+
+	swordWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"SwordWorldPosPointer",
+		this,
+		float4::Red,
+		float4(0, 0, -5),
+		float4(5, 5, 1)
+		);
+
+	lowerLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+		"LowerLandingChecker",
+		this,
+		float4::Black,
+		float4(0, -5, -5),
+		float4(5, 5, 1)
+		);
+	
+
+
+
 }
 
 void TestSword::Update(float _deltaTime)
 {
+	CheckGround();
+	isFalling_ ? Fly(_deltaTime) : StickOnGround();
+
+
 }
 
 void TestSword::End()
 {
+}
+
+void TestSword::Fly(float _deltaTime)
+{
+	if (false == flyingSwordRenderer_->IsUpdate())
+	{
+		flyingSwordRenderer_->On();
+	}
+
+	flyingSwordRenderer_->GetTransform().SetAddWorldRotation(
+		float4::Forward * _deltaTime * rotationSpeed_ * TestLevel::playSpeed_
+	);
+
+	this->GetTransform().SetWorldMove(
+		releaseSpeed_ * _deltaTime * TestLevel::playSpeed_
+	);
+
+	releaseSpeed_.y -= TestLevel::gravity_ * _deltaTime;
+}
+
+void TestSword::StickOnGround()
+{
+	if (false == stuckSwordRenderer_->IsUpdate())
+	{
+		flyingSwordRenderer_->Off();
+		stuckSwordRenderer_->On();
+		Death(1.f);
+	}
+}
+
+void TestSword::Hit()
+{
+}
+
+//void TestSword::Fall(float _deltaTime)
+//{
+//	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
+//
+//	this->GetTransform().SetWorldMove(
+//		float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
+//}
+
+void TestSword::CheckGround()
+{
+	if (0 >= releaseSpeed_.y)
+	{
+		if ((TestLevel::groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
+			&& (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+			&& (TestLevel::groundColor_.color_ <= swordWorldPosPointer_->GetColorValue_UINT()))
+		{
+			//PixelColor magenta = PixelColor(255, 0, 255, 255);
+			//magenta.color_;		//4294902015
+			//PixelColor yellow = PixelColor(255, 255, 0, 255);
+			//yellow.color_;		//4278255615
+			//PixelColor cyan = PixelColor(0, 255, 255, 255);
+			//cyan.color_;			//4294967040
+
+
+			if (true == isFalling_)
+			{
+				this->GetTransform().SetWorldMove(float4::Up * 5.f);
+				isFalling_ = false;
+				releaseSpeed_ = float4::Zero;
+			}
+		}
+		else if (TestLevel::groundColor_.color_ <= swordWorldPosPointer_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		{
+			if (true == isFalling_)
+			{
+				isFalling_ = false;
+				releaseSpeed_ = float4::Zero;
+			}
+		}
+		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		{
+			if (true == isFalling_)
+			{
+				this->GetTransform().SetWorldMove(float4::Down * 5.f);
+				isFalling_ = false;
+				releaseSpeed_ = float4::Zero;
+			}
+		}
+		else
+		{
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+			}
+		}
+	}
 }

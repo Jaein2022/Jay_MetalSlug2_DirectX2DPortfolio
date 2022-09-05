@@ -39,7 +39,7 @@ private:
 
 	void Run(float _deltaTime);
 	void DuckStep(float _deltaTime);
-	float CheckSlope();
+	float GetSlope();
 	void Fall(float _deltaTime);
 	void CheckGround();
 	void ControlMuzzle();
