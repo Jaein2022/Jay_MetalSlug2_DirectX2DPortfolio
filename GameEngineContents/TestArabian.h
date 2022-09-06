@@ -11,7 +11,7 @@ enum class ArabianState
 	FallingToIdling,
 	ThrowingSword,
 	MeleeAttack,
-	Death
+	Dead
 };
 
 
@@ -38,6 +38,11 @@ public:
 	void Update(float _deltaTime) override;
 	void End() override;
 
+public:
+	inline void TakeDamage(int _damage)
+	{
+		hp_ -= _damage;
+	}
 
 private:
 	void ReactToPlayerPosition();	
@@ -48,7 +53,6 @@ private:
 	void Fall(float _deltaTime);
 	void CheckGround();
 	void ThrowSword();
-
 
 
 private:
@@ -92,9 +96,7 @@ private:
 
 	float shufflingSpeed_;
 
-	bool isLeft_;
-
-	char localDirection_;		//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
+	char shuffleDirection_;		//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
 
 
 	TestIndicator* releasePoint_;
@@ -105,7 +107,7 @@ private:
 	const float engagementDistance_;	//교전거리.
 	const float chargeDistance_;		//돌진거리.
 
-
+	int hp_;
 
 };
 

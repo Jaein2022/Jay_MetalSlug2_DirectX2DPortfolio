@@ -144,6 +144,7 @@ void TestPlayer::Start()
 	);
 
 	playerCollision_ = CreateComponent<GameEngineCollision>("PlayerCollision");
+	playerCollision_->ChangeOrder(this->GetOrder());
 	playerCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 	playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);

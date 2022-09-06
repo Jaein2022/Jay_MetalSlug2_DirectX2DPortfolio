@@ -16,7 +16,6 @@ TestSword::TestSword()
 	upperLandingChecker_(nullptr),
 	swordWorldPosPointer_(nullptr),
 	lowerLandingChecker_(nullptr),
-	//fallingSpeed_(0.f),
 	rotationSpeed_(0.f),
 	releaseSpeed_(float4::Zero)
 {
@@ -54,8 +53,9 @@ void TestSword::Start()
 	stuckSwordRenderer_->Off();
 
 	swordCollision_ = CreateComponent<GameEngineCollision>("SwordCollision");
+	swordCollision_->ChangeOrder(this->GetOrder());
 	swordCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
-	swordCollision_->GetTransform().SetLocalScale(88, 100, 10);
+	swordCollision_->GetTransform().SetLocalScale(70, 100, 10);
 	swordCollision_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
 
 
@@ -130,6 +130,7 @@ void TestSword::StickOnGround()
 {
 	if (false == stuckSwordRenderer_->IsUpdate())
 	{
+		swordCollision_->Off();
 		flyingSwordRenderer_->Off();
 		stuckSwordRenderer_->On();
 		Death(1.f);
@@ -139,14 +140,6 @@ void TestSword::StickOnGround()
 void TestSword::Hit()
 {
 }
-
-//void TestSword::Fall(float _deltaTime)
-//{
-//	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
-//
-//	this->GetTransform().SetWorldMove(
-//		float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
-//}
 
 void TestSword::CheckGround()
 {

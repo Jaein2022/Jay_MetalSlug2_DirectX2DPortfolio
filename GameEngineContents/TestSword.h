@@ -34,7 +34,6 @@ private:
 	void Fly(float _deltaTime);
 	void StickOnGround();
 	void Hit();
-	//void Fall(float _deltaTime);
 	void CheckGround();
 
 private:
@@ -55,7 +54,6 @@ private:
 	TestPixelIndicator* swordWorldPosPointer_;	//액터의 월드포지션 표시.
 	TestPixelIndicator* lowerLandingChecker_;
 
-	//float fallingSpeed_;
 	float rotationSpeed_;
 
 	float4 releaseSpeed_;

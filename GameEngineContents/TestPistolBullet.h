@@ -30,6 +30,7 @@ public:
 
 private:
 	bool CheckGroundHit();
+	bool Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision);
 
 private:
 	const float bulletSpeed_;
@@ -40,5 +41,7 @@ private:
 	TestPixelIndicator* groundChecker_;
 	
 	float4 firingDirection_;
+
+	const int damage_;
 };
 

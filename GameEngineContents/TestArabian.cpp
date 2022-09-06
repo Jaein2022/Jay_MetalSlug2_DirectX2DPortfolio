@@ -27,14 +27,14 @@ TestArabian::TestArabian()
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
 	shufflingSpeed_(0.5f),
-	isLeft_(false),
-	localDirection_(1),
+	shuffleDirection_(1),
 	releasePoint_(nullptr),
 	releaseAngle_(60.f),
 	releaseVelocity_(5.f),
 	recognitionDistance_(800.f),
 	engagementDistance_(500.f),
-	chargeDistance_(150.f)
+	chargeDistance_(150.f),
+	hp_(3)
 {
 }
 
@@ -54,6 +54,7 @@ void TestArabian::Start()
 	}
 
 	arabianCollision_ = CreateComponent<GameEngineCollision>("ArabianCollision");
+	arabianCollision_->ChangeOrder(this->GetOrder());
 	arabianCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	arabianCollision_->GetTransform().SetLocalScale(80, 150, 10);
 	arabianCollision_->GetTransform().SetLocalPosition(0, 75, 10);
@@ -85,7 +86,7 @@ void TestArabian::Start()
 	);
 	arabianRenderer_->AnimationBindEnd("Shuffling",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			localDirection_ = -localDirection_;
+			shuffleDirection_ = -shuffleDirection_;
 		}
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Running",
@@ -139,10 +140,21 @@ void TestArabian::Start()
 		FrameAnimation_Desc("Rebel_Arabian.png", 110, 120, 0.05f, false)
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Death1",
-		FrameAnimation_Desc("Rebel_Arabian.png", 130, 142, 0.05f, false)
+		FrameAnimation_Desc("Rebel_Arabian.png", 130, 142, 0.075f, false)
 	);
+	arabianRenderer_->AnimationBindEnd("Death1",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			this->Death();
+		}
+	);
+
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Death2",
 		FrameAnimation_Desc("Rebel_Arabian.png", 150, 169, 0.05f, true)
+	);
+	arabianRenderer_->AnimationBindEnd("Death2",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			this->Death();
+		}
 	);
 
 
@@ -237,7 +249,7 @@ void TestArabian::Start()
 			arabianRenderer_->ChangeFrameAnimation("Shuffling");
 		},
 		[this](const StateInfo& _info)->void {
-			localDirection_ = 1;
+			shuffleDirection_ = 1;
 		}
 	);	
 	arabianStateManager_.CreateState(
@@ -290,10 +302,11 @@ void TestArabian::Start()
 		}
 	);	
 	arabianStateManager_.CreateState(
-		"Death",
+		"Dead",
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Death1");
+			arabianCollision_->Off();
 		}
 	);
 
@@ -323,8 +336,6 @@ void TestArabian::Update(float _deltaTime)
 	CheckGround();
 	ReactToPlayerPosition();
 
-
-
 	UpdateArabianState(_deltaTime);
 }
 
@@ -345,13 +356,10 @@ void TestArabian::ReactToPlayerPosition()
 	if (playerWorldPosX < thisWorldPosX)
 	{
 		this->GetTransform().PixLocalNegativeX();
-		isLeft_ = true;
-		
 	}
 	else
 	{
 		this->GetTransform().PixLocalPositiveX();
-		isLeft_ = false;
 	}
 
 	if (chargeDistance_ > horizontalDistance)
@@ -375,29 +383,29 @@ void TestArabian::ReactToPlayerPosition()
 void TestArabian::Shuffle(float _deltaTime)
 {
 	slopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * localDirection_,
+		slopeCheckerLocalPosX_ * shuffleDirection_,
 		slopeChecker_->GetTransform().GetLocalPosition().IY(),
 		slopeChecker_->GetTransform().GetLocalPosition().IZ()
 	);
 	ascendingSlopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * localDirection_,
+		slopeCheckerLocalPosX_ * shuffleDirection_,
 		ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY(),
 		ascendingSlopeChecker_->GetTransform().GetLocalPosition().IZ()
 	);
 	flatSlopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * localDirection_,
+		slopeCheckerLocalPosX_ * shuffleDirection_,
 		flatSlopeChecker_->GetTransform().GetLocalPosition().IY(),
 		flatSlopeChecker_->GetTransform().GetLocalPosition().IZ()
 	);
 	descendingSlopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * localDirection_,
+		slopeCheckerLocalPosX_ * shuffleDirection_,
 		descendingSlopeChecker_->GetTransform().GetLocalPosition().IY(),
 		descendingSlopeChecker_->GetTransform().GetLocalPosition().IZ()
 	);
 
 
 	this->GetTransform().SetWorldMove(
-		float4::Right * GetTransform().GetWorldScale().x * localDirection_
+		float4::Right * GetTransform().GetWorldScale().x * shuffleDirection_
 		* _deltaTime * shufflingSpeed_ * TestLevel::playSpeed_
 	);
 
@@ -407,6 +415,10 @@ void TestArabian::Shuffle(float _deltaTime)
 
 void TestArabian::UpdateArabianState(float _deltaTime)
 {
+	if (0 >= hp_)
+	{
+		currentArabianState_ = ArabianState::Dead;
+	}
 
 	if (allArabianStates_[currentArabianState_] != arabianStateManager_.GetCurrentStateName())
 	{
@@ -439,7 +451,7 @@ float TestArabian::GetSlope()
 			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
-				slopeCheckerLocalPosX_ * localDirection_,
+				slopeCheckerLocalPosX_ * shuffleDirection_,
 				ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY() + 5,
 				-5
 			);
@@ -474,7 +486,7 @@ float TestArabian::GetSlope()
 		for (slopeCheckPosY = beginPosY; slopeCheckPosY >= endPosY; slopeCheckPosY--)
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
-				slopeCheckerLocalPosX_ * localDirection_,
+				slopeCheckerLocalPosX_ * shuffleDirection_,
 				slopeCheckPosY,
 				-5
 			);

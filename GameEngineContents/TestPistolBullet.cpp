@@ -2,6 +2,7 @@
 #include "TestPistolBullet.h"
 #include "TestPixelIndicator.h"
 #include "TestLevel.h"
+#include "TestArabian.h"
 
 TestPistolBullet::TestPistolBullet()
 	: bulletSpeed_(12.f),
@@ -9,7 +10,8 @@ TestPistolBullet::TestPistolBullet()
 	pistolBulletRenderer_(nullptr),
 	effectiveHitSparkRenderer_(nullptr),
 	glancingHitSparkRenderer_(nullptr),
-	groundChecker_(nullptr)
+	groundChecker_(nullptr),
+	damage_(1)
 {
 }
 
@@ -24,6 +26,7 @@ void TestPistolBullet::Start()
 
 
 	pistolBulletCollision_ = CreateComponent<GameEngineCollision>("PistolBulletCollision");
+	pistolBulletCollision_->ChangeOrder(this->GetOrder());
 	pistolBulletCollision_->GetTransform().SetLocalScale(40, 24, 10);
 	pistolBulletCollision_->GetTransform().SetLocalPosition(0, 0, 0);
 	pistolBulletCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
@@ -92,8 +95,6 @@ void TestPistolBullet::Update(float _deltaTime)
 {
 	this->GetTransform().SetWorldMove(firingDirection_ * bulletSpeed_ * _deltaTime * TestLevel::playSpeed_);
 
-	//GameEngineDebug::DrawBox(pistolBulletCollision_->GetTransform(), float4::Red);
-
 	if (true == CheckGroundHit() && false == glancingHitSparkRenderer_->IsUpdate())
 	{
 		pistolBulletRenderer_->Off();
@@ -102,6 +103,17 @@ void TestPistolBullet::Update(float _deltaTime)
 		glancingHitSparkRenderer_->GetTransform().SetWorldRotation(0, 0, -90);
 		firingDirection_ = float4::Zero;
 	}
+
+	
+
+	pistolBulletCollision_->IsCollision(
+		CollisionType::CT_AABB,
+		ActorGroup::Rebel,
+		CollisionType::CT_AABB,
+		std::bind(&TestPistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
+	);
+
+
 }
 
 void TestPistolBullet::End()
@@ -117,4 +129,18 @@ bool TestPistolBullet::CheckGroundHit()
 	}
 
 	return false;
+}
+
+bool TestPistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)
+{
+
+	_rebelCollision->GetActor<TestArabian>()->TakeDamage(damage_);
+
+	pistolBulletRenderer_->Off();
+	pistolBulletCollision_->Off();
+	effectiveHitSparkRenderer_->On();
+	effectiveHitSparkRenderer_->GetTransform().SetLocalPosition(20, 0, 0);
+	firingDirection_ = float4::Zero;
+
+	return true;
 }

@@ -90,19 +90,19 @@ bool GameEngineCollision::IsCollision(
 
 	std::list<GameEngineCollision*>& collisionGroup = allCollisions[_collisionOrder];
 
-	for (GameEngineCollision* collision : collisionGroup)
+	for (GameEngineCollision* otherCollision : collisionGroup)
 	{
-		if (false == collision->IsUpdate())
+		if (false == otherCollision->IsUpdate())
 		{
 			continue;
 		}
 
-		if (true == GameEngineCollision::collisionFunctions_[thisType][otherType](this->GetTransform(), collision->GetTransform()))
+		if (true == GameEngineCollision::collisionFunctions_[thisType][otherType](this->GetTransform(), otherCollision->GetTransform()))
 		{
 			if (nullptr != _function)
 			{
-				if (true == _function(this, collision))	//연결된 충돌 함수가 true를 반환하면 충돌체크를 한번만 한다.
-														//연결된 충돌 함수가 false를 반환하면 충돌체크를 계속 한다.
+				if (true == _function(this, otherCollision))	//연결된 충돌 함수가 true를 반환하면 충돌체크를 한번만 한다.
+																//연결된 충돌 함수가 false를 반환하면 충돌체크를 계속 한다.
 				{
 					return true;
 				}

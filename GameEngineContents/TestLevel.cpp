@@ -52,7 +52,7 @@ void TestLevel::Start()
 		float4(15, 15, 1)
 	);
 
-	destFocus_ = CreateActor<TestIndicatorBase>(0, "DestFocus");
+	destFocus_ = CreateActor<TestIndicatorBase>(ActorGroup::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
 		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
@@ -86,6 +86,9 @@ void TestLevel::Update(float _deltaTime)
 	}
 
 	UpdateCameraActorMovement(_deltaTime);
+
+
+	int i = testArabian_->GetOrder();
 
 }
 
