@@ -86,10 +86,6 @@ void TestLevel::Update(float _deltaTime)
 	}
 
 	UpdateCameraActorMovement(_deltaTime);
-
-
-	int i = testArabian_->GetOrder();
-
 }
 
 void TestLevel::End()
@@ -98,12 +94,12 @@ void TestLevel::End()
 
 TestPistolBullet* TestLevel::GetPistolBullet()
 {
-	return CreateActor<TestPistolBullet>(ActorGroup::PistolBullet, "TestPistolBullet");
+	return CreateActor<TestPistolBullet>(ActorGroup::PlayerProjectile, "TestPistolBullet");
 }
 
 TestSword* TestLevel::GetSword()
 {
-	return CreateActor<TestSword>(ActorGroup::Sword, "TestSword");
+	return CreateActor<TestSword>(ActorGroup::RebelAttack_FlyingSword, "TestSword");
 }
 
 const float4& TestLevel::GetPlayerWorldPosition()

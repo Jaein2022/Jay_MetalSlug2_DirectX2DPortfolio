@@ -3,6 +3,7 @@
 #include "TestLevel.h"
 #include "TestIndicator.h"
 #include "TestPixelIndicator.h"
+#include "TestPlayer.h"
 
 TestSword::TestSword()
 	: swordRendererLocalPosX_(0),
@@ -99,8 +100,16 @@ void TestSword::Start()
 void TestSword::Update(float _deltaTime)
 {
 	CheckGround();
+
 	isFalling_ ? Fly(_deltaTime) : StickOnGround();
 
+
+	swordCollision_->IsCollision(
+		CollisionType::CT_AABB,
+		ActorGroup::Player,
+		CollisionType::CT_AABB,
+		std::bind(&TestSword::Hit, this, std::placeholders::_1, std::placeholders::_2)
+	);
 
 }
 
@@ -135,10 +144,6 @@ void TestSword::StickOnGround()
 		stuckSwordRenderer_->On();
 		Death(1.f);
 	}
-}
-
-void TestSword::Hit()
-{
 }
 
 void TestSword::CheckGround()
@@ -190,4 +195,13 @@ void TestSword::CheckGround()
 			}
 		}
 	}
+}
+
+bool TestSword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)
+{
+	_playerCollision->GetActor<TestPlayer>()->TakeDamage(this->GetOrder());
+
+	this->Death();
+
+	return true;
 }

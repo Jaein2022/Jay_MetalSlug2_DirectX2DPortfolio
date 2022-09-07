@@ -33,8 +33,8 @@ public:
 private:
 	void Fly(float _deltaTime);
 	void StickOnGround();
-	void Hit();
 	void CheckGround();
+	bool Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision);
 
 private:
 

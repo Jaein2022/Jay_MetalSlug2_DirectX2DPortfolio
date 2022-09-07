@@ -56,6 +56,7 @@ void TestPistolBullet::Start()
 	effectiveHitSparkRenderer_->GetTransform().SetLocalScale(68, 64, 1);
 	effectiveHitSparkRenderer_->SetPivot(PivotMode::Center);
 	effectiveHitSparkRenderer_->ChangeFrameAnimation("EffectiveHitSpark");
+	effectiveHitSparkRenderer_->GetTransform().SetLocalPosition(40, 0, -15);
 	effectiveHitSparkRenderer_->Off();
 
 
@@ -76,6 +77,7 @@ void TestPistolBullet::Start()
 	glancingHitSparkRenderer_->GetTransform().SetLocalScale(128, 64, 1);
 	glancingHitSparkRenderer_->SetPivot(PivotMode::Right);
 	glancingHitSparkRenderer_->ChangeFrameAnimation("GlancingHitSpark");
+	glancingHitSparkRenderer_->GetTransform().SetLocalPosition(20, 0, -15);
 	glancingHitSparkRenderer_->Off();
 
 
@@ -100,6 +102,7 @@ void TestPistolBullet::Update(float _deltaTime)
 		pistolBulletRenderer_->Off();
 		pistolBulletCollision_->Off();
 		glancingHitSparkRenderer_->On();
+		glancingHitSparkRenderer_->GetTransform().SetLocalPosition(0, 0, -15);
 		glancingHitSparkRenderer_->GetTransform().SetWorldRotation(0, 0, -90);
 		firingDirection_ = float4::Zero;
 	}
@@ -133,13 +136,11 @@ bool TestPistolBullet::CheckGroundHit()
 
 bool TestPistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)
 {
-
 	_rebelCollision->GetActor<TestArabian>()->TakeDamage(damage_);
 
 	pistolBulletRenderer_->Off();
 	pistolBulletCollision_->Off();
 	effectiveHitSparkRenderer_->On();
-	effectiveHitSparkRenderer_->GetTransform().SetLocalPosition(20, 0, 0);
 	firingDirection_ = float4::Zero;
 
 	return true;

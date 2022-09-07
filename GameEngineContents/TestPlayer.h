@@ -24,7 +24,9 @@ public:
 	void Update(float _deltaTime) override;
 	void End() override;
 
-
+	//void TakeWeapon(int _weaponType);
+	//void ReleasePrisoner(int _prisonerType);
+	void TakeDamage(int _rebelWeaponType);
 public:
 
 
@@ -33,21 +35,20 @@ private:
 	void CreatePlayerStates();
 
 	void UpdateInputInfo();	//키입력 업데이트.
-	void ConvertInputToPlayerStates();
+	void ConvertInputToPlayerStates();	//키입력 정보를 각 부위별 스테이트로 변환.
 
 	void UpdatePlayerState(float _deltaTime);	//플레이어 전체 상태 업데이트.
 
-	void Run(float _deltaTime);
-	void DuckStep(float _deltaTime);
-	float GetSlope();
-	void Fall(float _deltaTime);
-	void CheckGround();
-	void ControlMuzzle();
-	void Fire();
+	void Run(float _deltaTime);			//달리기.
+	void DuckStep(float _deltaTime);	//오리걸음.
+	float GetSlope();			//Run(), DuckStep()함수로 지상 이동할때 경사각 구하는 함수.
+	void Fall(float _deltaTime);	//추락.
+	void CheckGround();			//착지할때 정확한 액터위치 조정/땅에 발이 안 닿아있으면 추락 판정.
+	void ControlMuzzle();		//총구위치 변화.
+	void Fire();				//총알 생성 및 발사시 필요한 정보 입력.
 
 
 private:
-	//TestLevel* testLevel_;
 
 	PlayerState currentPlayerState_;
 
@@ -111,5 +112,10 @@ private:
 
 
 	GameEngineCollision* playerCollision_;
+
+	int causeOfDeath_;		//플레이어 사망원인. 0: 플레이어가 아직 살아있음. 
+
+
+
 };
 

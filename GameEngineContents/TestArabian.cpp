@@ -139,19 +139,19 @@ void TestArabian::Start()
 	arabianRenderer_->CreateFrameAnimation_CutTexture("JumpDeath",
 		FrameAnimation_Desc("Rebel_Arabian.png", 110, 120, 0.05f, false)
 	);
-	arabianRenderer_->CreateFrameAnimation_CutTexture("Death1",
-		FrameAnimation_Desc("Rebel_Arabian.png", 130, 142, 0.075f, false)
+	arabianRenderer_->CreateFrameAnimation_CutTexture("Dead1",
+		FrameAnimation_Desc("Rebel_Arabian.png", 130, 131/*142*/, 0.5f, true)
 	);
-	arabianRenderer_->AnimationBindEnd("Death1",
+	arabianRenderer_->AnimationBindEnd("Dead1",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			this->Death();
+			//this->Death();
 		}
 	);
 
-	arabianRenderer_->CreateFrameAnimation_CutTexture("Death2",
-		FrameAnimation_Desc("Rebel_Arabian.png", 150, 169, 0.05f, true)
+	arabianRenderer_->CreateFrameAnimation_CutTexture("Dead2",
+		FrameAnimation_Desc("Rebel_Arabian.png", 150, 169, 0.075f, true)
 	);
-	arabianRenderer_->AnimationBindEnd("Death2",
+	arabianRenderer_->AnimationBindEnd("Dead2",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			this->Death();
 		}
@@ -240,6 +240,7 @@ void TestArabian::Start()
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Idling");
+			//arabianRenderer_->ChangeFrameAnimation("Dead1");
 		}
 	);
 	arabianStateManager_.CreateState(
@@ -305,7 +306,7 @@ void TestArabian::Start()
 		"Dead",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			arabianRenderer_->ChangeFrameAnimation("Death1");
+			arabianRenderer_->ChangeFrameAnimation("Dead2");
 			arabianCollision_->Off();
 		}
 	);
@@ -426,7 +427,6 @@ void TestArabian::UpdateArabianState(float _deltaTime)
 	}
 
 	arabianStateManager_.Update(_deltaTime);
-
 }
 
 void TestArabian::Run(float _deltaTime)

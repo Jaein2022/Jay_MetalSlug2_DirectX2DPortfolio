@@ -40,12 +40,13 @@ TestPlayer::TestPlayer()
 	pistolUpwardMuzzlePosition_(-10, 220, 10),
 	pistolDownwardMuzzlePosition_(15, -5, 10),
 	pistolDuckingMuzzlePosition_(95, 65, 10),
-	initialJumpSpeed_(5.f),
+	initialJumpSpeed_(7.f),
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
 	duckStepSpeed_(1.f),
 	aimingAngle_(0.f),
-	playerCollision_(nullptr)
+	playerCollision_(nullptr),
+	causeOfDeath_(0)
 {
 }
 
@@ -149,9 +150,6 @@ void TestPlayer::Start()
 	playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 	playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 
-	//playerDuckingCollision_->GetTransform().SetLocalScale(100, 100, 10);
-	//playerDuckingCollision_->GetTransform().SetLocalPosition(0, 50, 10);
-
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 
@@ -162,17 +160,22 @@ void TestPlayer::Start()
 
 void TestPlayer::Update(float _deltaTime)
 {
+	UpdatePlayerState(_deltaTime);
 	CheckGround();
 	UpdateInputInfo();
 	ConvertInputToPlayerStates();
 	ControlMuzzle();
-	UpdatePlayerState(_deltaTime);
 
 
 }
 
 void TestPlayer::End()
 {
+}
+
+void TestPlayer::TakeDamage(int _rebelWeaponType)
+{
+	causeOfDeath_ = _rebelWeaponType;
 }
 
 void TestPlayer::UpdateInputInfo()
@@ -233,6 +236,7 @@ void TestPlayer::UpdateInputInfo()
 	if (true == GameEngineInput::GetInst()->IsDown("Test"))
 	{
 		TestIndicator::RenderingOnOffSwitch();
+		//인디케이터들만 특정 카메라에 몰아넣고 그 카메라를 껐다켰다하는 코드로 바꿔 볼 것.
 	}
 }
 
@@ -454,8 +458,8 @@ void TestPlayer::ConvertInputToPlayerStates()
 	{
 		if (false == isFalling_)
 		{
-			isFalling_ = true;
-			fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			//isFalling_ = true;
+			//fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 
 			if (0 == horizontalInputValue_)
 			{
@@ -593,12 +597,20 @@ void TestPlayer::ConvertInputToPlayerStates()
 
 void TestPlayer::UpdatePlayerState(float _deltaTime)
 {
-	int intNewState =
-		static_cast<int>(weapon_)
-		+ static_cast<int>(leg_)
-		+ static_cast<int>(top_)
-		+ static_cast<int>(direction_);
+	int intNewState = 0;
 
+	if (0 != causeOfDeath_)
+	{
+		intNewState = 1000 + causeOfDeath_;
+	}
+	else
+	{
+		intNewState
+			= static_cast<int>(weapon_)
+			+ static_cast<int>(leg_)
+			+ static_cast<int>(top_)
+			+ static_cast<int>(direction_);
+	}
 
 	if (allPlayerStates_.end() == allPlayerStates_.find(intNewState))
 	{

@@ -268,7 +268,7 @@ void TestPlayer::CreatePlayerAnimations()
 
 	if (0 == GameEngineTexture::Find("Tarma_Whole_Pistol.png")->GetCutCount())
 	{
-		GameEngineTexture::Cut("Tarma_Whole_Pistol.png", 10, 11);
+		GameEngineTexture::Cut("Tarma_Whole_Pistol.png", 10, 17);
 	}
 	wholePistolRenderer_->SetTexture("Tarma_Whole_Pistol.png");
 
@@ -330,6 +330,38 @@ void TestPlayer::CreatePlayerAnimations()
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Aiming3_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 70, 73, 0.2f, true));
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_MeleeAttack1",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 80, 83, 0.05f, false));
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_MeleeAttack2",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 90, 95, 0.05f, false));
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_ByMeleeAttack_Ground",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 100, 118, 0.05f, false));
+	wholePistolRenderer_->AnimationBindEnd("Dead_ByMeleeAttack_Ground",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			//this->Death(1.f);
+		}
+	);
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_ByFlyingSword_Ground",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 120, 138, 0.05f, false));
+	wholePistolRenderer_->AnimationBindEnd("Dead_ByFlyingSword_Ground",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			//this->Death(1.f);
+		}
+	);
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_BySolidAttack_Midair",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.5f, true));
+	wholePistolRenderer_->AnimationBindEnd("Dead_BySolidAttack_Midair",
+		[this](const FrameAnimation_Desc& _desc)->void { 
+			//this->Death(1.f);
+		}
+	);
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_BySolidBullet_Ground",
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.1f, false));
+	wholePistolRenderer_->AnimationBindEnd("Dead_BySolidBullet_Ground",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			//this->Death(1.f);
+		}
+	);
 
 
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
@@ -338,11 +370,33 @@ void TestPlayer::CreatePlayerAnimations()
 
 void TestPlayer::CreatePlayerStates()
 {
-	playerStateManager_.CreateState(		//1000
-		"Dead",
+	playerStateManager_.CreateState(		//1010
+		"Dead_ByMeleeAttack",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->On();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			wholePistolRenderer_->ChangeFrameAnimation("Dead_ByMeleeAttack_Ground");
+			playerCollision_->Off();
+		}
+	);
+
+	playerStateManager_.CreateState(		//1011
+		"Dead_ByFlyingSword",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->On();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			wholePistolRenderer_->ChangeFrameAnimation("Dead_ByFlyingSword_Ground");
+			playerCollision_->Off();
 		}
 	);
 
@@ -350,6 +404,7 @@ void TestPlayer::CreatePlayerStates()
 		"Pistol_Standing_Aiming_Forward",
 		nullptr,
 		[this](const StateInfo& _info)->void {
+
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -361,6 +416,16 @@ void TestPlayer::CreatePlayerStates()
 			
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+
+			//legRenderer_->Off();
+			//topPistolRenderer_->Off();
+			//wholePistolRenderer_->On();
+
+			//wholePistolRenderer_->ChangeFrameAnimation("Dead_BySolidAttack_Midair");
+			//
+			//playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			//playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
 		}
 	);
 
@@ -902,6 +967,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -920,6 +991,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -938,6 +1015,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -956,6 +1039,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -974,6 +1063,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -992,6 +1087,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1010,6 +1111,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);	
 
@@ -1028,6 +1135,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);	
 
@@ -1046,6 +1159,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);	
 
@@ -1064,6 +1183,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);	
 
@@ -1082,6 +1207,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);	
 
@@ -1100,6 +1231,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);	
 	
@@ -1133,6 +1270,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1151,6 +1294,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1169,6 +1318,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1187,6 +1342,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1205,6 +1366,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1223,6 +1390,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1241,6 +1414,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1259,6 +1438,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1277,6 +1462,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1295,6 +1486,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1313,6 +1510,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 
@@ -1331,6 +1534,12 @@ void TestPlayer::CreatePlayerStates()
 
 			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
 			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
 		}
 	);
 

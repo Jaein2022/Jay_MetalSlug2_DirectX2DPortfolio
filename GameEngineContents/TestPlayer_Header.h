@@ -2,7 +2,11 @@
 
 enum class PlayerState
 {
-	Dead = 1000,
+	Dead_ByMeleeAttack											= 1010,
+	Dead_ByFlyingSword											= 1011,
+	Dead_BySolidBullet											= 1012,
+	Dead_ByExplosive											= 1013,
+	Dead_ByFlame												= 1014,
 
 	Pistol_Standing_Aiming_Forward								= 1111,
 	Pistol_Standing_Aiming_Upward								= 1112,
@@ -180,13 +184,14 @@ enum class PlayerWeaponType
 {
 	Pistol			= 1000,
 	HeavyMachineGun = 2000,
-	//RockeLauncher		= 3000,
-	//Shotgun				= 4000,
-	//Flameshot			= 5000
+	Shotgun			= 3000,
+	Flameshot		= 4000,
+	RockeLauncher	= 5000,
 };
 
 enum class PlayerLegState
 {
+	//Dead				= 000,
 	Standing			= 100,
 	Running				= 200,
 	Ducking				= 300,

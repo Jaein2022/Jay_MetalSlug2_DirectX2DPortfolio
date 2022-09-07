@@ -3,10 +3,10 @@
 class GameEngineTexture;
 class TestIndicator : public GameEngineDefaultRenderer
 {
-	//이 클래스의 존재 이유: 특정 지점을 소량의 비용으로 표시.
+	//이 클래스의 존재 이유: 특정 지점을 소량의 비용으로 화면에 표시.
  
-	//한가하면 전용 렌더링 파이프라인, 전용 셰이더를 만들어서 간단한 지시자 모양들을 만들어 볼 것.
-	//나중에 메인, UI카메라가 아닌 제3의 카메라에 등록해볼 것.
+	//메인, UI카메라가 아닌 제3의 카메라에 등록해볼 것.
+	//한가하면 전용 렌더링 파이프라인, 전용 셰이더를 만들어서 화살표나 쐐기 같은 간단한 지시자 모양들을 만들어 볼 것.
 
 	friend class TestIndicatorBase;
 
