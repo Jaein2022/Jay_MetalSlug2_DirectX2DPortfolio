@@ -59,7 +59,7 @@ void TestPlayer::CreatePlayerAnimations()
 
 	if (0 == GameEngineTexture::Find("Tarma_Top_Pistol.png")->GetCutCount())
 	{
-		GameEngineTexture::Cut("Tarma_Top_Pistol.png", 10, 18);
+		GameEngineTexture::Cut("Tarma_Top_Pistol.png", 10, 17);
 	}
 	topPistolRenderer_->SetTexture("Tarma_Top_Pistol.png");
 
@@ -203,8 +203,19 @@ void TestPlayer::CreatePlayerAnimations()
 
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack1",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 150, 155, 0.05f, false));
+	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_MeleeAttack1",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::Aiming;
+		}
+	);
+
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack2",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 160, 165, 0.05f, false));
+	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_MeleeAttack2",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::Aiming;
+		}
+	);
 
 
 	topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
@@ -334,6 +345,8 @@ void TestPlayer::CreatePlayerAnimations()
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 80, 83, 0.05f, false));
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_MeleeAttack2",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 90, 95, 0.05f, false));
+
+
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_ByMeleeAttack_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 100, 118, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Dead_ByMeleeAttack_Ground",
@@ -593,23 +606,31 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);	
 
+	playerStateManager_.CreateState(		//1171
+		"Pistol_Standing_MeleeAttack",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
 
+			legRenderer_->ChangeFrameAnimation("Standing");
 
+			if (true == topPistolRenderer_->IsCurAnimation("Standing, Running, Jumping_MeleeAttack1"))
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack2");
+			}
+			else
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
+			}
 
-
-
-
-
-
-
-
-	//Pistol_Standing_MeleeAttack = 1171,
-
-
-
-
-
-
+			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+		}
+	);	
 
 
 
@@ -932,7 +953,22 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
+	playerStateManager_.CreateState(		//1371
+		"Pistol_Ducking_MeleeAttack",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->On();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
 
+			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenadeToAiming");
+
+			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
+			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+		}
+	);
 
 
 

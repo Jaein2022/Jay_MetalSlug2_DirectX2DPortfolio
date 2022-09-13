@@ -7,6 +7,7 @@
 #include "GameEngineRenderTarget.h"
 #include "GameEngineVertexes.h"
 #include "GameEngineConstantBuffer.h"
+#include "GameEngineStructuredBuffer.h"
 
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineVertexBuffer.h"
@@ -146,7 +147,7 @@ void EngineSubSetting()
 	//true: 깊이테스트 함.
 
 	engineBaseDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-	//D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL: 기존 깊이데이타와 비교 함.
+	//D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL: 기존 깊이데이터와 비교 함.
 	//이걸 제로로 바꾸면 왜 깊이테스트가 제대로 안 되는 걸까??
 
 	engineBaseDepthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
@@ -166,7 +167,7 @@ void EngineSubSetting()
 	//true: 깊이테스트 함.
 
 	alwaysDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-	//D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL: 기존 깊이데이타와 비교 함.
+	//D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL: 기존 깊이데이터와 비교 함.
 	//이걸 제로로 바꾸면 왜 깊이테스트가 제대로 안 되는 걸까??
 
 	alwaysDepthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
@@ -192,7 +193,7 @@ void EngineTextureLoad()
 	//최대값인 16으로 하면 1/16로 축소된 밉맵 이미지까지 만들어서 사용한다는 건가??
 	//Filter가 D3D11_FILTER_ANISOTROPIC, D3D11_FILTER_COMPARISON_ANISOTROPIC일때만 적용.
 	// 
-	//	D3D11_COMPARISON_FUNC ComparisonFunc;	샘플링 데이타를 기존 샘플링 데이타와 비교할 때 적용되는 옵션??
+	//	D3D11_COMPARISON_FUNC ComparisonFunc;	샘플링 데이터를 기존 샘플링 데이터와 비교할 때 적용되는 옵션??
 	//필터 옵션이 D3D11_FILTER_COMPARISON_~ 으로 시작할 때만 적용.
 	// 
 	//	FLOAT BorderColor[4];					rgba 0~1 범위내에서 경계선 색상을 정한다.
@@ -562,6 +563,7 @@ void GameEngineCore::EngineResourceDestroy()
 	GameEngineBlend::ResourceDestroy();
 
 	GameEngineConstantBuffer::ResourceDestroy();
+	GameEngineStructuredBuffer::ResourceDestroy();
 
 	GameEngineRenderTarget::ResourceDestroy();
 	GameEngineTexture::ResourceDestroy();

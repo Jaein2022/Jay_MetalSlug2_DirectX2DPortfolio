@@ -16,7 +16,7 @@ class GameEngineCamera : public GameEngineTransformComponent
 	// 뷰포트행렬대로 다시 확대한 만큼의 정점 좌표를 계산해서 변형된 대로 그리는 컴포넌트.
 
 	friend GameEngineLevel;
-	friend GameEngineRenderer;
+	friend class GameEngineRenderer;
 
 public:
 
@@ -84,7 +84,7 @@ private:
 	void ChangeRenderingOrder(GameEngineRenderer* _renderer, int _newRenderingOrder);
 
 private:
-	std::map<int, std::list<class GameEngineRenderer*>> allRenderers_;
+	std::map<int, std::list<GameEngineRenderer*>> allRenderers_;
 	//이 카메라가 가진 모든 렌더러들.
 
 

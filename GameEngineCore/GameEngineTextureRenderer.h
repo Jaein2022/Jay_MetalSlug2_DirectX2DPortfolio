@@ -293,6 +293,15 @@ public:
 		return true;
 	}
 
+	bool IsCurAnimation(const std::string& _animationName)
+	{
+		if (&allAnimations_[_animationName] == currentAnimation_)
+		{
+			return true;
+		}
+		return false;
+	}
+
 
 protected:
 	void Start() override;

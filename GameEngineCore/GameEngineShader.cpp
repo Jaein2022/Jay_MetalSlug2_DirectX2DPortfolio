@@ -5,6 +5,7 @@
 #include "GameEngineConstantBuffer.h"
 #include "GameEngineTexture.h"
 #include "GameEngineSampler.h"
+#include "GameEngineStructuredBuffer.h"
 
 GameEngineShader::GameEngineShader()
 	: shaderVersion_(""),
@@ -137,6 +138,7 @@ void GameEngineShader::ShaderResCheck()
 
 	//리플렉션: 원래의 구체적인 클래스나 자료형에 대해 몰라도 바이트코드로 되어있는 컴파일 결과물에서 
 	// 정보를 추출해내는 프로그램 기법이다. 그러니까 컴파일된 바이너리코드에서 파싱하는것과 마찬가지.
+
 	ID3D11ShaderReflection* compileInfo = { 0 };
 
 	if (S_OK != D3DReflect(				//컴파일된 HLSL코드를 바탕으로 내가 셰이더에서 사용한 변수, 함수, 인자들에 
@@ -192,8 +194,8 @@ void GameEngineShader::ShaderResCheck()
 			//	UINT                    uFlags;		상수버퍼가 연결될 슬롯을 지정하는 플래그. 
 			//		hlsl코드에 지정된 슬롯으로 연결한다는 플래그 하나밖에 없으므로 의미 없음.
 			//} D3D11_SHADER_BUFFER_DESC;
-			D3D11_SHADER_BUFFER_DESC bufferDesc = { 0 };
-			cBufferPtr->GetDesc(&bufferDesc);
+			D3D11_SHADER_BUFFER_DESC cBufferDesc = { 0 };
+			cBufferPtr->GetDesc(&cBufferDesc);
 
 
 			GameEngineConstantBufferSetter newCBufferSetter;
@@ -202,8 +204,8 @@ void GameEngineShader::ShaderResCheck()
 			newCBufferSetter.parentShaderType_ = this->shaderType_;
 			newCBufferSetter.constantBuffer_ = GameEngineConstantBuffer::CreateAndFind(
 				uppercaseResourceName,	//만들려는 상수버퍼가 없으면 만들고, 이미 있으면 공유한다.
-				bufferDesc,				//같은 이름, 같은 크기의 상수 버퍼는 포인터를 공유한다.
-				cBufferPtr);			// 그래서 이미 만들어져 있는걸 또 만들어도 터뜨리지 않고 대신 이미 만들어져 있는걸 공유한다.
+				cBufferDesc				//같은 이름, 같은 크기의 상수 버퍼는 포인터를 공유한다.
+			);			// 그래서 이미 만들어져 있는걸 또 만들어도 터뜨리지 않고 대신 이미 만들어져 있는걸 공유한다.
 
 			newCBufferSetter.bindPoint_ = resInfo.BindPoint;
 
@@ -241,7 +243,7 @@ void GameEngineShader::ShaderResCheck()
 
 			if (false == insertResult.second)
 			{
-				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 텍스쳐가 존재합니다.");
+				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 텍스처 세터가 존재합니다.");
 				return;
 			}
 
@@ -265,7 +267,44 @@ void GameEngineShader::ShaderResCheck()
 
 			if (false == insertResult.second)
 			{
-				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 텍스쳐가 존재합니다.");
+				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 텍스처 세터가 존재합니다.");
+				return;
+			}
+
+			break;
+		}
+
+		case D3D_SIT_STRUCTURED:
+		{
+			//구조화버퍼는 구조적인 특성상 대용량 메모리를 사용하는것이 기본인데, 
+			//동적 할당되는 특성상 미리 만들수도 없다.
+
+			ID3D11ShaderReflectionConstantBuffer* cBufferPtr = compileInfo->GetConstantBufferByName(resInfo.Name);
+			D3D11_SHADER_BUFFER_DESC shaderBufferDesc = { 0 };
+			cBufferPtr->GetDesc(&shaderBufferDesc);
+
+			GameEngineStructuredBufferSetter newSBufferSetter;
+			newSBufferSetter.parentShader_ = this;
+			newSBufferSetter.SetName(uppercaseResourceName);
+			newSBufferSetter.parentShaderType_ = this->shaderType_;
+
+			// 아직은 데이터의 사이즈는 알수있어도 이걸로 몇개짜리 버퍼를 만들지는 알수가 없다.
+
+			newSBufferSetter.structuredBuffer_ = GameEngineStructuredBuffer::CreateAndFind(
+				uppercaseResourceName,	//
+				shaderBufferDesc,		//
+				0						//
+			);
+			newSBufferSetter.bindPoint_ = resInfo.BindPoint;
+
+			std::pair<std::map<std::string, GameEngineStructuredBufferSetter>::iterator, bool> insertResult
+				= structuredBufferMap_.insert(
+					std::make_pair(uppercaseResourceName, newSBufferSetter)
+				);
+
+			if (false == insertResult.second)
+			{
+				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 구조화 버퍼 세터가 존재합니다.");
 				return;
 			}
 
@@ -294,6 +333,11 @@ void GameEngineTextureSetter::Setting() const
 }
 
 void GameEngineSamplerSetter::Setting() const
+{
+	settingFunction_();
+}
+
+void GameEngineStructuredBufferSetter::Setting() const
 {
 	settingFunction_();
 }

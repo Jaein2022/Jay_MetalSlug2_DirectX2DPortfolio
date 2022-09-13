@@ -56,7 +56,7 @@ void TestSword::Start()
 	swordCollision_ = CreateComponent<GameEngineCollision>("SwordCollision");
 	swordCollision_->ChangeOrder(this->GetOrder());
 	swordCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
-	swordCollision_->GetTransform().SetLocalScale(70, 100, 10);
+	swordCollision_->GetTransform().SetLocalScale(70, 70, 10);
 	swordCollision_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
 
 

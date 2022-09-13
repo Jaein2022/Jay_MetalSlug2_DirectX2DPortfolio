@@ -31,7 +31,7 @@ private:
 public:
 	static GameEngineVertexBuffer* Create(
 		const std::string& _name,
-		const void* _data,
+		const void* _initializationData,
 		UINT _vertexSize,
 		UINT _vertexCount,
 		const GameEngineInputLayoutInfo& _info
@@ -61,7 +61,7 @@ public:
 
 private:
 	void CreateVertexBuffer(
-		const void* _data,
+		const void* _initializationData,
 		UINT _vertexSize,
 		UINT _vertexCount
 	);
@@ -70,7 +70,7 @@ private:
 	ID3D11Buffer* vertexBuffer_;				//버텍스 정보를 저장할 버퍼 인터페이스.
 
 	D3D11_SUBRESOURCE_DATA resData_;	//버퍼의 초기값.
-	D3D11_BUFFER_DESC bufferDesc_;		//버퍼의 생성 명세서.
+	D3D11_BUFFER_DESC vertexBufferDesc_;		//버퍼의 생성 명세서.
 
 	UINT vertexSize_;		//버퍼 한개의 크기.
 	UINT vertexCount_;		//버퍼 개수.

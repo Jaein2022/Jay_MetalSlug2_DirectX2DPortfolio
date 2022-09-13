@@ -94,7 +94,6 @@ protected:
 		return newRes;
 	}
 
-private:
 	static ResType* CreateRes(const std::string& _resName = "")
 	{
 		std::string uppercaseResName = GameEngineString::ToUpperReturn(_resName);
@@ -104,6 +103,7 @@ private:
 
 		return newRes;
 	}
+private:
 
 };
 

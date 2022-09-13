@@ -112,7 +112,7 @@ void GameEngineDevice::CreateSwapChain()
 	//스왑체인에선 버퍼 스왑만 설정하고, 샘플링이 필요하다면 백버퍼에 해야 하므로 스왑체인 설정을 만지는 건 아무 의미 없다. 
 
 	scInfo.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
-	//버퍼 사용처: 화면에 출력할 렌더타겟으로 | 셰이더를 거친 결과물을 받는 용도로.
+	//버퍼 사용 방식: 화면에 출력할 렌더타겟으로 | 셰이더를 거친 결과물을 받는 용도로.
 
 	scInfo.OutputWindow = GameEngineWindow::GetHWND();
 	//지정한 렌더타겟을 출력할 윈도우의 핸들.

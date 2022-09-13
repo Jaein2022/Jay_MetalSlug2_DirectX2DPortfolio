@@ -48,7 +48,7 @@ private:
 	//최대값인 16으로 하면 1/16로 축소된 밉맵 이미지까지 만들어서 사용한다는 건가??
 	//Filter가 D3D11_FILTER_ANISOTROPIC, D3D11_FILTER_COMPARISON_ANISOTROPIC일때만 적용.
 	// 
-	//	D3D11_COMPARISON_FUNC ComparisonFunc;	샘플링 데이타를 기존 샘플링 데이타와 비교할 때 적용되는 옵션??
+	//	D3D11_COMPARISON_FUNC ComparisonFunc;	샘플링 데이터를 기존 샘플링 데이터와 비교할 때 적용되는 옵션??
 	//Filter가 D3D11_FILTER_COMPARISON_~ 으로 시작할 때만 적용.
 	// 
 	//	FLOAT BorderColor[4];					rgba 0~1 범위내에서 경계선 색상을 정한다.

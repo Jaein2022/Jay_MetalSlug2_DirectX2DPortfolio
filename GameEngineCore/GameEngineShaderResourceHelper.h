@@ -44,7 +44,7 @@ public:
 	void SetConstantBuffer_Link(const std::string& _name, const void* _data, UINT _size);	//참조로 연결.
 
 	void SetConstantBuffer_New(const std::string& _name, const void* _data, UINT _size);	//깊은 복사.
-	//외부 데이타를 복사받아야 하는 등의 SetConstantBufferLink()를 사용할 수 없는 예외적인 상황에만 사용할 것.
+	//외부 데이터를 복사받아야 하는 등의 SetConstantBufferLink()를 사용할 수 없는 예외적인 상황에만 사용할 것.
 
 	GameEngineTexture* SetTexture(const std::string& _textureSetterName, const std::string& _textureName);
 	GameEngineTexture* SetTexture(const std::string& _textureSetterName, GameEngineTexture* _texture);

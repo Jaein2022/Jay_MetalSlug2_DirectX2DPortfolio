@@ -16,7 +16,7 @@ enum class FileMode
 
 class GameEngineFile: public GameEnginePath
 {
-	//파일의 생성과 열고 닫음, 데이타 저장/불러오기 등 파일 관리하는데 필요한 기능들을 모아둔 클래스.
+	//파일의 생성과 열고 닫음, 데이터 저장/불러오기 등 파일 관리하는데 필요한 기능들을 모아둔 클래스.
 
 
 public:

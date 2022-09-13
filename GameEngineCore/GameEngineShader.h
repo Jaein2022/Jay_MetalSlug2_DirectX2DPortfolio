@@ -34,7 +34,7 @@ class GameEngineConstantBuffer;
 class GameEngineConstantBufferSetter : public ShaderResSetter
 {
 	//셰이더들이 필요로 하는 각각의 상수버퍼가 가져야 하는 정보 관리 클래스.
-	//렌더러가 n개->렌더링파이프라인과 트랜스폼이 각각 n개 필요. ->각각의 트랜스폼 데이타를 GPU로 전달할 상수버퍼도 n개 필요.
+	//렌더러가 n개->렌더링파이프라인과 트랜스폼이 각각 n개 필요. ->각각의 트랜스폼 데이터를 GPU로 전달할 상수버퍼도 n개 필요.
 	// ->n개의 렌더링 파이프라인에 딸린 2(+@)*n개의 셰이더들이 2(+@)*n개의 상수버퍼를 필요로 한다.
 	// 그 2(+@)*n개의 상수버퍼들을 통해 셰이더로 전달해야 하는 정보, 상수버퍼들의 목적지 셰이더, 
 	// 상수버퍼들을 관리하는데 필요한 이름과 그 크기 등을 저장한다.
@@ -110,6 +110,19 @@ public:
 	}
 };
 
+class GameEngineStructuredBuffer;
+class GameEngineStructuredBufferSetter : public ShaderResSetter
+{
+public:
+	void Setting() const;
+
+	GameEngineStructuredBuffer* structuredBuffer_;
+
+	GameEngineStructuredBufferSetter() : structuredBuffer_(nullptr)
+	{
+	}
+};
+
 
 class GameEngineShader
 {
@@ -146,17 +159,16 @@ protected:
 	std::string entryPoint_;	//HLSL 코드의 진입점함수 이름.
 	std::string shaderVersion_;	//HLSL 코드의 사용 목적과 컴파일러의 버전.
 	ID3DBlob* binaryCodePtr_;	//HLSL 코드를 컴파일한 결과물(바이트코드).
-	ShaderType shaderType_;		//셰이더 종류.
+	ShaderType shaderType_;		//이 셰이더의 종류.
 
 	std::map<std::string, GameEngineConstantBufferSetter> constantBufferMap_;
 	std::map<std::string, GameEngineTextureSetter> textureMap_;
 	std::map<std::string, GameEngineSamplerSetter> samplerMap_;
+	std::map<std::string, GameEngineStructuredBufferSetter> structuredBufferMap_;
 
 	//셰이더리소스세터들을 값형으로 저장한 이유는??
 	//->셰이더 리소스 종류가 다양하지 않아서 값형으로 보관해도 많은 컨테이너들을 만들 필요가 없고, 
 	// 각각의 리소스들을 분리해서 보다 세밀하게 관리할 수 있다는 장점을 이용할 수 있기 때문.
-
-	//std::set<dataType>: dataType을 키값으로 사용하는 연관 컨테이너. std::map처럼 이진 탐색트리를 사용한다.
 
 protected:
 	inline void SetEntrtyPoint(const std::string& _entryPoint)

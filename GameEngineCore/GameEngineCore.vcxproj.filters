@@ -266,6 +266,9 @@
     <ClInclude Include="GameEngineRenderSet.h">
       <Filter>Object\Component\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="GameEngineStructuredBuffer.h">
+      <Filter>Resource\ShaderResource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -330,9 +333,6 @@
     </ClCompile>
     <ClCompile Include="GameEngineTexture.cpp">
       <Filter>Resource\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngineRenderTarget.cpp">
-      <Filter>Resource\OutputMerger</Filter>
     </ClCompile>
     <ClCompile Include="GameEngineVertexBuffer.cpp">
       <Filter>Resource\InputAssembler</Filter>
@@ -415,6 +415,12 @@
     </ClCompile>
     <ClCompile Include="GameEngineRenderSet.cpp">
       <Filter>Object\Component\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineRenderTarget.cpp">
+      <Filter>Resource\OutputMerger</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEngineStructuredBuffer.cpp">
+      <Filter>Resource\ShaderResource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,9 @@
     <FxCompile Include="Blur.hlsl">
       <Filter>RenderTargetEffect</Filter>
     </FxCompile>
+    <FxCompile Include="TextureAtlas_Inst.hlsl">
+      <Filter>Object</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="TransformHeader.hlsli" />

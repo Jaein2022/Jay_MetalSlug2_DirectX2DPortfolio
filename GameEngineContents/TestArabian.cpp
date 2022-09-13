@@ -8,7 +8,6 @@
 TestArabian::TestArabian()
 	: currentArabianState_(ArabianState::Idling),
 	isFalling_(false),
-	//isEngaging_(false),
 	arabianRendererLocalPosX_(0),
 	arabianRendererLocalPosY_(75),
 	arabianRendererLocalPosZ_(0),
@@ -34,7 +33,7 @@ TestArabian::TestArabian()
 	recognitionDistance_(800.f),
 	engagementDistance_(500.f),
 	chargeDistance_(150.f),
-	hp_(3)
+	hp_(1)
 {
 }
 
@@ -111,7 +110,7 @@ void TestArabian::Start()
 		FrameAnimation_Desc("Rebel_Arabian.png", 70, 73, 0.1f, false)
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("ThrowingSword&Reloading",
-		FrameAnimation_Desc("Rebel_Arabian.png", 80, 98, 0.1f, true)
+		FrameAnimation_Desc("Rebel_Arabian.png", 80, 97, 0.1f, true)
 	);
 	arabianRenderer_->AnimationBindFrame("ThrowingSword&Reloading",
 		[this](const FrameAnimation_Desc& _desc)->void {
@@ -140,11 +139,11 @@ void TestArabian::Start()
 		FrameAnimation_Desc("Rebel_Arabian.png", 110, 120, 0.05f, false)
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Dead1",
-		FrameAnimation_Desc("Rebel_Arabian.png", 130, 131/*142*/, 0.5f, true)
+		FrameAnimation_Desc("Rebel_Arabian.png", 130, 141, 0.075f, true)
 	);
 	arabianRenderer_->AnimationBindEnd("Dead1",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			//this->Death();
+			this->Death();
 		}
 	);
 
@@ -306,7 +305,7 @@ void TestArabian::Start()
 		"Dead",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			arabianRenderer_->ChangeFrameAnimation("Dead2");
+			arabianRenderer_->ChangeFrameAnimation("Dead1");
 			arabianCollision_->Off();
 		}
 	);
@@ -351,6 +350,7 @@ void TestArabian::ReactToPlayerPosition()
 
 
 	float playerWorldPosX = GetLevel<TestLevel>()->GetPlayerWorldPosition().x;
+	//float playerWorldPosX = this->GetLevel()->GetGroup(ActorGroup::Player).front()->GetTransform().GetWorldPosition().x;
 	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
 	float horizontalDistance = abs(thisWorldPosX - playerWorldPosX);
 
@@ -376,7 +376,7 @@ void TestArabian::ReactToPlayerPosition()
 		currentArabianState_ = ArabianState::Running;
 	}
 
-
+	
 
 
 }
@@ -577,6 +577,15 @@ void TestArabian::ThrowSword()
 {
 	TestSword* newSword = this->GetLevel<TestLevel>()->GetSword();
 	newSword->GetTransform().SetWorldPosition(releasePoint_->GetTransform().GetWorldPosition());
+
+	if (0 > this->GetTransform().GetWorldScale().x)
+	{
+		newSword->GetTransform().PixLocalPositiveX();
+	}
+	else
+	{
+		newSword->GetTransform().PixLocalNegativeX();
+	}
 
 	newSword->SetReleaseSpeed(
 		abs((90.f - releaseAngle_) - (GetTransform().GetWorldScale().x * 90.f)),

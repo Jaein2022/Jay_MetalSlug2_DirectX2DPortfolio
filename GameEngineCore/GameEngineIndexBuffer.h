@@ -31,7 +31,7 @@ private:
 public:
 	static GameEngineIndexBuffer* Create(
 		const std::string& _name,
-		const void* _data,
+		const void* _initializationData,
 		UINT _indexSize,
 		UINT _indexCount
 	);
@@ -58,14 +58,14 @@ public:
 	}
 
 private:
-	void CreateIndexBuffer(const void* _data, UINT _indexSize, UINT _indexCount);
+	void CreateIndexBuffer(const void* _initializationData, UINT _indexSize, UINT _indexCount);
 
 private:
 	ID3D11Buffer* indexBuffer_;				//인덱스를 저장할 버퍼.
 
-//버퍼 생성 관련 정보.
+	//버퍼 생성 관련 정보.
 	D3D11_SUBRESOURCE_DATA resData_;	//버퍼의 초기값.
-	D3D11_BUFFER_DESC bufferDesc_;		//버퍼의 생성 명세서.
+	D3D11_BUFFER_DESC indexBufferDesc_;		//버퍼의 생성 명세서.
 
 	//버퍼 세팅 관련 정보.
 	UINT indexSize_;					//인덱스 한개 크기.

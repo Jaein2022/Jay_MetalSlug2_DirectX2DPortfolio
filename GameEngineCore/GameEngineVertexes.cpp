@@ -32,12 +32,12 @@ void GameEngineInputLayoutInfo::AddInputLayout(
 
 	//typedef struct D3D11_INPUT_ELEMENT_DESC		인풋레이아웃을 생성할때 필요한 세부설정 정보를 담는 구조체.
 	//{
-	//	LPCSTR SemanticName;						이 인풋레이아웃이 가리키는 데이타의 시맨틱의 이름. 대소문자 구분 안함.
-	//	UINT SemanticIndex;							이 인풋레이아웃이 가리키는 데이타의 시맨틱의 번호.  COLOR[n]의 n.
-	//	DXGI_FORMAT Format;							이 인풋레이아웃이 가리키는 데이타의 데이타타입. 
+	//	LPCSTR SemanticName;						이 인풋레이아웃이 가리키는 데이터의 시맨틱의 이름. 대소문자 구분 안함.
+	//	UINT SemanticIndex;							이 인풋레이아웃이 가리키는 데이터의 시맨틱의 번호.  COLOR[n]의 n.
+	//	DXGI_FORMAT Format;							이 인풋레이아웃이 가리키는 데이터의 데이터타입. 
 	//	UINT InputSlot;								렌더링 파이프라인에 버텍스버퍼를 등록할 슬롯 번호. 0~15까지 가능.
-	//	UINT AlignedByteOffset;						이 인풋레이아웃이 가리키는 데이타의 오프셋(메모리 시작점에서부터의 바이트 거리).
-	//	D3D11_INPUT_CLASSIFICATION InputSlotClass;	이 인풋레이아웃으로 등록되는것이 단순 버텍스 정보인지, 인스턴스 데이타를 포함하는지를 알려주는 값.
+	//	UINT AlignedByteOffset;						이 인풋레이아웃이 가리키는 데이터의 오프셋(메모리 시작점에서부터의 바이트 거리).
+	//	D3D11_INPUT_CLASSIFICATION InputSlotClass;	이 인풋레이아웃으로 등록되는것이 단순 버텍스 정보인지, 인스턴스 데이터를 포함하는지를 알려주는 값.
 	//	UINT InstanceDataStepRate;					위의 InputSlotClass에서 D3D11_INPUT_PER_INSTANCE_DATA를 선택했을때만 필요한 값이라고 한다.
 	//} 	D3D11_INPUT_ELEMENT_DESC;
 
