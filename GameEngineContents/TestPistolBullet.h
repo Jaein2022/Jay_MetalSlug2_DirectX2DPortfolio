@@ -34,7 +34,7 @@ private:
 
 private:
 	const float bulletSpeed_;
-	GameEngineCollision* pistolBulletCollision_;
+	GameEngineCollision* pistolBulletCollisionBody_;
 	GameEngineTextureRenderer* pistolBulletRenderer_;
 	GameEngineTextureRenderer* effectiveHitSparkRenderer_;
 	GameEngineTextureRenderer* glancingHitSparkRenderer_;

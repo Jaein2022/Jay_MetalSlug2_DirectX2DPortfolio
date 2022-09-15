@@ -6,7 +6,7 @@
 
 TestPistolBullet::TestPistolBullet()
 	: bulletSpeed_(12.f),
-	pistolBulletCollision_(nullptr),
+	pistolBulletCollisionBody_(nullptr),
 	pistolBulletRenderer_(nullptr),
 	effectiveHitSparkRenderer_(nullptr),
 	glancingHitSparkRenderer_(nullptr),
@@ -25,11 +25,11 @@ void TestPistolBullet::Start()
 	this->GetTransform().SetWorldScale(1, 1, 1);
 
 
-	pistolBulletCollision_ = CreateComponent<GameEngineCollision>("PistolBulletCollision");
-	pistolBulletCollision_->ChangeOrder(this->GetOrder());
-	pistolBulletCollision_->GetTransform().SetLocalScale(40, 24, 10);
-	pistolBulletCollision_->GetTransform().SetLocalPosition(0, 0, 0);
-	pistolBulletCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
+	pistolBulletCollisionBody_ = CreateComponent<GameEngineCollision>("PistolBulletCollision");
+	pistolBulletCollisionBody_->ChangeOrder(this->GetOrder());
+	pistolBulletCollisionBody_->GetTransform().SetLocalScale(40, 24, 10);
+	pistolBulletCollisionBody_->GetTransform().SetLocalPosition(0, 0, 0);
+	pistolBulletCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 
@@ -100,7 +100,7 @@ void TestPistolBullet::Update(float _deltaTime)
 	if (true == CheckGroundHit() && false == glancingHitSparkRenderer_->IsUpdate())
 	{
 		pistolBulletRenderer_->Off();
-		pistolBulletCollision_->Off();
+		pistolBulletCollisionBody_->Off();
 		glancingHitSparkRenderer_->On();
 		glancingHitSparkRenderer_->GetTransform().SetLocalPosition(0, 0, -15);
 		glancingHitSparkRenderer_->GetTransform().SetWorldRotation(0, 0, -90);
@@ -109,9 +109,9 @@ void TestPistolBullet::Update(float _deltaTime)
 
 	
 
-	pistolBulletCollision_->IsCollision(
+	pistolBulletCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		ActorGroup::Rebel,
+		CollisionBodySorting::Rebel,
 		CollisionType::CT_AABB,
 		std::bind(&TestPistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
 	);
@@ -121,7 +121,7 @@ void TestPistolBullet::Update(float _deltaTime)
 
 void TestPistolBullet::End()
 {
-	int i = 0;
+
 }
 
 bool TestPistolBullet::CheckGroundHit()
@@ -139,7 +139,7 @@ bool TestPistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollis
 	_rebelCollision->GetActor<TestArabian>()->TakeDamage(damage_);
 
 	pistolBulletRenderer_->Off();
-	pistolBulletCollision_->Off();
+	pistolBulletCollisionBody_->Off();
 	effectiveHitSparkRenderer_->On();
 	firingDirection_ = float4::Zero;
 

@@ -12,7 +12,7 @@ TestArabian::TestArabian()
 	arabianRendererLocalPosY_(75),
 	arabianRendererLocalPosZ_(0),
 	arabianRenderer_(nullptr),
-	arabianCollision_(nullptr),
+	arabianLifeCollisionBody_(nullptr),
 	renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
 	arabianWorldPosPointer_(nullptr),
@@ -27,13 +27,14 @@ TestArabian::TestArabian()
 	runningSpeed_(3.f),
 	shufflingSpeed_(0.5f),
 	shuffleDirection_(1),
+	movementFor1Second_(float4::Zero),
 	releasePoint_(nullptr),
 	releaseAngle_(60.f),
 	releaseVelocity_(5.f),
 	recognitionDistance_(800.f),
 	engagementDistance_(500.f),
 	chargeDistance_(150.f),
-	hp_(1)
+	hp_(10)
 {
 }
 
@@ -52,11 +53,11 @@ void TestArabian::Start()
 		return;
 	}
 
-	arabianCollision_ = CreateComponent<GameEngineCollision>("ArabianCollision");
-	arabianCollision_->ChangeOrder(this->GetOrder());
-	arabianCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
-	arabianCollision_->GetTransform().SetLocalScale(80, 150, 10);
-	arabianCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+	arabianLifeCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCollision");
+	arabianLifeCollisionBody_->ChangeOrder(this->GetOrder());
+	arabianLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
+	arabianLifeCollisionBody_->GetTransform().SetLocalScale(80, 150, 10);
+	arabianLifeCollisionBody_->GetTransform().SetLocalPosition(0, 75, 10);
 
 
 
@@ -122,7 +123,7 @@ void TestArabian::Start()
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("MeleeAttack",
-		FrameAnimation_Desc("Rebel_Arabian.png", 100, 107, 0.1f, false)
+		FrameAnimation_Desc("Rebel_Arabian.png", 100, 107, 0.05f, true)
 	);
 	arabianRenderer_->AnimationBindFrame("MeleeAttack",
 		[this](const FrameAnimation_Desc& _desc)->void {
@@ -136,23 +137,32 @@ void TestArabian::Start()
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("JumpDeath",
-		FrameAnimation_Desc("Rebel_Arabian.png", 110, 120, 0.05f, false)
+		FrameAnimation_Desc("Rebel_Arabian.png", 110, 120, 0.075f, true)
 	);
-	arabianRenderer_->CreateFrameAnimation_CutTexture("Dead1",
-		FrameAnimation_Desc("Rebel_Arabian.png", 130, 141, 0.075f, true)
+	arabianRenderer_->AnimationBindFrame("JumpDeath",
+		std::bind(&TestArabian::MoveInJumpDeath, this, std::placeholders::_1)
 	);
-	arabianRenderer_->AnimationBindEnd("Dead1",
+	arabianRenderer_->AnimationBindEnd("JumpDeath",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			this->Death();
 		}
 	);
 
-	arabianRenderer_->CreateFrameAnimation_CutTexture("Dead2",
+	arabianRenderer_->CreateFrameAnimation_CutTexture("Death1",
+		FrameAnimation_Desc("Rebel_Arabian.png", 130, 141, 0.075f, true)
+	);
+	arabianRenderer_->AnimationBindEnd("Death1",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			//this->Death();
+		}
+	);
+
+	arabianRenderer_->CreateFrameAnimation_CutTexture("Death2",
 		FrameAnimation_Desc("Rebel_Arabian.png", 150, 169, 0.075f, true)
 	);
-	arabianRenderer_->AnimationBindEnd("Dead2",
+	arabianRenderer_->AnimationBindEnd("Death2",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			this->Death();
+			//this->Death();
 		}
 	);
 
@@ -239,12 +249,12 @@ void TestArabian::Start()
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Idling");
-			//arabianRenderer_->ChangeFrameAnimation("Dead1");
+			//arabianRenderer_->ChangeFrameAnimation("JumpDeath");
 		}
 	);
 	arabianStateManager_.CreateState(
 		"Shuffling",
-		std::bind(&TestArabian::Shuffle, this, std::placeholders::_1),
+		std::bind(&TestArabian::Shuffle, this),
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Shuffling");
 		},
@@ -261,21 +271,21 @@ void TestArabian::Start()
 	);	
 	arabianStateManager_.CreateState(
 		"Running",
-		std::bind(&TestArabian::Run, this, std::placeholders::_1),
+		std::bind(&TestArabian::Run, this),
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Running");
 		}
 	);	
 	arabianStateManager_.CreateState(
 		"Jumping",
-		std::bind(&TestArabian::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Jumping");
 		}
 	);	
 	arabianStateManager_.CreateState(
 		"Falling",
-		std::bind(&TestArabian::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Falling");
 		}
@@ -305,8 +315,8 @@ void TestArabian::Start()
 		"Dead",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			arabianRenderer_->ChangeFrameAnimation("Dead1");
-			arabianCollision_->Off();
+			arabianRenderer_->ChangeFrameAnimation("JumpDeath");
+			arabianLifeCollisionBody_->Off();
 		}
 	);
 
@@ -334,185 +344,18 @@ void TestArabian::Start()
 void TestArabian::Update(float _deltaTime)
 {
 	CheckGround();
+	if (true == isFalling_)
+	{
+		Fall(_deltaTime);
+	}
 	ReactToPlayerPosition();
 
 	UpdateArabianState(_deltaTime);
+	MoveArabian(_deltaTime);
 }
 
 void TestArabian::End()
 {
-}
-
-void TestArabian::ReactToPlayerPosition()
-{
-	//float4 currectDistance 
-	//	= this->GetTransform().GetWorldPosition() - this->GetLevel<TestLevel>()->GetPlayerWorldPosition();
-
-
-	float playerWorldPosX = GetLevel<TestLevel>()->GetPlayerWorldPosition().x;
-	//float playerWorldPosX = this->GetLevel()->GetGroup(ActorGroup::Player).front()->GetTransform().GetWorldPosition().x;
-	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
-	float horizontalDistance = abs(thisWorldPosX - playerWorldPosX);
-
-	if (playerWorldPosX < thisWorldPosX)
-	{
-		this->GetTransform().PixLocalNegativeX();
-	}
-	else
-	{
-		this->GetTransform().PixLocalPositiveX();
-	}
-
-	if (chargeDistance_ > horizontalDistance)
-	{
-		currentArabianState_ = ArabianState::MeleeAttack;
-	}
-	else if (engagementDistance_ > horizontalDistance)
-	{
-		currentArabianState_ = ArabianState::ThrowingSword;
-	}
-	else if (recognitionDistance_ > horizontalDistance)
-	{
-		currentArabianState_ = ArabianState::Running;
-	}
-
-	
-
-
-}
-
-void TestArabian::Shuffle(float _deltaTime)
-{
-	slopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * shuffleDirection_,
-		slopeChecker_->GetTransform().GetLocalPosition().IY(),
-		slopeChecker_->GetTransform().GetLocalPosition().IZ()
-	);
-	ascendingSlopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * shuffleDirection_,
-		ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY(),
-		ascendingSlopeChecker_->GetTransform().GetLocalPosition().IZ()
-	);
-	flatSlopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * shuffleDirection_,
-		flatSlopeChecker_->GetTransform().GetLocalPosition().IY(),
-		flatSlopeChecker_->GetTransform().GetLocalPosition().IZ()
-	);
-	descendingSlopeChecker_->GetTransform().SetLocalPosition(
-		slopeCheckerLocalPosX_ * shuffleDirection_,
-		descendingSlopeChecker_->GetTransform().GetLocalPosition().IY(),
-		descendingSlopeChecker_->GetTransform().GetLocalPosition().IZ()
-	);
-
-
-	this->GetTransform().SetWorldMove(
-		float4::Right * GetTransform().GetWorldScale().x * shuffleDirection_
-		* _deltaTime * shufflingSpeed_ * TestLevel::playSpeed_
-	);
-
-	this->GetTransform().SetWorldMove(
-		float4::Up * GetSlope() * _deltaTime * shufflingSpeed_ * TestLevel::playSpeed_);
-}
-
-void TestArabian::UpdateArabianState(float _deltaTime)
-{
-	if (0 >= hp_)
-	{
-		currentArabianState_ = ArabianState::Dead;
-	}
-
-	if (allArabianStates_[currentArabianState_] != arabianStateManager_.GetCurrentStateName())
-	{
-		arabianStateManager_.ChangeState(allArabianStates_[currentArabianState_]);
-	}
-
-	arabianStateManager_.Update(_deltaTime);
-}
-
-void TestArabian::Run(float _deltaTime)
-{
-	this->GetTransform().SetWorldMove(
-		float4::Right * GetTransform().GetWorldScale().x * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
-
-	this->GetTransform().SetWorldMove(
-		float4::Up * GetSlope() * _deltaTime * runningSpeed_ * TestLevel::playSpeed_);
-}
-
-float TestArabian::GetSlope()
-{
-	if (false == isFalling_)
-	{
-		int beginPosY = 0;
-		int endPosY = 0;
-		int slopeCheckPosY = 0;
-
-		if (TestLevel::groundColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
-		{
-			slopeChecker_->GetTransform().SetLocalPosition(
-				slopeCheckerLocalPosX_ * shuffleDirection_,
-				ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY() + 5,
-				-5
-			);
-
-			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
-			{
-				return 0.f;
-			}
-			else
-			{
-				beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY() + 5;
-				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
-			}
-		}
-		else if (TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
-		{
-			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
-			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
-		}
-		else if (TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
-		{
-			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
-			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
-		}
-		else
-		{
-			beginPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
-			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY() - 5;
-		}
-
-		for (slopeCheckPosY = beginPosY; slopeCheckPosY >= endPosY; slopeCheckPosY--)
-		{
-			slopeChecker_->GetTransform().SetLocalPosition(
-				slopeCheckerLocalPosX_ * shuffleDirection_,
-				slopeCheckPosY,
-				-5
-			);
-
-			if (TestLevel::groundColor_.color_ <= slopeChecker_->GetColorValue_UINT())
-			{
-				break;
-			}
-		}
-
-		return static_cast<float>(slopeCheckPosY) / static_cast<float>(slopeCheckerLocalPosX_);
-		//액터가 수평방향으로 1픽셀 이동했을때 수직으로는 몇픽셀 이동해야하는지에 대한 값 반환.
-	}
-	else
-	{
-		MsgBoxAssert("점프중일때는 의미 없는 기능입니다.");
-		return 0.f;
-	}
-}
-
-void TestArabian::Fall(float _deltaTime)
-{
-	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
-
-	this->GetTransform().SetWorldMove(
-		float4::Down * _deltaTime * fallingSpeed_ * TestLevel::playSpeed_);
 }
 
 void TestArabian::CheckGround()
@@ -573,6 +416,184 @@ void TestArabian::CheckGround()
 	}
 }
 
+void TestArabian::Fall(float _deltaTime)
+{
+	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
+
+	movementFor1Second_ += float4::Down * fallingSpeed_;
+}
+
+void TestArabian::ReactToPlayerPosition()
+{
+	//float4 currectDistance 
+	//	= this->GetTransform().GetWorldPosition() - this->GetLevel<TestLevel>()->GetPlayerWorldPosition();
+
+
+	float playerWorldPosX = GetLevel<TestLevel>()->GetPlayerWorldPosition().x;
+	//float playerWorldPosX = this->GetLevel()->GetGroup(ActorGroup::Player).front()->GetTransform().GetWorldPosition().x;
+	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
+	float horizontalDistance = abs(thisWorldPosX - playerWorldPosX);
+
+	if (playerWorldPosX < thisWorldPosX)
+	{
+		this->GetTransform().PixLocalNegativeX();
+	}
+	else
+	{
+		this->GetTransform().PixLocalPositiveX();
+	}
+
+	if (false == isFalling_)
+	{
+		if (chargeDistance_ > horizontalDistance)
+		{
+			currentArabianState_ = ArabianState::MeleeAttack;
+		}
+		else if (engagementDistance_ > horizontalDistance)
+		{
+			currentArabianState_ = ArabianState::ThrowingSword;
+		}
+		else if (recognitionDistance_ > horizontalDistance)
+		{
+			currentArabianState_ = ArabianState::Running;
+		}
+	}
+
+	
+
+
+}
+
+void TestArabian::UpdateArabianState(float _deltaTime)
+{
+	if (0 >= hp_)
+	{
+		currentArabianState_ = ArabianState::Dead;
+	}
+
+	if (allArabianStates_[currentArabianState_] != arabianStateManager_.GetCurrentStateName())
+	{
+		arabianStateManager_.ChangeState(allArabianStates_[currentArabianState_]);
+	}
+
+	arabianStateManager_.Update(_deltaTime);
+}
+
+void TestArabian::MoveArabian(float _deltaTime)
+{
+	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * TestLevel::playSpeed_);
+	movementFor1Second_ = float4::Zero;
+}
+
+void TestArabian::Shuffle()
+{
+	movementFor1Second_ += float4::Right * GetTransform().GetWorldScale().x * shuffleDirection_ * shufflingSpeed_;
+
+	movementFor1Second_ += float4::Up * GetSlope(shuffleDirection_) * shufflingSpeed_;
+}
+
+void TestArabian::Run()
+{
+	movementFor1Second_ += float4::Right * GetTransform().GetWorldScale().x * runningSpeed_ ;
+
+	movementFor1Second_ += float4::Up * GetSlope(1) * runningSpeed_ ;
+}
+
+void TestArabian::SetSlopeCheckerDirection(char _localDirection)
+{
+	slopeChecker_->GetTransform().SetLocalPosition(
+		slopeCheckerLocalPosX_ * _localDirection,
+		slopeChecker_->GetTransform().GetLocalPosition().IY(),
+		slopeChecker_->GetTransform().GetLocalPosition().IZ()
+	);
+	ascendingSlopeChecker_->GetTransform().SetLocalPosition(
+		slopeCheckerLocalPosX_ * _localDirection,
+		ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY(),
+		ascendingSlopeChecker_->GetTransform().GetLocalPosition().IZ()
+	);
+	flatSlopeChecker_->GetTransform().SetLocalPosition(
+		slopeCheckerLocalPosX_ * _localDirection,
+		flatSlopeChecker_->GetTransform().GetLocalPosition().IY(),
+		flatSlopeChecker_->GetTransform().GetLocalPosition().IZ()
+	);
+	descendingSlopeChecker_->GetTransform().SetLocalPosition(
+		slopeCheckerLocalPosX_ * _localDirection,
+		descendingSlopeChecker_->GetTransform().GetLocalPosition().IY(),
+		descendingSlopeChecker_->GetTransform().GetLocalPosition().IZ()
+	);
+}
+
+float TestArabian::GetSlope(char _localDirection)
+{
+	if (false == isFalling_)
+	{
+		SetSlopeCheckerDirection(_localDirection);
+
+		int beginPosY = 0;
+		int endPosY = 0;
+		int slopeCheckPosY = 0;
+
+		if (TestLevel::groundColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		{
+			slopeChecker_->GetTransform().SetLocalPosition(
+				slopeCheckerLocalPosX_ * _localDirection,
+				ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY() + 5,
+				-5
+			);
+
+			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			{
+				return 0.f;
+			}
+			else
+			{
+				beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY() + 5;
+				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+			}
+		}
+		else if (TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		{
+			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
+		}
+		else if (TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		{
+			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
+			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+		}
+		else
+		{
+			beginPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
+			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY() - 5;
+		}
+
+		for (slopeCheckPosY = beginPosY; slopeCheckPosY >= endPosY; slopeCheckPosY--)
+		{
+			slopeChecker_->GetTransform().SetLocalPosition(
+				slopeCheckerLocalPosX_ * _localDirection,
+				slopeCheckPosY,
+				-5
+			);
+
+			if (TestLevel::groundColor_.color_ <= slopeChecker_->GetColorValue_UINT())
+			{
+				break;
+			}
+		}
+
+		return static_cast<float>(slopeCheckPosY) / static_cast<float>(slopeCheckerLocalPosX_);
+		//액터가 수평방향으로 1픽셀 이동했을때 수직으로는 몇픽셀 이동해야하는지에 대한 값 반환.
+	}
+	else
+	{
+		MsgBoxAssert("점프중일때는 의미 없는 기능입니다.");
+		return 0.f;
+	}
+}
+
 void TestArabian::ThrowSword()
 {
 	TestSword* newSword = this->GetLevel<TestLevel>()->GetSword();
@@ -592,3 +613,26 @@ void TestArabian::ThrowSword()
 		releaseVelocity_
 	);
 }
+
+void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
+{
+	if (8 <= _desc.curFrame_)
+	{
+		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 1.f / _desc.interval_;
+
+		if (false == isFalling_)
+		{
+			movementFor1Second_ += float4::Up * GetSlope(-1) * 1.f / _desc.interval_;
+		}
+	}
+	else
+	{
+		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 5.f / _desc.interval_;
+
+		if (false == isFalling_)
+		{
+			movementFor1Second_ += float4::Up * GetSlope(-1) * 5.f / _desc.interval_;
+		}
+	}
+}
+

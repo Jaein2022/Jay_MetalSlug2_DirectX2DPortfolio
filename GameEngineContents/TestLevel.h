@@ -1,19 +1,15 @@
 #pragma once
 
-enum class ActorGroup	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
+enum class CollisionBodySorting	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
 {
 	Player,				//플레이어
-	PlayerProjectile,	//플레이어 원거리 공격.
+	PlayerMeleeAttack,	//플레이어 근접공격.
+	PlayerProjectile,	//플레이어 원거리공격.
 
-	Weapon_HeavyMachineGun,
-	Weapon_Shotgun,
-	Weapon_FlameShot,
-	Weapon_RocketLauncher,
 
-	Prisoner,
-	Hyakutaro,
 
-	Rebel						= 10,	//반란군/반란군 근접공격.
+	Rebel						= 10,	//반란군.
+	RebelAttack_MeleeAttack,			//반란군 근접공격.
 	RebelAttack_FlyingSword,			//아라비안 투척검.
 	RebelAttack_SolidBullet,			//반란군 총알.
 	RebelAttack_Explosive,				//반란군 로켓/바주카/수류탄 공격.
@@ -23,13 +19,22 @@ enum class ActorGroup	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리
 	//Mummy,
 	//MummyOrb,
 
+	Prisoner,
+	Hyakutaro,
+
+	Weapon_HeavyMachineGun,
+	Weapon_Shotgun,
+	Weapon_FlameShot,
+	Weapon_RocketLauncher,
+
 	Item_Ammo,
 	Item_Explosive,
 
 	//그 외 잡다한 아이템들은 여기에.
 
-	UI,
 	Background,
+
+	UI,
 };
 
 class TestSword;

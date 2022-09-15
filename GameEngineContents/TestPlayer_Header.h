@@ -2,11 +2,11 @@
 
 enum class PlayerState
 {
-	Dead_ByMeleeAttack											= 1010,
-	Dead_ByFlyingSword											= 1011,
-	Dead_BySolidBullet											= 1012,
-	Dead_ByExplosive											= 1013,
-	Dead_ByFlame												= 1014,
+	Fallen_ByMeleeAttack										= 1011,
+	Fallen_ByFlyingSword										= 1012,
+	Fallen_BySolidBullet										= 1013,
+	Fallen_ByExplosive											= 1014,
+	Fallen_ByFlame												= 1015,
 
 	Pistol_Standing_Aiming_Forward								= 1111,
 	Pistol_Standing_Aiming_Upward								= 1112,
@@ -83,8 +83,7 @@ enum class PlayerState
 	Pistol_Falling_MeleeAttack									= 1671,
 
 	Pistol_StandingToDucking									= 1711,
-	Pistol_RunningToStanding									= 1811,
-	Pistol_JumpingToStanding									= 1911,
+	Pistol_RunningOrJumpingToStanding							= 1811,
 
 
 
@@ -167,8 +166,7 @@ enum class PlayerState
 	HeavyMachineGun_Falling_MeleeAttack							= 2671,
 
 	HeavyMachineGun_StandingToDucking							= 2711,
-	HeavyMachineGun_RunningToStanding							= 2811,
-	HeavyMachineGun_JumpingToStanding							= 2911,
+	HeavyMachineGun_RunningOrJumpingToStanding					= 2811
 
 
 };
@@ -191,16 +189,16 @@ enum class PlayerWeaponType
 
 enum class PlayerLegState
 {
-	//Dead				= 000,
-	Standing			= 100,
-	Running				= 200,
-	Ducking				= 300,
-	VerticalJumping		= 400,
-	ForwardJumping		= 500,
-	Falling				= 600,
-	StandingToDucking	= 700,
-	RunningToStanding	= 800,
-	JumpingToStanding	= 900,
+	//Fallen					= 000,
+	Standing					= 100,
+	Running						= 200,
+	Ducking						= 300,
+	VerticalJumping				= 400,
+	ForwardJumping				= 500,
+	Falling						= 600,
+	StandingToDucking			= 700,
+	RunningOrJumpingToStanding	= 800,
+	//JumpingToStanding	= 900,
 };
 
 enum class PlayerTopState

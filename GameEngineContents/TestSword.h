@@ -45,7 +45,7 @@ private:
 	GameEngineTextureRenderer* flyingSwordRenderer_;
 	GameEngineTextureRenderer* stuckSwordRenderer_;
 
-	GameEngineCollision* swordCollision_;
+	GameEngineCollision* swordCollisionBody_;
 
 	bool isFalling_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 

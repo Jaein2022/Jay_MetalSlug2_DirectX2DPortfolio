@@ -154,7 +154,7 @@ void TestPlayer::CreatePlayerAnimations()
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_FiringToAiming_Upward",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
-			if (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_)
+			if (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_)
 			{
 				direction_ = AimingDirection::Forward;
 			}
@@ -203,6 +203,14 @@ void TestPlayer::CreatePlayerAnimations()
 
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack1",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 150, 155, 0.05f, false));
+	topPistolRenderer_->AnimationBindFrame("Standing, Running, Jumping_MeleeAttack1", 
+		[this](const FrameAnimation_Desc& _desc)->void {
+			if (2 == _desc.curFrame_)
+			{
+				MeleeAttack();
+			}
+		}
+	);
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_MeleeAttack1",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
@@ -211,6 +219,14 @@ void TestPlayer::CreatePlayerAnimations()
 
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack2",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 160, 165, 0.05f, false));
+	topPistolRenderer_->AnimationBindFrame("Standing, Running, Jumping_MeleeAttack2",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			if (2 == _desc.curFrame_)
+			{
+				MeleeAttack();
+			}
+		}
+	);
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_MeleeAttack2",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			top_ = PlayerTopState::Aiming;
@@ -341,36 +357,64 @@ void TestPlayer::CreatePlayerAnimations()
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Aiming3_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 70, 73, 0.2f, true));
+
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_MeleeAttack1",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 80, 83, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 80, 85, 0.05f, true));
+	wholePistolRenderer_->AnimationBindFrame("Ducking_MeleeAttack1",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			if (2 == _desc.curFrame_)
+			{
+				MeleeAttack();
+			}
+		}
+	);
+	wholePistolRenderer_->AnimationBindEnd("Ducking_MeleeAttack1",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::Aiming;
+		}
+	);
+
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_MeleeAttack2",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 90, 95, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 90, 95, 0.05f, true));
+	wholePistolRenderer_->AnimationBindFrame("Ducking_MeleeAttack2",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			if (2 == _desc.curFrame_)
+			{
+				MeleeAttack();
+			}
+		}
+	);
+	wholePistolRenderer_->AnimationBindEnd("Ducking_MeleeAttack2",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			top_ = PlayerTopState::Aiming;
+		}
+	);
 
 
-	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_ByMeleeAttack_Ground",
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByMeleeAttack_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 100, 118, 0.05f, false));
-	wholePistolRenderer_->AnimationBindEnd("Dead_ByMeleeAttack_Ground",
+	wholePistolRenderer_->AnimationBindEnd("Fallen_ByMeleeAttack_Ground",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			//this->Death(1.f);
 		}
 	);
-	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_ByFlyingSword_Ground",
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByFlyingSword_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 120, 138, 0.05f, false));
-	wholePistolRenderer_->AnimationBindEnd("Dead_ByFlyingSword_Ground",
+	wholePistolRenderer_->AnimationBindEnd("Fallen_ByFlyingSword_Ground",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			//this->Death(1.f);
 		}
 	);
-	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_BySolidAttack_Midair",
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidAttack_Midair",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.5f, true));
-	wholePistolRenderer_->AnimationBindEnd("Dead_BySolidAttack_Midair",
+	wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidAttack_Midair",
 		[this](const FrameAnimation_Desc& _desc)->void { 
 			//this->Death(1.f);
 		}
 	);
-	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Dead_BySolidBullet_Ground",
+	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidBullet_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.1f, false));
-	wholePistolRenderer_->AnimationBindEnd("Dead_BySolidBullet_Ground",
+	wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidBullet_Ground",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			//this->Death(1.f);
 		}
@@ -384,7 +428,7 @@ void TestPlayer::CreatePlayerAnimations()
 void TestPlayer::CreatePlayerStates()
 {
 	playerStateManager_.CreateState(		//1010
-		"Dead_ByMeleeAttack",
+		"Fallen_ByMeleeAttack",
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
@@ -393,13 +437,14 @@ void TestPlayer::CreatePlayerStates()
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
 
-			wholePistolRenderer_->ChangeFrameAnimation("Dead_ByMeleeAttack_Ground");
-			playerCollision_->Off();
+			wholePistolRenderer_->ChangeFrameAnimation("Fallen_ByMeleeAttack_Ground");
+			playerLifeCollisionBody_->Off();
+			playerCloseCombatCollisionBody_->Off();
 		}
 	);
 
 	playerStateManager_.CreateState(		//1011
-		"Dead_ByFlyingSword",
+		"Fallen_ByFlyingSword",
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
@@ -408,10 +453,15 @@ void TestPlayer::CreatePlayerStates()
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
 
-			wholePistolRenderer_->ChangeFrameAnimation("Dead_ByFlyingSword_Ground");
-			playerCollision_->Off();
+			wholePistolRenderer_->ChangeFrameAnimation("Fallen_ByFlyingSword_Ground");
+			playerLifeCollisionBody_->Off();
+			playerCloseCombatCollisionBody_->Off();
 		}
 	);
+
+
+
+
 
 	playerStateManager_.CreateState(		//1111
 		"Pistol_Standing_Aiming_Forward",
@@ -427,18 +477,18 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
 			
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 
 			//legRenderer_->Off();
 			//topPistolRenderer_->Off();
 			//wholePistolRenderer_->On();
 
-			//wholePistolRenderer_->ChangeFrameAnimation("Dead_BySolidAttack_Midair");
+			//wholePistolRenderer_->ChangeFrameAnimation("Fallen_BySolidAttack_Midair");
 			//
-			//playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			//playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			//playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			//playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
@@ -455,8 +505,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Aiming_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
@@ -473,8 +523,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_ForwardToUpward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
@@ -491,8 +541,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_UpwardToForward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
@@ -510,8 +560,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
@@ -528,8 +578,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
@@ -546,8 +596,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
@@ -564,8 +614,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);	
 
@@ -583,8 +633,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);	
 
@@ -601,8 +651,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);	
 
@@ -618,17 +668,18 @@ void TestPlayer::CreatePlayerStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 
-			if (true == topPistolRenderer_->IsCurAnimation("Standing, Running, Jumping_MeleeAttack1"))
-			{
-				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack2");
-			}
-			else
+			if (true == this->isMeleeAttack1_)
 			{
 				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
 			}
+			else
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack2");
+			}
+			isMeleeAttack1_ = !isMeleeAttack1_;
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);	
 
@@ -638,7 +689,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1211
 		"Pistol_Running_Aiming_Forward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -649,14 +700,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Running_Aiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1212
 		"Pistol_Running_Aiming_Upward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -667,14 +718,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Aiming_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1214
 		"Pistol_Running_Aiming_ForwardToUpward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -685,14 +736,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_ForwardToUpward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1215
 		"Pistol_Running_Aiming_UpwardToForward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -703,14 +754,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running_Aiming_UpwardToForward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
  
 	playerStateManager_.CreateState(		//1221
 		"Pistol_Running_Firing_Forward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -721,14 +772,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 		
 	playerStateManager_.CreateState(		//1222	
 		"Pistol_Running_Firing_Upward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -739,14 +790,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1231
 		"Pistol_Running_FiringToAiming_Forward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -757,14 +808,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1232
 		"Pistol_Running_FiringToAiming_Upward",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -775,14 +826,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1241
 		"Pistol_Running_ThrowingGrenade",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -793,14 +844,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1251
 		"Pistol_Running_ThrowingGrenadeToAiming",
-		std::bind(&TestPlayer::Run, this, std::placeholders::_1),
+		std::bind(&TestPlayer::Run, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -811,27 +862,37 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Running");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
+	playerStateManager_.CreateState(		//1271
+		"Pistol_Running_MeleeAttack",
+		std::bind(&TestPlayer::Run, this),
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
 
+			legRenderer_->ChangeFrameAnimation("Running");
 
+			if (true == this->isMeleeAttack1_)
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
+			}
+			else
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack2");
+			}
+			isMeleeAttack1_ = !isMeleeAttack1_;
 
-
-
-
-
-
-
-	//Pistol_Running_MeleeAttack = 1271,
-
-
-
-
-
-
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
+		}
+	);
 
 
 
@@ -854,7 +915,8 @@ void TestPlayer::CreatePlayerStates()
 			{
 				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming3_Forward");
 			}
-			else if ("Pistol_Ducking_FiringToAiming" == _info.prevState_)
+			else if ("Pistol_Ducking_FiringToAiming" == _info.prevState_ 
+				|| "Pistol_Ducking_MeleeAttack" == _info.prevState_)
 			{
 				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming2_Forward");
 			}
@@ -863,8 +925,8 @@ void TestPlayer::CreatePlayerStates()
 				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
 			}
 
-			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
 		}
 	);
 
@@ -880,8 +942,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Firing_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
 		}
 	);
 
@@ -897,8 +959,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_FiringToAiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
 		}
 	);
 
@@ -914,8 +976,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenade");
 
-			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
 		}
 	);
 
@@ -931,14 +993,14 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenadeToAiming");
 
-			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1361
 		"Pistol_Ducking_DuckStepping",
-		std::bind(&TestPlayer::DuckStep, this, std::placeholders::_1),
+		std::bind(&TestPlayer::DuckStep, this),
 		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
@@ -948,8 +1010,8 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Ducking_Ducksteping_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
 		}
 	);
 
@@ -963,21 +1025,22 @@ void TestPlayer::CreatePlayerStates()
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
 
-			wholePistolRenderer_->ChangeFrameAnimation("Ducking_ThrowingGrenadeToAiming");
+			if (true == this->isMeleeAttack1_)
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Ducking_MeleeAttack1");
+			}
+			else
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Ducking_MeleeAttack2");
+			}
+			isMeleeAttack1_ = !isMeleeAttack1_;
 
-			playerCollision_->GetTransform().SetLocalScale(100, 100, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 50, 10);
+
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
 		}
 	);
 
-
-
-
-
-
-
-
-	//Pistol_Ducking_MeleeAttack = 1371,
 
 
 
@@ -990,7 +1053,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1411
 		"Pistol_VerticalJumping_Aiming_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1001,8 +1064,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("VerticalJumping_Aiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1014,7 +1077,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1413
 		"Pistol_VerticalJumping_Aiming_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1025,8 +1088,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1038,7 +1101,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1416
 		"Pistol_VerticalJumping_Aiming_ForwardToDownward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1049,8 +1112,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1062,7 +1125,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1417
 		"Pistol_VerticalJumping_Aiming_DownwardToForward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1073,8 +1136,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1086,7 +1149,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1421
 		"Pistol_VerticalJumping_Firing_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1097,8 +1160,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1110,7 +1173,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1422
 		"Pistol_VerticalJumping_Firing_Upward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1121,8 +1184,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1134,7 +1197,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1423
 		"Pistol_VerticalJumping_Firing_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1145,8 +1208,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1158,7 +1221,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1431
 		"Pistol_VerticalJumping_FiringToAiming_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1169,8 +1232,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1182,7 +1245,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1432
 		"Pistol_VerticalJumping_FiringToAiming_Upward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1193,8 +1256,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1206,7 +1269,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1433
 		"Pistol_VerticalJumping_FiringToAiming_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1217,8 +1280,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1230,7 +1293,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1441
 		"Pistol_VerticalJumping_ThrowingGrenade",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1241,8 +1304,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1254,7 +1317,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1451
 		"Pistol_VerticalJumping_ThrowingGrenadeToAiming",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1265,8 +1328,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1276,14 +1339,38 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);	
 	
+	playerStateManager_.CreateState(		//1471
+		"Pistol_VerticalJumping_MeleeAttack",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
 
+			legRenderer_->ChangeFrameAnimation("VerticalJumping");
 
+			if (true == this->isMeleeAttack1_)
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
+			}
+			else
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack2");
+			}
+			isMeleeAttack1_ = !isMeleeAttack1_;
 
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-
-
-	//	Pistol_VerticalJumping_MeleeAttack = 1471,
-
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
+		}
+	);
 
 
 
@@ -1293,7 +1380,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1511
 		"Pistol_ForwardJumping_Aiming_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1304,8 +1391,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("VerticalJumping_Aiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1317,7 +1404,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1513
 		"Pistol_ForwardJumping_Aiming_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1328,8 +1415,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1341,7 +1428,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1516
 		"Pistol_ForwardJumping_Aiming_ForwardToDownward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1352,8 +1439,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1365,7 +1452,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1517
 		"Pistol_ForwardJumping_Aiming_DownwardToForward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1376,8 +1463,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1389,7 +1476,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1521
 		"Pistol_ForwardJumping_Firing_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1400,8 +1487,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1413,7 +1500,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1522
 		"Pistol_ForwardJumping_Firing_Upward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1424,8 +1511,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1437,7 +1524,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1523
 		"Pistol_ForwardJumping_Firing_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1448,8 +1535,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1461,7 +1548,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1531
 		"Pistol_ForwardJumping_FiringToAiming_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1472,8 +1559,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1485,7 +1572,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1532
 		"Pistol_ForwardJumping_FiringToAiming_Upward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1496,8 +1583,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1509,7 +1596,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1533
 		"Pistol_ForwardJumping_FiringToAiming_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1520,8 +1607,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1533,7 +1620,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1541
 		"Pistol_ForwardJumping_ThrowingGrenade",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1544,8 +1631,8 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1557,7 +1644,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1551
 		"Pistol_ForwardJumping_ThrowingGrenadeToAiming",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1568,8 +1655,41 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("ForwardJumping");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
+
+			if (false == isFalling_)
+			{
+				isFalling_ = true;
+				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
+			}
+		}
+	);
+
+	playerStateManager_.CreateState(		//1571
+		"Pistol_ForwardJumping_MeleeAttack",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			legRenderer_->ChangeFrameAnimation("ForwardJumping");
+
+			if (true == this->isMeleeAttack1_)
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
+			}
+			else
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack2");
+			}
+			isMeleeAttack1_ = !isMeleeAttack1_;
+
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 			if (false == isFalling_)
 			{
@@ -1586,21 +1706,9 @@ void TestPlayer::CreatePlayerStates()
 
 
 
-
-
-	//	Pistol_ForwardJumping_MeleeAttack = 1571,
-
-
-
-
-
-
-
-
-
 	playerStateManager_.CreateState(		//1611
 		"Pistol_Falling_Aiming_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1611,14 +1719,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Falling_Aiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1613
 		"Pistol_Falling_Aiming_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1629,14 +1737,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1616
 		"Pistol_Falling_Aiming_ForwardToDownward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1647,14 +1755,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_ForwardToDownward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1617
 		"Pistol_Falling_Aiming_DownwardToForward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1665,14 +1773,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Aiming_DownwardToForward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1617
 		"Pistol_Falling_Firing_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1683,14 +1791,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1622
 		"Pistol_Falling_Firing_Upward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1701,14 +1809,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_Firing_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1623
 		"Pistol_Falling_Firing_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1719,14 +1827,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_Firing_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1631
 		"Pistol_Falling_FiringToAiming_Forward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1737,14 +1845,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Forward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1632
 		"Pistol_Falling_FiringToAiming_Upward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1755,14 +1863,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_FiringToAiming_Upward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1633
 		"Pistol_Falling_FiringToAiming_Downward",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1773,14 +1881,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Jumping_FiringToAiming_Downward");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1641
 		"Pistol_Falling_ThrowingGrenade",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1791,14 +1899,14 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenade");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1651
 		"Pistol_Falling_ThrowingGrenadeToAiming",
-		std::bind(&TestPlayer::Fall, this, std::placeholders::_1),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1809,18 +1917,37 @@ void TestPlayer::CreatePlayerStates()
 			legRenderer_->ChangeFrameAnimation("Falling");
 			topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_ThrowingGrenadeToAiming");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
+	playerStateManager_.CreateState(		//1671
+		"Pistol_Falling_MeleeAttack",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->On();
+			topPistolRenderer_->On();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
 
+			legRenderer_->ChangeFrameAnimation("Falling");
 
+			if (true == this->isMeleeAttack1_)
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
+			}
+			else
+			{
+				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack2");
+			}
+			isMeleeAttack1_ = !isMeleeAttack1_;
 
-
-
-
-//	Pistol_Falling_MeleeAttack = 1671,
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
+		}
+	);
 
 
 
@@ -1841,13 +1968,13 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("StandingToDucking");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		}
 	);
 
 	playerStateManager_.CreateState(		//1811
-		"Pistol_RunningToStanding",
+		"Pistol_RunningOrJumpingToStanding",
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
@@ -1858,33 +1985,14 @@ void TestPlayer::CreatePlayerStates()
 
 			wholePistolRenderer_->ChangeFrameAnimation("Running, JumpingToStanding");
 
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 		},
 		[this](const StateInfo& _info)->void {
 			wholePistolRenderer_->CurAnimationReset();
 		}
 	);
 
-	playerStateManager_.CreateState(		//1911
-		"Pistol_JumpingToStanding",
-		nullptr,
-		[this](const StateInfo& _info)->void {
-			legRenderer_->Off();
-			topPistolRenderer_->Off();
-			wholePistolRenderer_->On();
-			//topWeaponRenderer_->Off();
-			//wholeWeaponRenderer_->Off();
-
-			wholePistolRenderer_->ChangeFrameAnimation("Running, JumpingToStanding");
-
-			playerCollision_->GetTransform().SetLocalScale(80, 150, 10);
-			playerCollision_->GetTransform().SetLocalPosition(0, 75, 10);
-		},
-		[this](const StateInfo& _info)->void {
-			wholePistolRenderer_->CurAnimationReset();
-		}
-	);
 
 
 

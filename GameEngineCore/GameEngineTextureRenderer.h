@@ -120,10 +120,17 @@ class FrameAnimation
 	bool bOnceEnd_;
 	bool isPaused_;
 
-	std::function<void(const FrameAnimation_Desc&)> start_;		//애니메이션 재생 시작시 호출되는 함수들.
-	std::function<void(const FrameAnimation_Desc&)> frame_;		//애니메이션 재생중 매 프레임마다 호출되는 함수들.
-	std::function<void(const FrameAnimation_Desc&, float)> time_;	//애니메이션 재생중 일정 시간 후에 호출되는 함수들.
-	std::function<void(const FrameAnimation_Desc&)> end_;			//애니메이션 재생 종료시 호출되는 함수들.
+	//애니메이션 재생 시작시 호출되는 함수들.
+	std::function<void(const FrameAnimation_Desc&)> start_;		
+
+	//애니메이션 재생중 매 프레임마다 호출되는 함수들.
+	std::function<void(const FrameAnimation_Desc&)> frame_;		
+
+	//애니메이션 재생중 매 루프마다 호출되는 함수들. 델타타임을 매개변수로 받는다.
+	std::function<void(const FrameAnimation_Desc&, float)> time_;	
+
+	//애니메이션 재생 종료시 호출되는 함수들.
+	std::function<void(const FrameAnimation_Desc&)> end_;			
 
 	void Reset();
 	void Update(float _deltaTime);

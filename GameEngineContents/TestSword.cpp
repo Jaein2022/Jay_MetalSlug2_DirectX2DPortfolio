@@ -11,7 +11,7 @@ TestSword::TestSword()
 	swordRendererLocalPosZ_(0),
 	flyingSwordRenderer_(nullptr),
 	stuckSwordRenderer_(nullptr),
-	swordCollision_(nullptr),
+	swordCollisionBody_(nullptr),
 	isFalling_(true),
 	renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
@@ -53,11 +53,11 @@ void TestSword::Start()
 	);
 	stuckSwordRenderer_->Off();
 
-	swordCollision_ = CreateComponent<GameEngineCollision>("SwordCollision");
-	swordCollision_->ChangeOrder(this->GetOrder());
-	swordCollision_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
-	swordCollision_->GetTransform().SetLocalScale(70, 70, 10);
-	swordCollision_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
+	swordCollisionBody_ = CreateComponent<GameEngineCollision>("SwordCollision");
+	swordCollisionBody_->ChangeOrder(this->GetOrder());
+	swordCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
+	swordCollisionBody_->GetTransform().SetLocalScale(70, 70, 10);
+	swordCollisionBody_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
 
 
 	renderPivotPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
@@ -104,9 +104,9 @@ void TestSword::Update(float _deltaTime)
 	isFalling_ ? Fly(_deltaTime) : StickOnGround();
 
 
-	swordCollision_->IsCollision(
+	swordCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		ActorGroup::Player,
+		CollisionBodySorting::Player,
 		CollisionType::CT_AABB,
 		std::bind(&TestSword::Hit, this, std::placeholders::_1, std::placeholders::_2)
 	);
@@ -139,7 +139,7 @@ void TestSword::StickOnGround()
 {
 	if (false == stuckSwordRenderer_->IsUpdate())
 	{
-		swordCollision_->Off();
+		swordCollisionBody_->Off();
 		flyingSwordRenderer_->Off();
 		stuckSwordRenderer_->On();
 		Death(1.f);
