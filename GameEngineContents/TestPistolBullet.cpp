@@ -111,7 +111,7 @@ void TestPistolBullet::Update(float _deltaTime)
 
 	pistolBulletCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		CollisionBodySorting::Rebel,
+		CollisionBodyOrder::Rebel,
 		CollisionType::CT_AABB,
 		std::bind(&TestPistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
 	);

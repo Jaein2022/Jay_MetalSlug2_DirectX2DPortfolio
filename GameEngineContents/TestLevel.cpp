@@ -32,11 +32,11 @@ void TestLevel::Start()
 {
 	TestPixelIndicator::SetTexture("TestBG_PC.png");
 
-	testPlayer_ = CreateActor<TestPlayer>(CollisionBodySorting::Player, "TestPlayer");
+	testPlayer_ = CreateActor<TestPlayer>(CollisionBodyOrder::Player, "TestPlayer");
 
-	testBackground_ = CreateActor<TestBackground>(CollisionBodySorting::Background, "TestBackground");
+	testBackground_ = CreateActor<TestBackground>(CollisionBodyOrder::Background, "TestBackground");
 
-	testArabian_ = CreateActor<TestArabian>(CollisionBodySorting::Rebel, "TestArabian");
+	testArabian_ = CreateActor<TestArabian>(CollisionBodyOrder::Rebel, "TestArabian");
 	testArabian_->GetTransform().SetWorldPosition(450, 0, 0);
 
 	if (false == GameEngineInput::GetInst()->IsKey("FreeCameraOnOff"))
@@ -52,7 +52,7 @@ void TestLevel::Start()
 		float4(15, 15, 1)
 	);
 
-	destFocus_ = CreateActor<TestIndicatorBase>(CollisionBodySorting::UI, "DestFocus");
+	destFocus_ = CreateActor<TestIndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
 		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
@@ -94,12 +94,12 @@ void TestLevel::End()
 
 TestPistolBullet* TestLevel::GetPistolBullet()
 {
-	return CreateActor<TestPistolBullet>(CollisionBodySorting::PlayerProjectile, "TestPistolBullet");
+	return CreateActor<TestPistolBullet>(CollisionBodyOrder::PlayerProjectile, "TestPistolBullet");
 }
 
 TestSword* TestLevel::GetSword()
 {
-	return CreateActor<TestSword>(CollisionBodySorting::RebelAttack_FlyingSword, "TestSword");
+	return CreateActor<TestSword>(CollisionBodyOrder::RebelAttack_FlyingSword, "TestSword");
 }
 
 const float4& TestLevel::GetPlayerWorldPosition()

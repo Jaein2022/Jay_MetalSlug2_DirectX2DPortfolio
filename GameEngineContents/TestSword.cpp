@@ -106,7 +106,7 @@ void TestSword::Update(float _deltaTime)
 
 	swordCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		CollisionBodySorting::Player,
+		CollisionBodyOrder::Player,
 		CollisionType::CT_AABB,
 		std::bind(&TestSword::Hit, this, std::placeholders::_1, std::placeholders::_2)
 	);

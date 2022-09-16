@@ -1,6 +1,6 @@
 #pragma once
 
-enum class CollisionBodySorting	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
+enum class CollisionBodyOrder	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
 {
 	Player,				//플레이어
 	PlayerMeleeAttack,	//플레이어 근접공격.

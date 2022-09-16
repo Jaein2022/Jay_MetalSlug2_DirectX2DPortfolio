@@ -67,6 +67,7 @@ private:
 	float GetSlope(char _localDirection);
 	void ThrowSword();		
 	void MoveInJumpDeath(const FrameAnimation_Desc& _desc);	//점프데스 애니메이션 중 움직임.
+	void MeleeAttack();
 
 private:
 
@@ -83,6 +84,7 @@ private:
 	GameEngineTextureRenderer* arabianRenderer_;
 
 	GameEngineCollision* arabianLifeCollisionBody_;
+	GameEngineCollision* arabianCloseCombatCollisionBody_;
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 	TestIndicator* renderPivotPointer_;		//액터의 렌더피봇 표시.

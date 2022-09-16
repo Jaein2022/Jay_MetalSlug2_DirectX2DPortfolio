@@ -24,14 +24,14 @@ public:
 	GameEngineRandom& operator=(GameEngineRandom&& _other) = delete;
 
 public:
-	int RandomInt(int _min, int _max)
+	int GetRandomInt(int _min, int _max)
 	{
 		//대부분의 난수 알고리즘이 마지막 제한을 할때 %를 사용하므로 _max -1까지 나온다는것을 항상 염두해 둘 것.
 		std::uniform_int_distribution<int> intDistribution(_min, _max);
 		return intDistribution(mt_);
 	}
 
-	float RandomFloat(float _min, float _max)
+	float GetRandomFloat(float _min, float _max)
 	{
 		std::uniform_real_distribution<float> floatDistribution(_min, _max);
 		return floatDistribution(mt_);

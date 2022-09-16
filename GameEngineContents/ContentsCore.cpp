@@ -21,6 +21,8 @@ void ContentsCore::Start()
 	//GameEngineGUI::CreateGUIWindow<GameEngineStatusWindow>("EngineStatus", nullptr);
 	//ImGui 창이 필요하면 복원.
 
+	GameEngineRandom::mainRandom_;
+
 	CreateLevel<TestLevel>("TestLevel");
 
 

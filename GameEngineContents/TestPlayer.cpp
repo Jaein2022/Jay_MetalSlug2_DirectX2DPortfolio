@@ -654,7 +654,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 		{
 			if (true == playerCloseCombatCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
-				CollisionBodySorting::Rebel,
+				CollisionBodyOrder::Rebel,
 				CollisionType::CT_AABB, 
 				nullptr)
 			)
@@ -968,7 +968,7 @@ void TestPlayer::MeleeAttack()
 {
 	playerCloseCombatCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		CollisionBodySorting::Rebel,
+		CollisionBodyOrder::Rebel,
 		CollisionType::CT_AABB,
 		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->bool {
 			_rebelCollision->GetActor<TestArabian>()->TakeDamage(meleeAttackDamage_);

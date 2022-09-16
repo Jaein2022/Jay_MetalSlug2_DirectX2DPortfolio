@@ -4,6 +4,7 @@
 #include "TestPixelIndicator.h"
 #include "TestLevel.h"
 #include "TestSword.h"
+#include "TestPlayer.h"
 
 TestArabian::TestArabian()
 	: currentArabianState_(ArabianState::Idling),
@@ -13,6 +14,7 @@ TestArabian::TestArabian()
 	arabianRendererLocalPosZ_(0),
 	arabianRenderer_(nullptr),
 	arabianLifeCollisionBody_(nullptr),
+	arabianCloseCombatCollisionBody_(nullptr),
 	renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
 	arabianWorldPosPointer_(nullptr),
@@ -53,11 +55,17 @@ void TestArabian::Start()
 		return;
 	}
 
-	arabianLifeCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCollision");
+	arabianLifeCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianLifeCollision");
 	arabianLifeCollisionBody_->ChangeOrder(this->GetOrder());
 	arabianLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	arabianLifeCollisionBody_->GetTransform().SetLocalScale(80, 150, 10);
 	arabianLifeCollisionBody_->GetTransform().SetLocalPosition(0, 75, 10);
+
+	arabianCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCloseCombatCollisionBody");
+	arabianCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
+	arabianCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
+	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(180, 190, 10);
+	arabianCloseCombatCollisionBody_->GetTransform().SetLocalPosition(90, 95, 10);
 
 
 
@@ -93,7 +101,7 @@ void TestArabian::Start()
 		FrameAnimation_Desc("Rebel_Arabian.png", 30, 41, 0.05f, true)
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Jumping",
-		FrameAnimation_Desc("Rebel_Arabian.png", 50, 58, 0.1f, false)
+		FrameAnimation_Desc("Rebel_Arabian.png", 50, 57, 0.1f, true)
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Falling",
 		FrameAnimation_Desc("Rebel_Arabian.png", 58, 58, 1.f, true)
@@ -127,7 +135,10 @@ void TestArabian::Start()
 	);
 	arabianRenderer_->AnimationBindFrame("MeleeAttack",
 		[this](const FrameAnimation_Desc& _desc)->void {
-
+			if (1 == _desc.curFrame_)
+			{
+				MeleeAttack();
+			}
 		}
 	);
 	arabianRenderer_->AnimationBindEnd("MeleeAttack",
@@ -153,7 +164,7 @@ void TestArabian::Start()
 	);
 	arabianRenderer_->AnimationBindEnd("Death1",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			//this->Death();
+			this->Death();
 		}
 	);
 
@@ -162,7 +173,7 @@ void TestArabian::Start()
 	);
 	arabianRenderer_->AnimationBindEnd("Death2",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			//this->Death();
+			this->Death();
 		}
 	);
 
@@ -248,8 +259,8 @@ void TestArabian::Start()
 		"Idling",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			arabianRenderer_->ChangeFrameAnimation("Idling");
-			//arabianRenderer_->ChangeFrameAnimation("JumpDeath");
+			//arabianRenderer_->ChangeFrameAnimation("Idling");
+			arabianRenderer_->ChangeFrameAnimation("MeleeAttack");
 		}
 	);
 	arabianStateManager_.CreateState(
@@ -315,8 +326,57 @@ void TestArabian::Start()
 		"Dead",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			arabianRenderer_->ChangeFrameAnimation("JumpDeath");
 			arabianLifeCollisionBody_->Off();
+
+			if (true == isFalling_)
+			{
+				int deathAnimationSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 1);
+
+				switch (deathAnimationSelection)
+				{
+				case 0:
+				{
+					arabianRenderer_->ChangeFrameAnimation("JumpDeath");
+					break;
+				}
+				case 1:
+				{
+					arabianRenderer_->ChangeFrameAnimation("Death1");
+					break;
+				}
+
+				default:
+					MsgBoxAssertString(std::to_string(deathAnimationSelection) + ": deathAnimationSelection의 범위가 잘못되었습니다.");
+					return;
+				}
+			}
+			else
+			{
+				int deathAnimationSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 2);
+
+				switch (deathAnimationSelection)
+				{
+				case 0:
+				{
+					arabianRenderer_->ChangeFrameAnimation("JumpDeath");
+					break;
+				}	
+				case 1:
+				{
+					arabianRenderer_->ChangeFrameAnimation("Death1");
+					break;
+				}	
+				case 2:
+				{
+					arabianRenderer_->ChangeFrameAnimation("Death2");
+					break;
+				}
+
+				default:
+					MsgBoxAssertString(std::to_string(deathAnimationSelection) + ": deathAnimationSelection의 범위가 잘못되었습니다.");
+					return;
+				}
+			}
 		}
 	);
 
@@ -443,21 +503,21 @@ void TestArabian::ReactToPlayerPosition()
 		this->GetTransform().PixLocalPositiveX();
 	}
 
-	if (false == isFalling_)
-	{
-		if (chargeDistance_ > horizontalDistance)
-		{
-			currentArabianState_ = ArabianState::MeleeAttack;
-		}
-		else if (engagementDistance_ > horizontalDistance)
-		{
-			currentArabianState_ = ArabianState::ThrowingSword;
-		}
-		else if (recognitionDistance_ > horizontalDistance)
-		{
-			currentArabianState_ = ArabianState::Running;
-		}
-	}
+	//if (false == isFalling_)
+	//{
+	//	if (chargeDistance_ > horizontalDistance)
+	//	{
+	//		currentArabianState_ = ArabianState::MeleeAttack;
+	//	}
+	//	else if (engagementDistance_ > horizontalDistance)
+	//	{
+	//		currentArabianState_ = ArabianState::ThrowingSword;
+	//	}
+	//	else if (recognitionDistance_ > horizontalDistance)
+	//	{
+	//		currentArabianState_ = ArabianState::Running;
+	//	}
+	//}
 
 	
 
@@ -634,5 +694,18 @@ void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 			movementFor1Second_ += float4::Up * GetSlope(-1) * 5.f / _desc.interval_;
 		}
 	}
+}
+
+void TestArabian::MeleeAttack()
+{
+	arabianCloseCombatCollisionBody_->IsCollision(
+		CollisionType::CT_AABB,
+		CollisionBodyOrder::Player,
+		CollisionType::CT_AABB,
+		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)->bool {
+			_playerCollision->GetActor<TestPlayer>()->TakeDamage(arabianCloseCombatCollisionBody_->GetOrder());
+			return true;
+		}
+	);
 }
 
