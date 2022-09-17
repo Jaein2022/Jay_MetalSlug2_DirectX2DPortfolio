@@ -198,7 +198,7 @@ enum class PlayerLegState
 	Falling						= 600,
 	StandingToDucking			= 700,
 	RunningOrJumpingToStanding	= 800,
-	//JumpingToStanding	= 900,
+	Redeploying					= 900
 };
 
 enum class PlayerTopState

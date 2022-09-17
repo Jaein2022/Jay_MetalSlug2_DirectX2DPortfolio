@@ -13,7 +13,7 @@ TestPlayer::TestPlayer()
 	leg_(PlayerLegState::Standing),
 	top_(PlayerTopState::Aiming),
 	direction_(AimingDirection::Forward),
-	isFalling_(false),
+	isInMidair_(false),
 	playerRendererLocalPosX_(0),
 	playerRendererLocalPosY_(75),
 	playerRendererLocalPosZ_(0),
@@ -55,7 +55,8 @@ TestPlayer::TestPlayer()
 	playerLifeCollisionBodyPosition_Ducking_(0, 50, 10),
 	meleeAttackDamage_(3),
 	isMeleeAttack1_(true),
-	causeOfDeath_(0)
+	causeOfDeath_(0),
+	isDamageProof_(false)
 {
 }
 
@@ -176,7 +177,7 @@ void TestPlayer::Start()
 void TestPlayer::Update(float _deltaTime)
 {
 	CheckGround();
-	if (true == isFalling_)
+	if (true == isInMidair_)
 	{
 		Fall(_deltaTime);
 	}
@@ -209,10 +210,10 @@ void TestPlayer::CheckGround()
 			//cyan.color_;			//4294967040
 
 
-			if (true == isFalling_)
+			if (true == isInMidair_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
-				isFalling_ = false;
+				isInMidair_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -242,9 +243,9 @@ void TestPlayer::CheckGround()
 		else if (TestLevel::groundColor_.color_ <= playerWorldPosPointer_->GetColorValue_UINT()
 			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isFalling_)
+			if (true == isInMidair_)
 			{
-				isFalling_ = false;
+				isInMidair_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -273,10 +274,10 @@ void TestPlayer::CheckGround()
 		}
 		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isFalling_)
+			if (true == isInMidair_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
-				isFalling_ = false;
+				isInMidair_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -305,10 +306,10 @@ void TestPlayer::CheckGround()
 		}
 		else
 		{
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
 				leg_ = PlayerLegState::Falling;
-				isFalling_ = true;
+				isInMidair_ = true;
 			}
 		}
 	}
@@ -380,8 +381,10 @@ void TestPlayer::UpdateInputInfo()
 
 	if (true == GameEngineInput::GetInst()->IsDown("Test"))
 	{
-		TestIndicator::RenderingOnOffSwitch();
-		//인디케이터들만 특정 카메라에 몰아넣고 그 카메라를 껐다켰다하는 코드로 바꿔 볼 것.
+		//TestIndicator::RenderingOnOffSwitch();
+		////인디케이터들만 특정 카메라에 몰아넣고 그 카메라를 껐다켰다하는 코드로 바꿔 볼 것.
+
+		isDamageProof_ = true;
 	}
 }
 
@@ -393,7 +396,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	{
 	case -1:	//아랫방향 입력.
 	{
-		if (true == isFalling_)
+		if (true == isInMidair_)
 		{
 			if (AimingDirection::ForwardToDownward != direction_ && AimingDirection::Downward != direction_)
 			{
@@ -536,7 +539,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 				top_ = PlayerTopState::DuckStepping;
 			}
 		}
-		else if (true == isFalling_
+		else if (true == isInMidair_
 			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
@@ -561,7 +564,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 				top_ = PlayerTopState::DuckStepping;
 			}
 		}
-		else if (true == isFalling_
+		else if (true == isInMidair_
 			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
@@ -602,7 +605,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	//점프키 입력 반응.
 	if (true == isJumpKeyDown_)
 	{
-		if (false == isFalling_)
+		if (false == isInMidair_)
 		{
 			if (0 == horizontalInputValue_)
 			{
@@ -733,7 +736,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 
 	//아래방향 조준은 공중에서만.
-	if (false == isFalling_ && (AimingDirection::Downward == direction_
+	if (false == isInMidair_ && (AimingDirection::Downward == direction_
 		|| AimingDirection::DownwardToForward == direction_
 		|| AimingDirection::ForwardToDownward == direction_))
 	{
@@ -746,7 +749,7 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 {
 	int intNewState = 0;
 
-	if (0 != causeOfDeath_)
+	if (0 != causeOfDeath_ && false == isDamageProof_)
 	{
 		intNewState = 1000 + causeOfDeath_;
 	}
@@ -874,7 +877,7 @@ void TestPlayer::DuckStep()
 
 float TestPlayer::GetSlope()
 {
-	if (false == isFalling_)
+	if (false == isInMidair_)
 	{
 		int beginPosY = 0;
 		int endPosY = 0;

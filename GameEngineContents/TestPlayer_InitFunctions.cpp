@@ -26,6 +26,10 @@ void TestPlayer::CreatePlayerAnimations()
 		FrameAnimation_Desc("Tarma_Leg.png", 0, 0, 1.f, true));
 	legRenderer_->CreateFrameAnimation_CutTexture("Running",
 		FrameAnimation_Desc("Tarma_Leg.png", 10, 21, 0.05f, true));
+	legRenderer_->AnimationBindTime("Running",
+		std::bind(&TestPlayer::Run, this)
+	);
+
 	legRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping",
 		FrameAnimation_Desc("Tarma_Leg.png", 30, 40, 0.05f, false));
 	legRenderer_->AnimationBindEnd("VerticalJumping",
@@ -317,6 +321,10 @@ void TestPlayer::CreatePlayerAnimations()
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 20, 23, 0.2f, true));
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Ducksteping_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 30, 36, 0.05f, true));
+	wholePistolRenderer_->AnimationBindTime("Ducking_Ducksteping_Forward",
+		std::bind(&TestPlayer::DuckStep, this)
+	);
+
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Firing_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 40, 43, 0.03f, true));
 	wholePistolRenderer_->AnimationBindFrame("Ducking_Firing_Forward",
@@ -396,6 +404,7 @@ void TestPlayer::CreatePlayerAnimations()
 	wholePistolRenderer_->AnimationBindEnd("Fallen_ByMeleeAttack_Ground",
 		[this](const FrameAnimation_Desc& _desc)->void {
 			//this->Death(1.f);
+
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByFlyingSword_Ground",
@@ -689,7 +698,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1211
 		"Pistol_Running_Aiming_Forward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -707,7 +716,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1212
 		"Pistol_Running_Aiming_Upward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -725,7 +734,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1214
 		"Pistol_Running_Aiming_ForwardToUpward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -743,7 +752,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1215
 		"Pistol_Running_Aiming_UpwardToForward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -761,7 +770,7 @@ void TestPlayer::CreatePlayerStates()
  
 	playerStateManager_.CreateState(		//1221
 		"Pistol_Running_Firing_Forward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -779,7 +788,7 @@ void TestPlayer::CreatePlayerStates()
 		
 	playerStateManager_.CreateState(		//1222	
 		"Pistol_Running_Firing_Upward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -797,7 +806,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1231
 		"Pistol_Running_FiringToAiming_Forward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -815,7 +824,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1232
 		"Pistol_Running_FiringToAiming_Upward",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -833,7 +842,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1241
 		"Pistol_Running_ThrowingGrenade",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -851,7 +860,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1251
 		"Pistol_Running_ThrowingGrenadeToAiming",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -869,7 +878,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1271
 		"Pistol_Running_MeleeAttack",
-		std::bind(&TestPlayer::Run, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -1000,7 +1009,7 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1361
 		"Pistol_Ducking_DuckStepping",
-		std::bind(&TestPlayer::DuckStep, this),
+		nullptr,
 		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
@@ -1067,9 +1076,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1091,9 +1100,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1115,9 +1124,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1139,9 +1148,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1163,9 +1172,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1187,9 +1196,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1211,9 +1220,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1235,9 +1244,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1259,9 +1268,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1283,9 +1292,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1307,9 +1316,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1331,9 +1340,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1364,9 +1373,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1394,9 +1403,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1418,9 +1427,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1442,9 +1451,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1466,9 +1475,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1490,9 +1499,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1514,9 +1523,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1538,9 +1547,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1562,9 +1571,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1586,9 +1595,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1610,9 +1619,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1634,9 +1643,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1658,9 +1667,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}
@@ -1691,9 +1700,9 @@ void TestPlayer::CreatePlayerStates()
 			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				fallingSpeed_ = -initialJumpSpeed_;		//점프 시작.
 			}
 		}

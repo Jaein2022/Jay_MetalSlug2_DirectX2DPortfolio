@@ -120,16 +120,16 @@ class FrameAnimation
 	bool bOnceEnd_;
 	bool isPaused_;
 
-	//애니메이션 재생 시작시 호출되는 함수들.
+	//애니메이션 재생 시작시 호출되는 함수.
 	std::function<void(const FrameAnimation_Desc&)> start_;		
 
-	//애니메이션 재생중 매 프레임마다 호출되는 함수들.
+	//애니메이션 재생중 매 프레임마다 호출되는 함수.
 	std::function<void(const FrameAnimation_Desc&)> frame_;		
 
-	//애니메이션 재생중 매 루프마다 호출되는 함수들. 델타타임을 매개변수로 받는다.
+	//애니메이션 재생중 매 루프마다 호출되는 함수. 델타타임을 매개변수로 받는다.
 	std::function<void(const FrameAnimation_Desc&, float)> time_;	
 
-	//애니메이션 재생 종료시 호출되는 함수들.
+	//애니메이션 재생 종료시 호출되는 함수.
 	std::function<void(const FrameAnimation_Desc&)> end_;			
 
 	void Reset();
@@ -210,8 +210,8 @@ public:
 	GameEngineTexture* GetCurrentTexture() const;
 
 public:
-
-	void AnimationBindStart(
+	//애니메이션 재생 시작시 호출되는 함수를 연결.
+	void AnimationBindStart(	
 		const std::string& _animationName,
 		std::function<void(const FrameAnimation_Desc&)> _function)
 	{
@@ -225,7 +225,7 @@ public:
 
 		allAnimations_[uppercaseAnimationName].start_ = _function;
 	}
-
+	//애니메이션 재생중 매 프레임마다 호출되는 함수를 연결.
 	void AnimationBindFrame(
 		const std::string& _animationName,
 		std::function<void(const FrameAnimation_Desc&)> _function)
@@ -241,6 +241,7 @@ public:
 		allAnimations_[uppercaseAnimationName].frame_ = _function;
 	}
 
+	//애니메이션 재생중 매 루프마다 호출되는 함수를 연결.
 	void AnimationBindTime(
 		const std::string& _animationName,
 		std::function<void(const FrameAnimation_Desc&, float)> _function)
@@ -256,6 +257,7 @@ public:
 		allAnimations_[uppercaseAnimationName].time_ = _function;
 	}
 
+	//애니메이션 재생 종료시 호출되는 함수.
 	void AnimationBindEnd(
 		const std::string& _animationName,
 		std::function<void(const FrameAnimation_Desc&)> _function)

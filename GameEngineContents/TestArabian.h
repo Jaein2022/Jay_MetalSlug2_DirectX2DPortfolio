@@ -1,16 +1,19 @@
 #pragma once
+#include <cstdarg>
 
 enum class ArabianState
 {
-	Idling,
 	Shuffling,
 	PreparingToAttack,
+	ThrowingSword,
 	Running,
+	MeleeAttack,
+
+
 	Jumping, 
 	Falling,
 	FallingToIdling,
-	ThrowingSword,
-	MeleeAttack,
+	Idling,
 	Dead
 };
 
@@ -53,13 +56,19 @@ private:
 	void Fall(float _deltaTime);
 
 	//플레이어 위치에 따라 스테이트 변화.
-	void ReactToPlayerPosition();
+	void GetDistance();
 
 	//아라비안 스테이트 변환 및 업데이트.
 	void UpdateArabianState(float _deltaTime);
 
 	//모든 계산이 적용된 이동값을 실제로 적용하고 이동값을 리셋하는 함수.
 	void MoveArabian(float _deltaTime);
+
+	//반란군 아라비안의 다음 스테이트를 선택하는 함수. 
+	//_minStateIndex와 _maxStateIndex는 정수를 넣어야 하지만 가변인자로 들어가는 제외대상은 아라비안스테이트로 넣어야 한다.
+	//_maxStateIndex는 1보다 큰 정수를 넣어야 하지만 _minStateIndex는 0이나 음수를 넣을 수 있고,
+	// 음수값이 커질수록 0번인 ArabianState::Shuffling이 나올 확률이 올라가서 그만큼 공격 빈도와 난이도가 줄어든다.
+	void SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...);
 
 	void Shuffle();	//셔플중 이동.
 	void Run();		//달리기.
@@ -73,8 +82,8 @@ private:
 
 	ArabianState currentArabianState_;
 
-	bool isFalling_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
-	//bool isEngaging_;
+	bool isInMidair_;		//true: 공중에 떠 있는 상태. false: 착지 상태.
+	bool isEngaging_;		//true: 교전 중. false: 플레이어 인식 못함.
 
 	const int arabianRendererLocalPosX_;
 	const int arabianRendererLocalPosY_;
@@ -117,10 +126,11 @@ private:
 	float4 movementFor1Second_;	//1초 동안의 이동량. 델타타임과 플레이 속도는 MoveArabian()함수에서 한번만 계산한다.
 
 
-	TestIndicator* releasePoint_;
-	float releaseAngle_;
-	float releaseVelocity_;
+	TestIndicator* releasePoint_;	//검 투척 지점. 플레이어의 머즐과 같은 역할.
+	float releaseAngle_;			//검 투척 각도.
+	float releaseVelocity_;			//검 투척 속도.
 
+	float horizontalDistance_;			//플레이어와의 수평 거리. 높이는 반영하지 않음.
 	const float recognitionDistance_;	//인식거리.
 	const float engagementDistance_;	//교전거리.
 	const float chargeDistance_;		//돌진거리.

@@ -77,7 +77,7 @@ private:
 
 	std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
 
-	bool isFalling_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
+	bool isInMidair_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 
 
 	const int playerRendererLocalPosX_;
@@ -140,7 +140,7 @@ private:
 	bool isMeleeAttack1_;	//true: 근접공격 애니메이션1. false: 근접공격 애니메이션2.
 
 	int causeOfDeath_;		//플레이어 사망원인. 0: 플레이어가 아직 살아있음. 
-
+	bool isDamageProof_;	//true: 무적상태. 
 
 
 };

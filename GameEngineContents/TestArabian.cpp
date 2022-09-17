@@ -8,7 +8,8 @@
 
 TestArabian::TestArabian()
 	: currentArabianState_(ArabianState::Idling),
-	isFalling_(false),
+	isInMidair_(false),
+	isEngaging_(false),
 	arabianRendererLocalPosX_(0),
 	arabianRendererLocalPosY_(75),
 	arabianRendererLocalPosZ_(0),
@@ -33,10 +34,11 @@ TestArabian::TestArabian()
 	releasePoint_(nullptr),
 	releaseAngle_(60.f),
 	releaseVelocity_(5.f),
+	horizontalDistance_(0.f),
 	recognitionDistance_(800.f),
-	engagementDistance_(500.f),
-	chargeDistance_(150.f),
-	hp_(10)
+	engagementDistance_(600.f),
+	chargeDistance_(400.f),
+	hp_(7)
 {
 }
 
@@ -64,8 +66,8 @@ void TestArabian::Start()
 	arabianCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCloseCombatCollisionBody");
 	arabianCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
 	arabianCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
-	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(180, 190, 10);
-	arabianCloseCombatCollisionBody_->GetTransform().SetLocalPosition(90, 95, 10);
+	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(160, 190, 10);
+	arabianCloseCombatCollisionBody_->GetTransform().SetLocalPosition(80, 95, 10);
 
 
 
@@ -89,17 +91,100 @@ void TestArabian::Start()
 	arabianRenderer_->CreateFrameAnimation_CutTexture("PreparingToAttack",
 		FrameAnimation_Desc("Rebel_Arabian.png", 10, 15, 0.1f, false)
 	);
+	arabianRenderer_->AnimationBindEnd("PreparingToAttack",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			currentArabianState_ = ArabianState::Shuffling;
+		}
+	);
+
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Shuffling",
 		FrameAnimation_Desc("Rebel_Arabian.png", 20, 25, 0.1f, true)
 	);
 	arabianRenderer_->AnimationBindEnd("Shuffling",
 		[this](const FrameAnimation_Desc& _desc)->void {
+
 			shuffleDirection_ = -shuffleDirection_;
+
+			if (chargeDistance_ > horizontalDistance_)
+			{
+				//int nextActionSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 2);
+
+				//switch (nextActionSelection)
+				//{
+				//case 0:
+				//{
+				//	currentArabianState_ = ArabianState::ThrowingSword;
+				//	break;
+				//}
+
+				//case 1:
+				//{
+				//	currentArabianState_ = ArabianState::Running;
+				//	break;
+				//}
+
+				//case 2:
+				//{
+				//	shuffleDirection_ = -shuffleDirection_;
+				//	break;
+				//}
+
+				//default:
+				//	MsgBoxAssertString(std::to_string(nextActionSelection) + ": nextActionSelection의 범위가 잘못되었습니다.");
+				//	return;
+				//}
+
+				
+				SelectNextState(0, 3, 0);
+
+			}
+			else if (engagementDistance_ > horizontalDistance_)
+			{
+				//int nextActionSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 4);
+
+				//switch (nextActionSelection)
+				//{
+				//case 0:
+				//{
+				//	currentArabianState_ = ArabianState::PreparingToAttack;
+				//	break;
+				//}
+				//case 1:
+				//{
+				//	currentArabianState_ = ArabianState::ThrowingSword;
+				//	break;
+				//}
+				//case 2:
+				//case 3:
+				//case 4:
+				//{
+				//	shuffleDirection_ = -shuffleDirection_;
+				//	break;
+				//}
+
+				//default:
+				//	MsgBoxAssertString(std::to_string(nextActionSelection) + ": nextActionSelection의 범위가 잘못되었습니다.");
+				//	return;
+				//}
+
+
+
+				SelectNextState(0, 4, 2, ArabianState::Running, ArabianState::MeleeAttack);
+
+			}
+			else if (engagementDistance_ < horizontalDistance_ && true == isEngaging_)
+			{
+				currentArabianState_ = ArabianState::Running;
+			}
 		}
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Running",
 		FrameAnimation_Desc("Rebel_Arabian.png", 30, 41, 0.05f, true)
 	);
+	arabianRenderer_->AnimationBindTime("Running",
+		std::bind(&TestArabian::Run, this)
+	);
+
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Jumping",
 		FrameAnimation_Desc("Rebel_Arabian.png", 50, 57, 0.1f, true)
 	);
@@ -129,6 +214,11 @@ void TestArabian::Start()
 			}
 		}
 	);
+	arabianRenderer_->AnimationBindEnd("ThrowingSword&Reloading",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			currentArabianState_ = ArabianState::Shuffling;
+		}
+	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("MeleeAttack",
 		FrameAnimation_Desc("Rebel_Arabian.png", 100, 107, 0.05f, true)
@@ -143,7 +233,7 @@ void TestArabian::Start()
 	);
 	arabianRenderer_->AnimationBindEnd("MeleeAttack",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			//currentArabianState_ = ArabianState::Shuffling;
+			currentArabianState_ = ArabianState::PreparingToAttack;
 		}
 	);
 
@@ -259,10 +349,11 @@ void TestArabian::Start()
 		"Idling",
 		nullptr,
 		[this](const StateInfo& _info)->void {
-			//arabianRenderer_->ChangeFrameAnimation("Idling");
-			arabianRenderer_->ChangeFrameAnimation("MeleeAttack");
+			arabianRenderer_->ChangeFrameAnimation("Idling");
+			//arabianRenderer_->ChangeFrameAnimation("MeleeAttack");
 		}
 	);
+
 	arabianStateManager_.CreateState(
 		"Shuffling",
 		std::bind(&TestArabian::Shuffle, this),
@@ -275,18 +366,71 @@ void TestArabian::Start()
 	);	
 	arabianStateManager_.CreateState(
 		"PreparingToAttack",
-		nullptr,
+		[this](float _deltaTime, const StateInfo& _info)->void {
+
+			if (true == arabianCloseCombatCollisionBody_->IsCollision(
+				CollisionType::CT_AABB,
+				CollisionBodyOrder::Player,
+				CollisionType::CT_AABB)
+			)
+			{
+				currentArabianState_ = ArabianState::MeleeAttack;
+			}
+		},
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("PreparingToAttack");
 		}
 	);	
+
 	arabianStateManager_.CreateState(
 		"Running",
-		std::bind(&TestArabian::Run, this),
+		[this](float _deltaTime, const StateInfo& _info)->void {
+	
+			if (true == arabianCloseCombatCollisionBody_->IsCollision(
+				CollisionType::CT_AABB,
+				CollisionBodyOrder::Player,
+				CollisionType::CT_AABB)
+			)
+			{
+				currentArabianState_ = ArabianState::MeleeAttack;
+				return;
+			}
+
+			if (engagementDistance_ > horizontalDistance_ && chargeDistance_ < horizontalDistance_)
+			{
+				//int nextActionSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 2);
+
+				//switch (nextActionSelection)
+				//{
+				//case 0:
+				//{
+				//	currentArabianState_ = ArabianState::PreparingToAttack;
+				//	break;
+				//}
+				//case 1:
+				//{
+				//	currentArabianState_ = ArabianState::ThrowingSword;
+				//	break;
+				//}
+				//case 2:
+				//{
+				//	currentArabianState_ = ArabianState::Shuffling;
+				//	break;
+				//}
+
+				//default:
+				//	MsgBoxAssertString(std::to_string(nextActionSelection) + ": nextActionSelection의 범위가 잘못되었습니다.");
+				//	return;
+				//}
+
+				SelectNextState(0, 2, 0);
+			}
+		},
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Running");
 		}
 	);	
+
 	arabianStateManager_.CreateState(
 		"Jumping",
 		nullptr,
@@ -294,6 +438,7 @@ void TestArabian::Start()
 			arabianRenderer_->ChangeFrameAnimation("Jumping");
 		}
 	);	
+
 	arabianStateManager_.CreateState(
 		"Falling",
 		nullptr,
@@ -327,8 +472,9 @@ void TestArabian::Start()
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianLifeCollisionBody_->Off();
+			arabianCloseCombatCollisionBody_->Off();
 
-			if (true == isFalling_)
+			if (true == isInMidair_)
 			{
 				int deathAnimationSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 1);
 
@@ -404,11 +550,20 @@ void TestArabian::Start()
 void TestArabian::Update(float _deltaTime)
 {
 	CheckGround();
-	if (true == isFalling_)
+	if (true == isInMidair_)
 	{
 		Fall(_deltaTime);
 	}
-	ReactToPlayerPosition();
+
+	GetDistance();
+
+	if (recognitionDistance_ > horizontalDistance_ && false == isEngaging_)
+	{
+		currentArabianState_ = ArabianState::Running;
+		isEngaging_ = true;
+	}
+	
+
 
 	UpdateArabianState(_deltaTime);
 	MoveArabian(_deltaTime);
@@ -434,10 +589,10 @@ void TestArabian::CheckGround()
 			//cyan.color_;			//4294967040
 
 
-			if (true == isFalling_)
+			if (true == isInMidair_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
-				isFalling_ = false;
+				isInMidair_ = false;
 				fallingSpeed_ = 0.f;
 
 				currentArabianState_ = ArabianState::FallingToIdling;
@@ -446,9 +601,9 @@ void TestArabian::CheckGround()
 		else if (TestLevel::groundColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()
 			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isFalling_)
+			if (true == isInMidair_)
 			{
-				isFalling_ = false;
+				isInMidair_ = false;
 				fallingSpeed_ = 0.f;
 
 				currentArabianState_ = ArabianState::FallingToIdling;
@@ -456,10 +611,10 @@ void TestArabian::CheckGround()
 		}
 		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isFalling_)
+			if (true == isInMidair_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
-				isFalling_ = false;
+				isInMidair_ = false;
 				fallingSpeed_ = 0.f;
 
 				currentArabianState_ = ArabianState::FallingToIdling;
@@ -467,9 +622,9 @@ void TestArabian::CheckGround()
 		}
 		else
 		{
-			if (false == isFalling_)
+			if (false == isInMidair_)
 			{
-				isFalling_ = true;
+				isInMidair_ = true;
 				currentArabianState_ = ArabianState::Falling;
 			}
 		}
@@ -483,16 +638,11 @@ void TestArabian::Fall(float _deltaTime)
 	movementFor1Second_ += float4::Down * fallingSpeed_;
 }
 
-void TestArabian::ReactToPlayerPosition()
+void TestArabian::GetDistance()
 {
-	//float4 currectDistance 
-	//	= this->GetTransform().GetWorldPosition() - this->GetLevel<TestLevel>()->GetPlayerWorldPosition();
-
-
 	float playerWorldPosX = GetLevel<TestLevel>()->GetPlayerWorldPosition().x;
-	//float playerWorldPosX = this->GetLevel()->GetGroup(ActorGroup::Player).front()->GetTransform().GetWorldPosition().x;
 	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
-	float horizontalDistance = abs(thisWorldPosX - playerWorldPosX);
+	horizontalDistance_ = abs(thisWorldPosX - playerWorldPosX);
 
 	if (playerWorldPosX < thisWorldPosX)
 	{
@@ -502,26 +652,6 @@ void TestArabian::ReactToPlayerPosition()
 	{
 		this->GetTransform().PixLocalPositiveX();
 	}
-
-	//if (false == isFalling_)
-	//{
-	//	if (chargeDistance_ > horizontalDistance)
-	//	{
-	//		currentArabianState_ = ArabianState::MeleeAttack;
-	//	}
-	//	else if (engagementDistance_ > horizontalDistance)
-	//	{
-	//		currentArabianState_ = ArabianState::ThrowingSword;
-	//	}
-	//	else if (recognitionDistance_ > horizontalDistance)
-	//	{
-	//		currentArabianState_ = ArabianState::Running;
-	//	}
-	//}
-
-	
-
-
 }
 
 void TestArabian::UpdateArabianState(float _deltaTime)
@@ -543,6 +673,62 @@ void TestArabian::MoveArabian(float _deltaTime)
 {
 	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * TestLevel::playSpeed_);
 	movementFor1Second_ = float4::Zero;
+}
+
+void TestArabian::SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...)
+{
+	if (_maxStateIndex <= _minStateIndex)
+	{
+		MsgBoxAssert("최대값이 최소값보다 작거나 같습니다. 값을 다시 지정하세요.");
+		return;
+	}
+
+	if (_maxStateIndex >= static_cast<int>(ArabianState::Dead) || 1 > _maxStateIndex)
+	{
+		MsgBoxAssert("최대값이 스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
+		return;
+	}
+
+	int nextStateIndex 
+		= GameEngineRandom::mainRandom_.GetRandomInt(_minStateIndex, _maxStateIndex);
+
+	if (0 < _exclusionCount)	//제외할 아라비안스테이트가 1개 이상일때만 진입.
+	{
+		va_list exclusionList;		//제외할 아라비안스테이트 리스트.
+		va_start(exclusionList, _exclusionCount);	//exclusionList 초기화.
+		ArabianState exclusion;		//제외할 아라비안스테이트.
+
+		for (int i = 0; i < _exclusionCount; i++)
+		{
+			exclusion = va_arg(exclusionList, ArabianState);
+
+			if (static_cast<ArabianState>(nextStateIndex) == exclusion)
+			{
+				//랜덤으로 뽑은 숫자가 다음 스테이트에서 제외할 아라비안스테이트 번호와 같다면 다시 뽑는다.
+				nextStateIndex = GameEngineRandom::mainRandom_.GetRandomInt(_minStateIndex, _maxStateIndex);
+				va_end(exclusionList);
+				va_start(exclusionList, _exclusionCount);
+				i = -1;
+				continue;
+			}
+
+			if (exclusion > ArabianState::Idling)
+			{
+				MsgBoxAssert("제외값이 아라비안스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
+				return;
+			}
+		}
+		//랜덤으로 뽑은 숫자가 제외할 스테이트와 하나도 겹치지 않는다면 통과.
+		va_end(exclusionList);
+	}
+
+
+	if (0 >= nextStateIndex)
+	{
+		nextStateIndex = 0;
+	}
+
+	currentArabianState_ = static_cast<ArabianState>(nextStateIndex);
 }
 
 void TestArabian::Shuffle()
@@ -585,7 +771,7 @@ void TestArabian::SetSlopeCheckerDirection(char _localDirection)
 
 float TestArabian::GetSlope(char _localDirection)
 {
-	if (false == isFalling_)
+	if (false == isInMidair_)
 	{
 		SetSlopeCheckerDirection(_localDirection);
 
@@ -649,8 +835,10 @@ float TestArabian::GetSlope(char _localDirection)
 	}
 	else
 	{
+#ifdef _DEBUG
 		MsgBoxAssert("점프중일때는 의미 없는 기능입니다.");
 		return 0.f;
+#endif	
 	}
 }
 
@@ -680,7 +868,7 @@ void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 	{
 		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 1.f / _desc.interval_;
 
-		if (false == isFalling_)
+		if (false == isInMidair_)
 		{
 			movementFor1Second_ += float4::Up * GetSlope(-1) * 1.f / _desc.interval_;
 		}
@@ -689,7 +877,7 @@ void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 	{
 		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 5.f / _desc.interval_;
 
-		if (false == isFalling_)
+		if (false == isInMidair_)
 		{
 			movementFor1Second_ += float4::Up * GetSlope(-1) * 5.f / _desc.interval_;
 		}
