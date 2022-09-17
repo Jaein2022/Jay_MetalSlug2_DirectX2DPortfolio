@@ -77,6 +77,7 @@ private:
 	void ThrowSword();		
 	void MoveInJumpDeath(const FrameAnimation_Desc& _desc);	//점프데스 애니메이션 중 움직임.
 	void MeleeAttack();
+	void JumpBackWard(const FrameAnimation_Desc& _desc);	//백점프 애니메이션 중 움직임.
 
 private:
 

@@ -26,11 +26,8 @@ public:
 
 	//void TakeWeapon(int _weaponType);
 	//void ReleasePrisoner(int _prisonerType);
-public:
-	inline void TakeDamage(int _rebelWeaponType)	//데미지 받는 함수. 플레이어는 한방에 죽으므로 뭐로 맞았는지 정보를 받는다.
-	{
-		causeOfDeath_ = _rebelWeaponType;
-	}
+	void TakeDamage(int _rebelWeaponType);	//데미지 받는 함수. 플레이어는 무적 상태가 아니면 한방에 죽으므로 뭐로 맞았는지 정보를 받는다.
+
 
 
 private:
@@ -63,6 +60,12 @@ private:
 	float GetSlope();	//Run(), DuckStep()함수로 지상 이동할때 경사각 구하는 함수.
 	void Fire();		//총알 생성 및 발사시 필요한 정보 입력.
 	void MeleeAttack();	//근접공격.
+	void Flicker(		//깜빡임.
+		float _deltaTime,
+		const float _period,
+		std::function<void()> _func1,
+		std::function<void()> _func2 = nullptr
+	);	
 
 private:
 
@@ -90,6 +93,7 @@ private:
 	GameEngineTextureRenderer* wholePistolRenderer_;
 	GameEngineTextureRenderer* topWeaponRenderer_;
 	GameEngineTextureRenderer* wholeWeaponRenderer_;
+	GameEngineTextureRenderer* redeployingRenderer_;
 
 
 	char horizontalInputValue_;	//-1: 좌측 입력, 0: 중립, 1: 우측 입력.
@@ -141,7 +145,7 @@ private:
 
 	int causeOfDeath_;		//플레이어 사망원인. 0: 플레이어가 아직 살아있음. 
 	bool isDamageProof_;	//true: 무적상태. 
-
+	float flickeringPeriod_;//깜빡임 주기.
 
 };
 

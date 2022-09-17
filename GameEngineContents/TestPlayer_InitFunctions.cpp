@@ -401,44 +401,86 @@ void TestPlayer::CreatePlayerAnimations()
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByMeleeAttack_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 100, 118, 0.05f, false));
-	wholePistolRenderer_->AnimationBindEnd("Fallen_ByMeleeAttack_Ground",
-		[this](const FrameAnimation_Desc& _desc)->void {
-			//this->Death(1.f);
+	//wholePistolRenderer_->AnimationBindEnd("Fallen_ByMeleeAttack_Ground",
+	//	[this](const FrameAnimation_Desc& _desc)->void {
+	//		//this->Death(1.f);
 
-		}
-	);
+	//	}
+	//);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByFlyingSword_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 120, 138, 0.05f, false));
-	wholePistolRenderer_->AnimationBindEnd("Fallen_ByFlyingSword_Ground",
-		[this](const FrameAnimation_Desc& _desc)->void {
-			//this->Death(1.f);
-		}
-	);
+	//wholePistolRenderer_->AnimationBindEnd("Fallen_ByFlyingSword_Ground",
+	//	[this](const FrameAnimation_Desc& _desc)->void {
+	//		//this->Death(1.f);
+	//	}
+	//);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidAttack_Midair",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.5f, true));
-	wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidAttack_Midair",
-		[this](const FrameAnimation_Desc& _desc)->void { 
-			//this->Death(1.f);
-		}
-	);
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.05f, false));
+	//wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidAttack_Midair",
+	//	[this](const FrameAnimation_Desc& _desc)->void { 
+	//		//this->Death(1.f);
+	//	}
+	//);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidBullet_Ground",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.1f, false));
-	wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidBullet_Ground",
-		[this](const FrameAnimation_Desc& _desc)->void {
-			//this->Death(1.f);
-		}
-	);
-
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.05f, false));
+	//wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidBullet_Ground",
+	//	[this](const FrameAnimation_Desc& _desc)->void {
+	//		//this->Death(1.f);
+	//	}
+	//);
 
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
 	wholePistolRenderer_->Off();
+
+
+
+
+	redeployingRenderer_ = CreateComponent<GameEngineTextureRenderer>("RedeployingRenderer");
+	if (0 == GameEngineTexture::Find("Tarma_Redeploying.png")->GetCutCount())
+	{
+		GameEngineTexture::Cut("Tarma_Redeploying.png", 7, 1);
+	}
+	redeployingRenderer_->SetTexture("Tarma_Redeploying.png");
+	redeployingRenderer_->SetPivot(PivotMode::Bot);
+	redeployingRenderer_->GetTransform().SetLocalScale(128, 960, 1);
+	redeployingRenderer_->GetTransform().SetLocalPosition(float4::Zero);
+	redeployingRenderer_->CreateFrameAnimation_CutTexture("Redeploying",
+		FrameAnimation_Desc("Tarma_Redeploying.png", 0, 6, 0.05f, false));
+	redeployingRenderer_->AnimationBindEnd("Redeploying",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			leg_ = PlayerLegState::Ducking;
+			top_ = PlayerTopState::Aiming;
+			direction_ = AimingDirection::Forward;
+		}
+	);
+	redeployingRenderer_->ChangeFrameAnimation("Redeploying");
+	redeployingRenderer_->Off();
+
 }
 
 void TestPlayer::CreatePlayerStates()
 {
 	playerStateManager_.CreateState(		//1010
 		"Fallen_ByMeleeAttack",
-		nullptr,
+		[this](float _deltaTime, const StateInfo& _info)->void {
+			if (2.f <= _info.stateTime_)
+			{
+				causeOfDeath_ = 0;
+				weapon_ = PlayerWeaponType::Pistol;
+				leg_ = PlayerLegState::Redeploying;
+				top_ = PlayerTopState::Aiming;
+				direction_ = AimingDirection::Forward;
+			}
+			else if (1.f <= _info.stateTime_)
+			{
+				Flicker(
+					_deltaTime,
+					flickeringPeriod_,
+					std::bind(&GameEngineTextureRenderer::On, this->wholePistolRenderer_),
+					std::bind(&GameEngineTextureRenderer::Off, this->wholePistolRenderer_)
+				);
+			}
+		},
 		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
@@ -454,7 +496,25 @@ void TestPlayer::CreatePlayerStates()
 
 	playerStateManager_.CreateState(		//1011
 		"Fallen_ByFlyingSword",
-		nullptr,
+		[this](float _deltaTime, const StateInfo& _info)->void {
+			if (2.f <= _info.stateTime_)
+			{
+				causeOfDeath_ = 0;
+				weapon_ = PlayerWeaponType::Pistol;
+				leg_ = PlayerLegState::Redeploying;
+				top_ = PlayerTopState::Aiming;
+				direction_ = AimingDirection::Forward;
+			}
+			else if (1.f <= _info.stateTime_)
+			{
+				Flicker(
+					_deltaTime,
+					flickeringPeriod_,
+					std::bind(&GameEngineTextureRenderer::On, this->wholePistolRenderer_),
+					std::bind(&GameEngineTextureRenderer::Off, this->wholePistolRenderer_)
+				);
+			}
+		},
 		[this](const StateInfo& _info)->void {
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
@@ -920,7 +980,8 @@ void TestPlayer::CreatePlayerStates()
 			//wholeWeaponRenderer_->Off();
 
 
-			if ("Pistol_Ducking_ThrowingGrenadeToAiming" == _info.prevState_)
+			if ("Pistol_Ducking_ThrowingGrenadeToAiming" == _info.prevState_ 
+				|| "Pistol_Redeploying" == _info.prevState_)
 			{
 				wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming3_Forward");
 			}
@@ -2002,7 +2063,29 @@ void TestPlayer::CreatePlayerStates()
 		}
 	);
 
+	playerStateManager_.CreateState(		//1911
+		"Pistol_Redeploying",
+		nullptr,
+		[this](const StateInfo& _info)->void {
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->Off();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+			redeployingRenderer_->On();
 
+			isDamageProof_ = true;
+		},
+		[this](const StateInfo& _info)->void {
+			redeployingRenderer_->CurAnimationReset();
+			redeployingRenderer_->Off();
+
+			playerLifeCollisionBody_->On();
+			playerCloseCombatCollisionBody_->On();
+			playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Ducking_);
+			playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Ducking_);
+		}
+	);
 
 
 

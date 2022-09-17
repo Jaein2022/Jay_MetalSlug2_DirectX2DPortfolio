@@ -106,71 +106,12 @@ void TestArabian::Start()
 			shuffleDirection_ = -shuffleDirection_;
 
 			if (chargeDistance_ > horizontalDistance_)
-			{
-				//int nextActionSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 2);
-
-				//switch (nextActionSelection)
-				//{
-				//case 0:
-				//{
-				//	currentArabianState_ = ArabianState::ThrowingSword;
-				//	break;
-				//}
-
-				//case 1:
-				//{
-				//	currentArabianState_ = ArabianState::Running;
-				//	break;
-				//}
-
-				//case 2:
-				//{
-				//	shuffleDirection_ = -shuffleDirection_;
-				//	break;
-				//}
-
-				//default:
-				//	MsgBoxAssertString(std::to_string(nextActionSelection) + ": nextActionSelection의 범위가 잘못되었습니다.");
-				//	return;
-				//}
-
-				
+			{				
 				SelectNextState(0, 3, 0);
-
 			}
 			else if (engagementDistance_ > horizontalDistance_)
 			{
-				//int nextActionSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 4);
-
-				//switch (nextActionSelection)
-				//{
-				//case 0:
-				//{
-				//	currentArabianState_ = ArabianState::PreparingToAttack;
-				//	break;
-				//}
-				//case 1:
-				//{
-				//	currentArabianState_ = ArabianState::ThrowingSword;
-				//	break;
-				//}
-				//case 2:
-				//case 3:
-				//case 4:
-				//{
-				//	shuffleDirection_ = -shuffleDirection_;
-				//	break;
-				//}
-
-				//default:
-				//	MsgBoxAssertString(std::to_string(nextActionSelection) + ": nextActionSelection의 범위가 잘못되었습니다.");
-				//	return;
-				//}
-
-
-
-				SelectNextState(0, 4, 2, ArabianState::Running, ArabianState::MeleeAttack);
-
+				SelectNextState(0, 3, 0);
 			}
 			else if (engagementDistance_ < horizontalDistance_ && true == isEngaging_)
 			{
@@ -233,7 +174,7 @@ void TestArabian::Start()
 	);
 	arabianRenderer_->AnimationBindEnd("MeleeAttack",
 		[this](const FrameAnimation_Desc& _desc)->void {
-			currentArabianState_ = ArabianState::PreparingToAttack;
+			SelectNextState(-5, 1, 0);
 		}
 	);
 
@@ -398,31 +339,6 @@ void TestArabian::Start()
 
 			if (engagementDistance_ > horizontalDistance_ && chargeDistance_ < horizontalDistance_)
 			{
-				//int nextActionSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 2);
-
-				//switch (nextActionSelection)
-				//{
-				//case 0:
-				//{
-				//	currentArabianState_ = ArabianState::PreparingToAttack;
-				//	break;
-				//}
-				//case 1:
-				//{
-				//	currentArabianState_ = ArabianState::ThrowingSword;
-				//	break;
-				//}
-				//case 2:
-				//{
-				//	currentArabianState_ = ArabianState::Shuffling;
-				//	break;
-				//}
-
-				//default:
-				//	MsgBoxAssertString(std::to_string(nextActionSelection) + ": nextActionSelection의 범위가 잘못되었습니다.");
-				//	return;
-				//}
-
 				SelectNextState(0, 2, 0);
 			}
 		},
@@ -895,5 +811,9 @@ void TestArabian::MeleeAttack()
 			return true;
 		}
 	);
+}
+
+void TestArabian::JumpBackWard(const FrameAnimation_Desc& _desc)
+{
 }
 

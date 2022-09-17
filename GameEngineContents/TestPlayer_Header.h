@@ -84,6 +84,7 @@ enum class PlayerState
 
 	Pistol_StandingToDucking									= 1711,
 	Pistol_RunningOrJumpingToStanding							= 1811,
+	Pistol_Redeploying											= 1911,
 
 
 

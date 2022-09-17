@@ -22,6 +22,7 @@ TestPlayer::TestPlayer()
 	wholePistolRenderer_(nullptr),
 	topWeaponRenderer_(nullptr),
 	wholeWeaponRenderer_(nullptr),
+	redeployingRenderer_(nullptr),
 	horizontalInputValue_(0),
 	verticalInputValue_(0),
 	isJumpKeyDown_(false),
@@ -56,7 +57,8 @@ TestPlayer::TestPlayer()
 	meleeAttackDamage_(3),
 	isMeleeAttack1_(true),
 	causeOfDeath_(0),
-	isDamageProof_(false)
+	isDamageProof_(false),
+	flickeringPeriod_(0.05f)
 {
 }
 
@@ -181,7 +183,10 @@ void TestPlayer::Update(float _deltaTime)
 	{
 		Fall(_deltaTime);
 	}
-	UpdateInputInfo();
+	if (PlayerState::Pistol_Redeploying != currentPlayerState_ && 0 == causeOfDeath_ )
+	{
+		UpdateInputInfo();
+	}
 	ConvertInputToPlayerStates();
 	UpdatePlayerState(_deltaTime);
 	ControlMuzzle();
@@ -192,6 +197,16 @@ void TestPlayer::Update(float _deltaTime)
 
 void TestPlayer::End()
 {
+}
+
+void TestPlayer::TakeDamage(int _rebelWeaponType)
+{
+	if (true == isDamageProof_)
+	{
+		return;
+	}
+
+	causeOfDeath_ = _rebelWeaponType;
 }
 
 void TestPlayer::CheckGround()
@@ -384,7 +399,7 @@ void TestPlayer::UpdateInputInfo()
 		//TestIndicator::RenderingOnOffSwitch();
 		////인디케이터들만 특정 카메라에 몰아넣고 그 카메라를 껐다켰다하는 코드로 바꿔 볼 것.
 
-		isDamageProof_ = true;
+		isDamageProof_ = !isDamageProof_;
 	}
 }
 
@@ -749,7 +764,7 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 {
 	int intNewState = 0;
 
-	if (0 != causeOfDeath_ && false == isDamageProof_)
+	if (0 != causeOfDeath_)
 	{
 		intNewState = 1000 + causeOfDeath_;
 	}
@@ -978,4 +993,41 @@ void TestPlayer::MeleeAttack()
 			return true;
 		}
 	);
+}
+
+void TestPlayer::Flicker(
+	float _deltaTime,
+	const float _period,
+	std::function<void()> _func1,
+	std::function<void()> _func2 /*= nullptr*/
+)
+{
+	static float passedTime;
+	static bool flickeringSwitch;
+	
+	if (_period <= passedTime)
+	{
+		passedTime = 0.f;
+		flickeringSwitch = !flickeringSwitch;
+
+		if (true == flickeringSwitch)
+		{
+			_func1();
+		}
+		else
+		{
+			if (nullptr != _func2)
+			{
+				_func2();
+			}
+			else
+			{
+				_func1();
+			}
+		}
+	}
+	else
+	{
+		passedTime += _deltaTime;
+	}
 }
