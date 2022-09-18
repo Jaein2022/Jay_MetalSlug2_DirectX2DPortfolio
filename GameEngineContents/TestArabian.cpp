@@ -458,8 +458,8 @@ float TestArabian::GetSlope(char _localDirection)
 	{
 #ifdef _DEBUG
 		MsgBoxAssert("점프중일때는 의미 없는 기능입니다.");
-		return 0.f;
 #endif	
+		return 0.f;
 	}
 }
 
