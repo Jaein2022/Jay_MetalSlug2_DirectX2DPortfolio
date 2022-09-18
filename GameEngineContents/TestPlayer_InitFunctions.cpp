@@ -401,33 +401,30 @@ void TestPlayer::CreatePlayerAnimations()
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByMeleeAttack_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 100, 118, 0.05f, false));
-	//wholePistolRenderer_->AnimationBindEnd("Fallen_ByMeleeAttack_Ground",
-	//	[this](const FrameAnimation_Desc& _desc)->void {
-	//		//this->Death(1.f);
 
-	//	}
-	//);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByFlyingSword_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 120, 138, 0.05f, false));
-	//wholePistolRenderer_->AnimationBindEnd("Fallen_ByFlyingSword_Ground",
-	//	[this](const FrameAnimation_Desc& _desc)->void {
-	//		//this->Death(1.f);
-	//	}
-	//);
+
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidAttack_Midair",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.05f, false));
-	//wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidAttack_Midair",
-	//	[this](const FrameAnimation_Desc& _desc)->void { 
-	//		//this->Death(1.f);
-	//	}
-	//);
+	wholePistolRenderer_->AnimationBindStart("Fallen_BySolidAttack_Midair",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			fallingSpeed_ = -1.f;
+		}
+	);
+	wholePistolRenderer_->AnimationBindTime("Fallen_BySolidAttack_Midair",
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void {
+			if (true == isInMidair_)
+			{
+				movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+			}
+		}
+	);
+
+
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidBullet_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.05f, false));
-	//wholePistolRenderer_->AnimationBindEnd("Fallen_BySolidBullet_Ground",
-	//	[this](const FrameAnimation_Desc& _desc)->void {
-	//		//this->Death(1.f);
-	//	}
-	//);
+
 
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
 	wholePistolRenderer_->Off();
@@ -470,6 +467,7 @@ void TestPlayer::CreatePlayerStates()
 				leg_ = PlayerLegState::Redeploying;
 				top_ = PlayerTopState::Aiming;
 				direction_ = AimingDirection::Forward;
+				wholePistolRenderer_->CurAnimationReset();
 			}
 			else if (1.f <= _info.stateTime_)
 			{
@@ -488,7 +486,15 @@ void TestPlayer::CreatePlayerStates()
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
 
-			wholePistolRenderer_->ChangeFrameAnimation("Fallen_ByMeleeAttack_Ground");
+			if (true == isInMidair_)
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Fallen_BySolidAttack_Midair");
+			}
+			else
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Fallen_ByMeleeAttack_Ground");
+			}
+
 			playerLifeCollisionBody_->Off();
 			playerCloseCombatCollisionBody_->Off();
 		}
@@ -504,6 +510,7 @@ void TestPlayer::CreatePlayerStates()
 				leg_ = PlayerLegState::Redeploying;
 				top_ = PlayerTopState::Aiming;
 				direction_ = AimingDirection::Forward;
+				wholePistolRenderer_->CurAnimationReset();
 			}
 			else if (1.f <= _info.stateTime_)
 			{
@@ -522,7 +529,16 @@ void TestPlayer::CreatePlayerStates()
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
 
-			wholePistolRenderer_->ChangeFrameAnimation("Fallen_ByFlyingSword_Ground");
+			if (true == isInMidair_)
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Fallen_BySolidAttack_Midair");
+			}
+			else
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Fallen_ByFlyingSword_Ground");
+			}
+
+
 			playerLifeCollisionBody_->Off();
 			playerCloseCombatCollisionBody_->Off();
 		}
@@ -542,7 +558,7 @@ void TestPlayer::CreatePlayerStates()
 			wholePistolRenderer_->Off();
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
-
+			
 			legRenderer_->ChangeFrameAnimation("Standing");
 			topPistolRenderer_->ChangeFrameAnimation("Standing_Aiming_Forward");
 			
@@ -553,7 +569,7 @@ void TestPlayer::CreatePlayerStates()
 			//legRenderer_->Off();
 			//topPistolRenderer_->Off();
 			//wholePistolRenderer_->On();
-
+			//
 			//wholePistolRenderer_->ChangeFrameAnimation("Fallen_BySolidAttack_Midair");
 			//
 			//playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);

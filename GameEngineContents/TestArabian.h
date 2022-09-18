@@ -1,16 +1,16 @@
 #pragma once
-#include <cstdarg>
+
 
 enum class ArabianState
 {
 	Shuffling,
 	PreparingToAttack,
-	ThrowingSword,
+	JumpingBackward,
 	Running,
+	ThrowingSword,
 	MeleeAttack,
-
-
-	Jumping, 
+	Jumping,
+	Turning,
 	Falling,
 	FallingToIdling,
 	Idling,
@@ -48,6 +48,8 @@ public:
 	}
 
 private:
+	void CreateArabianAnimations();
+	void CreateArabianStates();
 
 	//발이 땅에 닿으면 추락을 멈추고, 발이 땅에 닿으면 추락 판정하는 함수. 
 	void CheckGround();
@@ -77,7 +79,7 @@ private:
 	void ThrowSword();		
 	void MoveInJumpDeath(const FrameAnimation_Desc& _desc);	//점프데스 애니메이션 중 움직임.
 	void MeleeAttack();
-	void JumpBackWard(const FrameAnimation_Desc& _desc);	//백점프 애니메이션 중 움직임.
+	void JumpBackWard();	//백점프 애니메이션 중 움직임.
 
 private:
 

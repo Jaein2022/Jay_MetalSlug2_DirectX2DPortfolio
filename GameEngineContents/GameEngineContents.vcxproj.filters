@@ -92,5 +92,8 @@
     <ClCompile Include="TestSword.cpp">
       <Filter>Test</Filter>
     </ClCompile>
+    <ClCompile Include="TestArabian_InitFunctions.cpp">
+      <Filter>Test</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

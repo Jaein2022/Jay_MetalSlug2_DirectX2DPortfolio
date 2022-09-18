@@ -203,6 +203,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="TestArabian_InitFunctions.cpp" />
     <ClCompile Include="TestBackground.cpp">
       <SubType>
       </SubType>

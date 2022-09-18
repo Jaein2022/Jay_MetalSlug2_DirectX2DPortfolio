@@ -24,6 +24,8 @@
 #include <set>
 #include <list>
 
+//Variable Arguement
+#include <cstdarg>
 
 //DirectX11
 #include <d3d11_4.h>
