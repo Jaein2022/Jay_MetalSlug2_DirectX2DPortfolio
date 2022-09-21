@@ -107,6 +107,9 @@ void GameEngineCore::CoreUpdate(GameEngineCore* _userCore)
 	}
 
 	GameEngineTime::GetInst()->Update();
+
+	GameEngineSound::Update();
+
 	float deltaTime = GameEngineTime::GetDeltaTime();
 
 	GameEngineInput::GetInst()->Update(deltaTime);

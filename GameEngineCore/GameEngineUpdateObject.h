@@ -194,16 +194,16 @@ protected:
 
 protected:
 	template<typename ConvertType>
-	std::list<ConvertType*> GetConvertChildren()
+	std::list<ConvertType*> GetConvertedChildren()
 	{
 		std::list<ConvertType*> newList;
 
 		for (GameEngineUpdateObject* child : children_)
 		{
-			ConvertType* convertPtr = dynamic_cast<ConvertType*>(child);
-			if (nullptr != convertPtr)
+			ConvertType* convertedChildPtr = dynamic_cast<ConvertType*>(child);
+			if (nullptr != convertedChildPtr)
 			{
-				newList.push_back(convertPtr);
+				newList.push_back(convertedChildPtr);
 			}
 		}
 

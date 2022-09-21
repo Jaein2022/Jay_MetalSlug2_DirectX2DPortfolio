@@ -161,7 +161,7 @@ GameEngineTexture* GameEngineShaderResourceHelper::SetTexture(
 
 	if (false == IsTexture(uppercaseTextureSetterName))
 	{
-		MsgBoxAssertString(_textureSetterName + ": 이런 이름의 텍스쳐 세터가 존재하지 않습니다.");
+		MsgBoxAssertString(_textureSetterName + ": 그런 이름의 텍스처 세터가 존재하지 않습니다.");
 		return nullptr;
 	}
 
@@ -177,7 +177,7 @@ GameEngineTexture* GameEngineShaderResourceHelper::SetTexture(
 
 	if (false == this->IsTexture(uppercaseTextureSetterName))
 	{
-		MsgBoxAssertString(_textureSetterName + ": 이런 이름의 텍스쳐 세터가 없습니다.");
+		MsgBoxAssertString(_textureSetterName + ": 그런 이름의 텍스처 세터가 없습니다.");
 		return nullptr;
 	}
 
@@ -201,7 +201,7 @@ GameEngineSampler* GameEngineShaderResourceHelper::SetSampler(const std::string&
 
 	if (false == IsSampler(_samplerSetterName))
 	{
-		MsgBoxAssertString(_samplerSetterName + ": 이런 이름의 샘플러 세터가 존재하지 않습니다.");
+		MsgBoxAssertString(_samplerSetterName + ": 그런 이름의 샘플러 세터가 존재하지 않습니다.");
 		return nullptr;
 	}
 
@@ -225,7 +225,7 @@ GameEngineSampler* GameEngineShaderResourceHelper::SetSampler(const std::string&
 
 	if (false == IsSampler(_samplerSetterName))
 	{
-		MsgBoxAssertString(_samplerSetterName + ": 이런 이름의 샘플러 세터가 존재하지 않습니다.");
+		MsgBoxAssertString(_samplerSetterName + ": 그런 이름의 샘플러 세터가 존재하지 않습니다.");
 		return nullptr;
 	}
 
@@ -235,22 +235,30 @@ GameEngineSampler* GameEngineShaderResourceHelper::SetSampler(const std::string&
 
 void GameEngineShaderResourceHelper::AllResourcesSetting()
 {
-	for (const std::pair<std::string, GameEngineConstantBufferSetter>& cBufferSetter
+	for (const std::pair<std::string, GameEngineConstantBufferSetter>& cBufferSetterPair
 		: constantBufferSetterMap_)
 	{
-		cBufferSetter.second.Setting();
+		cBufferSetterPair.second.Setting();
 	}
 
-	for (const std::pair<std::string, GameEngineTextureSetter>& textureSetter
+	for (const std::pair<std::string, GameEngineTextureSetter>& textureSetterPair
 		: textureSetterMap_)
 	{
-		textureSetter.second.Setting();
+		textureSetterPair.second.Setting();
 	}
 
-	for (const std::pair<std::string, GameEngineSamplerSetter>& samplerSetter
+	for (const std::pair<std::string, GameEngineSamplerSetter>& samplerSetterPair
 		: samplerSetterMap_)
 	{
-		samplerSetter.second.Setting();
+		samplerSetterPair.second.Setting();
+	}
+}
+
+void GameEngineShaderResourceHelper::AllResourcesReset()
+{
+	for (const std::pair<std::string, GameEngineTextureSetter>& textureSetterPair : textureSetterMap_)
+	{
+		textureSetterPair.second.Reset();
 	}
 }
 
@@ -344,6 +352,13 @@ void GameEngineShaderResourceHelper::BindTexture(GameEngineTextureSetter& _textu
 			_textureSetter.texture_,
 			_textureSetter.bindPoint_
 		);
+
+		_textureSetter.resetFunction_ = std::bind(
+			&GameEngineTexture::VSReset,
+			_textureSetter.texture_,
+			_textureSetter.bindPoint_
+		);
+
 		break;
 	}
 
@@ -354,6 +369,13 @@ void GameEngineShaderResourceHelper::BindTexture(GameEngineTextureSetter& _textu
 			_textureSetter.texture_,
 			_textureSetter.bindPoint_
 		);
+
+		_textureSetter.resetFunction_ = std::bind(
+			&GameEngineTexture::PSReset,
+			_textureSetter.texture_,
+			_textureSetter.bindPoint_
+		);
+
 		break;
 	}
 

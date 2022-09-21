@@ -47,8 +47,9 @@ public:
 
 GameEngineCollisionFunctionInit inst_;
 
-GameEngineCollision::GameEngineCollision() 
+GameEngineCollision::GameEngineCollision()
 	: debugType_(CollisionType::CT_Max),
+	collisionMode_(CollisionMode::Single),
 	color_(1.f, 0.f, 0.f, 0.5f),
 	debugCameraOrder_(CameraOrder::MainCamera)	//기본 디버그카메라 세팅: 메인카메라.
 	//메인카메라는 엔진 기본제공 카메라이므로 엔진 수준에서 이런 편의기능을 제공할 수 있다.
@@ -66,9 +67,11 @@ void GameEngineCollision::ChangeOrder(int _collisionOrder)
 
 bool GameEngineCollision::IsCollision(
 	CollisionType _thisType,
-	int _collisionOrder,
+	int _collisionGroup,
 	CollisionType _otherType,
-	std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function /*= nullptr*/
+	std::function<CollisionReturn(GameEngineCollision* _this, GameEngineCollision* _other)> _update /*= nullptr*/,
+	std::function<CollisionReturn(GameEngineCollision* _this, GameEngineCollision* _other)> _enter /*= nullptr*/,
+	std::function<CollisionReturn(GameEngineCollision* _this, GameEngineCollision* _other)> _exit /*= nullptr*/
 )
 {
 	if (false == this->IsUpdate())
@@ -81,25 +84,57 @@ bool GameEngineCollision::IsCollision(
 
 	if (nullptr == GameEngineCollision::collisionFunctions_[thisType][otherType])
 	{
-		MsgBoxAssert("아직 준비되지 않은 충돌 함수입니다.");
+		MsgBoxAssert("아직 준비되지 않은 충돌 처리입니다.");
 		return false;
 	}
 
 	std::map<int, std::list<GameEngineCollision*>>& allCollisions
 		= this->GetActor()->GetLevel()->allCollisions_;
 
-	std::list<GameEngineCollision*>& collisionGroup = allCollisions[_collisionOrder];
+	std::list<GameEngineCollision*>& collisionGroup = allCollisions[_collisionGroup];
 
 	for (GameEngineCollision* otherCollision : collisionGroup)
 	{
-		if (true == otherCollision->IsUpdate())
+		if (false == otherCollision->IsUpdate())
 		{
-			if (true == GameEngineCollision::collisionFunctions_[thisType][otherType](this->GetTransform(), otherCollision->GetTransform()))
+			continue;
+		}
+
+		if (true == GameEngineCollision::collisionFunctions_[thisType][otherType](this->GetTransform(), otherCollision->GetTransform()))
+		{
+			if (CollisionMode::Multiple == collisionMode_)
 			{
-				if (nullptr != _function)
+				if (collisionCheck_.end() == collisionCheck_.find(otherCollision))
 				{
-					if (true == _function(this, otherCollision))	//연결된 충돌 함수가 true를 반환하면 충돌체크를 한번만 한다.
-						//연결된 충돌 함수가 false를 반환하면 충돌체크를 계속 한다.
+					//첫 충돌.
+					std::pair<std::set<GameEngineCollision*>::iterator, bool> insertResult
+						= collisionCheck_.insert(otherCollision);
+
+					if (false == insertResult.second)
+					{
+						MsgBoxAssertString(otherCollision->GetNameConstRef()
+							+ ": 이미 충돌했던 충돌체가 아직 정리되지 않은 상태에서 다시 충돌했습니다.");
+						return true;
+					}
+
+					if (nullptr != _enter && CollisionReturn::Stop == _enter(this, otherCollision))
+					{
+						return true;
+					}
+				}
+				else
+				{
+					if (nullptr != _update && CollisionReturn::Stop == _update(this, otherCollision))
+					{
+						return true;
+					}
+				}
+			}
+			else if (CollisionMode::Single == collisionMode_)
+			{
+				if (nullptr != _update)
+				{
+					if (CollisionReturn::Stop == _update(this, otherCollision))
 					{
 						return true;
 					}
@@ -107,6 +142,27 @@ bool GameEngineCollision::IsCollision(
 				else
 				{
 					return true;
+				}
+			}
+		}
+		else
+		{
+			if (CollisionMode::Multiple == collisionMode_)
+			{
+				if (collisionCheck_.end() != collisionCheck_.find(otherCollision))
+				{
+					if (0 == collisionCheck_.erase(otherCollision))
+					{
+						MsgBoxAssertString(otherCollision->GetNameConstRef()
+							+ ": 충돌한 적 없는 충돌체를 제거하려고 했습니다.");
+						return false;
+					}
+
+					if (nullptr != _exit && CollisionReturn::Stop == _exit(this, otherCollision))
+					{
+						return false;
+					}
+					//collisionCheck_.erase(otherCollision);
 				}
 			}
 		}

@@ -88,11 +88,17 @@ public:
 	void VSSetting(int _bindPoint);
 	void PSSetting(int _bindPoint);
 
+	void VSReset(int _bindPoint);
+	void PSReset(int _bindPoint);
+
 	ID3D11RenderTargetView* CreateRenderTargetView();
 	ID3D11ShaderResourceView* CreateShaderResourceView();
 	ID3D11DepthStencilView* CreateDepthStencilView();
 
+	//지정한 텍스처를 가로 x등분, 세로 y등분으로 균일 분할.
 	static void Cut(const std::string& _textureName, int _x, int _y);
+
+	//원하는 절단 지점의 픽셀좌표와 크기를 UV값으로 변환 후 저장.
 	void Cut(UINT _startX, UINT _startY, UINT _sizeX, UINT _sizeY);
 
 	float4 GetPixelToFloat4(int _x, int _y);	//float4는 실수 특성상 색상값의 오차 발생 가능성 있음.
@@ -150,7 +156,6 @@ private:
 private:
 	ID3D11Texture2D* texture2D_;
 	//픽셀별 색상 정보가 든 2차원 배열이 저장된 그래픽카드 내 메모리 영역을 관리하는 인터페이스 ID3D11Texture2D* 타입 멤버변수.
-	//텍스쳐: 렌더링 리소스 중 2차원 배열 형태로 
 
 
 	ID3D11RenderTargetView* renderTargetView_;
@@ -163,13 +168,15 @@ private:
 
 	ID3D11DepthStencilView* depthStencilView_;	//깊이스텐실뷰.
 
+
+
 	D3D11_TEXTURE2D_DESC desc_;	//텍스처 생성용 명세서.
 
 
 	DirectX::ScratchImage scratchImage_;//DirectXTex로 불러온 텍스처
 	DirectX::TexMetadata metaData_;		//DirectXTex로 불러온 텍스처의 각종 정보들.
 
-	std::vector<float4> cutData_;	//
+	std::vector<float4> cutData_;	//프레임 애니메이션 만들 때 필요한 아틀라스텍스처 분할 정보.
 
 };
 

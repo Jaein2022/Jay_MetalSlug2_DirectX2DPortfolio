@@ -286,7 +286,7 @@ void GameEngineTextureRenderer::CreateFrameAnimation_FolderTexture(const std::st
 	}
 }
 
-void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animationName)
+void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animationName, bool _isForcedChange /*= false*/)
 {
 	std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
 
@@ -296,7 +296,7 @@ void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animati
 		return;
 	}
 
-	if (this->currentAnimation_ != &allAnimations_[uppercaseAnimationName])
+	if (this->currentAnimation_ != &allAnimations_[uppercaseAnimationName] || true == _isForcedChange)
 	{
 		this->currentAnimation_ = &allAnimations_[uppercaseAnimationName];
 		this->currentAnimation_->Reset();

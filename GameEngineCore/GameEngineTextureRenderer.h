@@ -194,7 +194,7 @@ public:
 	void CreateFrameAnimation_CutTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc);
 	void CreateFrameAnimation_FolderTexture(const std::string& _animationName, const FrameAnimation_Desc& _desc);
 
-	void ChangeFrameAnimation(const std::string& _animationName);
+	void ChangeFrameAnimation(const std::string& _animationName, bool _isForcedChange = false);
 
 	void ScaleToTexture();	//텍스처 크기에 메쉬 스케일을 자동으로 맞춰주는 함수.
 	void ScaleToCutTexture(int _index);

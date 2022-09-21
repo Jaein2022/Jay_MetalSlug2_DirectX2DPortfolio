@@ -13,7 +13,7 @@ TestPlayer::TestPlayer()
 	leg_(PlayerLegState::Standing),
 	top_(PlayerTopState::Aiming),
 	direction_(AimingDirection::Forward),
-	isInMidair_(false),
+	isAirborne_(false),
 	playerRendererLocalPosX_(0),
 	playerRendererLocalPosY_(75),
 	playerRendererLocalPosZ_(0),
@@ -58,7 +58,7 @@ TestPlayer::TestPlayer()
 	isMeleeAttack1_(true),
 	causeOfDeath_(0),
 	isDamageProof_(false),
-	flickeringPeriod_(0.05f)
+	flickeringPeriod_(0.1f)
 {
 }
 
@@ -158,12 +158,14 @@ void TestPlayer::Start()
 
 	playerLifeCollisionBody_ = CreateComponent<GameEngineCollision>("PlayerLifeCollisionBody");
 	playerLifeCollisionBody_->ChangeOrder(this->GetOrder());
+	playerLifeCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
 	playerLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
 	playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
 
 	playerCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("PlayerCloseCombatCollisionBody");
 	playerCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
+	playerCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
 	playerCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	playerCloseCombatCollisionBody_->GetTransform().SetLocalScale(120, 160, 10);
 	playerCloseCombatCollisionBody_->GetTransform().SetLocalPosition(60, 80, 10);
@@ -179,14 +181,22 @@ void TestPlayer::Start()
 void TestPlayer::Update(float _deltaTime)
 {
 	CheckGround();
-	if (true == isInMidair_)
+
+	if (true == isAirborne_)
 	{
 		Fall(_deltaTime);
 	}
+
 	if (PlayerState::Pistol_Redeploying != currentPlayerState_ && 0 == causeOfDeath_ )
 	{
 		UpdateInputInfo();
 	}
+
+	if (true == isDamageProof_)
+	{
+		Flicker(_deltaTime, float4(0.25f, 0.25f, 0.25f, 0.f));
+	}
+
 	ConvertInputToPlayerStates();
 	UpdatePlayerState(_deltaTime);
 	ControlMuzzle();
@@ -225,10 +235,10 @@ void TestPlayer::CheckGround()
 			//cyan.color_;			//4294967040
 
 
-			if (true == isInMidair_)
+			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
-				isInMidair_ = false;
+				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -258,9 +268,9 @@ void TestPlayer::CheckGround()
 		else if (TestLevel::groundColor_.color_ <= playerWorldPosPointer_->GetColorValue_UINT()
 			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isInMidair_)
+			if (true == isAirborne_)
 			{
-				isInMidair_ = false;
+				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -289,10 +299,10 @@ void TestPlayer::CheckGround()
 		}
 		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isInMidair_)
+			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
-				isInMidair_ = false;
+				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (PlayerTopState::Firing == top_
@@ -321,10 +331,10 @@ void TestPlayer::CheckGround()
 		}
 		else
 		{
-			if (false == isInMidair_)
+			if (false == isAirborne_)
 			{
 				leg_ = PlayerLegState::Falling;
-				isInMidair_ = true;
+				isAirborne_ = true;
 			}
 		}
 	}
@@ -411,7 +421,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	{
 	case -1:	//아랫방향 입력.
 	{
-		if (true == isInMidair_)
+		if (true == isAirborne_)
 		{
 			if (AimingDirection::ForwardToDownward != direction_ && AimingDirection::Downward != direction_)
 			{
@@ -554,7 +564,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 				top_ = PlayerTopState::DuckStepping;
 			}
 		}
-		else if (true == isInMidair_
+		else if (true == isAirborne_
 			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
@@ -579,7 +589,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 				top_ = PlayerTopState::DuckStepping;
 			}
 		}
-		else if (true == isInMidair_
+		else if (true == isAirborne_
 			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
@@ -620,7 +630,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	//점프키 입력 반응.
 	if (true == isJumpKeyDown_)
 	{
-		if (false == isInMidair_)
+		if (false == isAirborne_)
 		{
 			if (0 == horizontalInputValue_)
 			{
@@ -751,7 +761,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	}
 
 	//아래방향 조준은 공중에서만.
-	if (false == isInMidair_ && (AimingDirection::Downward == direction_
+	if (false == isAirborne_ && (AimingDirection::Downward == direction_
 		|| AimingDirection::DownwardToForward == direction_
 		|| AimingDirection::ForwardToDownward == direction_))
 	{
@@ -892,7 +902,7 @@ void TestPlayer::DuckStep()
 
 float TestPlayer::GetSlope()
 {
-	if (false == isInMidair_)
+	if (false == isAirborne_)
 	{
 		int beginPosY = 0;
 		int endPosY = 0;
@@ -953,7 +963,9 @@ float TestPlayer::GetSlope()
 	}
 	else
 	{
+#ifdef _DEBUG
 		MsgBoxAssert("점프중일때는 의미 없는 기능입니다.");
+#endif // DEBUG
 		return 0.f;
 	}
 }
@@ -988,42 +1000,42 @@ void TestPlayer::MeleeAttack()
 		CollisionType::CT_AABB,
 		CollisionBodyOrder::Rebel,
 		CollisionType::CT_AABB,
-		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->bool {
+		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->CollisionReturn {
 			_rebelCollision->GetActor<TestArabian>()->TakeDamage(meleeAttackDamage_);
-			return true;
+			return CollisionReturn::Stop;
 		}
 	);
 }
 
 void TestPlayer::Flicker(
 	float _deltaTime,
-	const float _period,
-	std::function<void()> _func1,
-	std::function<void()> _func2 /*= nullptr*/
+	const float4& _plusColor
 )
 {
 	static float passedTime;
 	static bool flickeringSwitch;
 	
-	if (_period <= passedTime)
+	if (flickeringPeriod_ <= passedTime)
 	{
 		passedTime = 0.f;
-		flickeringSwitch = !flickeringSwitch;
 
 		if (true == flickeringSwitch)
 		{
-			_func1();
+			for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
+				iter != allTextureRenderers_.end(); iter++)
+			{
+				(*iter)->GetPixelData().plusColor_ = _plusColor;
+			}
+			flickeringSwitch = false;
 		}
 		else
 		{
-			if (nullptr != _func2)
+			for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
+				iter != allTextureRenderers_.end(); iter++)
 			{
-				_func2();
+				(*iter)->GetPixelData().plusColor_ = float4::Zero;
 			}
-			else
-			{
-				_func1();
-			}
+			flickeringSwitch = true;
 		}
 	}
 	else

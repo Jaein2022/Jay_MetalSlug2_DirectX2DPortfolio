@@ -12,7 +12,7 @@ TestSword::TestSword()
 	flyingSwordRenderer_(nullptr),
 	stuckSwordRenderer_(nullptr),
 	swordCollisionBody_(nullptr),
-	isFalling_(true),
+	isAirborne_(true),
 	renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
 	swordWorldPosPointer_(nullptr),
@@ -55,6 +55,7 @@ void TestSword::Start()
 
 	swordCollisionBody_ = CreateComponent<GameEngineCollision>("SwordCollision");
 	swordCollisionBody_->ChangeOrder(this->GetOrder());
+	swordCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	swordCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	swordCollisionBody_->GetTransform().SetLocalScale(70, 70, 10);
 	swordCollisionBody_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
@@ -101,7 +102,7 @@ void TestSword::Update(float _deltaTime)
 {
 	CheckGround();
 
-	isFalling_ ? Fly(_deltaTime) : StickOnGround();
+	isAirborne_ ? Fly(_deltaTime) : StickOnGround();
 
 
 	swordCollisionBody_->IsCollision(
@@ -162,46 +163,46 @@ void TestSword::CheckGround()
 			//cyan.color_;			//4294967040
 
 
-			if (true == isFalling_)
+			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
-				isFalling_ = false;
+				isAirborne_ = false;
 				releaseSpeed_ = float4::Zero;
 			}
 		}
 		else if (TestLevel::groundColor_.color_ <= swordWorldPosPointer_->GetColorValue_UINT()
 			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isFalling_)
+			if (true == isAirborne_)
 			{
-				isFalling_ = false;
+				isAirborne_ = false;
 				releaseSpeed_ = float4::Zero;
 			}
 		}
 		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isFalling_)
+			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
-				isFalling_ = false;
+				isAirborne_ = false;
 				releaseSpeed_ = float4::Zero;
 			}
 		}
 		else
 		{
-			if (false == isFalling_)
+			if (false == isAirborne_)
 			{
-				isFalling_ = true;
+				isAirborne_ = true;
 			}
 		}
 	}
 }
 
-bool TestSword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)
+CollisionReturn TestSword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)
 {
 	_playerCollision->GetActor<TestPlayer>()->TakeDamage(this->GetOrder());
 
 	this->Death();
 
-	return true;
+	return CollisionReturn::Stop;
 }

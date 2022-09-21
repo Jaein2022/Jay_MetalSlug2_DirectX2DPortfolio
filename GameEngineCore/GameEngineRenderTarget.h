@@ -4,13 +4,27 @@
 
 class GameEnginePostEffect
 {
+	bool isUpdate_;
 public:
+	virtual ~GameEnginePostEffect(){};
 	virtual void EffectInit() = 0;
 	virtual void Effect(class GameEngineRenderTarget* _renderTarget) = 0;
 
-	virtual ~GameEnginePostEffect()
+public:
+	inline bool IsUpdate()
 	{
-	};
+		return isUpdate_;
+	}
+
+	virtual void On()
+	{
+		isUpdate_ = true;
+	}
+
+	virtual void Off()
+	{
+		isUpdate_ = false;
+	}
 };
 
 class GameEngineTexture;
@@ -86,11 +100,12 @@ public:
 	}
 
 	template<typename EffectType>
-	void AddEffect()
+	EffectType* AddEffect()
 	{
-		EffectType* newEffect = new EffectType();
+		GameEnginePostEffect* newEffect = new EffectType();
 		newEffect->EffectInit();
 		allEffects_.push_back(newEffect);
+		return reinterpret_cast<EffectType*>(newEffect);
 	}
 
 private:
@@ -101,7 +116,7 @@ private:
 	//위 텍스쳐에서 파생된 렌더타겟뷰들.
 
 	std::vector<ID3D11ShaderResourceView*> shaderResourceViews_;
-	//
+	//위 텍스쳐에서 파생된 셰이더리소스뷰들
 
 	std::vector<float4> clearColors_;
 	//렌더타겟뷰를 초기화할때 쓸 색상값들.

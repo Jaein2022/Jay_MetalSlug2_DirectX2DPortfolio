@@ -30,7 +30,7 @@ public:
 
 private:
 	bool CheckGroundHit();
-	bool Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision);
+	CollisionReturn Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision);
 
 private:
 	const float bulletSpeed_;

@@ -18,6 +18,7 @@ public:
 	int bindPoint_;		//해당 셰이더리소스의 바인드포인트(레지스터 등록 번호).
 	ShaderType parentShaderType_;	//이 리소스가 연결될 부모 셰이더의 종류.
 	std::function<void()> settingFunction_;	//셰이더가 가진 리소스들을 세팅하는 함수.
+	std::function<void()> resetFunction_;	//셰이더가 가진 리소스들을 리셋하는 함수.
 
 protected:
 	ShaderResSetter()
@@ -80,6 +81,7 @@ public:
 	GameEngineTexture* texture_;
 
 	void Setting() const;
+	void Reset() const;
 
 	//private:	<-일일히 다 막기엔 일이 너무 복잡해져서 막지는 않지만 외부에서 사용해선 안된다.
 	// 여기서 외부는 이 리소스를 직접 사용할 GameEngineShader의 자식 클래스들과 셰이더를 사용할 GameEngineRenderingPipeLine,

@@ -8,7 +8,7 @@
 
 TestArabian::TestArabian()
 	: currentArabianState_(ArabianState::Idling),
-	isInMidair_(false),
+	isAirborne_(false),
 	isEngaging_(false),
 	arabianRendererLocalPosX_(0),
 	arabianRendererLocalPosY_(75),
@@ -59,12 +59,14 @@ void TestArabian::Start()
 
 	arabianLifeCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianLifeCollision");
 	arabianLifeCollisionBody_->ChangeOrder(this->GetOrder());
+	arabianLifeCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	arabianLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	arabianLifeCollisionBody_->GetTransform().SetLocalScale(80, 150, 10);
 	arabianLifeCollisionBody_->GetTransform().SetLocalPosition(0, 75, 10);
 
 	arabianCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCloseCombatCollisionBody");
 	arabianCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
+	arabianCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
 	arabianCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(160, 190, 10);
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalPosition(80, 95, 10);
@@ -150,7 +152,7 @@ void TestArabian::Start()
 void TestArabian::Update(float _deltaTime)
 {
 	CheckGround();
-	if (true == isInMidair_)
+	if (true == isAirborne_)
 	{
 		Fall(_deltaTime);
 	}
@@ -189,10 +191,10 @@ void TestArabian::CheckGround()
 			//cyan.color_;			//4294967040
 
 
-			if (true == isInMidair_)
+			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
-				isInMidair_ = false;
+				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
@@ -208,9 +210,9 @@ void TestArabian::CheckGround()
 		else if (TestLevel::groundColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()
 			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isInMidair_)
+			if (true == isAirborne_)
 			{
-				isInMidair_ = false;
+				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
@@ -225,10 +227,10 @@ void TestArabian::CheckGround()
 		}
 		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
-			if (true == isInMidair_)
+			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
-				isInMidair_ = false;
+				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
@@ -243,9 +245,9 @@ void TestArabian::CheckGround()
 		}
 		else
 		{
-			if (false == isInMidair_)
+			if (false == isAirborne_)
 			{
-				isInMidair_ = true;
+				isAirborne_ = true;
 				currentArabianState_ = ArabianState::Falling;
 			}
 		}
@@ -392,7 +394,7 @@ void TestArabian::SetSlopeCheckerDirection(char _localDirection)
 
 float TestArabian::GetSlope(char _localDirection)
 {
-	if (false == isInMidair_)
+	if (false == isAirborne_)
 	{
 		SetSlopeCheckerDirection(_localDirection);
 
@@ -489,7 +491,7 @@ void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 	{
 		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 1.f / _desc.interval_;
 
-		if (false == isInMidair_)
+		if (false == isAirborne_)
 		{
 			movementFor1Second_ += float4::Up * GetSlope(-1) * 1.f / _desc.interval_;
 		}
@@ -498,7 +500,7 @@ void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 	{
 		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 5.f / _desc.interval_;
 
-		if (false == isInMidair_)
+		if (false == isAirborne_)
 		{
 			movementFor1Second_ += float4::Up * GetSlope(-1) * 5.f / _desc.interval_;
 		}
@@ -511,9 +513,9 @@ void TestArabian::MeleeAttack()
 		CollisionType::CT_AABB,
 		CollisionBodyOrder::Player,
 		CollisionType::CT_AABB,
-		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)->bool {
+		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)->CollisionReturn {
 			_playerCollision->GetActor<TestPlayer>()->TakeDamage(arabianCloseCombatCollisionBody_->GetOrder());
-			return true;
+			return CollisionReturn::Stop;
 		}
 	);
 }

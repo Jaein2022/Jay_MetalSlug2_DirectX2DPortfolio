@@ -27,6 +27,6 @@ public:
 
 
 private:
-	TestIndicator* pointer_;
+	TestIndicator* indicator_;
 };
 

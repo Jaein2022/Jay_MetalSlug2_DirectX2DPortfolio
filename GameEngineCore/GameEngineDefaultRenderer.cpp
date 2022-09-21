@@ -20,6 +20,7 @@ void GameEngineDefaultRenderer::Render(float _deltaTime)
 
 	this->shaderResourceHelper_.AllResourcesSetting();
 	this->renderingPipeLine_->Rendering();
+	this->shaderResourceHelper_.AllResourcesReset();
 }
 
 void GameEngineDefaultRenderer::SetPipeLine(const std::string& _name)

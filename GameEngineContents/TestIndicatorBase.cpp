@@ -2,7 +2,7 @@
 #include "TestIndicatorBase.h"
 #include "TestIndicator.h"
 
-TestIndicatorBase::TestIndicatorBase(): pointer_(nullptr)
+TestIndicatorBase::TestIndicatorBase(): indicator_(nullptr)
 {
 }
 
@@ -14,7 +14,7 @@ void TestIndicatorBase::Start()
 {
 	this->GetTransform().SetLocalScale(float4::One);
 	this->GetTransform().SetWorldScale(float4::One);
-	pointer_ = TestIndicator::CreateIndicator<TestIndicator>(
+	indicator_ = TestIndicator::CreateIndicator<TestIndicator>(
 		this->GetNameConstRef() + "_Indicator",
 		this,
 		float4::Black,
@@ -33,10 +33,10 @@ void TestIndicatorBase::End()
 
 void TestIndicatorBase::SetPointerColor(const float4& _color)
 {
-	pointer_->color_ = _color;
+	indicator_->color_ = _color;
 }
 
 void TestIndicatorBase::SetPointerScale(const float4& _scale)
 {
-	pointer_->GetTransform().SetLocalScale(_scale);
+	indicator_->GetTransform().SetLocalScale(_scale);
 }

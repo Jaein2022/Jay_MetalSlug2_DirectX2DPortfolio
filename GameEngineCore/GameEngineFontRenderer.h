@@ -11,8 +11,14 @@ enum class LeftAndRightSort
 enum class TopAndBotSort
 {
 	Top = 0x0,
-	VCenter = 0x4,
+	Mid = 0x4,
 	Bot = 0x8
+};
+
+enum class FontPositionMode	//글자의 좌표계 설정.
+{
+	World = 0x4,	//글자를 배치하는 좌표가 월드좌표계 기반이다.
+	Window = 0X8	//글자를 배치하는 좌표가 윈도우좌표계 기반이다.
 };
 
 class GameEngineRenderTarget;
@@ -43,14 +49,14 @@ public:
 		return text_;
 	}
 
-	void SetScreenPosition(const float4& _position)
+	void SetTextPosition(const float4& _position)	//글자의 위치 설정.
 	{
-		screenPosition_ = _position;
+		textPosition_ = _position;
 	}
 
-	float4 GetScreenPostion()
+	float4 GetTextPostion()
 	{
-		return screenPosition_;
+		return textPosition_;
 	}
 
 	void SetColor(const float4& _color)
@@ -63,14 +69,22 @@ public:
 		fontSize_ = _size;
 	}
 
+	//글자를 지정한 지점의 왼쪽/가운데/오른쪽에 배치한다.
 	void SetLeftAndRightSort(LeftAndRightSort _value)
 	{
 		lr_ = _value;
 	}
 
+	//글자를 지정한 지점의 위/중간/아래에 배치한다.
 	void SetTopAndBotSort(TopAndBotSort _value)
 	{
 		tb_ = _value;
+	}
+
+	//글자의 좌표를 월드좌표계/윈도우좌표계로 설정.
+	void SetPositionMode(FontPositionMode _mode)
+	{
+		mode_ = _mode;
 	}
 
 protected:
@@ -84,8 +98,9 @@ private:
 	GameEngineFont* font_;
 	float fontSize_;
 	float4 fontColor_;
-	float4 screenPosition_;
+	float4 textPosition_;	//글자 위치. 기본설정은 윈도우좌표계 기반
 
-	LeftAndRightSort lr_;
-	TopAndBotSort tb_;
+	LeftAndRightSort lr_;	//글자를 지정한 지점의 왼쪽/가운데/오른쪽에 배치한다.
+	TopAndBotSort tb_;		//글자를 지정한 지점의 위/중간/아래에 배치한다.
+	FontPositionMode mode_;	//글자의 좌표를 월드좌표계/윈도우좌표계 기준으로 보고 배치한다.
 };

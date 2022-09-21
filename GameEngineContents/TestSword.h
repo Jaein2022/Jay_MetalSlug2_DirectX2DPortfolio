@@ -34,7 +34,7 @@ private:
 	void Fly(float _deltaTime);
 	void StickOnGround();
 	void CheckGround();
-	bool Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision);
+	CollisionReturn Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision);
 
 private:
 
@@ -47,7 +47,7 @@ private:
 
 	GameEngineCollision* swordCollisionBody_;
 
-	bool isFalling_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
+	bool isAirborne_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 
 	TestIndicator* renderPivotPointer_;			//액터의 렌더피봇 표시.
 	TestPixelIndicator* upperLandingChecker_;

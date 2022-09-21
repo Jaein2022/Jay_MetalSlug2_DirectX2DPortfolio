@@ -2,6 +2,18 @@
 #include "GameEngineTransformComponent.h"
 #include "GameEngineLevel.h"
 
+enum class CollisionMode	//상대 충돌체별 충돌 횟수.
+{
+	Single,		//한 충돌체와는 한번만 충돌.
+	Multiple	//중복충돌 허용.
+};
+
+enum class CollisionReturn	//충돌 이후 반응
+{
+	Continue,	//계속 충돌 가능한 상태 유지.
+	Stop		//충돌 중단.
+};
+
 class GameEngineCollision : public GameEngineTransformComponent
 {
 	friend class GameEngineCollisionFunctionInit;
@@ -23,9 +35,11 @@ public:
 	void ChangeOrder(int _order);
 	bool IsCollision(		//충돌 여부 판정 함수.
 		CollisionType _thisType,
-		int _collisionOrder,
+		int _collisionGroup,
 		CollisionType _otherType,
-		std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function = nullptr);
+		std::function<CollisionReturn(GameEngineCollision* _this, GameEngineCollision* _other)> _update = nullptr,
+		std::function<CollisionReturn(GameEngineCollision* _this, GameEngineCollision* _other)> _enter = nullptr,
+		std::function<CollisionReturn(GameEngineCollision* _this, GameEngineCollision* _other)> _exit = nullptr);
 	void DebugRender();	//함수 이름과는 다르게, 실제로는 충돌체를 직접 그리지 않고 그리는데 필요한 정보만 저장하는 함수.
 	//이 함수에서 저장된 정보대로 GameEngineCoreDebug의 Debug3DRender()함수에서 진짜 렌더링을 한다.
 
@@ -44,27 +58,46 @@ public:
 		CollisionType _thisType,
 		EnumType _collisionOrder,
 		CollisionType _otherType,
-		std::function<bool(GameEngineCollision* _this, GameEngineCollision* _other)> _function = nullptr)
+		std::function<CollisionReturn(GameEngineCollision* _this, GameEngineCollision* _other)> _function = nullptr)
 	{
 		return IsCollision(_thisType, static_cast<int>(_collisionOrder), _otherType, _function);
 	}
 
-	void SetDebugSetting(CollisionType _debugType, const float4& _color)
+	inline void SetDebugSetting(CollisionType _debugType, const float4& _color)
 	{
 		debugType_ = _debugType;
 		color_ = _color;
 	}
 
-	void SetDebugCamera(CameraOrder _cameraOrder)
+	inline void SetDebugCamera(CameraOrder _cameraOrder)
 	{
 		debugCameraOrder_ = _cameraOrder;
+	}
+
+	inline void SetCollisionMode(CollisionMode _mode)
+	{
+		collisionMode_ = _mode;
+	}
+
+	void OffEvent() override
+	{
+		ResetExData();
+	}
+
+	void ResetExData()
+	{
+		collisionCheck_.clear();
 	}
 
 private:
 	void Start() override;
 
 private:
+	std::set<GameEngineCollision*> collisionCheck_;
+
 	CollisionType debugType_;
+	CollisionMode collisionMode_;
+
 	float4 color_;
 	CameraOrder debugCameraOrder_;
 };

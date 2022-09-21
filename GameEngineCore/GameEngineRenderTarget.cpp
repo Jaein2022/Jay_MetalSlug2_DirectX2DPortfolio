@@ -189,6 +189,7 @@ void GameEngineRenderTarget::Effect(GameEngineRenderingPipeLine* _otherPipeLine,
 	this->Setting();
 	_shaderResourceHelper->AllResourcesSetting();
 	_otherPipeLine->Rendering();
+	_shaderResourceHelper->AllResourcesReset();
 }
 
 void GameEngineRenderTarget::Effect(GameEngineRenderSet& _renderSet)
@@ -200,6 +201,9 @@ void GameEngineRenderTarget::EffectProcess()
 {
 	for (GameEnginePostEffect* effect : allEffects_)
 	{
-		effect->Effect(this);
+		if (true == effect->IsUpdate())
+		{
+			effect->Effect(this);
+		}
 	}
 }

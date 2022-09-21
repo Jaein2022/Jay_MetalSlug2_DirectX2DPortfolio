@@ -52,6 +52,10 @@ public:
 	void Copy(GameEngineRenderingPipeLine* _original);
 
 public:
+	inline GameEngineVertexBuffer* GetVertexBuffer()
+	{
+		return this->vertexBuffer_;
+	}
 	inline GameEngineVertexShader* GetVertexShader()
 	{
 		return vertexShader_;

@@ -31,7 +31,6 @@ GameEngineTexture::~GameEngineTexture()
 		depthStencilView_ = nullptr;
 	}
 
-	//근원 리소스니까 제일 마지막에 삭제.
 	if (nullptr != texture2D_)
 	{
 		texture2D_->Release();
@@ -101,6 +100,26 @@ void GameEngineTexture::PSSetting(int _bindPoint)
 		_bindPoint,
 		1,
 		&shaderResourceView_
+	);
+}
+
+void GameEngineTexture::VSReset(int _bindPoint)
+{
+	ID3D11ShaderResourceView* emptyResourceView = nullptr;
+	GameEngineDevice::GetContext()->VSSetShaderResources(
+		_bindPoint,
+		1,
+		&emptyResourceView
+	);
+}
+
+void GameEngineTexture::PSReset(int _bindPoint)
+{
+	ID3D11ShaderResourceView* emptyResourceView = nullptr;
+	GameEngineDevice::GetContext()->PSSetShaderResources(
+		_bindPoint,
+		1,
+		&emptyResourceView
 	);
 }
 

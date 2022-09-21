@@ -62,7 +62,7 @@ float4 TextureAtlas_PS(Output _input) : SV_Target0 //SV_Target[n]: n¹ø ·»´õÅ¸°Ù¿
     {
         clip(-1);
     }
-
+    
     float4 resultColor = (Tex.Sample(Smp, _input.texcoord_.xy) * mulColor_) + plusColor_;
     
     if (resultColor.a <= 0.f)

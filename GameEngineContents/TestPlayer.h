@@ -62,10 +62,8 @@ private:
 	void MeleeAttack();	//근접공격.
 	void Flicker(		//깜빡임.
 		float _deltaTime,
-		const float _period,
-		std::function<void()> _func1,
-		std::function<void()> _func2 = nullptr
-	);	
+		const float4& _plusColor
+	);
 
 private:
 
@@ -80,7 +78,7 @@ private:
 
 	std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
 
-	bool isInMidair_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
+	bool isAirborne_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 
 
 	const int playerRendererLocalPosX_;
@@ -94,6 +92,7 @@ private:
 	GameEngineTextureRenderer* topWeaponRenderer_;
 	GameEngineTextureRenderer* wholeWeaponRenderer_;
 	GameEngineTextureRenderer* redeployingRenderer_;
+	std::list<GameEngineTextureRenderer*> allTextureRenderers_;
 
 
 	char horizontalInputValue_;	//-1: 좌측 입력, 0: 중립, 1: 우측 입력.
@@ -145,7 +144,7 @@ private:
 
 	int causeOfDeath_;		//플레이어 사망원인. 0: 플레이어가 아직 살아있음. 
 	bool isDamageProof_;	//true: 무적상태. 
-	float flickeringPeriod_;//깜빡임 주기.
+	const float flickeringPeriod_;//깜빡임 주기.
 
 };
 

@@ -27,6 +27,7 @@ void TestPistolBullet::Start()
 
 	pistolBulletCollisionBody_ = CreateComponent<GameEngineCollision>("PistolBulletCollision");
 	pistolBulletCollisionBody_->ChangeOrder(this->GetOrder());
+	pistolBulletCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	pistolBulletCollisionBody_->GetTransform().SetLocalScale(40, 24, 10);
 	pistolBulletCollisionBody_->GetTransform().SetLocalPosition(0, 0, 0);
 	pistolBulletCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
@@ -134,7 +135,7 @@ bool TestPistolBullet::CheckGroundHit()
 	return false;
 }
 
-bool TestPistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)
+CollisionReturn TestPistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)
 {
 	_rebelCollision->GetActor<TestArabian>()->TakeDamage(damage_);
 
@@ -143,5 +144,5 @@ bool TestPistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollis
 	effectiveHitSparkRenderer_->On();
 	firingDirection_ = float4::Zero;
 
-	return true;
+	return CollisionReturn::Stop;
 }

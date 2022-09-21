@@ -1,7 +1,11 @@
 #include "PreCompile.h"
 #include "TestIndicator.h"
 
+#ifdef _DEBUG
 bool TestIndicator::isRendering_ = true;
+#else
+bool TestIndicator::isRendering_ = false;
+#endif
 
 TestIndicator::TestIndicator()
 {
@@ -13,8 +17,6 @@ TestIndicator::~TestIndicator()
 
 void TestIndicator::Start()
 {
-	//GameEngineRenderer::Start();
-
 	SetPipeLine("Color");
 
 	if (true == shaderResourceHelper_.IsConstantBuffer("ResultColor"))

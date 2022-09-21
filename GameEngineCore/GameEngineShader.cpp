@@ -94,7 +94,7 @@ void GameEngineShader::CreateVersion(const std::string& _shaderType, UINT _versi
 
 void GameEngineShader::CompileHLSLCode(const std::string& _path)
 {
-	int compileFlag = 0;
+	unsigned int compileFlag = 0;
 #ifdef _DEBUG
 	compileFlag = D3D10_SHADER_DEBUG;	//디버그 파일/줄/유형/기호 정보를 삽입한다.
 #endif // _DEBUG
@@ -330,6 +330,11 @@ void GameEngineConstantBufferSetter::Setting() const
 void GameEngineTextureSetter::Setting() const
 {
 	settingFunction_();
+}
+
+void GameEngineTextureSetter::Reset() const
+{
+	resetFunction_();
 }
 
 void GameEngineSamplerSetter::Setting() const

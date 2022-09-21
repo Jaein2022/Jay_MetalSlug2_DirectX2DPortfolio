@@ -51,7 +51,7 @@ private:
 	void CreateArabianAnimations();
 	void CreateArabianStates();
 
-	//발이 땅에 닿으면 추락을 멈추고, 발이 땅에 닿으면 추락 판정하는 함수. 
+	//착지할때 정확한 액터위치 조정/땅에 발이 안 닿아있으면 추락 판정.
 	void CheckGround();
 
 	//추락 이동값 적용.
@@ -85,7 +85,7 @@ private:
 
 	ArabianState currentArabianState_;
 
-	bool isInMidair_;		//true: 공중에 떠 있는 상태. false: 착지 상태.
+	bool isAirborne_;		//true: 공중에 떠 있는 상태. false: 착지 상태.
 	bool isEngaging_;		//true: 교전 중. false: 플레이어 인식 못함.
 
 	const int arabianRendererLocalPosX_;

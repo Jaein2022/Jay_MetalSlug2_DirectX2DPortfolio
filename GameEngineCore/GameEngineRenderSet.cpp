@@ -45,4 +45,5 @@ void GameEngineRenderSet::Render()
 
 	this->shaderResourceHelper_.AllResourcesSetting();
 	this->renderingPipeLine_->Rendering();
+	this->shaderResourceHelper_.AllResourcesReset();
 }

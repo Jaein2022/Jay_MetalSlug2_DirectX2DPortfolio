@@ -79,6 +79,7 @@ namespace GameEngineDebug
 				debugShaderResource_.SetConstantBuffer_Link("DebugInfo", debugData_[i].info_);
 				debugShaderResource_.AllResourcesSetting();
 				debugRenderingPipeLine_->Rendering();
+				debugShaderResource_.AllResourcesReset();
 			}
 			else
 			{
@@ -87,6 +88,7 @@ namespace GameEngineDebug
 				debugTextureShaderResource_.SetTexture("Tex", debugData_[i].texture_);
 				debugTextureShaderResource_.AllResourcesSetting();
 				debugTextureRenderingPipeLine_->Rendering();
+				debugTextureShaderResource_.AllResourcesReset();
 			}
 		}
 		debugData_.clear();

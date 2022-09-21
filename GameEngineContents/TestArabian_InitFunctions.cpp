@@ -247,9 +247,9 @@ void TestArabian::CreateArabianStates()
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("JumpingBackward");
-			if (false == isInMidair_)
+			if (false == isAirborne_)
 			{
-				isInMidair_ = true;
+				isAirborne_ = true;
 				fallingSpeed_ = -2.5f;
 			}
 		}
@@ -283,7 +283,7 @@ void TestArabian::CreateArabianStates()
 			arabianLifeCollisionBody_->Off();
 			arabianCloseCombatCollisionBody_->Off();
 
-			if (true == isInMidair_)
+			if (true == isAirborne_)
 			{
 				int deathAnimationSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 1);
 
