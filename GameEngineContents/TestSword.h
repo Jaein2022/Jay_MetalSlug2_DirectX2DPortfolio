@@ -32,10 +32,15 @@ public:
 
 private:
 	void Fly(float _deltaTime);
-	void StickOnGround();
+	void StickOnGround(float _deltaTime);
 	void CheckGround();
 	CollisionReturn Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision);
-
+	void Flicker(		//±ôºýÀÓ.
+		float _deltaTime,
+		bool _isFlickeringOn,
+		const float4& _plusColor,
+		const float4& _originalColor = float4::Zero
+	);
 private:
 
 	const int swordRendererLocalPosX_;
@@ -55,7 +60,7 @@ private:
 	TestPixelIndicator* lowerLandingChecker_;
 
 	float rotationSpeed_;
-
+	const float flickeringPeriod_;
 	float4 releaseSpeed_;
 
 };

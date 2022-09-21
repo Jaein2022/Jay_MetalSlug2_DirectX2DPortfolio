@@ -18,6 +18,7 @@ TestSword::TestSword()
 	swordWorldPosPointer_(nullptr),
 	lowerLandingChecker_(nullptr),
 	rotationSpeed_(0.f),
+	flickeringPeriod_(0.1f),
 	releaseSpeed_(float4::Zero)
 {
 }
@@ -102,16 +103,17 @@ void TestSword::Update(float _deltaTime)
 {
 	CheckGround();
 
-	isAirborne_ ? Fly(_deltaTime) : StickOnGround();
+	isAirborne_ ? Fly(_deltaTime) : StickOnGround(_deltaTime);
 
-
-	swordCollisionBody_->IsCollision(
-		CollisionType::CT_AABB,
-		CollisionBodyOrder::Player,
-		CollisionType::CT_AABB,
-		std::bind(&TestSword::Hit, this, std::placeholders::_1, std::placeholders::_2)
-	);
-
+	if (true == isAirborne_)
+	{
+		swordCollisionBody_->IsCollision(
+			CollisionType::CT_AABB,
+			CollisionBodyOrder::Player,
+			CollisionType::CT_AABB,
+			std::bind(&TestSword::Hit, this, std::placeholders::_1, std::placeholders::_2)
+		);
+	}
 }
 
 void TestSword::End()
@@ -136,14 +138,20 @@ void TestSword::Fly(float _deltaTime)
 	releaseSpeed_.y -= TestLevel::gravity_ * _deltaTime;
 }
 
-void TestSword::StickOnGround()
+void TestSword::StickOnGround(float _deltaTime)
 {
 	if (false == stuckSwordRenderer_->IsUpdate())
 	{
 		swordCollisionBody_->Off();
 		flyingSwordRenderer_->Off();
 		stuckSwordRenderer_->On();
-		Death(1.f);
+		this->ResetAccTime();
+		Death(2.f);
+	}
+
+	if (1.f <= this->GetAccTime())
+	{
+		Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 	}
 }
 
@@ -205,4 +213,54 @@ CollisionReturn TestSword::Hit(GameEngineCollision* _thisCollision, GameEngineCo
 	this->Death();
 
 	return CollisionReturn::Stop;
+}
+
+void TestSword::Flicker(
+	float _deltaTime,
+	bool _isFlickeringOn,
+	const float4& _plusColor,
+	const float4& _originalColor /*= float4::Zero*/
+)
+{
+	static float passedTime;
+	static bool flickeringSwitch;
+
+	if (false == _isFlickeringOn && true == flickeringSwitch)
+	{
+		passedTime = flickeringPeriod_;
+	}
+
+	if (flickeringPeriod_ <= passedTime)
+	{
+		flickeringSwitch = !flickeringSwitch;
+
+		passedTime = 0.f;
+	}
+	else
+	{
+		if (true == _isFlickeringOn)
+		{
+			passedTime += _deltaTime;
+		}
+		return;
+	}
+
+	if (true == flickeringSwitch)
+	{
+		//for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
+		//	iter != allTextureRenderers_.end(); iter++)
+		//{
+		//	(*iter)->GetPixelData().plusColor_ = _plusColor;
+		//}
+		stuckSwordRenderer_->GetPixelData().plusColor_ = _plusColor;
+	}
+	else
+	{
+		//for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
+		//	iter != allTextureRenderers_.end(); iter++)
+		//{
+		//	(*iter)->GetPixelData().plusColor_ = _originalColor;
+		//}
+		stuckSwordRenderer_->GetPixelData().plusColor_ = _originalColor;
+	}
 }

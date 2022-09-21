@@ -474,7 +474,7 @@ void TestPlayer::CreatePlayerStates()
 			}
 			else if (1.f <= _info.stateTime_ && false == isAirborne_)
 			{
-				Flicker(_deltaTime, float4(0, 0, 0, -1));
+				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 			}
 		},
 		[this](const StateInfo& _info)->void {
@@ -512,7 +512,7 @@ void TestPlayer::CreatePlayerStates()
 			}
 			else if (1.f <= _info.stateTime_ && false == isAirborne_)
 			{
-				Flicker(_deltaTime, float4(0, 0, 0, -1));
+				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 			}
 		},
 		[this](const StateInfo& _info)->void {

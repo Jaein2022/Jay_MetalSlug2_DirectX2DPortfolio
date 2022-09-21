@@ -52,7 +52,7 @@ private:
 	//플레이어 전체 상태 업데이트.
 	void UpdatePlayerState(float _deltaTime);	
 
-	//모든 계산이 적용된 이동값을 실제로 적용하고 이동값을 리셋하는 함수.
+	//모든 계산이 적용된 이동값을 최종적으로 적용하고 이동값을 리셋하는 함수.
 	void MovePlayer(float _deltaTime);
 
 	void Run();			//달리기.
@@ -62,7 +62,9 @@ private:
 	void MeleeAttack();	//근접공격.
 	void Flicker(		//깜빡임.
 		float _deltaTime,
-		const float4& _plusColor
+		bool _isFlickeringOn,
+		const float4& _plusColor,
+		const float4& _originalColor = float4::Zero
 	);
 
 private:

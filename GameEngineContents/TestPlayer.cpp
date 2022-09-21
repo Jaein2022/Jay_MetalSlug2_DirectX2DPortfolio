@@ -187,15 +187,19 @@ void TestPlayer::Update(float _deltaTime)
 		Fall(_deltaTime);
 	}
 
-	if (PlayerState::Pistol_Redeploying != currentPlayerState_ && 0 == causeOfDeath_ )
+	if (0 == causeOfDeath_)
 	{
-		UpdateInputInfo();
+		Flicker(_deltaTime, isDamageProof_, float4(0.25f, 0.25f, 0.25f, 0.f));
+
+		if (PlayerState::Pistol_Redeploying != currentPlayerState_)
+		{
+			UpdateInputInfo();
+		}
 	}
 
-	if (true == isDamageProof_)
-	{
-		Flicker(_deltaTime, float4(0.25f, 0.25f, 0.25f, 0.f));
-	}
+
+	
+	
 
 	ConvertInputToPlayerStates();
 	UpdatePlayerState(_deltaTime);
@@ -1009,37 +1013,48 @@ void TestPlayer::MeleeAttack()
 
 void TestPlayer::Flicker(
 	float _deltaTime,
-	const float4& _plusColor
+	bool _isFlickeringOn,
+	const float4& _plusColor,
+	const float4& _originalColor /*= float4::Zero*/
 )
 {
 	static float passedTime;
 	static bool flickeringSwitch;
-	
+
+	if (false == _isFlickeringOn && true == flickeringSwitch)
+	{
+		passedTime = flickeringPeriod_;
+	}
+
 	if (flickeringPeriod_ <= passedTime)
 	{
-		passedTime = 0.f;
+		flickeringSwitch = !flickeringSwitch;
 
-		if (true == flickeringSwitch)
+		passedTime = 0.f;
+	}
+	else
+	{
+		if (true == _isFlickeringOn)
 		{
-			for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
-				iter != allTextureRenderers_.end(); iter++)
-			{
-				(*iter)->GetPixelData().plusColor_ = _plusColor;
-			}
-			flickeringSwitch = false;
+			passedTime += _deltaTime;
 		}
-		else
+		return;
+	}
+
+	if (true == flickeringSwitch)
+	{
+		for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
+			iter != allTextureRenderers_.end(); iter++)
 		{
-			for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
-				iter != allTextureRenderers_.end(); iter++)
-			{
-				(*iter)->GetPixelData().plusColor_ = float4::Zero;
-			}
-			flickeringSwitch = true;
+			(*iter)->GetPixelData().plusColor_ = _plusColor;
 		}
 	}
 	else
 	{
-		passedTime += _deltaTime;
+		for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
+			iter != allTextureRenderers_.end(); iter++)
+		{
+			(*iter)->GetPixelData().plusColor_ = _originalColor;
+		}
 	}
 }
