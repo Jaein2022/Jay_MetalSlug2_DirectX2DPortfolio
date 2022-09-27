@@ -57,8 +57,8 @@ private:
 	//추락 이동값 적용.
 	void Fall(float _deltaTime);
 
-	//플레이어 위치에 따라 스테이트 변화.
-	void GetDistance();
+	//플레이어와의 거리 판단.
+	void GetDistance(float _deltaTime);
 
 	//아라비안 스테이트 변환 및 업데이트.
 	void UpdateArabianState(float _deltaTime);
@@ -114,7 +114,10 @@ private:
 
 	GameEngineStateManager arabianStateManager_;
 
-	std::map<const ArabianState, const char*> allArabianStates_;
+	std::unordered_map<ArabianState, const char*> allArabianStates_;
+	//삽입, 순회, 삭제는 한번만 하고, 탐색은 런타임 내내 할 예정이므로 탐색 효율이 좋다고 하는 비정렬 맵 사용.
+	//사실 비정렬 맵을 써보고 싶어서 선택.
+	//해시 함수로 인한 문제가 생기면 즉시 일반 맵으로 복구시킬 것.
 
 	const float initialJumpSpeed_;
 	float fallingSpeed_;
@@ -128,6 +131,9 @@ private:
 
 	float4 movementFor1Second_;	//1초 동안의 이동량. 델타타임과 플레이 속도는 MoveArabian()함수에서 한번만 계산한다.
 
+	const float turningDelay_;
+	char nextWorldDirection_;	//아라비안이 돌아봐야 하는 방향.
+	//-1: 액터 월드방향의 역방향으로 방향전환. 0: 방향전환 필요없음. 1: 액터 월드방향의 정방향으로 방향전환.
 
 	TestIndicator* releasePoint_;	//검 투척 지점. 플레이어의 머즐과 같은 역할.
 	float releaseAngle_;			//검 투척 각도.

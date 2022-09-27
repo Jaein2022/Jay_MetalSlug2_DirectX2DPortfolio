@@ -10,6 +10,7 @@ struct RenderOption
     int option02_;
 };
 
+class GameEngineShaderResourceHelper;
 class GameEngineRenderingPipeLine;
 class GameEngineRenderer : public GameEngineTransformComponent
 {
@@ -31,8 +32,9 @@ public:
 
 public:
 	void ChangeCamera(CameraOrder _order);
-    GameEngineRenderingPipeLine* GetClonePipeLine(GameEngineRenderingPipeLine* _renderingPipeLine);
+    GameEngineRenderingPipeLine* ClonePipeLine(GameEngineRenderingPipeLine* _renderingPipeLine);
     void SetRenderingOrder(int _renderingOrder);
+    void EngineShaderResourceSetting(GameEngineShaderResourceHelper* _shaderResourceHelper);
 
 public:
     inline int GetRenderingOrder()

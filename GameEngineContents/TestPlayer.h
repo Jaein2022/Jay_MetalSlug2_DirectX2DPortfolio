@@ -78,7 +78,9 @@ private:
 
 	GameEngineStateManager playerStateManager_;
 
-	std::map<const int, const std::pair<const PlayerState, const char*>> allPlayerStates_;
+	std::unordered_map<int, const std::pair<const PlayerState, const char*>> allPlayerStates_;	//모든 플레이어 스테이트.
+	//삽입, 순회, 삭제는 한번만 하고, 탐색은 런타임 내내 할 예정이므로 탐색 효율이 좋다고 하는 비정렬 맵 사용.
+	//사실 비정렬 맵을 써보고 싶어서 선택.
 
 	bool isAirborne_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 

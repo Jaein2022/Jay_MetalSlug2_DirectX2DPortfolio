@@ -44,7 +44,7 @@ public:
 
 
 	//매 루프마다 바뀌는 트랜스폼 데이터 등의 상수버퍼가 가진 정보를 그래픽카드의 메모리로 전달하는 함수.
-	void ChangeData(const void* _data, size_t _size) const;		
+	void ChangeData(const void* _data, size_t _dataSize) const;		
 	//실질적인 상수버퍼의 데이터세팅은 여기에서 한다.
 	//맵, 언맵 함수를 호출하므로 최소한으로 사용할 것.
 
@@ -57,12 +57,17 @@ public:
 	static void ResourceDestroy();
 
 
+public:
+	D3D11_BUFFER_DESC& GetBufferDesc()
+	{
+		return constantBufferDesc_;
+	}
+
+
 
 private:
 	static GameEngineConstantBuffer* CreateNamedRes(const std::string& _name, int _byteWidth);
-	void CreateConstantBuffer(
-		const D3D11_SHADER_BUFFER_DESC& _desc
-	);
+	void CreateConstantBuffer(const D3D11_SHADER_BUFFER_DESC& _desc);
 
 private:
 	static std::map<std::string, std::map<int, GameEngineConstantBuffer*>> allConstantBuffers_;

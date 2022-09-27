@@ -31,6 +31,8 @@ TestArabian::TestArabian()
 	shufflingSpeed_(0.5f),
 	shuffleDirection_(1),
 	movementFor1Second_(float4::Zero),
+	turningDelay_(1.f),
+	nextWorldDirection_(1),
 	releasePoint_(nullptr),
 	releaseAngle_(60.f),
 	releaseVelocity_(5.f),
@@ -66,7 +68,7 @@ void TestArabian::Start()
 
 	arabianCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCloseCombatCollisionBody");
 	arabianCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
-	arabianCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
+	arabianCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	arabianCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(160, 190, 10);
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalPosition(80, 95, 10);
@@ -157,15 +159,13 @@ void TestArabian::Update(float _deltaTime)
 		Fall(_deltaTime);
 	}
 
-	GetDistance();
+	GetDistance(_deltaTime);
 
-	if (recognitionDistance_ > horizontalDistance_ && false == isEngaging_)
+	if (recognitionDistance_ > horizontalDistance_ && false == isEngaging_ && false == isAirborne_)
 	{
 		currentArabianState_ = ArabianState::Running;
 		isEngaging_ = true;
 	}
-	
-
 
 	UpdateArabianState(_deltaTime);
 	MoveArabian(_deltaTime);
@@ -261,19 +261,38 @@ void TestArabian::Fall(float _deltaTime)
 	movementFor1Second_ += float4::Down * fallingSpeed_;
 }
 
-void TestArabian::GetDistance()
+void TestArabian::GetDistance(float _deltaTime)
 {
 	float playerWorldPosX = GetLevel<TestLevel>()->GetPlayerWorldPosition().x;
 	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
 	horizontalDistance_ = abs(thisWorldPosX - playerWorldPosX);
 
-	if (playerWorldPosX < thisWorldPosX)
+	static float currentTurningDelay;
+
+	if (playerWorldPosX < thisWorldPosX && 0 < this->GetTransform().GetWorldScale().x)
 	{
-		this->GetTransform().PixLocalNegativeX();
+		//아라비안 보는방향 오른쪽 && 플레이어는 아라비안 왼쪽 위치.
+		currentTurningDelay += _deltaTime;
+		if (turningDelay_ <= currentTurningDelay)
+		{
+			nextWorldDirection_ = -1;
+		}
+
+	}
+	else if(playerWorldPosX > thisWorldPosX && 0 > this->GetTransform().GetWorldScale().x)
+	{
+		//아라비안 보는방향 왼쪽 && 플레이어는 아라비안 오른쪽 위치.
+		currentTurningDelay += _deltaTime;
+		if (turningDelay_ <= currentTurningDelay)
+		{
+			nextWorldDirection_ = 1;
+		}
 	}
 	else
 	{
-		this->GetTransform().PixLocalPositiveX();
+		//아라비안 보는 방향에 플레이어 있으면 방향전환 리셋.
+		nextWorldDirection_ = 0;
+		currentTurningDelay = 0.f;
 	}
 }
 
@@ -522,6 +541,6 @@ void TestArabian::MeleeAttack()
 
 void TestArabian::JumpBackWard()
 {
-	movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 5.f;
+	movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 4.5f;
 }
 

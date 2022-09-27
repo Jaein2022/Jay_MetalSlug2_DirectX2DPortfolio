@@ -5,6 +5,7 @@
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineConstantBuffer.h"
 #include "GameEngineTexture.h"
+#include "GameEngineFolderTexture.h"
 #include "GameEngineSampler.h" 
 
 GameEngineShaderResourceHelper::GameEngineShaderResourceHelper()
@@ -74,7 +75,7 @@ bool GameEngineShaderResourceHelper::IsSampler(const std::string& _name)
 void GameEngineShaderResourceHelper::SetConstantBuffer_Link(
 	const std::string& _name,
 	const void* _data,
-	UINT _size
+	UINT _dataSize
 )
 {
 	if (false == IsConstantBuffer(_name))
@@ -83,7 +84,7 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_Link(
 		return;
 	}
 
-	if (16 > _size)
+	if (16 > _dataSize)
 	{
 		MsgBoxAssert("상수버퍼는 최소 16바이트 이상의 크기를 가져야 합니다.");
 		return;
@@ -91,24 +92,29 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_Link(
 
 	std::string uppercaseCBufferSetterName = GameEngineString::ToUpperReturn(_name);
 
-	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameStartIter =
+	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameLowerBound =
 		constantBufferSetterMap_.lower_bound(uppercaseCBufferSetterName);
 
-	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameEndIter =
+	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameUpperBound =
 		constantBufferSetterMap_.upper_bound(uppercaseCBufferSetterName);
 
-
-	for (; nameStartIter != nameEndIter; ++nameStartIter)
+	for (std::multimap<std::string, GameEngineConstantBufferSetter>::iterator iter = nameLowerBound;
+		iter != nameUpperBound; ++iter)
 	{
-		nameStartIter->second.setData_ = _data;
-		nameStartIter->second.size_ = _size;
+		//트랜스폼이 바뀌면 변경된 정보가 자동 갱신된다.
+
+		iter->second.settingDataToGPU_ = _data;
+		iter->second.byteWidth_ = _dataSize;
 		//상수버퍼의 주소값과 크기를 얕은 복사로 셰이더리소스헬퍼에게 넘겨 저장하게 한다.
 		//상수버퍼의 정보가 바뀌면 변경된 정보가 자동 갱신된다.
 	}
-
 }
 
-void GameEngineShaderResourceHelper::SetConstantBuffer_New(const std::string& _name, const void* _data, UINT _size)
+void GameEngineShaderResourceHelper::SetConstantBuffer_New(
+	const std::string& _name,
+	const void* _data,
+	UINT _dataSize
+)
 {
 	if (false == IsConstantBuffer(_name))
 	{
@@ -116,7 +122,7 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_New(const std::string& _n
 		return;
 	}
 
-	if (16 > _size)
+	if (16 > _dataSize)
 	{
 		MsgBoxAssert("상수버퍼는 최소 16바이트 이상의 크기를 가져야 합니다.");
 		return;
@@ -124,30 +130,31 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_New(const std::string& _n
 
 	std::string uppercaseCBufferSetterName = GameEngineString::ToUpperReturn(_name);
 
-	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameStartIter =
+	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameLowerBound =
 		constantBufferSetterMap_.lower_bound(uppercaseCBufferSetterName);
 
-	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameEndIter =
+	std::multimap<std::string, GameEngineConstantBufferSetter>::iterator nameUpperBound =
 		constantBufferSetterMap_.upper_bound(uppercaseCBufferSetterName);
 
-	for (; nameStartIter != nameEndIter; ++nameStartIter)
+	for (std::multimap<std::string, GameEngineConstantBufferSetter>::iterator iter = nameLowerBound;
+		iter != nameUpperBound; ++iter)
 	{
-		if (0 == nameStartIter->second.originalData_.size()
-			|| nameStartIter->second.originalData_.size() != _size)
+		if (0 == iter->second.originalData_.size()
+			|| iter->second.originalData_.size() != _dataSize)
 		{
-			nameStartIter->second.originalData_.resize(_size);
+			iter->second.originalData_.resize(_dataSize);
 		}
 
-		nameStartIter->second.setData_ = &nameStartIter->second.originalData_[0];
+		iter->second.settingDataToGPU_ = &iter->second.originalData_[0];
 
 		memcpy_s(
-			&nameStartIter->second.originalData_[0],
-			_size,
+			&iter->second.originalData_[0],
+			_dataSize,
 			_data,
-			_size
+			_dataSize
 		);	//깊은복사.
 
-		nameStartIter->second.size_ = _size;
+		iter->second.byteWidth_ = _dataSize;
 	}
 
 }
@@ -181,18 +188,40 @@ GameEngineTexture* GameEngineShaderResourceHelper::SetTexture(
 		return nullptr;
 	}
 
-	std::multimap<std::string, GameEngineTextureSetter>::iterator nameStartIter
+	std::multimap<std::string, GameEngineTextureSetter>::iterator nameLowerBound
 		= textureSetterMap_.lower_bound(uppercaseTextureSetterName);
 
-	std::multimap<std::string, GameEngineTextureSetter>::iterator nameEndIter
+	std::multimap<std::string, GameEngineTextureSetter>::iterator nameUpperBound
 		= textureSetterMap_.upper_bound(uppercaseTextureSetterName);
 
-	for (; nameStartIter != nameEndIter; ++nameStartIter)
+	for (std::multimap<std::string, GameEngineTextureSetter>::iterator iter = nameLowerBound;
+		iter != nameUpperBound; ++iter)
 	{
-		BindTexture(nameStartIter->second, _texture);
+		BindTexture(iter->second, _texture);
 	}
 
 	return _texture;
+}
+
+GameEngineTexture* GameEngineShaderResourceHelper::SetTexture(
+	const std::string& _textureSetterName, const std::string& _folderTextureName, int _index)
+{
+	if (false == IsTexture(_textureSetterName))
+	{
+		MsgBoxAssertString(_textureSetterName + ": 그런 이름의 텍스터 세터가 존재하지 않습니다.");
+		return nullptr;
+	}
+
+	std::string uppercaseFolderTextureName = GameEngineString::ToUpperReturn(_folderTextureName);
+
+	GameEngineFolderTexture* folderTexture = GameEngineFolderTexture::Find(uppercaseFolderTextureName);
+
+	if (nullptr == folderTexture)
+	{
+		MsgBoxAssertString(_folderTextureName + ": 그런 이름의 폴더 텍스처가 존재하지 않습니다.");
+	}
+
+	return SetTexture(_textureSetterName, folderTexture->GetTexture(_index));
 }
 
 GameEngineSampler* GameEngineShaderResourceHelper::SetSampler(const std::string& _samplerSetterName, GameEngineSampler* _sampler)
@@ -205,15 +234,16 @@ GameEngineSampler* GameEngineShaderResourceHelper::SetSampler(const std::string&
 		return nullptr;
 	}
 
-	std::multimap<std::string, GameEngineSamplerSetter>::iterator nameStartIter
+	std::multimap<std::string, GameEngineSamplerSetter>::iterator nameLowerBound
 		= samplerSetterMap_.lower_bound(uppercaseSamplerSetterName);
 
-	std::multimap<std::string, GameEngineSamplerSetter>::iterator nameEndIter
+	std::multimap<std::string, GameEngineSamplerSetter>::iterator nameUpperBound
 		= samplerSetterMap_.upper_bound(uppercaseSamplerSetterName);
 
-	for (; nameStartIter != nameEndIter; ++nameStartIter)
+	for (std::multimap<std::string, GameEngineSamplerSetter>::iterator iter = nameLowerBound;
+		iter != nameUpperBound; ++iter)
 	{
-		BindSampler(nameStartIter->second, _sampler);
+		BindSampler(iter->second, _sampler);
 	}
 
 	return _sampler;
@@ -335,7 +365,6 @@ void GameEngineShaderResourceHelper::BindConstantBuffer(GameEngineConstantBuffer
 void GameEngineShaderResourceHelper::BindTexture(GameEngineTextureSetter& _textureSetter, GameEngineTexture* _texture)
 {
 	_textureSetter.texture_ = _texture;
-
 
 	if (nullptr == _textureSetter.texture_)
 	{

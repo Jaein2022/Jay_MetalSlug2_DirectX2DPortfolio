@@ -24,7 +24,9 @@ protected:
 	ShaderResSetter()
 		: parentShader_(nullptr),
 		bindPoint_(-1),
-		parentShaderType_(ShaderType::Max)
+		parentShaderType_(ShaderType::Max),
+		settingFunction_(nullptr),
+		resetFunction_(nullptr)
 	{
 	}
 
@@ -47,10 +49,10 @@ public:
 	GameEngineConstantBuffer* constantBuffer_;
 	//
 
-	//각각의 상수버퍼들이 가진 데이터의 주소값.
-	const void* setData_;
+	//Map()함수를 통해 GPU로 보내질, 각각의 상수버퍼들이 가진 데이터의 주소값. 
+	const void* settingDataToGPU_;
 
-	UINT size_;	//상수버퍼 크기.
+	UINT byteWidth_;	//상수버퍼 전체 크기.
 
 	std::vector<char> originalData_;
 	// 아예 자기 메모리로 만든다??
@@ -63,8 +65,8 @@ public:
 
 	GameEngineConstantBufferSetter()
 		: constantBuffer_(nullptr),
-		setData_(nullptr),
-		size_(-1)
+		settingDataToGPU_(nullptr),
+		byteWidth_(-1)
 	{
 	}
 
@@ -160,7 +162,7 @@ protected:
 protected:
 	std::string entryPoint_;	//HLSL 코드의 진입점함수 이름.
 	std::string shaderVersion_;	//HLSL 코드의 사용 목적과 컴파일러의 버전.
-	ID3DBlob* binaryCodePtr_;	//HLSL 코드를 컴파일한 결과물(바이트코드).
+	ID3DBlob* binaryCode_;	//HLSL 코드를 컴파일한 결과물(바이트코드).
 	ShaderType shaderType_;		//이 셰이더의 종류.
 
 	std::map<std::string, GameEngineConstantBufferSetter> constantBufferMap_;

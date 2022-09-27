@@ -107,7 +107,7 @@ void EngineSubSetting()
 	transparentBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	//D3D11_COLOR_WRITE_ENABLE_ALL: RGBA 모든 색상에 블렌딩 적용.
 
-	transparentBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_MAX;
+	transparentBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	//??
 
 	transparentBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
@@ -118,8 +118,8 @@ void EngineSubSetting()
 
 	//알파쪽은 따로 처리.
 	transparentBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	transparentBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	transparentBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	transparentBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+	transparentBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
 
 	GameEngineBlend::Create("TransparentBlend", transparentBlendDesc);
 

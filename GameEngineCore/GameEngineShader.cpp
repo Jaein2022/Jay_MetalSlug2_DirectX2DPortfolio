@@ -10,17 +10,17 @@
 GameEngineShader::GameEngineShader()
 	: shaderVersion_(""),
 	entryPoint_(""),
-	binaryCodePtr_(nullptr),
+	binaryCode_(nullptr),
 	shaderType_(ShaderType::Max)
 {
 }
 
 GameEngineShader::~GameEngineShader()
 {
-	if (nullptr != binaryCodePtr_)
+	if (nullptr != binaryCode_)
 	{
-		binaryCodePtr_->Release();
-		binaryCodePtr_ = nullptr;
+		binaryCode_->Release();
+		binaryCode_ = nullptr;
 	}
 }
 
@@ -100,7 +100,7 @@ void GameEngineShader::CompileHLSLCode(const std::string& _path)
 #endif // _DEBUG
 	compileFlag |= D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;  //행 중심 매트릭스 사용(안하면 전치행렬 사용).
 
-	ID3DBlob* binaryError = { 0 };		//컴파일 실패시 에러코드를 받는 변수.
+	ID3DBlob* errorMessage = { 0 };		//컴파일 실패시 에러코드를 받는 변수.
 
 	//와이드스트링 경로.
 	std::wstring unicodePath = GameEngineString::AnsiToUnicodeReturn(_path);
@@ -116,21 +116,24 @@ void GameEngineShader::CompileHLSLCode(const std::string& _path)
 		shaderVersion_.c_str(), //사용할 HLSL 컴파일러의 목적과 버전. vs_5_0이라면 HLSL컴파일러 5.0으로 컴파일한 결과물을 버텍스 셰이더로 쓰겠다는 뜻.
 		compileFlag,			//컴파일 옵션 플래그 1.
 		0,						//컴파일 옵션 플래그 2. 셰이더 컴파일때는 무시됨.
-		&binaryCodePtr_,		//컴파일된 바이너리 코드를 받을 ID3DBlob 인터페이스 주소값.
-		&binaryError			//에러메세지를 받을 ID3DBlob 인터페이스 주소값.
+		&binaryCode_,			//컴파일된 바이너리 코드를 받을 ID3DBlob 인터페이스 주소값.
+		&errorMessage			//에러메세지를 받을 ID3DBlob 인터페이스 주소값.
 	))
 	{
-		std::string errorText = reinterpret_cast<char*>(binaryError->GetBufferPointer());
+		std::string errorText = reinterpret_cast<char*>(errorMessage->GetBufferPointer());
 		MsgBoxAssertString(entryPoint_ + ": HLSL코드 컴파일 실패.");
 		MsgBoxAssertString(errorText);
-		binaryError->Release();
+		errorMessage->Release();
 		return;
 	}
+
+	//errorMessage->Release();
+	//컴파일에 문제가 없었다면 errorMessage는 널포인터인상태 그대로 내려오므로 릴리즈할 것이 없다.
 }
 
 void GameEngineShader::ShaderResCheck()
 {
-	if (nullptr == binaryCodePtr_)
+	if (nullptr == binaryCode_)
 	{
 		MsgBoxAssert("바이너리코드가 없습니다.");
 		return;
@@ -143,8 +146,8 @@ void GameEngineShader::ShaderResCheck()
 
 	if (S_OK != D3DReflect(				//컴파일된 HLSL코드를 바탕으로 내가 셰이더에서 사용한 변수, 함수, 인자들에 
 										// 대한 정보를 추출해서 셰이더 리플렉션이라는 인터페이스를 통해 반환하는 함수.
-		binaryCodePtr_->GetBufferPointer(),		//컴파일된 HLSL 코드의 포인터.
-		binaryCodePtr_->GetBufferSize(),		//컴파일된 HLSL 코드의 크기.
+		binaryCode_->GetBufferPointer(),		//컴파일된 HLSL 코드의 포인터.
+		binaryCode_->GetBufferSize(),			//컴파일된 HLSL 코드의 크기.
 		IID_ID3D11ShaderReflection,				//반환할때 참조할 ID3D11ShaderReflection의 인터페이스 식별자(GUID).
 		reinterpret_cast<void**>(&compileInfo)	//반환받을 ID3D11ShaderReflection의 포인터.
 	))
@@ -322,7 +325,7 @@ void GameEngineShader::ShaderResCheck()
 
 void GameEngineConstantBufferSetter::Setting() const
 {
-	constantBuffer_->ChangeData(setData_, size_);
+	constantBuffer_->ChangeData(settingDataToGPU_, byteWidth_);
 
 	settingFunction_();
 }

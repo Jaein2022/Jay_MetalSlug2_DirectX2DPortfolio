@@ -2098,10 +2098,14 @@ void TestPlayer::CreatePlayerStates()
 
 
 
-	constexpr auto playerStateEntries = magic_enum::enum_entries<PlayerState>();
-	const size_t playerStateSize = playerStateEntries.size();
 
-	for (size_t i = 0; i < playerStateSize; i++)
+	std::vector<std::pair<PlayerState, std::string_view>> playerStateEntries(
+		magic_enum::enum_entries<PlayerState>().begin(), magic_enum::enum_entries<PlayerState>().end()
+	);
+	size_t playerStateCount = playerStateEntries.size();
+	allPlayerStates_.reserve(playerStateCount);
+
+	for (size_t i = 0; i < playerStateCount; i++)
 	{
 		if (allPlayerStates_.end() != allPlayerStates_.find(static_cast<int>(playerStateEntries[i].first)))
 		{
@@ -2111,11 +2115,11 @@ void TestPlayer::CreatePlayerStates()
 		
 		allPlayerStates_.insert(
 			std::make_pair(
-				magic_enum::enum_integer<PlayerState>(playerStateEntries[i].first),
+				static_cast<int>(playerStateEntries[i].first),
 				std::make_pair(playerStateEntries[i].first, playerStateEntries[i].second.data())
 			)
 		);
 	}
 
-	playerStateManager_.ChangeState(allPlayerStates_.find(1111)->second.second);
+	playerStateManager_.ChangeState(allPlayerStates_[1111].second);
 }

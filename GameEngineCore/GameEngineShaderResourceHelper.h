@@ -41,13 +41,14 @@ public:
 	//이 셰이더 리소스 세터가 주어진 이름의 샘플러를 가지고 있는가를 외부에서 확인하는 함수.
 	bool IsSampler(const std::string& _name);
 
-	void SetConstantBuffer_Link(const std::string& _name, const void* _data, UINT _size);	//참조로 연결.
+	void SetConstantBuffer_Link(const std::string& _name, const void* _data, UINT _dataSize);	//참조로 연결.
 
-	void SetConstantBuffer_New(const std::string& _name, const void* _data, UINT _size);	//깊은 복사.
+	void SetConstantBuffer_New(const std::string& _name, const void* _data, UINT _dataSize);	//깊은 복사.
 	//외부 데이터를 복사받아야 하는 등의 SetConstantBufferLink()를 사용할 수 없는 예외적인 상황에만 사용할 것.
 
 	GameEngineTexture* SetTexture(const std::string& _textureSetterName, const std::string& _textureName);
 	GameEngineTexture* SetTexture(const std::string& _textureSetterName, GameEngineTexture* _texture);
+	GameEngineTexture* SetTexture(const std::string& _textureSetterName, const std::string& _folderTextureName, int _index);
 
 	GameEngineSampler* SetSampler(const std::string& _samplerSetterName, GameEngineSampler* _sampler);
 	GameEngineSampler* SetSampler(const std::string& _samplerSetterName, const std::string& _samplerName);

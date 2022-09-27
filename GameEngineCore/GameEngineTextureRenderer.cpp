@@ -125,11 +125,23 @@ GameEngineTextureRenderer::~GameEngineTextureRenderer()
 
 void GameEngineTextureRenderer::SetTexture(const std::string& _textureName)
 {
+	if (nullptr == GameEngineTexture::Find(_textureName))
+	{
+		MsgBoxAssertString(_textureName + ": 그런 이름의 텍스처가 없습니다.");
+		return;
+	}
+
 	this->currentTexture_ = this->shaderResourceHelper_.SetTexture("Tex", _textureName);
 }
 
 void GameEngineTextureRenderer::SetTexture(GameEngineTexture* _texture)
 {
+	if (nullptr == _texture)
+	{
+		MsgBoxAssert("텍스처가 없습니다.");
+		return;
+	}
+
 	currentTexture_ = _texture;
 	this->shaderResourceHelper_.SetTexture("Tex", _texture);
 }
@@ -286,7 +298,8 @@ void GameEngineTextureRenderer::CreateFrameAnimation_FolderTexture(const std::st
 	}
 }
 
-void GameEngineTextureRenderer::ChangeFrameAnimation(const std::string& _animationName, bool _isForcedChange /*= false*/)
+void GameEngineTextureRenderer::ChangeFrameAnimation(
+	const std::string& _animationName, bool _isForcedChange /*= false*/)
 {
 	std::string uppercaseAnimationName = GameEngineString::ToUpperReturn(_animationName);
 

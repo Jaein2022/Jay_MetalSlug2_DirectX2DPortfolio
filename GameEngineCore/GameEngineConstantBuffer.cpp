@@ -73,7 +73,7 @@ GameEngineConstantBuffer* GameEngineConstantBuffer::CreateAndFind(
 	return newBuffer;
 }
 
-void GameEngineConstantBuffer::ChangeData(const void* _data, size_t _size) const
+void GameEngineConstantBuffer::ChangeData(const void* _data, size_t _dataSize) const
 {
 	if (nullptr == _data)
 	{
@@ -81,23 +81,23 @@ void GameEngineConstantBuffer::ChangeData(const void* _data, size_t _size) const
 		return;
 	}
 
-	if (this->constantBufferDesc_.ByteWidth != _size)
+	if (this->constantBufferDesc_.ByteWidth != _dataSize)
 	{
 		MsgBoxAssertString(this->GetNameCopy() + ": 상수버퍼의 크기가 서로 맞지 않습니다.");
 		return;
 	}
 
-	static D3D11_MAPPED_SUBRESOURCE settingResource = { 0 };
+	static D3D11_MAPPED_SUBRESOURCE destMemoryPtrInGPU = { 0 };
 	//이게 멤버변수면 함수 선언 뒤 const를 쓸 수 없다. 
 
 	memset(
-		&settingResource,
+		&destMemoryPtrInGPU,
 		0,
-		sizeof(settingResource)
+		sizeof(destMemoryPtrInGPU)
 	);
-	//settingResource_의 pData가 가리키는 곳은 어디인가?? 만약 그래픽카드 내 메모리영역의 일부라면 어떻게 Map()
+	//destMemoryInGPU의 pData가 가리키는 곳은 어디인가?? 만약 그래픽카드 내 메모리영역의 일부라면 어떻게 Map()
 	// 이전에 memset()을 할 수 있는가?? 
-	// ->settingResource_의 pData는 램의 어딘가에 있고 memset()으로는 널포인터 위치를 가리키게 할 뿐이다. 
+	// ->destMemoryInGPU의 pData는 램의 어딘가에 있고 memset()으로는 널포인터 위치를 가리키게 할 뿐이다. 
 	// map()이후에 그래픽카드 메모리영역의 어딘가를 가리키게 된다.
 
 
@@ -110,22 +110,22 @@ void GameEngineConstantBuffer::ChangeData(const void* _data, size_t _size) const
 		//D3D11_MAP_WRITE_DISCARD: 해당 메모리에 있던 이전 내용은 무시하고 새로운 데이터를 덮어씌운다.
 		//bufferData_.Usage가 D3D11_USAGE_DYNAMIC으로 설정되어있어야 문제가 생기지 않는다.
 		0,					//GPU가 바쁠때 CPU의 행동을 지정하는 플래그. 0: 지정하지 않음.
-		&settingResource	//그래픽카드 내 메모리의 특정 영역을 가리키게 될 포인터.
+		&destMemoryPtrInGPU	//그래픽카드 내 메모리의 특정 영역을 가리키게 될 포인터.
 	);
 
-	//ID3D11Buffer*가 가리키는 곳과 settingResource_.pData가 가리키는 곳은 같은 그래픽카드 내 메모리라도 다른 영역인가?
+	//ID3D11Buffer*가 가리키는 곳과 destMemoryPtrInGPU.pData가 가리키는 곳은 같은 그래픽카드 내 메모리라도 다른 영역인가?
 	// 아니면 단순히 인터페이스를 통한 간접조작과 직접조작의 차이인가??
-	//->ID3D11Buffer*가 가리키는 곳은 램 내의 특정 영역이고, settingResource_.pData가 가리키는 곳은 그래픽카드 내 메모리의 어딘가이다.
+	//->ID3D11Buffer*가 가리키는 곳은 램 내의 특정 영역이고, destMemoryPtrInGPU.pData가 가리키는 곳은 그래픽카드 내 메모리의 어딘가이다.
 	// 둘이 가리키는 영역은 완전히 다르다.
 
-	if (nullptr == settingResource.pData)
+	if (nullptr == destMemoryPtrInGPU.pData)
 	{
 		MsgBoxAssert("그래픽카드 버퍼에 접근하지 못했습니다.");
 		return;
 	}
 
 	memcpy_s(
-		settingResource.pData,	//복사한 데이터의 목적지가 될 그래픽카드내 메모리의 주소.
+		destMemoryPtrInGPU.pData,	//복사한 데이터의 목적지가 될 그래픽카드내 메모리의 주소.
 		constantBufferDesc_.ByteWidth,	//목적지에 할당해야하는 메모리 크기.
 		_data,					//데이터 복사 대상이 될 정보를 가진 메모리의 주소.
 		constantBufferDesc_.ByteWidth	//복사할 데이터 크기.

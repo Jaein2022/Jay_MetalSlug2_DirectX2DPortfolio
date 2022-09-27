@@ -55,14 +55,15 @@ GameEngineVertexShader* GameEngineVertexShader::Load(
     newRes->SetEntrtyPoint(_entryPoint);
     newRes->CompileHLSLCode(_path);
     newRes->CreateVertexShader();
+    newRes->ShaderResCheck();
     return newRes;
 }
 
 void GameEngineVertexShader::CreateVertexShader()
 {
     if (S_OK != GameEngineDevice::GetDevice()->CreateVertexShader(  //버텍스셰이더 생성 함수.
-        binaryCodePtr_->GetBufferPointer(), //컴파일된 바이너리 코드.
-        binaryCodePtr_->GetBufferSize(),    //컴파일된 바이너리코드 크기.
+        binaryCode_->GetBufferPointer(), //컴파일된 바이너리 코드.
+        binaryCode_->GetBufferSize(),    //컴파일된 바이너리코드 크기.
         NULL,                               //??
         &vertexShader_                      //버텍스셰이더 포인터.
     ))
@@ -70,6 +71,4 @@ void GameEngineVertexShader::CreateVertexShader()
         MsgBoxAssert("버텍스셰이더 생성 실패.");
         return;
     }
-
-    ShaderResCheck();
 }

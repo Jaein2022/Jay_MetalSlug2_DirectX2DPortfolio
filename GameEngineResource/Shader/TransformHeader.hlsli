@@ -48,8 +48,8 @@ struct TransformData
     float4x4 localRotationMatrix_; //자전행렬(각도).
     float4x4 localPositionMatrix_; //이동행렬(위치).
 
-    //float4x4 localWorldMatrix_;
-	////오브젝트의 크기, 자전, 이동행렬이 반영된, 부모 오브젝트의 로컬월드상에서의 월드행렬. 행렬의 중간정산.
+    float4x4 localWorldMatrix_;
+	//오브젝트의 크기, 자전, 이동행렬이 반영된, 부모 오브젝트의 로컬월드상에서의 월드행렬. 행렬의 중간정산.
 
 
     float4 worldScaleVector_; //월드좌표상 크기. 이동하지 않으므로 w는 0으로 설정한다.
@@ -57,15 +57,15 @@ struct TransformData
     float4 worldPositionVector_; //월드좌표상 위치. 이동량을 반영해야 하므로 w는 1으로 설정한다.
 
 
-    //float4x4 worldWorldMatrix_;
-	////오브젝트의 로컬 크기, 로컬 자전, 로컬 이동행렬에 부모의 월드행렬까지 반영된 최종 월드 행렬.
-	////여기에 카메라 컴포넌트의 뷰행렬과 투영행렬까지 거치고 나야 비로소 모니터에 띄울 수 있게 된다.
+    float4x4 worldWorldMatrix_;
+	//오브젝트의 로컬 크기, 로컬 자전, 로컬 이동행렬에 부모의 월드행렬까지 반영된 최종 월드 행렬.
+	//여기에 카메라 컴포넌트의 뷰행렬과 투영행렬까지 거치고 나야 비로소 모니터에 띄울 수 있게 된다.
 
-    //float4x4 viewMatrix_; //뷰행렬.
-    //float4x4 projectionMatrix_; //투영행렬.
+    float4x4 viewMatrix_; //뷰행렬.
+    float4x4 projectionMatrix_; //투영행렬.
 
     float4x4 worldViewMatrix_; //월드행렬에 뷰행렬이 적용된 행렬.
     float4x4 worldViewProjectionMatrix_; //월드행렬에 뷰행렬 + 투영행렬까지 적용된 행렬.
 };
 
-StructuredBuffer<TransformData> allTransformDatas : register(t12);
+StructuredBuffer<TransformData> allTransformDataBuffer : register(t12);

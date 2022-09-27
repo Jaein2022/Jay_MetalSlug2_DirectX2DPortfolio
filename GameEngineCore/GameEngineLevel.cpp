@@ -29,6 +29,13 @@ GameEngineLevel::GameEngineLevel()
 
 GameEngineLevel::~GameEngineLevel()
 {
+	for (GameEngineUpdateObject* object : deleteObjects_)
+	{
+		object->ReleaseHierarchy();
+		//이전 루프에서 사망판정되서 objectsInDeletion_에 저장된 모든 오브젝트들과 그 자식들을 전부 삭제한다.
+	}
+	deleteObjects_.clear();
+
 	for (const std::pair<int, std::list<GameEngineActor*>>& actorGroup : allActors_)
 	{
 		for (GameEngineActor* actor : actorGroup.second)

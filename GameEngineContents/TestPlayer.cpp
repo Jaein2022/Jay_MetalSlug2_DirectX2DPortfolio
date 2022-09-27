@@ -797,10 +797,10 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 		return;
 	}
 
-	if (allPlayerStates_.find(intNewState)->second.first != currentPlayerState_)
+	if (allPlayerStates_[intNewState].first != currentPlayerState_)
 	{
-		currentPlayerState_ = allPlayerStates_.find(intNewState)->second.first;
-		playerStateManager_.ChangeState(allPlayerStates_.find(intNewState)->second.second);
+		currentPlayerState_ = allPlayerStates_[intNewState].first;
+		playerStateManager_.ChangeState(allPlayerStates_[intNewState].second);
 	}
 
 	playerStateManager_.Update(_deltaTime);

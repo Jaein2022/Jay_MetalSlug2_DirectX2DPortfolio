@@ -61,8 +61,13 @@ GameEngineRenderingPipeLine* GameEngineDefaultRenderer::GetPipeLine()
 		return renderingPipeLine_;
 	}
 
-	renderingPipeLine_ = GetClonePipeLine(renderingPipeLine_);
+	renderingPipeLine_ = ClonePipeLine(renderingPipeLine_);
 	return renderingPipeLine_;
+}
+
+GameEngineRenderingPipeLine* GameEngineDefaultRenderer::GetClonePipeLine()
+{
+	return this->renderingPipeLine_;
 }
 
 void GameEngineDefaultRenderer::Start()

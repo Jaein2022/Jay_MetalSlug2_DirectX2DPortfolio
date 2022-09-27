@@ -38,13 +38,19 @@ void TestArabian::CreateArabianAnimations()
 
 			shuffleDirection_ = -shuffleDirection_;
 
+			if (0 != nextWorldDirection_)
+			{
+				currentArabianState_ = ArabianState::Turning;
+				return;
+			}
+
 			if (chargeDistance_ > horizontalDistance_)
 			{
 				SelectNextState(0, 3, 1, ArabianState::JumpingBackward);
 			}
 			else if (engagementDistance_ > horizontalDistance_)
 			{
-				SelectNextState(0, 4, 2, ArabianState::JumpingBackward, ArabianState::Running);
+				SelectNextState(0, 4, 1, ArabianState::JumpingBackward);
 			}
 			else if (engagementDistance_ < horizontalDistance_ && true == isEngaging_)
 			{
@@ -82,8 +88,14 @@ void TestArabian::CreateArabianAnimations()
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Turning",
-		FrameAnimation_Desc("Rebel_Arabian.png", 80, 83, 0.05f, false)
+		FrameAnimation_Desc("Rebel_Arabian.png", 80, 83, 0.1f, false)
 	);
+	arabianRenderer_->AnimationBindEnd("Turning",
+		[this](const FrameAnimation_Desc& _desc)->void {
+			currentArabianState_ = ArabianState::Shuffling;
+		}
+	);
+
 	arabianRenderer_->CreateFrameAnimation_CutTexture("ThrowingSword&Reloading",
 		FrameAnimation_Desc("Rebel_Arabian.png", 90, 107, 0.1f, true)
 	);
@@ -164,7 +176,6 @@ void TestArabian::CreateArabianStates()
 		},
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Idling");
-			//arabianRenderer_->ChangeFrameAnimation("Turning");
 		}
 		);
 
@@ -210,15 +221,21 @@ void TestArabian::CreateArabianStates()
 				return;
 			}
 
+			if (0 != nextWorldDirection_)
+			{
+				currentArabianState_ = ArabianState::Turning;
+				return;
+			}
+
 			if (engagementDistance_ > horizontalDistance_ && chargeDistance_ < horizontalDistance_)
 			{
-				SelectNextState(0, 4, 0);
+				SelectNextState(0, 4, 1, ArabianState::Running);
 			}
 		},
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Running");
 		}
-		);
+	);
 
 	arabianStateManager_.CreateState(
 		"Jumping",
@@ -259,6 +276,23 @@ void TestArabian::CreateArabianStates()
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Turning");
+		},
+		[this](const StateInfo& _info)->void {
+			if (-1 == nextWorldDirection_)
+			{
+				this->GetTransform().PixLocalNegativeX();
+				nextWorldDirection_ = 0;
+			}
+			else if (1 == nextWorldDirection_)
+			{
+				this->GetTransform().PixLocalPositiveX();
+				nextWorldDirection_ = 0;
+			}
+			else
+			{
+				MsgBoxAssert("이런 방향은 있을 수 없습니다.");
+				return;
+			}
 		}
 	);
 
@@ -335,22 +369,26 @@ void TestArabian::CreateArabianStates()
 		}
 	);
 
-	constexpr auto arabianStateEntries = magic_enum::enum_entries<ArabianState>();
-	constexpr size_t arabianStateSize = arabianStateEntries.size();
+	std::vector<std::pair<ArabianState, std::string_view>> arabianStateEntries(
+		magic_enum::enum_entries<ArabianState>().begin(), magic_enum::enum_entries<ArabianState>().end()
+	);
 
-	for (size_t i = 0; i < arabianStateSize; i++)
+	size_t arabianStateCount = arabianStateEntries.size();
+	allArabianStates_.reserve(arabianStateCount);
+
+	for (size_t i = 0; i < arabianStateCount; i++)
 	{
-		std::pair<std::map<const ArabianState, const char*>::iterator, bool> insertResult = allArabianStates_.insert(
+		if (allArabianStates_.end() != allArabianStates_.find(arabianStateEntries[i].first))
+		{
+			MsgBoxAssertString(std::string(arabianStateEntries[i].second) + std::string(": 이미 존재하는 스테이트입니다."));
+			return;
+		}
+
+		allArabianStates_.insert(
 			std::make_pair(
 				arabianStateEntries[i].first, arabianStateEntries[i].second.data()
 			)
 		);
-
-		if (false == insertResult.second)
-		{
-			MsgBoxAssertString(std::string(insertResult.first->second) + std::string(": 이미 존재하는 스테이트입니다."));
-			return;
-		}
 	}
 
 	arabianStateManager_.ChangeState(allArabianStates_[currentArabianState_]);

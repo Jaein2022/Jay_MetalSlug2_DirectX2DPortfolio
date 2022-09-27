@@ -61,8 +61,8 @@ GameEnginePixelShader* GameEnginePixelShader::Load(
 void GameEnginePixelShader::CreatePixelShader()
 {
     if (S_OK != GameEngineDevice::GetDevice()->CreatePixelShader(   //픽셀셰이더 생성 함수.
-        binaryCodePtr_->GetBufferPointer(), //컴파일된 바이너리코드.
-        binaryCodePtr_->GetBufferSize(),    //컴파일된 바이너리코드 크기.
+        binaryCode_->GetBufferPointer(), //컴파일된 바이너리코드.
+        binaryCode_->GetBufferSize(),    //컴파일된 바이너리코드 크기.
         NULL,                               //??
         &pixelShader_                       //픽셀셰이더 포인터.
     ))

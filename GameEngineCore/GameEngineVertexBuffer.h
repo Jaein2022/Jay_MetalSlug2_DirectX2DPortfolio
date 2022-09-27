@@ -59,6 +59,16 @@ public:
 		return inputLayoutInfo_;
 	}
 
+	inline ID3D11Buffer* GetBuffer()
+	{
+		return vertexBuffer_;
+	}
+
+	inline unsigned int GetVertexSize()
+	{
+		return vertexSize_;
+	}
+
 private:
 	void CreateVertexBuffer(
 		const void* _initializationData,

@@ -3,6 +3,7 @@
 #include "GameEngineActor.h"
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineCamera.h"
+#include "GameEngineShaderResourceHelper.h"
 
 GameEngineRenderer::GameEngineRenderer()
 	: camera_(nullptr),
@@ -21,7 +22,7 @@ void GameEngineRenderer::ChangeCamera(CameraOrder _order)
 	this->GetActor()->GetLevel()->PushRenderer(this, _order);
 }
 
-GameEngineRenderingPipeLine* GameEngineRenderer::GetClonePipeLine(GameEngineRenderingPipeLine* _renderingPipeLine)
+GameEngineRenderingPipeLine* GameEngineRenderer::ClonePipeLine(GameEngineRenderingPipeLine* _renderingPipeLine)
 {
 	GameEngineRenderingPipeLine* clone = GameEngineRenderingPipeLine::Create();
 	clone->Copy(_renderingPipeLine);
@@ -31,6 +32,26 @@ GameEngineRenderingPipeLine* GameEngineRenderer::GetClonePipeLine(GameEngineRend
 void GameEngineRenderer::SetRenderingOrder(int _renderingOrder)
 {
 	camera_->ChangeRenderingOrder(this, _renderingOrder);
+}
+
+void GameEngineRenderer::EngineShaderResourceSetting(GameEngineShaderResourceHelper* _shaderResourceHelper)
+{
+	if (true == _shaderResourceHelper->IsConstantBuffer("TRANSFORMDATA"))
+	{
+		_shaderResourceHelper->SetConstantBuffer_Link(
+			"TRANSFORMDATA",
+			&GetTransformData(),
+			sizeof(GetTransformData())
+		);
+	}
+	if (true == _shaderResourceHelper->IsConstantBuffer("RENDEROPTION"))
+	{
+		_shaderResourceHelper->SetConstantBuffer_Link(
+			"RENDEROPTION",
+			&renderOption_,
+			sizeof(renderOption_)
+		);
+	}
 }
 
 void GameEngineRenderer::Start()

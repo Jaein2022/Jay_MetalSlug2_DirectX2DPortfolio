@@ -11,7 +11,11 @@ class GameEngineVertexShader : public GameEngineRes<GameEngineVertexShader>, pub
 	//GameEngineVertexShader 클래스의 프라이빗 소멸자를 GameEngineRes클래스에서 호출하기 위한 방법.
 
 	friend GameEngineShader;
+	//
+
+
 	friend class GameEngineInputLayout;
+	//
 
 
 private:

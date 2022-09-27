@@ -62,12 +62,20 @@ float4 TextureAtlas_PS(Output _input) : SV_Target0 //SV_Target[n]: n¹ø ·»´õÅ¸°Ù¿
     {
         clip(-1);
     }
+    if (_input.texcoord_.y < slice_.y)
+    {
+        clip(-1);
+    }
     
     float4 resultColor = (Tex.Sample(Smp, _input.texcoord_.xy) * mulColor_) + plusColor_;
     
-    if (resultColor.a <= 0.f)
+    if (0.f >= resultColor.a)
     {
         clip(-1);
+    }
+    else if (1.f < resultColor.a)
+    {
+        resultColor.a = 1.f;
     }
     
     return resultColor;
