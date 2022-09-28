@@ -1,4 +1,5 @@
 #pragma once
+#include "GlobalHeader.h"
 
 
 enum class ArabianState
@@ -17,23 +18,23 @@ enum class ArabianState
 	Dead
 };
 
-
-class TestIndicator;
-class TestPixelIndicator;
-class TestArabian: public GameEngineActor
+class Indicator;
+class PixelIndicator;
+class Soldier;
+class Arabian: public GameEngineActor
 {
 	//이 클래스의 존재 이유: 적과의 교전, 적/플레이어 사망 기능 구현.
 public:
-	TestArabian();
-	~TestArabian();
+	Arabian();
+	~Arabian();
 
 protected:
-	TestArabian(const TestArabian& _other) = delete;
-	TestArabian(TestArabian&& _other) noexcept = delete;
+	Arabian(const Arabian& _other) = delete;
+	Arabian(Arabian&& _other) noexcept = delete;
 
 private:
-	TestArabian& operator=(const TestArabian& _other) = delete;
-	TestArabian& operator=(const TestArabian&& _other) = delete;
+	Arabian& operator=(const Arabian& _other) = delete;
+	Arabian& operator=(const Arabian&& _other) = delete;
 
 
 public:	
@@ -72,14 +73,31 @@ private:
 	// 음수값이 커질수록 0번인 ArabianState::Shuffling이 나올 확률이 올라가서 그만큼 공격 빈도와 난이도가 줄어든다.
 	void SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...);
 
-	void Shuffle();	//셔플중 이동.
-	void Run();		//달리기.
-	void SetSlopeCheckerDirection(char _localDirection);	//경사체커들 로컬방향 전환.
+	//셔플중 이동.
+	void Shuffle();	
+
+	//달리기.
+	void Run();		
+
+	//점프.
+	void Jump(const FrameAnimation_Desc& _desc);
+
+	//경사체커들 로컬방향 전환.
+	void SetSlopeCheckerDirection(char _localDirection);	
+
+	//경사값 구하기.
 	float GetSlope(char _localDirection);
+
+	//검 투척.
 	void ThrowSword();		
-	void MoveInJumpDeath(const FrameAnimation_Desc& _desc);	//점프데스 애니메이션 중 움직임.
+
+	//점프데스 애니메이션 중 움직임.
+	void MoveInJumpDeath(const FrameAnimation_Desc& _desc);	
+
 	void MeleeAttack();
-	void JumpBackWard();	//백점프 애니메이션 중 움직임.
+
+	//백점프 애니메이션 중 움직임.
+	void JumpBackWard();	
 
 private:
 
@@ -99,18 +117,21 @@ private:
 	GameEngineCollision* arabianCloseCombatCollisionBody_;
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
-	TestIndicator* renderPivotPointer_;		//액터의 렌더피봇 표시.
+	Indicator* renderPivotPointer_;		//액터의 렌더피봇 표시.
 
 
-	TestPixelIndicator* upperLandingChecker_;
-	TestPixelIndicator* arabianWorldPosPointer_;	//액터의 월드포지션 표시.
-	TestPixelIndicator* lowerLandingChecker_;
+	PixelIndicator* upperLandingChecker_;
+	PixelIndicator* arabianWorldPosPointer_;	//액터의 월드포지션 표시.
+	PixelIndicator* lowerLandingChecker_;
 
 	const int slopeCheckerLocalPosX_;		//경사체커들의 로컬포스 X값. 0 넣지 말 것!
-	TestPixelIndicator* slopeChecker_;
-	TestPixelIndicator* ascendingSlopeChecker_;
-	TestPixelIndicator* flatSlopeChecker_;
-	TestPixelIndicator* descendingSlopeChecker_;
+	PixelIndicator* slopeChecker_;
+	PixelIndicator* ascendingSlopeChecker_;
+	PixelIndicator* flatSlopeChecker_;
+	PixelIndicator* descendingSlopeChecker_;
+
+	PixelColor currentSteppingColor_;
+
 
 	GameEngineStateManager arabianStateManager_;
 
@@ -131,11 +152,13 @@ private:
 
 	float4 movementFor1Second_;	//1초 동안의 이동량. 델타타임과 플레이 속도는 MoveArabian()함수에서 한번만 계산한다.
 
+	Soldier* enemySoldier_;
+
 	const float turningDelay_;
 	char nextWorldDirection_;	//아라비안이 돌아봐야 하는 방향.
 	//-1: 액터 월드방향의 역방향으로 방향전환. 0: 방향전환 필요없음. 1: 액터 월드방향의 정방향으로 방향전환.
 
-	TestIndicator* releasePoint_;	//검 투척 지점. 플레이어의 머즐과 같은 역할.
+	Indicator* releasePoint_;	//검 투척 지점. 플레이어의 머즐과 같은 역할.
 	float releaseAngle_;			//검 투척 각도.
 	float releaseVelocity_;			//검 투척 속도.
 

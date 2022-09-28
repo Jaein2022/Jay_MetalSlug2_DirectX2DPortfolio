@@ -30,6 +30,7 @@ void FrameAnimation::Update(float _deltaTime)
 
 			bOnceStart_ = true;
 			bOnceEnd_ = false;
+			return;
 		}
 
 		if (info_.interval_ <= info_.frameTime_)

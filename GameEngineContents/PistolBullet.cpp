@@ -1,10 +1,10 @@
 #include "PreCompile.h"
-#include "TestPistolBullet.h"
-#include "TestPixelIndicator.h"
+#include "PistolBullet.h"
+#include "PixelIndicator.h"
 #include "TestLevel.h"
-#include "TestArabian.h"
+#include "Arabian.h"
 
-TestPistolBullet::TestPistolBullet()
+PistolBullet::PistolBullet()
 	: bulletSpeed_(12.f),
 	pistolBulletCollisionBody_(nullptr),
 	pistolBulletRenderer_(nullptr),
@@ -15,11 +15,11 @@ TestPistolBullet::TestPistolBullet()
 {
 }
 
-TestPistolBullet::~TestPistolBullet()
+PistolBullet::~PistolBullet()
 {
 }
 
-void TestPistolBullet::Start()
+void PistolBullet::Start()
 {
 	this->GetTransform().SetLocalScale(1, 1, 1);
 	this->GetTransform().SetWorldScale(1, 1, 1);
@@ -82,7 +82,7 @@ void TestPistolBullet::Start()
 	glancingHitSparkRenderer_->Off();
 
 
-	groundChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	groundChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"GroundChecker",
 		this,
 		float4::Black,
@@ -94,9 +94,9 @@ void TestPistolBullet::Start()
 
 }
 
-void TestPistolBullet::Update(float _deltaTime)
+void PistolBullet::Update(float _deltaTime)
 {
-	this->GetTransform().SetWorldMove(firingDirection_ * bulletSpeed_ * _deltaTime * TestLevel::playSpeed_);
+	this->GetTransform().SetWorldMove(firingDirection_ * bulletSpeed_ * _deltaTime * playSpeed_);
 
 	if (true == CheckGroundHit() && false == glancingHitSparkRenderer_->IsUpdate())
 	{
@@ -114,20 +114,20 @@ void TestPistolBullet::Update(float _deltaTime)
 		CollisionType::CT_AABB,
 		CollisionBodyOrder::Rebel,
 		CollisionType::CT_AABB,
-		std::bind(&TestPistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
+		std::bind(&PistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
 	);
 
 
 }
 
-void TestPistolBullet::End()
+void PistolBullet::End()
 {
 
 }
 
-bool TestPistolBullet::CheckGroundHit()
+bool PistolBullet::CheckGroundHit()
 {
-	if (TestLevel::groundColor_.color_ <=  groundChecker_->GetColorValue_UINT())
+	if (groundColor_.color_ <=  groundChecker_->GetColorValue_UINT())
 	{
 		return true;
 	}
@@ -135,9 +135,9 @@ bool TestPistolBullet::CheckGroundHit()
 	return false;
 }
 
-CollisionReturn TestPistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)
+CollisionReturn PistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)
 {
-	_rebelCollision->GetActor<TestArabian>()->TakeDamage(damage_);
+	_rebelCollision->GetActor<Arabian>()->TakeDamage(damage_);
 
 	pistolBulletRenderer_->Off();
 	pistolBulletCollisionBody_->Off();

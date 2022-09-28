@@ -1,17 +1,17 @@
 #include "PreCompile.h"
-#include "TestPixelIndicator.h"
+#include "PixelIndicator.h"
 
-GameEngineTexture* TestPixelIndicator::pcTexture_ = nullptr;
+GameEngineTexture* PixelIndicator::pcTexture_ = nullptr;
 
-TestPixelIndicator::TestPixelIndicator()
+PixelIndicator::PixelIndicator()
 {
 }
 
-TestPixelIndicator::~TestPixelIndicator()
+PixelIndicator::~PixelIndicator()
 {
 }
 
-UINT TestPixelIndicator::GetColorValue_UINT()
+UINT PixelIndicator::GetColorValue_UINT()
 {
 	float4 thisPos(this->GetTransform().GetWorldPosition().x, this->GetTransform().GetWorldPosition().y);
 

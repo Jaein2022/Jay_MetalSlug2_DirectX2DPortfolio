@@ -1,21 +1,22 @@
 #pragma once
+#include "GlobalHeader.h"
 
-class TestIndicator;
-class TestPixelIndicator;
-class TestSword : public GameEngineActor
+class Indicator;
+class PixelIndicator;
+class Sword : public GameEngineActor
 {
 	//이 클래스의 존재 이유:
 public:
-	TestSword();
-	~TestSword();
+	Sword();
+	~Sword();
 
 protected:
-	TestSword(const TestSword& _other) = delete;
-	TestSword(TestSword&& _other) noexcept = delete;
+	Sword(const Sword& _other) = delete;
+	Sword(Sword&& _other) noexcept = delete;
 
 private:
-	TestSword& operator=(const TestSword& _other) = delete;
-	TestSword& operator=(const TestSword&& _other) = delete;
+	Sword& operator=(const Sword& _other) = delete;
+	Sword& operator=(const Sword&& _other) = delete;
 
 
 public:	
@@ -54,10 +55,10 @@ private:
 
 	bool isAirborne_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 
-	TestIndicator* renderPivotPointer_;			//액터의 렌더피봇 표시.
-	TestPixelIndicator* upperLandingChecker_;
-	TestPixelIndicator* swordWorldPosPointer_;	//액터의 월드포지션 표시.
-	TestPixelIndicator* lowerLandingChecker_;
+	Indicator* renderPivotPointer_;			//액터의 렌더피봇 표시.
+	PixelIndicator* upperLandingChecker_;
+	PixelIndicator* swordWorldPosPointer_;	//액터의 월드포지션 표시.
+	PixelIndicator* lowerLandingChecker_;
 
 	float rotationSpeed_;
 	const float flickeringPeriod_;

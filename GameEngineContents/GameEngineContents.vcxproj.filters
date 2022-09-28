@@ -13,6 +13,30 @@
     <Filter Include="ContentsGlobal">
       <UniqueIdentifier>{69a828a1-0ef3-4e8d-bc9f-21ee9a6ed471}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{e23b27db-d87b-4b79-a9aa-00b1c43a6938}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rebel">
+      <UniqueIdentifier>{1e4a5693-0698-4897-a8cd-ac17461d6d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Indicator">
+      <UniqueIdentifier>{b26c7567-1026-46c5-b366-9bfc4edb1097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rebel\Arabian">
+      <UniqueIdentifier>{5589f905-8bc1-4789-90e2-6580a7a1c810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rebel\Arabian\ArabianWeapon">
+      <UniqueIdentifier>{537c1d21-6532-46b8-a872-bee04d1d8783}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player\PlayerWeapon">
+      <UniqueIdentifier>{731e46f8-23c3-4ed0-9e22-b7e0c9b2039f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mission">
+      <UniqueIdentifier>{b14ac040-6ddb-442f-a4a2-081d85327ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mission\Background">
+      <UniqueIdentifier>{cfd558e1-0973-404f-a2a8-ab0aaac86e14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -24,35 +48,35 @@
     <ClInclude Include="TestLevel.h">
       <Filter>Test</Filter>
     </ClInclude>
-    <ClInclude Include="TestPlayer.h">
-      <Filter>Test</Filter>
-    </ClInclude>
     <ClInclude Include="TestBackground.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPlayer_Header.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIndicator.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIndicatorBase.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPixelIndicator.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPistolBullet.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="TestArabian.h">
-      <Filter>Test</Filter>
-    </ClInclude>
-    <ClInclude Include="TestSword.h">
       <Filter>Test</Filter>
     </ClInclude>
     <ClInclude Include="GlobalHeader.h">
       <Filter>ContentsGlobal</Filter>
+    </ClInclude>
+    <ClInclude Include="Indicator.h">
+      <Filter>Indicator</Filter>
+    </ClInclude>
+    <ClInclude Include="IndicatorBase.h">
+      <Filter>Indicator</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelIndicator.h">
+      <Filter>Indicator</Filter>
+    </ClInclude>
+    <ClInclude Include="Arabian.h">
+      <Filter>Rebel\Arabian</Filter>
+    </ClInclude>
+    <ClInclude Include="Sword.h">
+      <Filter>Rebel\Arabian\ArabianWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Soldier.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Soldier_Header.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PistolBullet.h">
+      <Filter>Player\PlayerWeapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -65,35 +89,35 @@
     <ClCompile Include="TestLevel.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="TestPlayer.cpp">
-      <Filter>Test</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPlayer_InitFunctions.cpp">
-      <Filter>Test</Filter>
-    </ClCompile>
     <ClCompile Include="TestBackground.cpp">
       <Filter>Test</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndicator.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="Indicator.cpp">
+      <Filter>Indicator</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndicatorBase.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="IndicatorBase.cpp">
+      <Filter>Indicator</Filter>
     </ClCompile>
-    <ClCompile Include="TestPixelIndicator.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="PixelIndicator.cpp">
+      <Filter>Indicator</Filter>
     </ClCompile>
-    <ClCompile Include="TestPistolBullet.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="Arabian_InitFunctions.cpp">
+      <Filter>Rebel\Arabian</Filter>
     </ClCompile>
-    <ClCompile Include="TestArabian.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="Arabian.cpp">
+      <Filter>Rebel\Arabian</Filter>
     </ClCompile>
-    <ClCompile Include="TestSword.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="Sword.cpp">
+      <Filter>Rebel\Arabian\ArabianWeapon</Filter>
     </ClCompile>
-    <ClCompile Include="TestArabian_InitFunctions.cpp">
-      <Filter>Test</Filter>
+    <ClCompile Include="Soldier_InitFunctions.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Soldier.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PistolBullet.cpp">
+      <Filter>Player\PlayerWeapon</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

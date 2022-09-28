@@ -1,49 +1,13 @@
 #pragma once
+#include "GlobalHeader.h"
 
-enum class CollisionBodyOrder	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
-{
-	Player,				//플레이어
-	PlayerMeleeAttack,	//플레이어 근접공격.
-	PlayerProjectile,	//플레이어 원거리공격.
-
-
-
-	Rebel						= 10,	//반란군.
-	RebelAttack_MeleeAttack,			//반란군 근접공격.
-	RebelAttack_FlyingSword,			//아라비안 투척검.
-	RebelAttack_SolidBullet,			//반란군 총알.
-	RebelAttack_Explosive,				//반란군 로켓/바주카/수류탄 공격.
-	RebelAttack_Flame,					//반란군 화염공격.
-	//RebelAttack_Electricity,
-
-	//Mummy,
-	//MummyOrb,
-
-	Prisoner,
-	Hyakutaro,
-
-	Weapon_HeavyMachineGun,
-	Weapon_Shotgun,
-	Weapon_FlameShot,
-	Weapon_RocketLauncher,
-
-	Item_Ammo,
-	Item_Explosive,
-
-	//그 외 잡다한 아이템들은 여기에.
-
-	Background,
-
-	UI,
-};
-
-class TestSword;
-class TestArabian;
-class TestPistolBullet;
-class TestIndicator;
-class TestIndicatorBase;
+class Sword;
+class Arabian;
+class PistolBullet;
+class Indicator;
+class IndicatorBase;
+class Soldier;
 class TestBackground;
-class TestPlayer;
 class TestLevel: public GameEngineLevel
 {
 	//이 클래스의 존재 이유: 여러가지 테스트.
@@ -65,29 +29,16 @@ public:
 	void Update(float _deltaTime) override;
 	void End() override;
 
-public:
-	TestPistolBullet* GetPistolBullet();
-	TestSword* GetSword();
-	const float4& GetPlayerWorldPosition();
-
-public:
-
-	//테스트레벨을 벗어나서 정식 미션 만들때 공용이넘으로 분리할 것.
-	static const float gravity_;
-	static const float playSpeed_;
-	static const PixelColor groundColor_;	//cyan(0, 255, 255, 255) = 4294967040(UINT)
-	
-
 
 private:
 	void UpdateCameraActorMovement(float _deltaTime);
 
 private:
-	TestPlayer* testPlayer_;
+	Soldier* testPlayer_;
 	TestBackground* testBackground_;
-	TestArabian* testArabian_;
+	Arabian* testArabian_;
 
-	TestIndicator* currentFocusPointer_;
-	TestIndicatorBase* destFocus_;
+	Indicator* currentFocusPointer_;
+	IndicatorBase* destFocus_;
 };
 

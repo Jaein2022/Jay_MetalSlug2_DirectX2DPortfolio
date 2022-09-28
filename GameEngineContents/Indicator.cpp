@@ -1,21 +1,21 @@
 #include "PreCompile.h"
-#include "TestIndicator.h"
+#include "Indicator.h"
 
 #ifdef _DEBUG
-bool TestIndicator::isRendering_ = true;
+bool Indicator::isRendering_ = true;
 #else
 bool TestIndicator::isRendering_ = false;
 #endif
 
-TestIndicator::TestIndicator()
+Indicator::Indicator()
 {
 }
 
-TestIndicator::~TestIndicator()
+Indicator::~Indicator()
 {
 }
 
-void TestIndicator::Start()
+void Indicator::Start()
 {
 	SetPipeLine("Color");
 
@@ -31,15 +31,15 @@ void TestIndicator::Start()
 	}
 }
 
-void TestIndicator::Update(float _deltaTime)
+void Indicator::Update(float _deltaTime)
 {
 }
 
-void TestIndicator::End()
+void Indicator::End()
 {
 }
 
-void TestIndicator::Render(float _deltaTime)
+void Indicator::Render(float _deltaTime)
 {
 	if (true == isRendering_)
 	{

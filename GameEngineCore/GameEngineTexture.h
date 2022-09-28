@@ -41,6 +41,43 @@ struct PixelColor
 	PixelColor(const PixelColor& _other) : color_(_other.color_)
 	{
 	}
+
+	bool operator==(const PixelColor& _other) const
+	{
+		return this->r == _other.r
+			&& this->g == _other.g
+			&& this->b == _other.b
+			&& this->a == _other.a;
+	}
+
+	bool operator!=(const PixelColor& _other) const
+	{
+		return this->r != _other.r
+			|| this->g != _other.g
+			|| this->b != _other.b
+			|| this->a != _other.a;
+	}
+
+	bool operator<(const PixelColor& _other) const
+	{
+		return this->color_ < _other.color_;
+	}
+
+	bool operator>(const PixelColor& _other) const
+	{
+		return this->color_ > _other.color_;
+	}
+
+	bool operator<=(const PixelColor& _other) const
+	{
+		return this->color_ <= _other.color_;
+	}
+
+	bool operator>=(const PixelColor& _other) const
+	{
+		return this->color_ >= _other.color_;
+	}
+
 };
 
 class GameEngineTexture : public GameEngineRes<GameEngineTexture>
@@ -58,7 +95,7 @@ class GameEngineTexture : public GameEngineRes<GameEngineTexture>
 	//GameEngineTexture클래스의 프라이빗 소멸자를 GameEngineRes클래스에서 호출하기 위한 방법.
 
 	friend class GameEngineFolderTexture;
-	//GameEngineDepthStencilTexture는 왜 프렌드??
+	//GameEngineFolderTexture는 왜 프렌드??
 
 	friend class GameEngineDepthStencilTexture;
 	//GameEngineDepthStencilTexture는 왜 프렌드??

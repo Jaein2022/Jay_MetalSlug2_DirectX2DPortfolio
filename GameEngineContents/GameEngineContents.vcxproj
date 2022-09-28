@@ -154,26 +154,26 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestArabian.h">
+    <ClInclude Include="Arabian.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestPistolBullet.h">
+    <ClInclude Include="PistolBullet.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestIndicator.h" />
-    <ClInclude Include="TestPixelIndicator.h">
+    <ClInclude Include="Indicator.h" />
+    <ClInclude Include="PixelIndicator.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestPlayer_Header.h" />
+    <ClInclude Include="Soldier_Header.h" />
     <ClInclude Include="PreCompile.h" />
     <ClInclude Include="TestBackground.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestPlayer.h">
+    <ClInclude Include="Soldier.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -181,11 +181,11 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestIndicatorBase.h">
+    <ClInclude Include="IndicatorBase.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="TestSword.h">
+    <ClInclude Include="Sword.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -199,25 +199,25 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TestArabian.cpp">
+    <ClCompile Include="Arabian.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestArabian_InitFunctions.cpp" />
+    <ClCompile Include="Arabian_InitFunctions.cpp" />
     <ClCompile Include="TestBackground.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestPistolBullet.cpp">
+    <ClCompile Include="PistolBullet.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestIndicator.cpp" />
-    <ClCompile Include="TestPixelIndicator.cpp">
+    <ClCompile Include="Indicator.cpp" />
+    <ClCompile Include="PixelIndicator.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestPlayer.cpp">
+    <ClCompile Include="Soldier.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -225,12 +225,12 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestPlayer_InitFunctions.cpp" />
-    <ClCompile Include="TestIndicatorBase.cpp">
+    <ClCompile Include="Soldier_InitFunctions.cpp" />
+    <ClCompile Include="IndicatorBase.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="TestSword.cpp">
+    <ClCompile Include="Sword.cpp">
       <SubType>
       </SubType>
     </ClCompile>

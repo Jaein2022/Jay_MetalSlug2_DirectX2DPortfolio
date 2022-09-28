@@ -1,7 +1,7 @@
 #pragma once
-#include "TestIndicator.h"
+#include "Indicator.h"
 
-class TestPixelIndicator: public TestIndicator
+class PixelIndicator: public Indicator
 {
 	//이 클래스의 존재 이유: 인디케이터에 픽셀충돌 보조기능 추가.
 
@@ -9,16 +9,16 @@ class TestPixelIndicator: public TestIndicator
 	//모든 픽셀인디케이터가 공유해야하는 텍스처이므로 정적 멤버변수로 만든다.
 
 public:
-	TestPixelIndicator();
-	~TestPixelIndicator();
+	PixelIndicator();
+	~PixelIndicator();
 
 protected:
-	TestPixelIndicator(const TestPixelIndicator& _other) = delete;
-	TestPixelIndicator(TestPixelIndicator&& _other) noexcept = delete;
+	PixelIndicator(const PixelIndicator& _other) = delete;
+	PixelIndicator(PixelIndicator&& _other) noexcept = delete;
 
 private:
-	TestPixelIndicator& operator=(const TestPixelIndicator& _other) = delete;
-	TestPixelIndicator& operator=(const TestPixelIndicator&& _other) = delete;
+	PixelIndicator& operator=(const PixelIndicator& _other) = delete;
+	PixelIndicator& operator=(const PixelIndicator&& _other) = delete;
 
 
 public:
@@ -27,7 +27,8 @@ public:
 	UINT GetColorValue_UINT();
 
 public:
-	static void SetTexture(GameEngineTexture* _pixelCollisionTexture)
+	//미션 시작 전에 반드시 호출할 것.
+	static void SetPCTexture(GameEngineTexture* _pixelCollisionTexture)
 	{
 		pcTexture_ = _pixelCollisionTexture;
 		if (nullptr == pcTexture_)
@@ -36,7 +37,9 @@ public:
 			return;
 		}
 	}
-	static void SetTexture(const std::string& _pixelCollisionTextureName)
+
+	//미션 시작 전에 반드시 호출할 것.
+	static void SetPCTexture(const std::string& _pixelCollisionTextureName)
 	{
 		pcTexture_ = GameEngineTexture::Find(_pixelCollisionTextureName);
 		if (nullptr == pcTexture_)

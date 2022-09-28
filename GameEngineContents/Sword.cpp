@@ -1,11 +1,11 @@
 #include "PreCompile.h"
-#include "TestSword.h"
+#include "Sword.h"
 #include "TestLevel.h"
-#include "TestIndicator.h"
-#include "TestPixelIndicator.h"
-#include "TestPlayer.h"
+#include "Indicator.h"
+#include "PixelIndicator.h"
+#include "Soldier.h"
 
-TestSword::TestSword()
+Sword::Sword()
 	: swordRendererLocalPosX_(0),
 	swordRendererLocalPosY_(55),
 	swordRendererLocalPosZ_(0),
@@ -23,11 +23,11 @@ TestSword::TestSword()
 {
 }
 
-TestSword::~TestSword()
+Sword::~Sword()
 {
 }
 
-void TestSword::Start()
+void Sword::Start()
 {
 	this->GetTransform().SetLocalScale(1, 1, 1);
 	this->GetTransform().SetWorldScale(1, 1, 1);
@@ -62,7 +62,7 @@ void TestSword::Start()
 	swordCollisionBody_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
 
 
-	renderPivotPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
+	renderPivotPointer_ = Indicator::CreateIndicator<Indicator>(
 		"RenderPivotPointer",
 		this,
 		float4::Cyan,
@@ -70,7 +70,7 @@ void TestSword::Start()
 		float4(5, 5, 1)
 		);
 
-	upperLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	upperLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"UpperLandingCheck",
 		this,
 		float4::Black,
@@ -78,7 +78,7 @@ void TestSword::Start()
 		float4(5, 5, 1)
 		);
 
-	swordWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	swordWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
 		"SwordWorldPosPointer",
 		this,
 		float4::Red,
@@ -86,7 +86,7 @@ void TestSword::Start()
 		float4(5, 5, 1)
 		);
 
-	lowerLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	lowerLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"LowerLandingChecker",
 		this,
 		float4::Black,
@@ -99,7 +99,7 @@ void TestSword::Start()
 
 }
 
-void TestSword::Update(float _deltaTime)
+void Sword::Update(float _deltaTime)
 {
 	CheckGround();
 
@@ -109,18 +109,18 @@ void TestSword::Update(float _deltaTime)
 	{
 		swordCollisionBody_->IsCollision(
 			CollisionType::CT_AABB,
-			CollisionBodyOrder::Player,
+			CollisionBodyOrder::Soldier,
 			CollisionType::CT_AABB,
-			std::bind(&TestSword::Hit, this, std::placeholders::_1, std::placeholders::_2)
+			std::bind(&Sword::Hit, this, std::placeholders::_1, std::placeholders::_2)
 		);
 	}
 }
 
-void TestSword::End()
+void Sword::End()
 {
 }
 
-void TestSword::Fly(float _deltaTime)
+void Sword::Fly(float _deltaTime)
 {
 	if (false == flyingSwordRenderer_->IsUpdate())
 	{
@@ -128,17 +128,17 @@ void TestSword::Fly(float _deltaTime)
 	}
 
 	flyingSwordRenderer_->GetTransform().SetAddWorldRotation(
-		float4::Forward * _deltaTime * rotationSpeed_ * TestLevel::playSpeed_
+		float4::Forward * _deltaTime * rotationSpeed_ * playSpeed_
 	);
 
 	this->GetTransform().SetWorldMove(
-		releaseSpeed_ * _deltaTime * TestLevel::playSpeed_
+		releaseSpeed_ * _deltaTime * playSpeed_
 	);
 
-	releaseSpeed_.y -= TestLevel::gravity_ * _deltaTime;
+	releaseSpeed_.y -= gravity_ * _deltaTime;
 }
 
-void TestSword::StickOnGround(float _deltaTime)
+void Sword::StickOnGround(float _deltaTime)
 {
 	if (false == stuckSwordRenderer_->IsUpdate())
 	{
@@ -155,13 +155,13 @@ void TestSword::StickOnGround(float _deltaTime)
 	}
 }
 
-void TestSword::CheckGround()
+void Sword::CheckGround()
 {
 	if (0 >= releaseSpeed_.y)
 	{
-		if ((TestLevel::groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (TestLevel::groundColor_.color_ <= swordWorldPosPointer_->GetColorValue_UINT()))
+		if ((groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
+			&& (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+			&& (groundColor_.color_ <= swordWorldPosPointer_->GetColorValue_UINT()))
 		{
 			//PixelColor magenta = PixelColor(255, 0, 255, 255);
 			//magenta.color_;		//4294902015
@@ -178,8 +178,8 @@ void TestSword::CheckGround()
 				releaseSpeed_ = float4::Zero;
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= swordWorldPosPointer_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (groundColor_.color_ <= swordWorldPosPointer_->GetColorValue_UINT()
+			&& groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
@@ -187,7 +187,7 @@ void TestSword::CheckGround()
 				releaseSpeed_ = float4::Zero;
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
@@ -206,16 +206,16 @@ void TestSword::CheckGround()
 	}
 }
 
-CollisionReturn TestSword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)
+CollisionReturn Sword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)
 {
-	_playerCollision->GetActor<TestPlayer>()->TakeDamage(this->GetOrder());
+	_playerCollision->GetActor<Soldier>()->TakeDamage(this->GetOrder());
 
 	this->Death();
 
 	return CollisionReturn::Stop;
 }
 
-void TestSword::Flicker(
+void Sword::Flicker(
 	float _deltaTime,
 	bool _isFlickeringOn,
 	const float4& _plusColor,
@@ -247,20 +247,10 @@ void TestSword::Flicker(
 
 	if (true == flickeringSwitch)
 	{
-		//for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
-		//	iter != allTextureRenderers_.end(); iter++)
-		//{
-		//	(*iter)->GetPixelData().plusColor_ = _plusColor;
-		//}
 		stuckSwordRenderer_->GetPixelData().plusColor_ = _plusColor;
 	}
 	else
 	{
-		//for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
-		//	iter != allTextureRenderers_.end(); iter++)
-		//{
-		//	(*iter)->GetPixelData().plusColor_ = _originalColor;
-		//}
 		stuckSwordRenderer_->GetPixelData().plusColor_ = _originalColor;
 	}
 }

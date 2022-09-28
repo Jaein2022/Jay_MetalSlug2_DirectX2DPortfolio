@@ -1,19 +1,13 @@
 #include "PreCompile.h"
 #include "TestLevel.h"
-#include "TestPlayer.h"
+#include "Soldier.h"
 #include "TestBackground.h"
-#include "TestIndicator.h"
-#include "TestIndicatorBase.h"
-#include "TestPixelIndicator.h"
-#include "TestPistolBullet.h"
-#include "TestArabian.h"
-#include "TestSword.h"
-
-//#include <GameEngineCore\GameEngineDevice.h>
-
-const float TestLevel::gravity_ = 9.80665f;
-const float TestLevel::playSpeed_ = 100.f;
-const PixelColor TestLevel::groundColor_(0, 255, 255, 255);
+#include "Indicator.h"
+#include "IndicatorBase.h"
+#include "PixelIndicator.h"
+#include "PistolBullet.h"
+#include "Arabian.h"
+#include "Sword.h"
 
 TestLevel::TestLevel()
 	: testPlayer_(nullptr),
@@ -30,32 +24,31 @@ TestLevel::~TestLevel()
 
 void TestLevel::Start()
 {
-	TestPixelIndicator::SetTexture("TestBG_PC.png");
+	PixelIndicator::SetPCTexture("TestBG_PC.png");
 
-	testPlayer_ = CreateActor<TestPlayer>(CollisionBodyOrder::Player, "TestPlayer");
+	testPlayer_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "TestPlayer");
+	testPlayer_->GetTransform().SetWorldPosition(1500, 0, 0);
+
+
+	testArabian_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "TestArabian");
+	testArabian_->GetTransform().SetWorldPosition(1925, 0, 0);
 
 	testBackground_ = CreateActor<TestBackground>(CollisionBodyOrder::Background, "TestBackground");
 
-	testArabian_ = CreateActor<TestArabian>(CollisionBodyOrder::Rebel, "TestArabian");
-	testArabian_->GetTransform().SetWorldPosition(925, 0, 0);
 
-	if (false == GameEngineInput::GetInst()->IsKey("FreeCameraOnOff"))
-	{
-		GameEngineInput::GetInst()->CreateKey("FreeCameraOnOff", 'O');
-	}
-
-	currentFocusPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
+	currentFocusPointer_ = Indicator::CreateIndicator<Indicator>(
 		"CurrentFocusPointer",
 		this->GetMainCameraActor(),
 		float4::Black,
-		float4(0, 0, 5),
+		float4(0, 0, 5),	//절대 변경하지 말 것.
 		float4(15, 15, 1)
 	);
 
-	destFocus_ = CreateActor<TestIndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
+	destFocus_ = CreateActor<IndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(1500, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+	//시작 카메라 위치 변경이 필요하면 여기에서.
 
 	
 	//GameEngineStatusWindow::AddDebugRenderTarget("TestLevel MainCamera", GetMainCamera()->GetCameraRenderTarget());
@@ -82,7 +75,7 @@ void TestLevel::Update(float _deltaTime)
 			>= destFocus_->GetTransform().GetWorldPosition().x)
 	{
 		destFocus_->GetTransform().SetWorldMove(
-			float4::Right * _deltaTime * 3.f * TestLevel::playSpeed_);
+			float4::Right * _deltaTime * 3.f * playSpeed_);
 	}
 
 	UpdateCameraActorMovement(_deltaTime);
@@ -90,21 +83,6 @@ void TestLevel::Update(float _deltaTime)
 
 void TestLevel::End()
 {
-}
-
-TestPistolBullet* TestLevel::GetPistolBullet()
-{
-	return CreateActor<TestPistolBullet>(CollisionBodyOrder::PlayerProjectile, "TestPistolBullet");
-}
-
-TestSword* TestLevel::GetSword()
-{
-	return CreateActor<TestSword>(CollisionBodyOrder::RebelAttack_FlyingSword, "TestSword");
-}
-
-const float4& TestLevel::GetPlayerWorldPosition()
-{
-	return testPlayer_->GetTransform().GetWorldPosition();
 }
 
 void TestLevel::UpdateCameraActorMovement(float _deltaTime)

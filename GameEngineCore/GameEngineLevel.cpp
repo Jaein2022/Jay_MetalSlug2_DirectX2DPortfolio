@@ -15,13 +15,13 @@ GameEngineLevel::GameEngineLevel()
 {
 	cameras_.resize(static_cast<size_t>(CameraOrder::UICamera) + 1);
 
-	GameEngineCameraActor* mainCameraActor = CreateActor<GameEngineCameraActor>(0, "MainCamera");
+	GameEngineCameraActor* mainCameraActor = CreateActor<GameEngineCameraActor>(100, "MainCamera");
 	mainCameraActor->GetTransform().SetLocalPosition(0, 0, -100);
 	mainCameraActor->GetCameraComponent()->SetProjectionMode(CameraProjectionMode::Orthographic);
 	mainCameraActor->GetCameraComponent()->SetCameraOrder(CameraOrder::MainCamera);
 
 
-	GameEngineCameraActor* UICameraActor = CreateActor<GameEngineCameraActor>(0, "UICamera");
+	GameEngineCameraActor* UICameraActor = CreateActor<GameEngineCameraActor>(100, "UICamera");
 	UICameraActor->GetTransform().SetLocalPosition(0, 0, -100);
 	UICameraActor->GetCameraComponent()->SetProjectionMode(CameraProjectionMode::Orthographic);
 	UICameraActor->GetCameraComponent()->SetCameraOrder(CameraOrder::UICamera);

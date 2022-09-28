@@ -43,6 +43,8 @@ void ContentsCore::Start()
 		GameEngineInput::GetInst()->CreateKey("Special", 'S');
 
 		GameEngineInput::GetInst()->CreateKey("Test", 'T');
+
+		GameEngineInput::GetInst()->CreateKey("FreeCameraOnOff", 'O');
 	}
 
 

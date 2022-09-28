@@ -1,12 +1,11 @@
 #include "PreCompile.h"
-#include "TestArabian.h"
-#include "TestIndicator.h"
-#include "TestPixelIndicator.h"
-#include "TestLevel.h"
-#include "TestSword.h"
-#include "TestPlayer.h"
+#include "Arabian.h"
+#include "Indicator.h"
+#include "PixelIndicator.h"
+#include "Sword.h"
+#include "Soldier.h"
 
-TestArabian::TestArabian()
+Arabian::Arabian()
 	: currentArabianState_(ArabianState::Idling),
 	isAirborne_(false),
 	isEngaging_(false),
@@ -25,30 +24,32 @@ TestArabian::TestArabian()
 	ascendingSlopeChecker_(nullptr),
 	flatSlopeChecker_(nullptr),
 	descendingSlopeChecker_(nullptr),
-	initialJumpSpeed_(5.f),
+	currentSteppingColor_(0, 255, 255, 255),
+	initialJumpSpeed_(1.5f),
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
 	shufflingSpeed_(0.5f),
 	shuffleDirection_(1),
 	movementFor1Second_(float4::Zero),
+	enemySoldier_(nullptr),
 	turningDelay_(1.f),
 	nextWorldDirection_(1),
 	releasePoint_(nullptr),
 	releaseAngle_(60.f),
 	releaseVelocity_(5.f),
 	horizontalDistance_(0.f),
-	recognitionDistance_(800.f),
+	recognitionDistance_(600.f),
 	engagementDistance_(600.f),
 	chargeDistance_(400.f),
 	hp_(3)
 {
 }
 
-TestArabian::~TestArabian()
+Arabian::~Arabian()
 {
 }
 
-void TestArabian::Start()
+void Arabian::Start()
 {
 	this->GetTransform().SetLocalScale(1, 1, 1);
 	this->GetTransform().SetWorldScale(1, 1, 1);
@@ -75,71 +76,71 @@ void TestArabian::Start()
 
 
 
-	renderPivotPointer_ = TestIndicator::CreateIndicator<TestIndicator>(
+	renderPivotPointer_ = Indicator::CreateIndicator<Indicator>(
 		"RenderPivotPointer",
 		this,
 		float4::Cyan,
 		float4(arabianRendererLocalPosX_, arabianRendererLocalPosY_, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	upperLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	upperLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"UpperLandingCheck",
 		this,
 		float4::Black,
 		float4(0, 5, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	arabianWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	arabianWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
 		"PlayerWorldPosPointer",
 		this,
 		float4::Red,
 		float4(0, 0, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	lowerLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	lowerLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"LowerLandingChecker",
 		this,
 		float4::Black,
 		float4(0, -5, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	slopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	slopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"SlopeChecker",
 		this,
 		float4::Blue,
 		float4(slopeCheckerLocalPosX_, 0, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	ascendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	ascendingSlopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"AscendingSlopeChecker",
 		this,
 		float4::Black,
 		float4(slopeCheckerLocalPosX_, 10, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	flatSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	flatSlopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"FlatSlopeChecker",
 		this,
 		float4::Black,
 		float4(slopeCheckerLocalPosX_, 0, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	descendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	descendingSlopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"DescendingSlopeChecker",
 		this,
 		float4::Black,
 		float4(slopeCheckerLocalPosX_, -10, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	releasePoint_ = TestIndicator::CreateIndicator<TestIndicator>(
+	releasePoint_ = Indicator::CreateIndicator<Indicator>(
 		"ReleasePoint",
 		this,
 		float4::Red,
@@ -147,11 +148,22 @@ void TestArabian::Start()
 		float4(5, 5, 1)
 	);
 
+	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(CollisionBodyOrder::Soldier).front();
+	//아라비안 생성은 반드시 솔저 생성 이후로 할 것.
+	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생.
+
+	if (nullptr == enemySoldier_)
+	{
+		MsgBoxAssert("모든 반란군 액터들은 솔저 생성 후 생성되어야 합니다.");
+		return;
+	}
+
+
 	CreateArabianAnimations();
 	CreateArabianStates();
 }
 
-void TestArabian::Update(float _deltaTime)
+void Arabian::Update(float _deltaTime)
 {
 	CheckGround();
 	if (true == isAirborne_)
@@ -171,17 +183,17 @@ void TestArabian::Update(float _deltaTime)
 	MoveArabian(_deltaTime);
 }
 
-void TestArabian::End()
+void Arabian::End()
 {
 }
 
-void TestArabian::CheckGround()
+void Arabian::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((TestLevel::groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (TestLevel::groundColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()))
+		if ((currentSteppingColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
+			&& (currentSteppingColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+			&& (currentSteppingColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()))
 		{
 			//PixelColor magenta = PixelColor(255, 0, 255, 255);
 			//magenta.color_;		//4294902015
@@ -196,6 +208,7 @@ void TestArabian::CheckGround()
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
+				currentSteppingColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -207,13 +220,14 @@ void TestArabian::CheckGround()
 				}
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (currentSteppingColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()
+			&& currentSteppingColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
+				currentSteppingColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -225,13 +239,14 @@ void TestArabian::CheckGround()
 				}
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (currentSteppingColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
+				currentSteppingColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -254,24 +269,25 @@ void TestArabian::CheckGround()
 	}
 }
 
-void TestArabian::Fall(float _deltaTime)
+void Arabian::Fall(float _deltaTime)
 {
-	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
+	fallingSpeed_ += gravity_ * _deltaTime;
 
 	movementFor1Second_ += float4::Down * fallingSpeed_;
 }
 
-void TestArabian::GetDistance(float _deltaTime)
-{
-	float playerWorldPosX = GetLevel<TestLevel>()->GetPlayerWorldPosition().x;
+void Arabian::GetDistance(float _deltaTime)
+{ 
+	float soldierWorldPosX = enemySoldier_->GetTransform().GetWorldPosition().x;
+
 	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
-	horizontalDistance_ = abs(thisWorldPosX - playerWorldPosX);
+	horizontalDistance_ = abs(thisWorldPosX - soldierWorldPosX);
 
 	static float currentTurningDelay;
 
-	if (playerWorldPosX < thisWorldPosX && 0 < this->GetTransform().GetWorldScale().x)
+	if (soldierWorldPosX < thisWorldPosX && 0 < this->GetTransform().GetWorldScale().x)
 	{
-		//아라비안 보는방향 오른쪽 && 플레이어는 아라비안 왼쪽 위치.
+		//아라비안 보는방향 오른쪽 && 솔저는 아라비안 왼쪽 위치.
 		currentTurningDelay += _deltaTime;
 		if (turningDelay_ <= currentTurningDelay)
 		{
@@ -279,9 +295,9 @@ void TestArabian::GetDistance(float _deltaTime)
 		}
 
 	}
-	else if(playerWorldPosX > thisWorldPosX && 0 > this->GetTransform().GetWorldScale().x)
+	else if(soldierWorldPosX > thisWorldPosX && 0 > this->GetTransform().GetWorldScale().x)
 	{
-		//아라비안 보는방향 왼쪽 && 플레이어는 아라비안 오른쪽 위치.
+		//아라비안 보는방향 왼쪽 && 솔저는 아라비안 오른쪽 위치.
 		currentTurningDelay += _deltaTime;
 		if (turningDelay_ <= currentTurningDelay)
 		{
@@ -290,13 +306,13 @@ void TestArabian::GetDistance(float _deltaTime)
 	}
 	else
 	{
-		//아라비안 보는 방향에 플레이어 있으면 방향전환 리셋.
+		//아라비안 보는 방향에 솔저 있으면 방향전환 리셋.
 		nextWorldDirection_ = 0;
 		currentTurningDelay = 0.f;
 	}
 }
 
-void TestArabian::UpdateArabianState(float _deltaTime)
+void Arabian::UpdateArabianState(float _deltaTime)
 {
 	if (0 >= hp_)
 	{
@@ -311,13 +327,13 @@ void TestArabian::UpdateArabianState(float _deltaTime)
 	arabianStateManager_.Update(_deltaTime);
 }
 
-void TestArabian::MoveArabian(float _deltaTime)
+void Arabian::MoveArabian(float _deltaTime)
 {
-	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * TestLevel::playSpeed_);
+	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * playSpeed_);
 	movementFor1Second_ = float4::Zero;
 }
 
-void TestArabian::SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...)
+void Arabian::SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...)
 {
 	if (_maxStateIndex <= _minStateIndex)
 	{
@@ -373,21 +389,44 @@ void TestArabian::SelectNextState(int _minStateIndex, int _maxStateIndex, int _e
 	currentArabianState_ = static_cast<ArabianState>(nextStateIndex);
 }
 
-void TestArabian::Shuffle()
+void Arabian::Shuffle()
 {
 	movementFor1Second_ += float4::Right * GetTransform().GetWorldScale().x * shuffleDirection_ * shufflingSpeed_;
 
 	movementFor1Second_ += float4::Up * GetSlope(shuffleDirection_) * shufflingSpeed_;
 }
 
-void TestArabian::Run()
+void Arabian::Run()
 {
 	movementFor1Second_ += float4::Right * GetTransform().GetWorldScale().x * runningSpeed_ ;
 
 	movementFor1Second_ += float4::Up * GetSlope(1) * runningSpeed_ ;
 }
 
-void TestArabian::SetSlopeCheckerDirection(char _localDirection)
+void Arabian::Jump(const FrameAnimation_Desc& _desc)
+{
+	if (5 == _desc.curFrame_ && false == isAirborne_)	//5번프레임부터 점프 시작.
+	{
+		fallingSpeed_ = -initialJumpSpeed_;
+		isAirborne_ = true;
+		currentSteppingColor_
+			= PixelColor(
+				static_cast<unsigned char>(currentSteppingColor_.r + 2),
+				currentSteppingColor_.g,
+				currentSteppingColor_.b,
+				currentSteppingColor_.a
+			);
+
+	}
+	else if (5 < _desc.curFrame_ && true == isAirborne_)
+	{
+		//점프중 횡이동.
+		movementFor1Second_ += float4::Right * this->GetTransform().GetWorldScale().x * shufflingSpeed_;
+	}
+
+}
+
+void Arabian::SetSlopeCheckerDirection(char _localDirection)
 {
 	slopeChecker_->GetTransform().SetLocalPosition(
 		slopeCheckerLocalPosX_ * _localDirection,
@@ -411,7 +450,7 @@ void TestArabian::SetSlopeCheckerDirection(char _localDirection)
 	);
 }
 
-float TestArabian::GetSlope(char _localDirection)
+float Arabian::GetSlope(char _localDirection)
 {
 	if (false == isAirborne_)
 	{
@@ -421,9 +460,9 @@ float TestArabian::GetSlope(char _localDirection)
 		int endPosY = 0;
 		int slopeCheckPosY = 0;
 
-		if (TestLevel::groundColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		if (currentSteppingColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
+			&& currentSteppingColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& currentSteppingColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
 				slopeCheckerLocalPosX_ * _localDirection,
@@ -431,7 +470,7 @@ float TestArabian::GetSlope(char _localDirection)
 				-5
 			);
 
-			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (currentSteppingColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				return 0.f;
 			}
@@ -441,13 +480,13 @@ float TestArabian::GetSlope(char _localDirection)
 				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (currentSteppingColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& currentSteppingColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 		}
-		else if (TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (currentSteppingColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
@@ -466,7 +505,7 @@ float TestArabian::GetSlope(char _localDirection)
 				-5
 			);
 
-			if (TestLevel::groundColor_.color_ <= slopeChecker_->GetColorValue_UINT())
+			if (currentSteppingColor_.color_ <= slopeChecker_->GetColorValue_UINT())
 			{
 				break;
 			}
@@ -484,9 +523,12 @@ float TestArabian::GetSlope(char _localDirection)
 	}
 }
 
-void TestArabian::ThrowSword()
+void Arabian::ThrowSword()
 {
-	TestSword* newSword = this->GetLevel<TestLevel>()->GetSword();
+	Sword* newSword 
+		= this->GetLevel()->CreateActor<Sword>(
+			CollisionBodyOrder::RebelAttack_FlyingSword, "FlyingSword");
+
 	newSword->GetTransform().SetWorldPosition(releasePoint_->GetTransform().GetWorldPosition());
 
 	if (0 > this->GetTransform().GetWorldScale().x)
@@ -504,7 +546,7 @@ void TestArabian::ThrowSword()
 	);
 }
 
-void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
+void Arabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 {
 	if (8 <= _desc.curFrame_)
 	{
@@ -526,20 +568,20 @@ void TestArabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 	}
 }
 
-void TestArabian::MeleeAttack()
+void Arabian::MeleeAttack()
 {
 	arabianCloseCombatCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		CollisionBodyOrder::Player,
+		CollisionBodyOrder::Soldier,
 		CollisionType::CT_AABB,
 		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)->CollisionReturn {
-			_playerCollision->GetActor<TestPlayer>()->TakeDamage(arabianCloseCombatCollisionBody_->GetOrder());
+			_playerCollision->GetActor<Soldier>()->TakeDamage(arabianCloseCombatCollisionBody_->GetOrder());
 			return CollisionReturn::Stop;
 		}
 	);
 }
 
-void TestArabian::JumpBackWard()
+void Arabian::JumpBackWard()
 {
 	movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 4.5f;
 }

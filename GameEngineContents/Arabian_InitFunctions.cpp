@@ -1,8 +1,8 @@
 #include "PreCompile.h"
-#include "TestArabian.h"
+#include "Arabian.h"
 #include "TestLevel.h"
 
-void TestArabian::CreateArabianAnimations()
+void Arabian::CreateArabianAnimations()
 {
 	arabianRenderer_ = CreateComponent<GameEngineTextureRenderer>("ArabianRenderer");
 	arabianRenderer_->GetTransform().SetLocalScale(600, 600, 1);
@@ -44,6 +44,12 @@ void TestArabian::CreateArabianAnimations()
 				return;
 			}
 
+			if (groundColor_ > currentSteppingColor_)
+			{
+				SelectNextState(0, 6, 1, ArabianState::MeleeAttack);
+				return;
+			}
+
 			if (chargeDistance_ > horizontalDistance_)
 			{
 				SelectNextState(0, 3, 1, ArabianState::JumpingBackward);
@@ -62,12 +68,21 @@ void TestArabian::CreateArabianAnimations()
 		FrameAnimation_Desc("Rebel_Arabian.png", 30, 41, 0.05f, true)
 	);
 	arabianRenderer_->AnimationBindTime("Running",
-		std::bind(&TestArabian::Run, this)
+		std::bind(&Arabian::Run, this)
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Jumping",
 		FrameAnimation_Desc("Rebel_Arabian.png", 50, 57, 0.1f, true)
 	);
+	arabianRenderer_->AnimationBindTime("Jumping",
+		std::bind(&Arabian::Jump, this, std::placeholders::_1)
+	);
+	arabianRenderer_->AnimationBindEnd("Jumping", 
+		[this](const FrameAnimation_Desc& _desc)->void {
+			currentArabianState_ = ArabianState::Falling;
+		}
+	);
+
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Falling",
 		FrameAnimation_Desc("Rebel_Arabian.png", 58, 58, 1.f, true)
 	);
@@ -84,7 +99,7 @@ void TestArabian::CreateArabianAnimations()
 		FrameAnimation_Desc("Rebel_Arabian.png", 70, 74, 0.1f, false)
 	);
 	arabianRenderer_->AnimationBindTime("JumpingBackward",
-		std::bind(&TestArabian::JumpBackWard, this)
+		std::bind(&Arabian::JumpBackWard, this)
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Turning",
@@ -134,7 +149,7 @@ void TestArabian::CreateArabianAnimations()
 		FrameAnimation_Desc("Rebel_Arabian.png", 120, 130, 0.075f, true)
 	);
 	arabianRenderer_->AnimationBindFrame("JumpDeath",
-		std::bind(&TestArabian::MoveInJumpDeath, this, std::placeholders::_1)
+		std::bind(&Arabian::MoveInJumpDeath, this, std::placeholders::_1)
 	);
 	arabianRenderer_->AnimationBindEnd("JumpDeath",
 		[this](const FrameAnimation_Desc& _desc)->void {
@@ -164,7 +179,7 @@ void TestArabian::CreateArabianAnimations()
 	arabianRenderer_->ChangeFrameAnimation("Idling");
 }
 
-void TestArabian::CreateArabianStates()
+void Arabian::CreateArabianStates()
 {
 	arabianStateManager_.CreateState(
 		"Idling",
@@ -181,7 +196,7 @@ void TestArabian::CreateArabianStates()
 
 	arabianStateManager_.CreateState(
 		"Shuffling",
-		std::bind(&TestArabian::Shuffle, this),
+		std::bind(&Arabian::Shuffle, this),
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("Shuffling");
 		},
@@ -195,7 +210,7 @@ void TestArabian::CreateArabianStates()
 
 			if (true == arabianCloseCombatCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
-				CollisionBodyOrder::Player,
+				CollisionBodyOrder::Soldier,
 				CollisionType::CT_AABB)
 				)
 			{
@@ -213,7 +228,7 @@ void TestArabian::CreateArabianStates()
 
 			if (true == arabianCloseCombatCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
-				CollisionBodyOrder::Player,
+				CollisionBodyOrder::Soldier,
 				CollisionType::CT_AABB)
 				)
 			{
@@ -257,7 +272,18 @@ void TestArabian::CreateArabianStates()
 		nullptr,
 		[this](const StateInfo& _info)->void {
 			arabianRenderer_->ChangeFrameAnimation("FallingToIdling");
+		},
+		[this](const StateInfo& _info)->void {
+			if (_info.prevState_ == allArabianStates_[ArabianState::Running])
+			{
+				currentArabianState_ = ArabianState::Running;
+			}
+			else
+			{
+				currentArabianState_ = ArabianState::Shuffling;
+			}
 		}
+
 	);
 	arabianStateManager_.CreateState(
 		"JumpingBackward",
@@ -290,7 +316,7 @@ void TestArabian::CreateArabianStates()
 			}
 			else
 			{
-				MsgBoxAssert("이런 방향은 있을 수 없습니다.");
+				MsgBoxAssert("이런 회전방향은 있을 수 없습니다.");
 				return;
 			}
 		}

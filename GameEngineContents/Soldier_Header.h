@@ -1,6 +1,6 @@
 #pragma once
 
-enum class PlayerState
+enum class SoldierState
 {
 	Fallen_ByMeleeAttack										= 1011,
 	Fallen_ByFlyingSword										= 1012,
@@ -173,13 +173,13 @@ enum class PlayerState
 };
 
 template <>
-struct magic_enum::customize::enum_range<PlayerState> {
+struct magic_enum::customize::enum_range<SoldierState> {
 	static constexpr int min = 1000;
 	static constexpr int max = 3000;
 	// 1000 ~ 6000 넘기지 말 것.
 };
 
-enum class PlayerWeaponType
+enum class SoldierWeaponType
 {
 	Pistol			= 1000,
 	HeavyMachineGun = 2000,
@@ -188,7 +188,7 @@ enum class PlayerWeaponType
 	RockeLauncher	= 5000,
 };
 
-enum class PlayerLegState
+enum class SoldierLegState
 {
 	//Fallen					= 000,
 	Standing					= 100,
@@ -202,7 +202,7 @@ enum class PlayerLegState
 	Redeploying					= 900
 };
 
-enum class PlayerTopState
+enum class SoldierTopState
 {
 	Aiming						= 10,
 	Firing						= 20,

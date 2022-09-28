@@ -95,6 +95,11 @@ bool GameEngineCollision::IsCollision(
 
 	for (GameEngineCollision* otherCollision : collisionGroup)
 	{
+		if (this == otherCollision)
+		{
+			continue;
+		}
+
 		if (false == otherCollision->IsUpdate())
 		{
 			continue;

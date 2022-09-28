@@ -1,20 +1,21 @@
 #pragma once
+#include "GlobalHeader.h"
 
-class TestPixelIndicator;
-class TestPistolBullet: public GameEngineActor
+class PixelIndicator;
+class PistolBullet: public GameEngineActor
 {
 	//이 클래스의 존재 이유: 권총 총알.
 public:
-	TestPistolBullet();
-	~TestPistolBullet();
+	PistolBullet();
+	~PistolBullet();
 
 protected:
-	TestPistolBullet(const TestPistolBullet& _other) = delete;
-	TestPistolBullet(TestPistolBullet&& _other) noexcept = delete;
+	PistolBullet(const PistolBullet& _other) = delete;
+	PistolBullet(PistolBullet&& _other) noexcept = delete;
 
 private:
-	TestPistolBullet& operator=(const TestPistolBullet& _other) = delete;
-	TestPistolBullet& operator=(const TestPistolBullet&& _other) = delete;
+	PistolBullet& operator=(const PistolBullet& _other) = delete;
+	PistolBullet& operator=(const PistolBullet&& _other) = delete;
 
 
 public:	
@@ -38,7 +39,7 @@ private:
 	GameEngineTextureRenderer* pistolBulletRenderer_;
 	GameEngineTextureRenderer* effectiveHitSparkRenderer_;
 	GameEngineTextureRenderer* glancingHitSparkRenderer_;
-	TestPixelIndicator* groundChecker_;
+	PixelIndicator* groundChecker_;
 	
 	float4 firingDirection_;
 

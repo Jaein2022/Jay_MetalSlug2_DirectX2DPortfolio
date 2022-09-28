@@ -1,22 +1,20 @@
 #include "PreCompile.h"
-#include "TestPlayer.h"
-#include "TestLevel.h"
-#include "TestBackground.h"
-#include "TestIndicator.h"
-#include "TestPixelIndicator.h"
-#include "TestPistolBullet.h"
-#include "TestArabian.h"
+#include "Soldier.h"
+#include "Indicator.h"
+#include "PixelIndicator.h"
+#include "PistolBullet.h"
+#include "Arabian.h"
 
-TestPlayer::TestPlayer()
-	: currentPlayerState_(PlayerState::Pistol_Standing_Aiming_Forward),
-	weapon_(PlayerWeaponType::Pistol),
-	leg_(PlayerLegState::Standing),
-	top_(PlayerTopState::Aiming),
+Soldier::Soldier()
+	: currentSoldierState_(SoldierState::Pistol_Standing_Aiming_Forward),
+	weapon_(SoldierWeaponType::Pistol),
+	leg_(SoldierLegState::Standing),
+	top_(SoldierTopState::Aiming),
 	direction_(AimingDirection::Forward),
 	isAirborne_(false),
-	playerRendererLocalPosX_(0),
-	playerRendererLocalPosY_(75),
-	playerRendererLocalPosZ_(0),
+	soldierRendererLocalPosX_(0),
+	soldierRendererLocalPosY_(75),
+	soldierRendererLocalPosZ_(0),
 	legRenderer_(nullptr),
 	topPistolRenderer_(nullptr),
 	wholePistolRenderer_(nullptr),
@@ -28,9 +26,8 @@ TestPlayer::TestPlayer()
 	isJumpKeyDown_(false),
 	isAttackKeyDown_(false),
 	isSpecialKeyDown_(false),
-	//renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
-	playerWorldPosPointer_(nullptr),
+	soldierWorldPosPointer_(nullptr),
 	lowerLandingChecker_(nullptr),
 	slopeCheckerLocalPosX_(10),	//0 금지!	
 	slopeChecker_(nullptr),
@@ -48,12 +45,12 @@ TestPlayer::TestPlayer()
 	duckStepSpeed_(1.f),
 	movementFor1Second_(float4::Zero),
 	aimingAngle_(0.f),
-	playerLifeCollisionBody_(nullptr),
-	playerCloseCombatCollisionBody_(nullptr),
-	playerLifeCollisionBodyScale_Standing_(80, 150, 10),
-	playerLifeCollisionBodyPosition_Standing_(0, 75, 10),
-	playerLifeCollisionBodyScale_Ducking_(100, 100, 10),
-	playerLifeCollisionBodyPosition_Ducking_(0, 50, 10),
+	soldierLifeCollisionBody_(nullptr),
+	soldierCloseCombatCollisionBody_(nullptr),
+	soldierLifeCollisionBodyScale_Standing_(80, 150, 10),
+	soldierLifeCollisionBodyPosition_Standing_(0, 75, 10),
+	soldierLifeCollisionBodyScale_Ducking_(100, 100, 10),
+	soldierLifeCollisionBodyPosition_Ducking_(0, 50, 10),
 	meleeAttackDamage_(3),
 	isMeleeAttack1_(true),
 	causeOfDeath_(0),
@@ -62,20 +59,20 @@ TestPlayer::TestPlayer()
 {
 }
 
-TestPlayer::~TestPlayer()
+Soldier::~Soldier()
 {
 }
 
-void TestPlayer::Start()
+void Soldier::Start()
 {
 	this->GetTransform().SetLocalScale(1, 1, 1);
 	this->GetTransform().SetWorldScale(1, 1, 1);
 
-	this->GetTransform().SetWorldPosition(
-		500 - GameEngineWindow::GetInst()->GetScale().HIX(),
-		200,
-		0
-	);
+	//this->GetTransform().SetWorldPosition(
+	//	500 - GameEngineWindow::GetInst()->GetScale().HIX(),
+	//	200,
+	//	0
+	//);	//솔저의 원래 시작위치.
 
 	if (0 == slopeCheckerLocalPosX_)
 	{
@@ -83,16 +80,7 @@ void TestPlayer::Start()
 		return;
 	}
 
-
-	//renderPivotPointer_ = TestIndicator::CreatePointer(
-	//	"RenderPivotPointer",
-	//	this,
-	//	float4::Cyan,
-	//	float4(playerRenderPivotX_, playerRenderPivotY_, -5),
-	//	float4(5, 5, 1)
-	//);
-
-	upperLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	upperLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"UpperLandingCheck",
 		this,
 		float4::Black,
@@ -100,15 +88,15 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	playerWorldPosPointer_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
-		"PlayerWorldPosPointer",
+	soldierWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
+		"SoldierWorldPosPointer",
 		this,
 		float4::Red,
 		float4(0, 0, -5),
 		float4(5, 5, 1)
 	);	
 	
-	lowerLandingChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	lowerLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"LowerLandingChecker",
 		this,
 		float4::Black,
@@ -116,7 +104,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	slopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	slopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"SlopeChecker",
 		this,
 		float4::Blue,
@@ -124,7 +112,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	ascendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	ascendingSlopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"AscendingSlopeChecker",
 		this,
 		float4::Black,
@@ -132,7 +120,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	flatSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	flatSlopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"FlatSlopeChecker",
 		this,
 		float4::Black,
@@ -140,7 +128,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	descendingSlopeChecker_ = TestIndicator::CreateIndicator<TestPixelIndicator>(
+	descendingSlopeChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"DescendingSlopeChecker",
 		this,
 		float4::Black,
@@ -148,7 +136,7 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	muzzleIndicator_ = TestIndicator::CreateIndicator<TestIndicator>(
+	muzzleIndicator_ = Indicator::CreateIndicator<Indicator>(
 		"MuzzleIndicator",
 		this,
 		float4::Red,
@@ -156,29 +144,29 @@ void TestPlayer::Start()
 		float4(5, 5, 1)
 	);
 
-	playerLifeCollisionBody_ = CreateComponent<GameEngineCollision>("PlayerLifeCollisionBody");
-	playerLifeCollisionBody_->ChangeOrder(this->GetOrder());
-	playerLifeCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
-	playerLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
-	playerLifeCollisionBody_->GetTransform().SetLocalScale(playerLifeCollisionBodyScale_Standing_);
-	playerLifeCollisionBody_->GetTransform().SetLocalPosition(playerLifeCollisionBodyPosition_Standing_);
+	soldierLifeCollisionBody_ = CreateComponent<GameEngineCollision>("SoldierLifeCollisionBody");
+	soldierLifeCollisionBody_->ChangeOrder(this->GetOrder());
+	soldierLifeCollisionBody_->SetCollisionMode(CollisionMode::Single);
+	soldierLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
+	soldierLifeCollisionBody_->GetTransform().SetLocalScale(soldierLifeCollisionBodyScale_Standing_);
+	soldierLifeCollisionBody_->GetTransform().SetLocalPosition(soldierLifeCollisionBodyPosition_Standing_);
 
-	playerCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("PlayerCloseCombatCollisionBody");
-	playerCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
-	playerCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
-	playerCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
-	playerCloseCombatCollisionBody_->GetTransform().SetLocalScale(120, 160, 10);
-	playerCloseCombatCollisionBody_->GetTransform().SetLocalPosition(60, 80, 10);
+	soldierCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("SoldierCloseCombatCollisionBody");
+	soldierCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
+	soldierCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Single);
+	soldierCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
+	soldierCloseCombatCollisionBody_->GetTransform().SetLocalScale(120, 160, 10);
+	soldierCloseCombatCollisionBody_->GetTransform().SetLocalPosition(60, 80, 10);
 
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 
 
-	CreatePlayerAnimations();
-	CreatePlayerStates();
+	CreateSoldierAnimations();
+	CreateSoldierStates();
 }
 
-void TestPlayer::Update(float _deltaTime)
+void Soldier::Update(float _deltaTime)
 {
 	CheckGround();
 
@@ -191,29 +179,28 @@ void TestPlayer::Update(float _deltaTime)
 	{
 		Flicker(_deltaTime, isDamageProof_, float4(0.25f, 0.25f, 0.25f, 0.f));
 
-		if (PlayerState::Pistol_Redeploying != currentPlayerState_)
+		if (SoldierState::Pistol_Redeploying != currentSoldierState_)
 		{
 			UpdateInputInfo();
 		}
 	}
 
+	ConvertInputToSoldierStates();
 
-	
-	
 
-	ConvertInputToPlayerStates();
-	UpdatePlayerState(_deltaTime);
+
+	UpdateSoldierState(_deltaTime);
 	ControlMuzzle();
-	MovePlayer(_deltaTime);
+	MoveSoldier(_deltaTime);
 
 
 }
 
-void TestPlayer::End()
+void Soldier::End()
 {
 }
 
-void TestPlayer::TakeDamage(int _rebelWeaponType)
+void Soldier::TakeDamage(int _rebelWeaponType)
 {
 	if (true == isDamageProof_)
 	{
@@ -223,13 +210,13 @@ void TestPlayer::TakeDamage(int _rebelWeaponType)
 	causeOfDeath_ = _rebelWeaponType;
 }
 
-void TestPlayer::CheckGround()
+void Soldier::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((TestLevel::groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (TestLevel::groundColor_.color_ <= playerWorldPosPointer_->GetColorValue_UINT()))
+		if ((steppableObjectColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
+			&& (steppableObjectColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+			&& (steppableObjectColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()))
 		{
 			//PixelColor magenta = PixelColor(255, 0, 255, 255);
 			//magenta.color_;		//4294902015
@@ -245,14 +232,14 @@ void TestPlayer::CheckGround()
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
-				if (PlayerTopState::Firing == top_
-					|| PlayerTopState::ThrowingGrenade == top_)
+				if (SoldierTopState::Firing == top_
+					|| SoldierTopState::ThrowingGrenade == top_)
 				{
-					leg_ = PlayerLegState::Standing;
+					leg_ = SoldierLegState::Standing;
 				}
 				else
 				{
-					leg_ = PlayerLegState::RunningOrJumpingToStanding;
+					leg_ = SoldierLegState::RunningOrJumpingToStanding;
 				}
 
 				if (AimingDirection::Downward == direction_
@@ -262,29 +249,29 @@ void TestPlayer::CheckGround()
 					direction_ = AimingDirection::Forward;
 				}
 
-				if (PlayerTopState::FiringToAiming == top_
-					|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+				if (SoldierTopState::FiringToAiming == top_
+					|| SoldierTopState::ThrowingGrenadeToAiming == top_)
 				{
-					top_ = PlayerTopState::Aiming;
+					top_ = SoldierTopState::Aiming;
 				}
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= playerWorldPosPointer_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (steppableObjectColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()
+			&& steppableObjectColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
-				if (PlayerTopState::Firing == top_
-					|| PlayerTopState::ThrowingGrenade == top_)
+				if (SoldierTopState::Firing == top_
+					|| SoldierTopState::ThrowingGrenade == top_)
 				{
-					leg_ = PlayerLegState::Standing;
+					leg_ = SoldierLegState::Standing;
 				}
 				else
 				{
-					leg_ = PlayerLegState::RunningOrJumpingToStanding;
+					leg_ = SoldierLegState::RunningOrJumpingToStanding;
 				}
 
 				if (AimingDirection::Downward == direction_
@@ -294,14 +281,14 @@ void TestPlayer::CheckGround()
 					direction_ = AimingDirection::Forward;
 				}
 
-				if (PlayerTopState::FiringToAiming == top_
-					|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+				if (SoldierTopState::FiringToAiming == top_
+					|| SoldierTopState::ThrowingGrenadeToAiming == top_)
 				{
-					top_ = PlayerTopState::Aiming;
+					top_ = SoldierTopState::Aiming;
 				}
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (steppableObjectColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
@@ -309,14 +296,14 @@ void TestPlayer::CheckGround()
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
 
-				if (PlayerTopState::Firing == top_
-					|| PlayerTopState::ThrowingGrenade == top_)
+				if (SoldierTopState::Firing == top_
+					|| SoldierTopState::ThrowingGrenade == top_)
 				{
-					leg_ = PlayerLegState::Standing;
+					leg_ = SoldierLegState::Standing;
 				}
 				else
 				{
-					leg_ = PlayerLegState::RunningOrJumpingToStanding;
+					leg_ = SoldierLegState::RunningOrJumpingToStanding;
 				}
 
 				if (AimingDirection::Downward == direction_
@@ -326,10 +313,10 @@ void TestPlayer::CheckGround()
 					direction_ = AimingDirection::Forward;
 				}
 
-				if (PlayerTopState::FiringToAiming == top_
-					|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+				if (SoldierTopState::FiringToAiming == top_
+					|| SoldierTopState::ThrowingGrenadeToAiming == top_)
 				{
-					top_ = PlayerTopState::Aiming;
+					top_ = SoldierTopState::Aiming;
 				}
 			}
 		}
@@ -337,23 +324,23 @@ void TestPlayer::CheckGround()
 		{
 			if (false == isAirborne_)
 			{
-				leg_ = PlayerLegState::Falling;
+				leg_ = SoldierLegState::Falling;
 				isAirborne_ = true;
 			}
 		}
 	}
 }
 
-void TestPlayer::Fall(float _deltaTime)
+void Soldier::Fall(float _deltaTime)
 {
-	fallingSpeed_ += TestLevel::gravity_ * _deltaTime;
+	fallingSpeed_ += gravity_ * _deltaTime;
 
 	movementFor1Second_ += float4::Down * fallingSpeed_;
 
 	movementFor1Second_ += float4::Right * horizontalInputValue_ * runningSpeed_;
 }
 
-void TestPlayer::UpdateInputInfo()
+void Soldier::UpdateInputInfo()
 {
 	if (true == GameEngineInput::GetInst()->IsPressed("Right"))
 	{
@@ -417,7 +404,7 @@ void TestPlayer::UpdateInputInfo()
 	}
 }
 
-void TestPlayer::ConvertInputToPlayerStates()
+void Soldier::ConvertInputToSoldierStates()
 {
 
 	//상하방향 입력 반응.
@@ -429,13 +416,13 @@ void TestPlayer::ConvertInputToPlayerStates()
 		{
 			if (AimingDirection::ForwardToDownward != direction_ && AimingDirection::Downward != direction_)
 			{
-				if (PlayerTopState::Aiming == top_)
+				if (SoldierTopState::Aiming == top_)
 				{
 					direction_ = AimingDirection::ForwardToDownward;
 				}
-				else if (PlayerTopState::Firing == top_)
+				else if (SoldierTopState::Firing == top_)
 				{
-					if (weapon_ == PlayerWeaponType::HeavyMachineGun)
+					if (weapon_ == SoldierWeaponType::HeavyMachineGun)
 					{
 						direction_ = AimingDirection::ForwardToDownward;
 					}
@@ -448,11 +435,11 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else
 		{
-			if (PlayerLegState::Standing == leg_
-				|| PlayerLegState::Running == leg_
-				|| PlayerLegState::RunningOrJumpingToStanding == leg_)
+			if (SoldierLegState::Standing == leg_
+				|| SoldierLegState::Running == leg_
+				|| SoldierLegState::RunningOrJumpingToStanding == leg_)
 			{
-				leg_ = PlayerLegState::StandingToDucking;
+				leg_ = SoldierLegState::StandingToDucking;
 			}
 
 			if (AimingDirection::Forward != direction_)
@@ -467,18 +454,18 @@ void TestPlayer::ConvertInputToPlayerStates()
 	{
 		if (AimingDirection::Upward != direction_ && AimingDirection::ForwardToUpward != direction_)
 		{
-			if (PlayerTopState::Aiming == top_)
+			if (SoldierTopState::Aiming == top_)
 			{
-				if (PlayerLegState::Running == leg_ || PlayerLegState::Standing == leg_)
+				if (SoldierLegState::Running == leg_ || SoldierLegState::Standing == leg_)
 				{
 					direction_ = AimingDirection::ForwardToUpward;
 				}
 			}
-			else if (PlayerTopState::Firing == top_)
+			else if (SoldierTopState::Firing == top_)
 			{
-				if (PlayerLegState::Ducking != leg_)
+				if (SoldierLegState::Ducking != leg_)
 				{
-					if (PlayerWeaponType::HeavyMachineGun == weapon_)
+					if (SoldierWeaponType::HeavyMachineGun == weapon_)
 					{
 						direction_ = AimingDirection::ForwardToUpward;
 					}
@@ -496,13 +483,13 @@ void TestPlayer::ConvertInputToPlayerStates()
 	{
 		if (AimingDirection::Upward == direction_)
 		{
-			if (PlayerTopState::Aiming == top_)
+			if (SoldierTopState::Aiming == top_)
 			{
 				direction_ = AimingDirection::UpwardToForward;
 			}
-			else if (PlayerTopState::Firing == top_)
+			else if (SoldierTopState::Firing == top_)
 			{
-				if (PlayerWeaponType::HeavyMachineGun == weapon_)
+				if (SoldierWeaponType::HeavyMachineGun == weapon_)
 				{
 					direction_ = AimingDirection::UpwardToForward;
 				}
@@ -514,13 +501,13 @@ void TestPlayer::ConvertInputToPlayerStates()
 		}
 		else if (AimingDirection::Downward == direction_)
 		{
-			if (PlayerTopState::Aiming == top_)
+			if (SoldierTopState::Aiming == top_)
 			{
 				direction_ = AimingDirection::DownwardToForward;
 			}
-			else if (PlayerTopState::Firing == top_)
+			else if (SoldierTopState::Firing == top_)
 			{
-				if (PlayerWeaponType::HeavyMachineGun == weapon_)
+				if (SoldierWeaponType::HeavyMachineGun == weapon_)
 				{
 					direction_ = AimingDirection::DownwardToForward;
 				}
@@ -531,14 +518,14 @@ void TestPlayer::ConvertInputToPlayerStates()
 			}
 		}
 		
-		if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
+		if (SoldierLegState::Ducking == leg_ || SoldierLegState::StandingToDucking == leg_)
 		{
-			leg_ = PlayerLegState::Standing;
-			if (PlayerTopState::DuckStepping == top_
-				|| PlayerTopState::FiringToAiming == top_
-				|| PlayerTopState::ThrowingGrenadeToAiming == top_)
+			leg_ = SoldierLegState::Standing;
+			if (SoldierTopState::DuckStepping == top_
+				|| SoldierTopState::FiringToAiming == top_
+				|| SoldierTopState::ThrowingGrenadeToAiming == top_)
 			{
-				top_ = PlayerTopState::Aiming;
+				top_ = SoldierTopState::Aiming;
 			}
 		}
 
@@ -560,22 +547,22 @@ void TestPlayer::ConvertInputToPlayerStates()
 		this->GetTransform().PixLocalNegativeX();
 		//플레이어 로컬포지션 전환.
 
-		if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
+		if (SoldierLegState::Ducking == leg_ || SoldierLegState::StandingToDucking == leg_)
 		{
-			leg_ = PlayerLegState::Ducking;
-			if ((PlayerTopState::Firing != top_ && PlayerTopState::ThrowingGrenade != top_))
+			leg_ = SoldierLegState::Ducking;
+			if ((SoldierTopState::Firing != top_ && SoldierTopState::ThrowingGrenade != top_))
 			{
-				top_ = PlayerTopState::DuckStepping;
+				top_ = SoldierTopState::DuckStepping;
 			}
 		}
 		else if (true == isAirborne_
-			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
+			&& (SoldierLegState::VerticalJumping == leg_ || SoldierLegState::ForwardJumping == leg_ || SoldierLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
 		}
 		else 
 		{
-			leg_ = PlayerLegState::Running;
+			leg_ = SoldierLegState::Running;
 		}
 		break;
 	}
@@ -585,42 +572,42 @@ void TestPlayer::ConvertInputToPlayerStates()
 		this->GetTransform().PixLocalPositiveX();
 		//플레이어 로컬포지션 전환.
 
-		if (PlayerLegState::Ducking == leg_ || PlayerLegState::StandingToDucking == leg_)
+		if (SoldierLegState::Ducking == leg_ || SoldierLegState::StandingToDucking == leg_)
 		{
-			leg_ = PlayerLegState::Ducking;
-			if ((PlayerTopState::Firing != top_ && PlayerTopState::ThrowingGrenade != top_))
+			leg_ = SoldierLegState::Ducking;
+			if ((SoldierTopState::Firing != top_ && SoldierTopState::ThrowingGrenade != top_))
 			{
-				top_ = PlayerTopState::DuckStepping;
+				top_ = SoldierTopState::DuckStepping;
 			}
 		}
 		else if (true == isAirborne_
-			&& (PlayerLegState::VerticalJumping == leg_ || PlayerLegState::ForwardJumping == leg_ || PlayerLegState::Falling == leg_))
+			&& (SoldierLegState::VerticalJumping == leg_ || SoldierLegState::ForwardJumping == leg_ || SoldierLegState::Falling == leg_))
 		{
 			//다리 스테이트 변화 없음.
 		}
 		else
 		{
-			leg_ = PlayerLegState::Running;
+			leg_ = SoldierLegState::Running;
 		}
 		break;
 	}
 
 	case 0:		//중립.
 	{
-		if (PlayerLegState::Ducking == leg_ && PlayerTopState::DuckStepping == top_)
+		if (SoldierLegState::Ducking == leg_ && SoldierTopState::DuckStepping == top_)
 		{
-			top_ = PlayerTopState::Aiming;
+			top_ = SoldierTopState::Aiming;
 		}
-		else if (PlayerLegState::Running == leg_ )
+		else if (SoldierLegState::Running == leg_ )
 		{
 			if (0 == verticalInputValue_)
 			{
-				leg_ = PlayerLegState::RunningOrJumpingToStanding;
+				leg_ = SoldierLegState::RunningOrJumpingToStanding;
 				direction_ = AimingDirection::Forward;
 			}
 			else if (1 == verticalInputValue_)
 			{
-				leg_ = PlayerLegState::Standing;
+				leg_ = SoldierLegState::Standing;
 			}
 		}
 		break;
@@ -638,21 +625,21 @@ void TestPlayer::ConvertInputToPlayerStates()
 		{
 			if (0 == horizontalInputValue_)
 			{
-				leg_ = PlayerLegState::VerticalJumping;
+				leg_ = SoldierLegState::VerticalJumping;
 			}
 			else
 			{
-				leg_ = PlayerLegState::ForwardJumping;
+				leg_ = SoldierLegState::ForwardJumping;
 			}
 
-			if (PlayerTopState::DuckStepping == top_
-				|| PlayerTopState::FiringToAiming ==top_
-				|| PlayerTopState::ThrowingGrenadeToAiming ==top_)
+			if (SoldierTopState::DuckStepping == top_
+				|| SoldierTopState::FiringToAiming ==top_
+				|| SoldierTopState::ThrowingGrenadeToAiming ==top_)
 			{
-				top_ = PlayerTopState::Aiming;
+				top_ = SoldierTopState::Aiming;
 			}
 
-			if (PlayerTopState::Firing != top_)
+			if (SoldierTopState::Firing != top_)
 			{
 				direction_ = AimingDirection::Forward;
 			}
@@ -682,21 +669,21 @@ void TestPlayer::ConvertInputToPlayerStates()
 	//공격키 입력 반응.
 	if (true == isAttackKeyDown_)
 	{
-		if (PlayerTopState::ThrowingGrenade != top_)
+		if (SoldierTopState::ThrowingGrenade != top_)
 		{
-			if (true == playerCloseCombatCollisionBody_->IsCollision(
+			if (true == soldierCloseCombatCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
 				CollisionBodyOrder::Rebel,
 				CollisionType::CT_AABB, 
 				nullptr)
 			)
 			{
-				top_ = PlayerTopState::MeleeAttack;
+				top_ = SoldierTopState::MeleeAttack;
 				direction_ = AimingDirection::Forward;
 			}
 			else 
 			{
-				top_ = PlayerTopState::Firing;
+				top_ = SoldierTopState::Firing;
 			}
 		}
 	}
@@ -704,29 +691,29 @@ void TestPlayer::ConvertInputToPlayerStates()
 	//특수공격 키 입력 반응.
 	if (true == isSpecialKeyDown_)
 	{
-		if (PlayerTopState::Firing != top_)
+		if (SoldierTopState::Firing != top_)
 		{
-			top_ = PlayerTopState::ThrowingGrenade;
+			top_ = SoldierTopState::ThrowingGrenade;
 			direction_ = AimingDirection::Forward;
 		}
 	}
 
 
 	//공격중일때 다른 부위 스테이트 강제변경.
-	if (PlayerTopState::Firing == top_ 
-		|| PlayerTopState::ThrowingGrenade == top_ 
-		|| PlayerTopState::MeleeAttack == top_)
+	if (SoldierTopState::Firing == top_ 
+		|| SoldierTopState::ThrowingGrenade == top_ 
+		|| SoldierTopState::MeleeAttack == top_)
 	{
-		if (PlayerLegState::RunningOrJumpingToStanding == leg_)
+		if (SoldierLegState::RunningOrJumpingToStanding == leg_)
 		{
-			leg_ = PlayerLegState::Standing;
+			leg_ = SoldierLegState::Standing;
 		}
-		else if (PlayerLegState::StandingToDucking == leg_)
+		else if (SoldierLegState::StandingToDucking == leg_)
 		{
-			leg_ = PlayerLegState::Ducking;
+			leg_ = SoldierLegState::Ducking;
 		}
 
-		if (PlayerTopState::Firing == top_ && PlayerWeaponType::HeavyMachineGun != weapon_)
+		if (SoldierTopState::Firing == top_ && SoldierWeaponType::HeavyMachineGun != weapon_)
 		{
 			if (AimingDirection::ForwardToDownward == direction_)
 			{
@@ -746,19 +733,19 @@ void TestPlayer::ConvertInputToPlayerStates()
 			}
 		}
 
-		if (PlayerTopState::ThrowingGrenade == top_ || PlayerTopState::MeleeAttack == top_)
+		if (SoldierTopState::ThrowingGrenade == top_ || SoldierTopState::MeleeAttack == top_)
 		{
 			direction_ = AimingDirection::Forward;
 		}
 	}
 
 	//중간동작들끼리 겹칠때 대응하는 코드.
-	if (PlayerLegState::RunningOrJumpingToStanding == leg_
-		|| PlayerLegState::StandingToDucking == leg_)
+	if (SoldierLegState::RunningOrJumpingToStanding == leg_
+		|| SoldierLegState::StandingToDucking == leg_)
 	{
-		if (PlayerTopState::FiringToAiming == top_ || PlayerTopState::ThrowingGrenadeToAiming == top_)
+		if (SoldierTopState::FiringToAiming == top_ || SoldierTopState::ThrowingGrenadeToAiming == top_)
 		{
-			top_ = PlayerTopState::Aiming;
+			top_ = SoldierTopState::Aiming;
 		}
 
 		direction_ = AimingDirection::Forward;		
@@ -774,7 +761,7 @@ void TestPlayer::ConvertInputToPlayerStates()
 	
 }
 
-void TestPlayer::UpdatePlayerState(float _deltaTime)
+void Soldier::UpdateSoldierState(float _deltaTime)
 {
 	int intNewState = 0;
 
@@ -791,22 +778,22 @@ void TestPlayer::UpdatePlayerState(float _deltaTime)
 			+ static_cast<int>(direction_);
 	}
 
-	if (allPlayerStates_.end() == allPlayerStates_.find(intNewState))
+	if (allSoldierStates_.end() == allSoldierStates_.find(intNewState))
 	{
 		MsgBoxAssertString(std::to_string(intNewState) + ": 존재하지 않는 플레이어 스테이트입니다.");
 		return;
 	}
 
-	if (allPlayerStates_[intNewState].first != currentPlayerState_)
+	if (allSoldierStates_[intNewState].first != currentSoldierState_)
 	{
-		currentPlayerState_ = allPlayerStates_[intNewState].first;
-		playerStateManager_.ChangeState(allPlayerStates_[intNewState].second);
+		currentSoldierState_ = allSoldierStates_[intNewState].first;
+		soldierStateManager_.ChangeState(allSoldierStates_[intNewState].second);
 	}
 
-	playerStateManager_.Update(_deltaTime);
+	soldierStateManager_.Update(_deltaTime);
 }
 
-void TestPlayer::ControlMuzzle()
+void Soldier::ControlMuzzle()
 {
 	switch (direction_)
 	{
@@ -814,7 +801,7 @@ void TestPlayer::ControlMuzzle()
 	{
 		aimingAngle_ = 90 - (90 * this->GetTransform().GetLocalScale().x);
 
-		if (PlayerLegState::Ducking == leg_)
+		if (SoldierLegState::Ducking == leg_)
 		{
 			muzzleIndicator_->GetTransform().SetLocalPosition(pistolDuckingMuzzlePosition_);
 		}
@@ -852,13 +839,13 @@ void TestPlayer::ControlMuzzle()
 
 }
 
-void TestPlayer::MovePlayer(float _deltaTime)
+void Soldier::MoveSoldier(float _deltaTime)
 {
-	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * TestLevel::playSpeed_);
+	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * playSpeed_);
 	movementFor1Second_ = float4::Zero;
 }
 
-void TestPlayer::Run()
+void Soldier::Run()
 {
 	if (this->GetTransform().GetWorldPosition().x - 50.f/*캐릭터 좌우크기 절반*/
 			< (- GameEngineWindow::GetInst()->GetScale().HX() 
@@ -881,7 +868,7 @@ void TestPlayer::Run()
 	movementFor1Second_ += float4::Up * GetSlope() * runningSpeed_;
 }
 
-void TestPlayer::DuckStep()
+void Soldier::DuckStep()
 {
 	if (this->GetTransform().GetWorldPosition().x - 50.f/*캐릭터 좌우크기 절반*/
 		< (-GameEngineWindow::GetInst()->GetScale().HX()
@@ -904,7 +891,7 @@ void TestPlayer::DuckStep()
 	movementFor1Second_ += float4::Up * GetSlope() * duckStepSpeed_;
 }
 
-float TestPlayer::GetSlope()
+float Soldier::GetSlope()
 {
 	if (false == isAirborne_)
 	{
@@ -912,9 +899,9 @@ float TestPlayer::GetSlope()
 		int endPosY = 0;
 		int slopeCheckPosY = 0;
 
-		if (TestLevel::groundColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		if (steppableObjectColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
+			&& steppableObjectColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& steppableObjectColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
 				slopeCheckerLocalPosX_,
@@ -922,7 +909,7 @@ float TestPlayer::GetSlope()
 				-5
 			);
 
-			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (steppableObjectColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				return 0.f;
 			}
@@ -932,13 +919,13 @@ float TestPlayer::GetSlope()
 				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			}
 		}
-		else if (TestLevel::groundColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (steppableObjectColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& steppableObjectColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 		}
-		else if (TestLevel::groundColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (steppableObjectColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
@@ -956,7 +943,7 @@ float TestPlayer::GetSlope()
 				slopeCheckPosY,
 				-5
 			);
-			if (TestLevel::groundColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (steppableObjectColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				break;
 			}
@@ -974,19 +961,22 @@ float TestPlayer::GetSlope()
 	}
 }
 
-void TestPlayer::Fire()
+void Soldier::Fire()
 {
 	switch (weapon_)
 	{
-	case PlayerWeaponType::Pistol:
+	case SoldierWeaponType::Pistol:
 	{
-		TestPistolBullet* newBullet = this->GetLevel<TestLevel>()->GetPistolBullet();
+		PistolBullet* newBullet 
+			= this->GetLevel()->CreateActor<PistolBullet>(
+				CollisionBodyOrder::Soldier_Projectile, "PistolBullet");
+
 		newBullet->GetTransform().SetWorldPosition(muzzleIndicator_->GetTransform().GetWorldPosition());
 		newBullet->GetTransform().SetWorldRotation(muzzleIndicator_->GetTransform().GetWorldRotation());
 		newBullet->SetFiringDirection(aimingAngle_);
 		break;
 	}
-	case PlayerWeaponType::HeavyMachineGun:
+	case SoldierWeaponType::HeavyMachineGun:
 	{
 		MsgBoxAssert("아직 준비되지 않은 무기 타입입니다.");
 		break;
@@ -998,20 +988,20 @@ void TestPlayer::Fire()
 	}
 }
 
-void TestPlayer::MeleeAttack()
+void Soldier::MeleeAttack()
 {
-	playerCloseCombatCollisionBody_->IsCollision(
+	soldierCloseCombatCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
 		CollisionBodyOrder::Rebel,
 		CollisionType::CT_AABB,
 		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->CollisionReturn {
-			_rebelCollision->GetActor<TestArabian>()->TakeDamage(meleeAttackDamage_);
+			_rebelCollision->GetActor<Arabian>()->TakeDamage(meleeAttackDamage_);
 			return CollisionReturn::Stop;
 		}
 	);
 }
 
-void TestPlayer::Flicker(
+void Soldier::Flicker(
 	float _deltaTime,
 	bool _isFlickeringOn,
 	const float4& _plusColor,

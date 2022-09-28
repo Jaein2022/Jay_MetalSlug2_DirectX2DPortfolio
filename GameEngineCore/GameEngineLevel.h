@@ -90,7 +90,7 @@ public:
 		return GetConvertedGroup<ObjectType>(static_cast<int>(_objectGroupIndex));
 	}
 
-protected:
+
 	//액터 생성 함수.
 	template<typename ActorType, typename GroupIndexType>
 	ActorType* CreateActor(GroupIndexType _type, const std::string& _actorName = "")
