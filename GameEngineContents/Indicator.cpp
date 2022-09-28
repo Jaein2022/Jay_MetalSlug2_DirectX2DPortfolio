@@ -4,7 +4,7 @@
 #ifdef _DEBUG
 bool Indicator::isRendering_ = true;
 #else
-bool TestIndicator::isRendering_ = false;
+bool Indicator::isRendering_ = false;
 #endif
 
 Indicator::Indicator()
