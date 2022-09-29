@@ -8,7 +8,7 @@ bool (*GameEngineCollision::collisionFunctions_[static_cast<int>(CollisionType::
 
 class GameEngineCollisionFunctionInit
 {
-	//이 클래스의 존재 이유: 
+	//이 클래스의 존재 이유: 충돌판정함수 초기화 전용 클래스.
 public:
 	GameEngineCollisionFunctionInit()
 	{
@@ -88,6 +88,8 @@ bool GameEngineCollision::IsCollision(
 		return false;
 	}
 
+	bool isCollided = false;	//충돌 여부.
+
 	std::map<int, std::list<GameEngineCollision*>>& allCollisions
 		= this->GetActor()->GetLevel()->allCollisions_;
 
@@ -107,6 +109,8 @@ bool GameEngineCollision::IsCollision(
 
 		if (true == GameEngineCollision::collisionFunctions_[thisType][otherType](this->GetTransform(), otherCollision->GetTransform()))
 		{
+			isCollided = true;	//여기까지 들어온 것이 이미 충돌했다는 의미.
+
 			if (CollisionMode::Multiple == collisionMode_)
 			{
 				if (collisionCheck_.end() == collisionCheck_.find(otherCollision))
@@ -173,7 +177,7 @@ bool GameEngineCollision::IsCollision(
 		}
 	}
 
-	return false;
+	return isCollided;
 }
 
 void GameEngineCollision::DebugRender()

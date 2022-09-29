@@ -110,16 +110,18 @@ void GameEngineCore::CoreUpdate(GameEngineCore* _userCore)
 
 	GameEngineSound::Update();
 
-	float deltaTime = GameEngineTime::GetDeltaTime();
+	float deltaTime = GameEngineTime::GetDeltaTimeF();
 
 	GameEngineInput::GetInst()->Update(deltaTime);
 
+	if (true == GameEngineTime::IsUnderFrameLimit())
+	{
+		//컨텐츠 제작자가 엔진 수준에서 뭔가 하고 싶을때 여기서 한다.
+		_userCore->Update(deltaTime);
 
-	//컨텐츠 제작자가 엔진 수준에서 뭔가 하고 싶을때 여기서 한다.
-	_userCore->Update(deltaTime);
-
-	//컨텐츠 제작자가 레벨 수준에서 뭔가 하고 싶을때 여기서 한다.
-	currentLevel_->LevelUpdate(deltaTime);
+		//컨텐츠 제작자가 레벨 수준에서 뭔가 하고 싶을때 여기서 한다.
+		currentLevel_->LevelUpdate(deltaTime);
+	}
 
 }
 

@@ -10,7 +10,7 @@ enum class CollisionBodyOrder	//충돌체오더지만 오브젝트오더도 겸함.
 {
 	Soldier,				//플레이어
 	Soldier_MeleeAttack,	//플레이어 근접공격.
-	Soldier_Projectile,	//플레이어 원거리공격.
+	Soldier_Projectile,		//플레이어 원거리공격.
 
 
 

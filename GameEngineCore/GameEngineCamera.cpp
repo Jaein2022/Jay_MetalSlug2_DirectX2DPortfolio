@@ -163,7 +163,7 @@ void GameEngineCamera::Render(float _deltaTime)
 
 	for (std::pair<const int, std::list<GameEngineRenderer*>>& rendererGroupPair : allRenderers_)
 	{
-		float scaleTime = GameEngineTime::GetDeltaTime(rendererGroupPair.first);
+		float scaleTime = GameEngineTime::GetDeltaTimeF(rendererGroupPair.first);
 
 		std::list<GameEngineRenderer*>& sortingRendererList = rendererGroupPair.second;
 		sortingRendererList.sort(ZSort);	//<-이거 있고 없고의 차이가 뭐길래 투명이 제대로 적용되지??

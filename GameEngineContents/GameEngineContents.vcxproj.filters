@@ -78,6 +78,12 @@
     <ClInclude Include="PistolBullet.h">
       <Filter>Player\PlayerWeapon</Filter>
     </ClInclude>
+    <ClInclude Include="Mission1.h">
+      <Filter>Mission</Filter>
+    </ClInclude>
+    <ClInclude Include="Mission1BG.h">
+      <Filter>Mission\Background</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -118,6 +124,12 @@
     </ClCompile>
     <ClCompile Include="PistolBullet.cpp">
       <Filter>Player\PlayerWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Mission1.cpp">
+      <Filter>Mission</Filter>
+    </ClCompile>
+    <ClCompile Include="Mission1BG.cpp">
+      <Filter>Mission\Background</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -38,10 +38,10 @@ Arabian::Arabian()
 	releaseAngle_(60.f),
 	releaseVelocity_(5.f),
 	horizontalDistance_(0.f),
-	recognitionDistance_(600.f),
+	recognitionDistance_(900.f),
 	engagementDistance_(600.f),
 	chargeDistance_(400.f),
-	hp_(3)
+	hp_(1)
 {
 }
 

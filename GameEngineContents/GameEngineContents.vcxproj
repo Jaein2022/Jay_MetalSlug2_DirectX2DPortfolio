@@ -158,6 +158,14 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Mission1.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Mission1BG.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="PistolBullet.h">
       <SubType>
       </SubType>
@@ -192,6 +200,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContentsCore.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Mission1.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Mission1BG.cpp">
       <SubType>
       </SubType>
     </ClCompile>

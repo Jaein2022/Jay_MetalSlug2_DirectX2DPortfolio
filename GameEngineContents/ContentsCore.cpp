@@ -1,6 +1,7 @@
 #include "PreCompile.h"
 #include "ContentsCore.h"
 #include "TestLevel.h"
+#include "Mission1.h"
 
 ContentsCore::ContentsCore()
 {
@@ -25,10 +26,16 @@ void ContentsCore::Start()
 
 	CreateLevel<TestLevel>("TestLevel");
 
+	CreateLevel<Mission1>("Mission1");
 
-	ChangeLevel("TestLevel");
+	ChangeLevel("Mission1");
 
 	//GameEngineDebug::ConsoleOpen(); 콘솔창이 필요하면 복원.
+
+
+	//GameEngineTime::SetFrameLimit(60);	프레임 제한이 필요하면 복원.
+	//그런데 프레임 제한을 거니 프레임 드랍이 너무 심하므로 사용 금지.
+
 
 
 	if (false == GameEngineInput::GetInst()->IsKey("Left"))

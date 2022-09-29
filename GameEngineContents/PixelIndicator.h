@@ -49,6 +49,10 @@ public:
 		}
 	}
 
+	static GameEngineTexture* GetPCTexture()
+	{
+		return pcTexture_;
+	}
 
 
 private:
