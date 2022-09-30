@@ -7,10 +7,11 @@ GameEngineTime::GameEngineTime()
 	: deltaTime_Double_(0.0),
 	deltaTime_Float_(0.00f),
 	globalTimeScale_(1.f),
-	fps_(0),
+	averageFPS_(0),
 	remainedFPSUpdateInterval_(0.0),
 	loopCount_(0),
 	totalFPS_(0),
+	accurateFPS_(0.0),
 	frameLimit_(-1),
 	isUnderFrameLimit_(true)
 {
@@ -24,7 +25,7 @@ void GameEngineTime::Reset()
 {
 	prev_ = std::chrono::steady_clock::now();
 
-	fps_ = 0;
+	averageFPS_ = 0;
 	remainedFPSUpdateInterval_ = 1.0;
 	loopCount_ = 0;
 	totalFPS_ = 0;
@@ -59,6 +60,7 @@ void GameEngineTime::Update()
 
 	prev_ = current;
 
+	accurateFPS_ = 1.00 / deltaTime_Double_;
 
 	remainedFPSUpdateInterval_ -= deltaTime_Double_;
 	if (DBL_EPSILON < deltaTime_Double_ && true == isUnderFrameLimit_)	
@@ -70,7 +72,7 @@ void GameEngineTime::Update()
 
 	if (0 >= remainedFPSUpdateInterval_ && 0 < loopCount_)	//1초간 평균 프레임 수 계산.
 	{
-		fps_ = totalFPS_ / loopCount_;
+		averageFPS_ = totalFPS_ / loopCount_;
 
 		remainedFPSUpdateInterval_ = 1.0;
 		loopCount_ = 0;

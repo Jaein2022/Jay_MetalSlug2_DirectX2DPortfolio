@@ -53,7 +53,7 @@ void GameEngineStatusWindow::Initialize(GameEngineLevel* _level)
 
 void GameEngineStatusWindow::OnGUI(GameEngineLevel* _level, float _deltaTime)
 {
-	std::string currentFPS = "Current FPS : " + std::to_string(GameEngineTime::GetFPS());
+	std::string currentFPS = "Current FPS : " + std::to_string(GameEngineTime::GetAverageFPS());
 	ImGui::Text(currentFPS.c_str());
 
 

@@ -23,9 +23,9 @@ private:
 
 
 public:
-	static float Lerp(float _p1, float _p2, float _time)
+	static float Lerp(float _p1, float _p2, float _ratio)
 	{
-		return (1.0f - _time) * _p1 + _time * _p2;
+		return (1.0f - _ratio) * _p1 + _ratio * _p2;
 	}
 
 	static float LerpTime(float _p1, float _p2, float _time)
@@ -283,26 +283,26 @@ public:
 		return *this;
 	}
 
-	//bool operator==(const float4& _other) const
-	//{
-	//	//return (this->x == _other.x && this->y == _other.y && this->z == _other.z);
-	//	return fabsf(this->x - _other.x) <= FLT_EPSILON
-	//		&& fabsf(this->y - _other.y) <= FLT_EPSILON
-	//		&& fabsf(this->z - _other.z) <= FLT_EPSILON;
-	//	//FLT_EPSILON: 1.192092896e-07F. float으로 표현할 수 있는 가장 작은 수 + 1.0f.
-	//	//실수는 부동소수점 시스템 때문에 항상 약간의 오차가 발생하고, 그래서 일반적인 방식으로 대소를 비교해선 안되고,
-	//	//두 숫자간 차이가 기준이 되는 일정 수치 이하일 때 같다고 표현하고, 그보다 크다면 다르다고 표현하는 방식을 써야 한다.
-	//}
+	bool operator==(const float4& _other) const
+	{
+		return fabsf(this->x - _other.x) <= FLT_EPSILON
+			&& fabsf(this->y - _other.y) <= FLT_EPSILON
+			&& fabsf(this->z - _other.z) <= FLT_EPSILON;
+		//return (this->x == _other.x && this->y == _other.y && this->z == _other.z);
+		//FLT_EPSILON: 1.192092896e-07F. float으로 표현할 수 있는 가장 작은 수 + 1.0f.
+		//실수는 부동소수점 시스템 때문에 항상 약간의 오차가 발생하고, 그래서 일반적인 방식으로 대소를 비교해선 안되고,
+		//두 숫자간 차이가 기준이 되는 일정 수치 이하일 때 같다고 표현하고, 그보다 크다면 다르다고 표현하는 방식을 써야 한다.
+	}
 
-	//bool operator!=(const float4& _other) const
-	//{
-	//	return fabsf(this->x - _other.x) > FLT_EPSILON
-	//		|| fabsf(this->y - _other.y) > FLT_EPSILON
-	//		|| fabsf(this->z - _other.z) > FLT_EPSILON;
-	//	//FLT_EPSILON: 1.192092896e-07F. float으로 표현할 수 있는 가장 작은 수 + 1.0f.
-	//	//실수는 부동소수점 시스템 때문에 항상 약간의 오차가 발생하고, 그래서 일반적인 방식으로 대소를 비교해선 안되고,
-	//	//두 숫자간 차이가 기준이 되는 일정 수치 이하일 때 같다고 표현하고, 그보다 크다면 다르다고 표현하는 방식을 써야 한다.
-	//}
+	bool operator!=(const float4& _other) const
+	{
+		return fabsf(this->x - _other.x) > FLT_EPSILON
+			|| fabsf(this->y - _other.y) > FLT_EPSILON
+			|| fabsf(this->z - _other.z) > FLT_EPSILON;
+		//FLT_EPSILON: 1.192092896e-07F. float으로 표현할 수 있는 가장 작은 수 + 1.0f.
+		//실수는 부동소수점 시스템 때문에 항상 약간의 오차가 발생하고, 그래서 일반적인 방식으로 대소를 비교해선 안되고,
+		//두 숫자간 차이가 기준이 되는 일정 수치 이하일 때 같다고 표현하고, 그보다 크다면 다르다고 표현하는 방식을 써야 한다.
+	}
 
 	float& operator[](int _index)
 	{

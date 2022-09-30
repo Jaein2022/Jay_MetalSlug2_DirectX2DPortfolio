@@ -29,6 +29,7 @@ public:
 
 
 private:
+	void UpdateDestFocusMovement(float _deltaTime);
 	void UpdateCameraActorMovement(float _deltaTime);
 
 
@@ -37,6 +38,8 @@ private:
 
 	Indicator* currentFocusPointer_;
 	IndicatorBase* destFocus_;
+
+	const float destFocusVelocity_;
 
 	Soldier* soldier_Mission1_;
 

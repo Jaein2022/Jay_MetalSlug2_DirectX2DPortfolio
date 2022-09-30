@@ -28,10 +28,13 @@ private:
 	GameEngineTextureRenderer* part1_SecondBG_;
 	GameEngineTextureRenderer* part1_ThirdBG_1_;
 	GameEngineTextureRenderer* part1_ThirdBG_2_;
-	GameEngineTextureRenderer* part1_FourthBG_;
 	GameEngineTextureRenderer* part1_Sign_;
 	GameEngineTextureRenderer* part1_SteppableObject_;
+	GameEngineTextureRenderer* skyBG_1_;
 
+
+	GameEngineTextureRenderer* part2_FirstBG_;
+	GameEngineTextureRenderer* skyBG_2_;
 
 
 };
