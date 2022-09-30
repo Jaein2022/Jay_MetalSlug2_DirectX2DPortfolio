@@ -87,14 +87,9 @@ public:
 		globalTimeScale_ = _globalTimeScale;
 	}
 
-	static inline int GetAverageFPS()
+	static inline int GetFPS()
 	{
 		return inst_->averageFPS_;
-	}
-
-	static inline double GetAccurateFPS()
-	{
-		return inst_->accurateFPS_;
 	}
 
 	static inline void SetFrameLimit(int _frameLimit)
@@ -134,7 +129,6 @@ private:
 	double remainedFPSUpdateInterval_;	//현재 남은 FPS 갱신 주기.
 	int loopCount_;				//1초간 수행한 전체 루프 수.
 	int totalFPS_;			//1초간 집계된 FPS의 총합.
-	double accurateFPS_;
 
 	int frameLimit_;
 	bool isUnderFrameLimit_;

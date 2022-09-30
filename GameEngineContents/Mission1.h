@@ -40,6 +40,7 @@ private:
 	IndicatorBase* destFocus_;
 
 	const float destFocusVelocity_;
+	bool isDestFocusHolding_;
 
 	Soldier* soldier_Mission1_;
 

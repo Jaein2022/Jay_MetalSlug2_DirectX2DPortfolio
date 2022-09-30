@@ -11,7 +11,6 @@ GameEngineTime::GameEngineTime()
 	remainedFPSUpdateInterval_(0.0),
 	loopCount_(0),
 	totalFPS_(0),
-	accurateFPS_(0.0),
 	frameLimit_(-1),
 	isUnderFrameLimit_(true)
 {
@@ -59,8 +58,6 @@ void GameEngineTime::Update()
 	//std::chrono::duration<Rep, Period>::count(): duration형식의 변수에 저장된 시간이 몇 틱인지 반환하는 함수. 
 
 	prev_ = current;
-
-	accurateFPS_ = 1.00 / deltaTime_Double_;
 
 	remainedFPSUpdateInterval_ -= deltaTime_Double_;
 	if (DBL_EPSILON < deltaTime_Double_ && true == isUnderFrameLimit_)	

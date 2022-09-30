@@ -32,6 +32,7 @@ Arabian::Arabian()
 	shuffleDirection_(1),
 	movementFor1Second_(float4::Zero),
 	enemySoldier_(nullptr),
+	currentTurningDelay_(0.f),
 	turningDelay_(1.f),
 	nextWorldDirection_(1),
 	releasePoint_(nullptr),
@@ -69,7 +70,7 @@ void Arabian::Start()
 
 	arabianCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCloseCombatCollisionBody");
 	arabianCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
-	arabianCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Single);
+	arabianCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
 	arabianCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(160, 190, 10);
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalPosition(80, 95, 10);
@@ -283,32 +284,34 @@ void Arabian::GetDistance(float _deltaTime)
 	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
 	horizontalDistance_ = abs(thisWorldPosX - soldierWorldPosX);
 
-	static float currentTurningDelay;
+;
 
 	if (soldierWorldPosX < thisWorldPosX && 0 < this->GetTransform().GetWorldScale().x)
 	{
 		//아라비안 보는방향 오른쪽 && 솔저는 아라비안 왼쪽 위치.
-		currentTurningDelay += _deltaTime;
-		if (turningDelay_ <= currentTurningDelay)
+		currentTurningDelay_ += _deltaTime;
+		if (turningDelay_ <= currentTurningDelay_)
 		{
 			nextWorldDirection_ = -1;
+			currentTurningDelay_ = 0.f;
 		}
 
 	}
 	else if(soldierWorldPosX > thisWorldPosX && 0 > this->GetTransform().GetWorldScale().x)
 	{
 		//아라비안 보는방향 왼쪽 && 솔저는 아라비안 오른쪽 위치.
-		currentTurningDelay += _deltaTime;
-		if (turningDelay_ <= currentTurningDelay)
+		currentTurningDelay_ += _deltaTime;
+		if (turningDelay_ <= currentTurningDelay_)
 		{
 			nextWorldDirection_ = 1;
+			currentTurningDelay_ = 0.f;
 		}
 	}
 	else
 	{
 		//아라비안 보는 방향에 솔저 있으면 방향전환 리셋.
 		nextWorldDirection_ = 0;
-		currentTurningDelay = 0.f;
+		currentTurningDelay_ = 0.f;
 	}
 }
 

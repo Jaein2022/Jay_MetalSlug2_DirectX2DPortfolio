@@ -55,6 +55,8 @@ Soldier::Soldier()
 	isMeleeAttack1_(true),
 	causeOfDeath_(0),
 	isDamageProof_(false),
+	remainedDamageProofDuration_(0.f),
+	damageProofTimeLimit_(3.f),
 	flickeringPeriod_(0.1f)
 {
 }
@@ -67,12 +69,6 @@ void Soldier::Start()
 {
 	this->GetTransform().SetLocalScale(1, 1, 1);
 	this->GetTransform().SetWorldScale(1, 1, 1);
-
-	//this->GetTransform().SetWorldPosition(
-	//	500 - GameEngineWindow::GetInst()->GetScale().HIX(),
-	//	200,
-	//	0
-	//);	//솔저의 원래 시작위치.
 
 	if (0 == slopeCheckerLocalPosX_)
 	{
@@ -146,7 +142,7 @@ void Soldier::Start()
 
 	soldierLifeCollisionBody_ = CreateComponent<GameEngineCollision>("SoldierLifeCollisionBody");
 	soldierLifeCollisionBody_->ChangeOrder(this->GetOrder());
-	soldierLifeCollisionBody_->SetCollisionMode(CollisionMode::Single);
+	soldierLifeCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
 	soldierLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	soldierLifeCollisionBody_->GetTransform().SetLocalScale(soldierLifeCollisionBodyScale_Standing_);
 	soldierLifeCollisionBody_->GetTransform().SetLocalPosition(soldierLifeCollisionBodyPosition_Standing_);
@@ -177,17 +173,13 @@ void Soldier::Update(float _deltaTime)
 
 	if (0 == causeOfDeath_)
 	{
-		Flicker(_deltaTime, isDamageProof_, float4(0.25f, 0.25f, 0.25f, 0.f));
-
+		Flicker(_deltaTime, isDamageProof_, float4(0.25f, 0.25f, 0.25f, 0.f));		
 		if (SoldierState::Pistol_Redeploying != currentSoldierState_)
 		{
 			UpdateInputInfo();
+			ConvertInputToSoldierStates();
 		}
 	}
-
-	ConvertInputToSoldierStates();
-
-
 
 	UpdateSoldierState(_deltaTime);
 	ControlMuzzle();
@@ -393,14 +385,6 @@ void Soldier::UpdateInputInfo()
 	else
 	{
 		isSpecialKeyDown_ = false;
-	}
-
-	if (true == GameEngineInput::GetInst()->IsDown("Test"))
-	{
-		//TestIndicator::RenderingOnOffSwitch();
-		////인디케이터들만 특정 카메라에 몰아넣고 그 카메라를 껐다켰다하는 코드로 바꿔 볼 것.
-
-		isDamageProof_ = !isDamageProof_;
 	}
 }
 
@@ -776,6 +760,19 @@ void Soldier::UpdateSoldierState(float _deltaTime)
 			+ static_cast<int>(leg_)
 			+ static_cast<int>(top_)
 			+ static_cast<int>(direction_);
+	}
+	
+	if (true == isDamageProof_)
+	{
+		if (0.f >= remainedDamageProofDuration_)
+		{
+			isDamageProof_ = false;
+			remainedDamageProofDuration_ = 0.f;
+		}
+		else if (0.f < remainedDamageProofDuration_)
+		{
+			remainedDamageProofDuration_ -= _deltaTime;
+		}
 	}
 
 	if (allSoldierStates_.end() == allSoldierStates_.find(intNewState))

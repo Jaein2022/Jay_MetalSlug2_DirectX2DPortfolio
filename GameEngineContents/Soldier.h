@@ -149,6 +149,8 @@ private:
 
 	int causeOfDeath_;		//솔저 사망원인. 0: 솔저가 아직 살아있음. 
 	bool isDamageProof_;	//true: 무적상태. 
+	float remainedDamageProofDuration_;	//남은 무적 지속시간.
+	const float damageProofTimeLimit_;	//무적 시간제한.
 	const float flickeringPeriod_;//깜빡임 주기.
 
 };

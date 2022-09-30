@@ -2082,6 +2082,7 @@ void Soldier::CreateSoldierStates()
 			redeployingRenderer_->On();
 
 			isDamageProof_ = true;
+			remainedDamageProofDuration_ = damageProofTimeLimit_;
 		},
 		[this](const StateInfo& _info)->void {
 			redeployingRenderer_->CurAnimationReset();

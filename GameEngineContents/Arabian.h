@@ -154,6 +154,7 @@ private:
 
 	Soldier* enemySoldier_;
 
+	float currentTurningDelay_;
 	const float turningDelay_;
 	char nextWorldDirection_;	//아라비안이 돌아봐야 하는 방향.
 	//-1: 액터 월드방향의 역방향으로 방향전환. 0: 방향전환 필요없음. 1: 액터 월드방향의 정방향으로 방향전환.

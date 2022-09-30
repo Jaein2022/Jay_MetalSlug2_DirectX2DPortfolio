@@ -12,6 +12,7 @@ Mission1::Mission1()
 	currentFocusPointer_(nullptr),
 	destFocus_(nullptr),
 	destFocusVelocity_(3.f),
+	isDestFocusHolding_(false),
 	soldier_Mission1_(nullptr),
 	arabian1_(nullptr),
 	arabian2_(nullptr),
@@ -51,8 +52,8 @@ void Mission1::Start()
 	//시작시 카메라 위치 변경이 필요하면 여기에서.
 
 	soldier_Mission1_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "Soldier_Mission1");
-	soldier_Mission1_->GetTransform().SetWorldPosition(2900, 200, 0);
-
+	soldier_Mission1_->GetTransform().SetWorldPosition(2800, 200, 0);
+	
 #ifndef _DEBUG
 	destFocus_->GetTransform().SetWorldPosition(
 		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
@@ -95,6 +96,9 @@ void Mission1::Update(float _deltaTime)
 		return;
 	}
 
+
+
+
 	UpdateDestFocusMovement(_deltaTime);
 	UpdateCameraActorMovement(_deltaTime);
 }
@@ -105,6 +109,11 @@ void Mission1::End()
 
 void Mission1::UpdateDestFocusMovement(float _deltaTime)
 {
+	if (true == isDestFocusHolding_)	//destFocus가 고정이면 모든 이동 무시.
+	{
+		return;
+	}
+
 	if (destFocus_->GetTransform().GetWorldPosition().x
 		<= soldier_Mission1_->GetTransform().GetWorldPosition().x + 75.f)
 		//destFocus 기본 이동 규칙: 솔저와 같은 속도로 솔저보다 살짝 앞서 나갈것.
@@ -113,13 +122,20 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 			>= destFocus_->GetTransform().GetWorldPosition().x)		//pc텍스처는 넘어가지 말 것.
 		{
 			destFocus_->GetTransform().SetWorldMove(
-				float4::Right * _deltaTime * 3.f * playSpeed_);
+				float4::Right * _deltaTime * destFocusVelocity_ * playSpeed_);
 		}
+	}
+
+	if (true)
+	{
+		isDestFocusHolding_ = true;
 	}
 
 	if (3700.f <= destFocus_->GetTransform().GetWorldPosition().x 
 		&& 4100.f >= destFocus_->GetTransform().GetWorldPosition().x)
 	{
+
+
 		float4 destFocusWorldPosition = float4::Black;
 
 		destFocusWorldPosition.x = destFocus_->GetTransform().GetWorldPosition().x;
