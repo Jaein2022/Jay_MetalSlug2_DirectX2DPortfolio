@@ -284,7 +284,7 @@ void Arabian::GetDistance(float _deltaTime)
 	float thisWorldPosX = this->GetTransform().GetWorldPosition().x; 
 	horizontalDistance_ = abs(thisWorldPosX - soldierWorldPosX);
 
-;
+	//static float currentTurningDelay; 모든 아라비안들이 방향전환 딜레이를 공유하는 문제 발생.
 
 	if (soldierWorldPosX < thisWorldPosX && 0 < this->GetTransform().GetWorldScale().x)
 	{
@@ -295,7 +295,6 @@ void Arabian::GetDistance(float _deltaTime)
 			nextWorldDirection_ = -1;
 			currentTurningDelay_ = 0.f;
 		}
-
 	}
 	else if(soldierWorldPosX > thisWorldPosX && 0 > this->GetTransform().GetWorldScale().x)
 	{

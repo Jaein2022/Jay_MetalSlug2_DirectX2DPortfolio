@@ -50,6 +50,8 @@ private:
 	Arabian* arabian4_;
 	Arabian* arabian5_;
 
+	bool isCamelRiderDead_;
+	bool isTruckDestroyed_;
 
 };
 

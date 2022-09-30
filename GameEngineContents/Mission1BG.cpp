@@ -3,6 +3,7 @@
 
 Mission1BG::Mission1BG()
 	: part1_FirstBG_(nullptr),
+	part1_FirstBG_InitPosition_(float4::Zero),
 	part1_FirstBG_Footstep_(nullptr),
 	part1_SecondBG_(nullptr),
 	part1_ThirdBG_1_(nullptr),
@@ -11,7 +12,11 @@ Mission1BG::Mission1BG()
 	part1_SteppableObject_(nullptr),
 	skyBG_1_(nullptr),
 	part2_FirstBG_(nullptr),
-	skyBG_2_(nullptr)
+	part2_FirstBG_InitPosition_(4205, 61, -1),
+	skyBG_2_(nullptr),
+	part3_FirstBG_(nullptr),
+	part3_FirstBG_InitPosition_(6000, 61, 0),
+	skyBG_3_(nullptr)
 {
 }
 
@@ -28,7 +33,7 @@ void Mission1BG::Start()
 	part1_FirstBG_->SetTexture("Mission1_Part1_FirstBG.png");
 	part1_FirstBG_->SetPivot(PivotMode::LeftBot);
 	part1_FirstBG_->ScaleToTexture();
-	part1_FirstBG_->GetTransform().SetLocalPosition(float4::Zero);
+	part1_FirstBG_->GetTransform().SetLocalPosition(part1_FirstBG_InitPosition_);
 
 	//part1_FirstBG_Footstep_ = CreateComponent<GameEngineTextureRenderer>("Part1_FirstBG_Footstep");
 	//part1_FirstBG_Footstep_->SetTexture("Mission1_Part1_FirstBG_Footstep.png");
@@ -68,6 +73,7 @@ void Mission1BG::Start()
 	part1_SteppableObject_->ScaleToTexture();
 	part1_SteppableObject_->GetTransform().SetLocalPosition(2200, 170, -5);
 
+
 	skyBG_1_ = CreateComponent<GameEngineTextureRenderer>("SkyBG_1");
 	skyBG_1_->SetTexture("Mission1_SkyBG.png");
 	skyBG_1_->SetPivot(PivotMode::LeftBot);
@@ -82,7 +88,7 @@ void Mission1BG::Start()
 	part2_FirstBG_->SetTexture("Mission1_Part2_FirstBG.png");
 	part2_FirstBG_->SetPivot(PivotMode::LeftBot);
 	part2_FirstBG_->ScaleToTexture();
-	part2_FirstBG_->GetTransform().SetLocalPosition(4205, 61, -1);
+	part2_FirstBG_->GetTransform().SetLocalPosition(part2_FirstBG_InitPosition_);
 
 	skyBG_2_ = CreateComponent<GameEngineTextureRenderer>("SkyBG_2");
 	skyBG_2_->SetTexture("Mission1_SkyBG.png");
@@ -91,6 +97,22 @@ void Mission1BG::Start()
 	skyBG_2_->GetTransform().SetLocalPosition(
 		3300,
 		GameEngineWindow::GetScale().IY() - 289,
+		17);
+
+
+	part3_FirstBG_ = CreateComponent<GameEngineTextureRenderer>("Part3_FirstBG");
+	part3_FirstBG_->SetTexture("Mission1_Part3_FirstBG.png");
+	part3_FirstBG_->SetPivot(PivotMode::LeftBot);
+	part3_FirstBG_->ScaleToTexture();
+	part3_FirstBG_->GetTransform().SetLocalPosition(part3_FirstBG_InitPosition_);
+
+	skyBG_3_ = CreateComponent<GameEngineTextureRenderer>("SkyBG_3");
+	skyBG_3_->SetTexture("Mission1_SkyBG.png");
+	skyBG_3_->SetPivot(PivotMode::LeftBot);
+	skyBG_3_->ScaleToTexture();
+	skyBG_3_->GetTransform().SetLocalPosition(
+		6800,
+		GameEngineWindow::GetScale().IY() - 289,	//모스크포대 배치한 후에 하늘배경 3번 y좌표 재조정.
 		17);
 }
 

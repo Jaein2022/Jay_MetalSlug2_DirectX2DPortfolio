@@ -22,8 +22,25 @@ public:
 	void End() override;
 
 
+public:
+	inline float GetPart1RightEnd()
+	{
+		return part1_FirstBG_InitPosition_.x + part1_FirstBG_->GetCurrentTexture()->GetScale().x;
+	}
+
+	inline float GetPart2RightEnd()
+	{
+		return part2_FirstBG_InitPosition_.x + part2_FirstBG_->GetCurrentTexture()->GetScale().x;
+	}
+
+	inline float GetPart3RightEnd()
+	{
+		return part3_FirstBG_InitPosition_.x + part3_FirstBG_->GetCurrentTexture()->GetScale().x;
+	}
+
 private:
 	GameEngineTextureRenderer* part1_FirstBG_;
+	const float4 part1_FirstBG_InitPosition_;
 	GameEngineTextureRenderer* part1_FirstBG_Footstep_;
 	GameEngineTextureRenderer* part1_SecondBG_;
 	GameEngineTextureRenderer* part1_ThirdBG_1_;
@@ -34,7 +51,13 @@ private:
 
 
 	GameEngineTextureRenderer* part2_FirstBG_;
+	const float4 part2_FirstBG_InitPosition_;
 	GameEngineTextureRenderer* skyBG_2_;
+
+
+	GameEngineTextureRenderer* part3_FirstBG_;
+	const float4 part3_FirstBG_InitPosition_;
+	GameEngineTextureRenderer* skyBG_3_;
 
 
 };

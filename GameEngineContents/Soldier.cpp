@@ -390,7 +390,6 @@ void Soldier::UpdateInputInfo()
 
 void Soldier::ConvertInputToSoldierStates()
 {
-
 	//상하방향 입력 반응.
 	switch (verticalInputValue_)
 	{

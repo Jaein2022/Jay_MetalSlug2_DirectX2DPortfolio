@@ -18,7 +18,9 @@ Mission1::Mission1()
 	arabian2_(nullptr),
 	arabian3_(nullptr),
 	arabian4_(nullptr),
-	arabian5_(nullptr)
+	arabian5_(nullptr),
+	isCamelRiderDead_(false),
+	isTruckDestroyed_(true)
 {
 }
 
@@ -48,11 +50,11 @@ void Mission1::Start()
 	destFocus_ = CreateActor<IndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(3000, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(3200, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
 	//시작시 카메라 위치 변경이 필요하면 여기에서.
 
 	soldier_Mission1_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "Soldier_Mission1");
-	soldier_Mission1_->GetTransform().SetWorldPosition(2800, 200, 0);
+	soldier_Mission1_->GetTransform().SetWorldPosition(3000, 200, 0);
 	
 #ifndef _DEBUG
 	destFocus_->GetTransform().SetWorldPosition(
@@ -61,9 +63,6 @@ void Mission1::Start()
 	soldier_Mission1_->GetTransform().SetWorldPosition(
 		500 - GameEngineWindow::GetInst()->GetScale().HIX(), 200, 0);
 #endif // !_DEBUG
-
-	
-
 
 
 
@@ -76,8 +75,8 @@ void Mission1::Start()
 
 	arabian1_->GetTransform().SetWorldPosition(925, 0, 0);
 	arabian2_->GetTransform().SetWorldPosition(1025, 0, 0);
-	arabian3_->GetTransform().SetWorldPosition(1225, 0, 0);
-	arabian4_->GetTransform().SetWorldPosition(1825, 0, 0);
+	arabian3_->GetTransform().SetWorldPosition(1600, 0, 0);
+	arabian4_->GetTransform().SetWorldPosition(1900, 0, 0);
 	arabian5_->GetTransform().SetWorldPosition(1925, 0, 0);
 
 
@@ -96,7 +95,10 @@ void Mission1::Update(float _deltaTime)
 		return;
 	}
 
-
+	if (true == GameEngineInput::GetInst()->IsDown("Test"))
+	{
+		isCamelRiderDead_ = true;
+	}
 
 
 	UpdateDestFocusMovement(_deltaTime);
@@ -109,41 +111,76 @@ void Mission1::End()
 
 void Mission1::UpdateDestFocusMovement(float _deltaTime)
 {
+	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x
+		<= destFocus_->GetTransform().GetWorldPosition().x)
+	{
+		if (true == isCamelRiderDead_)
+		{
+			isDestFocusHolding_ = false;
+		}
+		else
+		{
+			isDestFocusHolding_ = true;
+		}
+	}
+
+	if (mission1BG_->GetPart2RightEnd() - GameEngineWindow::GetScale().x
+		<= destFocus_->GetTransform().GetWorldPosition().x)
+	{
+		if (true == isTruckDestroyed_)
+		{
+			isDestFocusHolding_ = false;
+		}
+		else
+		{
+			isDestFocusHolding_ = true;
+		}
+	}
+
+	//지역보스 카메라 고정은 이 위로.
+
 	if (true == isDestFocusHolding_)	//destFocus가 고정이면 모든 이동 무시.
 	{
 		return;
 	}
 
+
+
 	if (destFocus_->GetTransform().GetWorldPosition().x
 		<= soldier_Mission1_->GetTransform().GetWorldPosition().x + 75.f)
-		//destFocus 기본 이동 규칙: 솔저와 같은 속도로 솔저보다 살짝 앞서 나갈것.
+		//destFocus 기본 이동 규칙: 솔저보다 살짝 앞서 나갈것.
 	{
 		if (PixelIndicator::GetPCTexture()->GetScale().x - GameEngineWindow::GetScale().x
 			>= destFocus_->GetTransform().GetWorldPosition().x)		//pc텍스처는 넘어가지 말 것.
 		{
-			destFocus_->GetTransform().SetWorldMove(
-				float4::Right * _deltaTime * destFocusVelocity_ * playSpeed_);
-		}
-	}
+			//destFocus_->GetTransform().SetWorldMove(
+			//	float4::Right * _deltaTime * destFocusVelocity_ * playSpeed_);
+			
+			float4 destFocusWorldPosition = float4::Black;
 
-	if (true)
-	{
-		isDestFocusHolding_ = true;
+			destFocusWorldPosition.x = GameEngineMath::LerpTime(
+				soldier_Mission1_->GetTransform().GetWorldPosition().x + 75.f,
+				destFocus_->GetTransform().GetWorldPosition().x,
+				_deltaTime
+			);
+			destFocusWorldPosition.y = destFocus_->GetTransform().GetWorldPosition().y;
+			destFocusWorldPosition.z = destFocus_->GetTransform().GetWorldPosition().z;
+
+			destFocus_->GetTransform().SetWorldPosition(destFocusWorldPosition);
+		}
 	}
 
 	if (3700.f <= destFocus_->GetTransform().GetWorldPosition().x 
 		&& 4100.f >= destFocus_->GetTransform().GetWorldPosition().x)
 	{
-
-
 		float4 destFocusWorldPosition = float4::Black;
 
 		destFocusWorldPosition.x = destFocus_->GetTransform().GetWorldPosition().x;
 		destFocusWorldPosition.y = GameEngineMath::Lerp(
 			0.f,
 			60.f,
-			(destFocus_->GetTransform().GetWorldPosition().x - 3700.f) / (4100.f - 3700.f)
-			//
+			(destFocus_->GetTransform().GetWorldPosition().x - 3700.f) * 0.0025f
+			//0.0025f == 1 / (4100.f - 3700.f)
 		);
 		destFocusWorldPosition.z = destFocus_->GetTransform().GetWorldPosition().z;
 

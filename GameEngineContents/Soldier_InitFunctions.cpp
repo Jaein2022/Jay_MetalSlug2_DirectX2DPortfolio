@@ -463,12 +463,12 @@ void Soldier::CreateSoldierStates()
 		[this](float _deltaTime, const StateInfo& _info)->void {
 			if (2.f <= _info.stateTime_)
 			{
-				causeOfDeath_ = 0;
 				weapon_ = SoldierWeaponType::Pistol;
 				leg_ = SoldierLegState::Redeploying;
 				top_ = SoldierTopState::Aiming;
 				direction_ = AimingDirection::Forward;
 				wholePistolRenderer_->CurAnimationReset();
+				causeOfDeath_ = 0;
 			}
 			else if (1.f <= _info.stateTime_ && false == isAirborne_)
 			{
@@ -501,12 +501,12 @@ void Soldier::CreateSoldierStates()
 		[this](float _deltaTime, const StateInfo& _info)->void {
 			if (2.f <= _info.stateTime_)
 			{
-				causeOfDeath_ = 0;
 				weapon_ = SoldierWeaponType::Pistol;
 				leg_ = SoldierLegState::Redeploying;
 				top_ = SoldierTopState::Aiming;
 				direction_ = AimingDirection::Forward;
 				wholePistolRenderer_->CurAnimationReset();
+				causeOfDeath_ = 0;
 			}
 			else if (1.f <= _info.stateTime_ && false == isAirborne_)
 			{
