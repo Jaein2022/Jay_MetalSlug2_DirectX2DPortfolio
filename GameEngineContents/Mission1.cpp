@@ -22,7 +22,7 @@ Mission1::Mission1()
 	arabian5_(nullptr),
 	camelRider_(nullptr),
 	isCamelRiderDead_(false),
-	isTruckDestroyed_(true)
+	isTruckDestroyed_(false)
 {
 }
 
