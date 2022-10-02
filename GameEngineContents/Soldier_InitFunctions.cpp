@@ -9,9 +9,9 @@ void Soldier::CreateSoldierAnimations()
 	legRenderer_->SetPivot(PivotMode::Center);
 
 	legRenderer_->GetTransform().SetLocalPosition(
-		soldierRendererLocalPosX_,
-		soldierRendererLocalPosY_,
-		soldierRendererLocalPosZ_ + 5
+		soldierRendererLocalPos_.x,
+		soldierRendererLocalPos_.y,
+		soldierRendererLocalPos_.z + 5.f
 	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Leg.png")->GetCutCount())
@@ -31,7 +31,8 @@ void Soldier::CreateSoldierAnimations()
 	legRenderer_->CreateFrameAnimation_CutTexture("VerticalJumping",
 		FrameAnimation_Desc("Tarma_Leg.png", 30, 40, 0.05f, false));
 	legRenderer_->AnimationBindEnd("VerticalJumping",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			leg_ = SoldierLegState::Falling;
 		}
 	);
@@ -53,11 +54,7 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_ = CreateComponent<GameEngineTextureRenderer>("TopPistolRenderer");
 	topPistolRenderer_->GetTransform().SetLocalScale(600, 600, 1);
 	topPistolRenderer_->SetPivot(PivotMode::Center);
-	topPistolRenderer_->GetTransform().SetLocalPosition(
-		soldierRendererLocalPosX_,
-		soldierRendererLocalPosY_,
-		soldierRendererLocalPosZ_
-	);
+	topPistolRenderer_->GetTransform().SetLocalPosition(soldierRendererLocalPos_);
 
 	if (0 == GameEngineTexture::Find("Tarma_Top_Pistol.png")->GetCutCount())
 	{
@@ -78,7 +75,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Aiming_ForwardToUpward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 50, 51, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running_Aiming_ForwardToUpward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			direction_ = AimingDirection::Upward;
 		}
 	);
@@ -88,7 +86,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running_Aiming_UpwardToForward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 70, 71, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running_Aiming_UpwardToForward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			direction_ = AimingDirection::Forward;
 		}
 	);
@@ -96,7 +95,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_ForwardToDownward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 80, 81, 0.05f, true));
 	topPistolRenderer_->AnimationBindEnd("Jumping_Aiming_ForwardToDownward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			direction_ = AimingDirection::Downward;
 		}
 	);
@@ -106,7 +106,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Aiming_DownwardToForward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 100, 101, 0.05f, true));
 	topPistolRenderer_->AnimationBindEnd("Jumping_Aiming_DownwardToForward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			direction_ = AimingDirection::Forward;
 		}
 	);
@@ -114,7 +115,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_Firing_Forward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 110, 113, 0.03f, true));
 	topPistolRenderer_->AnimationBindFrame("Standing, Running, Jumping_Firing_Forward", 
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (1 == _desc.curFrame_)
 			{
 				Fire();
@@ -122,7 +124,8 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_Firing_Forward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::FiringToAiming;
 		}
 	);
@@ -130,7 +133,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_FiringToAiming_Forward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 114, 119, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_FiringToAiming_Forward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -138,7 +142,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_Firing_Upward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 120, 123, 0.03f, true));
 	topPistolRenderer_->AnimationBindFrame("Standing, Running, Jumping_Firing_Upward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (1 == _desc.curFrame_)
 			{
 				Fire();
@@ -146,7 +151,8 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_Firing_Upward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::FiringToAiming;
 		}
 	);
@@ -154,7 +160,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_FiringToAiming_Upward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 124, 129, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_FiringToAiming_Upward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 			if (SoldierLegState::VerticalJumping == leg_ || SoldierLegState::ForwardJumping == leg_ || SoldierLegState::Falling == leg_)
 			{
@@ -166,7 +173,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_Firing_Downward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 130, 133, 0.03f, true));
 	topPistolRenderer_->AnimationBindFrame("Jumping_Firing_Downward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (1 == _desc.curFrame_)
 			{
 				Fire();
@@ -174,7 +182,8 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	topPistolRenderer_->AnimationBindEnd("Jumping_Firing_Downward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::FiringToAiming;
 		}
 	);
@@ -182,7 +191,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Jumping_FiringToAiming_Downward",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 134, 135, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Jumping_FiringToAiming_Downward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -190,7 +200,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_ThrowingGrenade",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 140, 143, 0.03f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_ThrowingGrenade",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::ThrowingGrenadeToAiming;
 		}
 	);
@@ -198,7 +209,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_ThrowingGrenadeToAiming",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 144, 145, 0.05f, false));
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_ThrowingGrenadeToAiming",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -206,7 +218,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack1",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 150, 155, 0.05f, false));
 	topPistolRenderer_->AnimationBindFrame("Standing, Running, Jumping_MeleeAttack1", 
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (2 == _desc.curFrame_)
 			{
 				MeleeAttack();
@@ -214,7 +227,8 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_MeleeAttack1",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -222,7 +236,8 @@ void Soldier::CreateSoldierAnimations()
 	topPistolRenderer_->CreateFrameAnimation_CutTexture("Standing, Running, Jumping_MeleeAttack2",
 		FrameAnimation_Desc("Tarma_Top_Pistol.png", 160, 165, 0.05f, false));
 	topPistolRenderer_->AnimationBindFrame("Standing, Running, Jumping_MeleeAttack2",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (2 == _desc.curFrame_)
 			{
 				MeleeAttack();
@@ -230,7 +245,8 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	topPistolRenderer_->AnimationBindEnd("Standing, Running, Jumping_MeleeAttack2",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -289,11 +305,7 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_ = CreateComponent<GameEngineTextureRenderer>("WholePistolRenderer");
 	wholePistolRenderer_->GetTransform().SetLocalScale(600, 600, 1);
 	wholePistolRenderer_->SetPivot(PivotMode::Center);
-	wholePistolRenderer_->GetTransform().SetLocalPosition(
-		soldierRendererLocalPosX_,
-		soldierRendererLocalPosY_,
-		soldierRendererLocalPosZ_
-	);
+	wholePistolRenderer_->GetTransform().SetLocalPosition(soldierRendererLocalPos_);
 
 	if (0 == GameEngineTexture::Find("Tarma_Whole_Pistol.png")->GetCutCount())
 	{
@@ -304,14 +316,16 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Running, JumpingToStanding",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 0, 3, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Running, JumpingToStanding",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			leg_ = SoldierLegState::Standing;
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("StandingToDucking",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 10, 12, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("StandingToDucking",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			leg_ = SoldierLegState::Ducking;
 		}
 	);
@@ -326,7 +340,8 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_Firing_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 40, 43, 0.03f, true));
 	wholePistolRenderer_->AnimationBindFrame("Ducking_Firing_Forward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (1 == _desc.curFrame_)
 			{
 				Fire();
@@ -334,14 +349,16 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	wholePistolRenderer_->AnimationBindEnd("Ducking_Firing_Forward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::FiringToAiming;
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_FiringToAiming_Forward",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 44, 49, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_FiringToAiming_Forward",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -350,14 +367,16 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_ThrowingGrenade",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 60, 63, 0.03f, false));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_ThrowingGrenade",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::ThrowingGrenadeToAiming;
 		}
 	);
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_ThrowingGrenadeToAiming",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 64, 65, 0.05f, false));
 	wholePistolRenderer_->AnimationBindEnd("Ducking_ThrowingGrenadeToAiming",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -367,7 +386,8 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_MeleeAttack1",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 80, 85, 0.05f, true));
 	wholePistolRenderer_->AnimationBindFrame("Ducking_MeleeAttack1",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (2 == _desc.curFrame_)
 			{
 				MeleeAttack();
@@ -375,7 +395,8 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	wholePistolRenderer_->AnimationBindEnd("Ducking_MeleeAttack1",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -383,7 +404,8 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Ducking_MeleeAttack2",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 90, 95, 0.05f, true));
 	wholePistolRenderer_->AnimationBindFrame("Ducking_MeleeAttack2",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			if (2 == _desc.curFrame_)
 			{
 				MeleeAttack();
@@ -391,7 +413,8 @@ void Soldier::CreateSoldierAnimations()
 		}
 	);
 	wholePistolRenderer_->AnimationBindEnd("Ducking_MeleeAttack2",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			top_ = SoldierTopState::Aiming;
 		}
 	);
@@ -406,12 +429,14 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidAttack_Midair",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.05f, false));
 	wholePistolRenderer_->AnimationBindStart("Fallen_BySolidAttack_Midair",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			fallingSpeed_ = -1.f;
 		}
 	);
 	wholePistolRenderer_->AnimationBindTime("Fallen_BySolidAttack_Midair",
-		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void {
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void 
+		{
 			if (true == isAirborne_)
 			{
 				movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
@@ -443,7 +468,8 @@ void Soldier::CreateSoldierAnimations()
 	redeployingRenderer_->CreateFrameAnimation_CutTexture("Redeploying",
 		FrameAnimation_Desc("Tarma_Redeploying.png", 0, 6, 0.05f, false));
 	redeployingRenderer_->AnimationBindEnd("Redeploying",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			leg_ = SoldierLegState::Ducking;
 			top_ = SoldierTopState::Aiming;
 			direction_ = AimingDirection::Forward;
@@ -460,7 +486,8 @@ void Soldier::CreateSoldierStates()
 {
 	soldierStateManager_.CreateState(		//1010
 		"Fallen_ByMeleeAttack",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		[this](float _deltaTime, const StateInfo& _info)->void 
+		{
 			if (2.f <= _info.stateTime_)
 			{
 				weapon_ = SoldierWeaponType::Pistol;
@@ -475,7 +502,8 @@ void Soldier::CreateSoldierStates()
 				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 			}
 		},
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -498,7 +526,8 @@ void Soldier::CreateSoldierStates()
 
 	soldierStateManager_.CreateState(		//1011
 		"Fallen_ByFlyingSword",
-		[this](float _deltaTime, const StateInfo& _info)->void {
+		[this](float _deltaTime, const StateInfo& _info)->void 
+		{
 			if (2.f <= _info.stateTime_)
 			{
 				weapon_ = SoldierWeaponType::Pistol;
@@ -513,7 +542,8 @@ void Soldier::CreateSoldierStates()
 				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 			}
 		},
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -542,7 +572,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1111
 		"Pistol_Standing_Aiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -571,7 +602,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1112
 		"Pistol_Standing_Aiming_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -589,7 +621,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1114
 		"Pistol_Standing_Aiming_ForwardToUpward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -607,7 +640,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1115
 		"Pistol_Standing_Aiming_UpwardToForward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -625,7 +659,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1121
 		"Pistol_Standing_Firing_Forward",
 		nullptr, 
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 
 			legRenderer_->On();
 			topPistolRenderer_->On();
@@ -644,7 +679,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1122
 		"Pistol_Standing_Firing_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -662,7 +698,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1131
 		"Pistol_Standing_FiringToAiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -680,7 +717,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1132
 		"Pistol_Standing_FiringToAiming_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -699,7 +737,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1141
 		"Pistol_Standing_ThrowingGrenade",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -717,7 +756,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1151
 		"Pistol_Standing_ThrowingGrenadeToAiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -735,7 +775,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1171
 		"Pistol_Standing_MeleeAttack",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -766,7 +807,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1211
 		"Pistol_Running_Aiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -784,7 +826,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1212
 		"Pistol_Running_Aiming_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -802,7 +845,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1214
 		"Pistol_Running_Aiming_ForwardToUpward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -820,7 +864,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1215
 		"Pistol_Running_Aiming_UpwardToForward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -838,7 +883,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1221
 		"Pistol_Running_Firing_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -856,7 +902,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1222	
 		"Pistol_Running_Firing_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -874,7 +921,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1231
 		"Pistol_Running_FiringToAiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -892,7 +940,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1232
 		"Pistol_Running_FiringToAiming_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -910,7 +959,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1241
 		"Pistol_Running_ThrowingGrenade",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -928,7 +978,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1251
 		"Pistol_Running_ThrowingGrenadeToAiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -946,7 +997,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1271
 		"Pistol_Running_MeleeAttack",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -979,7 +1031,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1311
 		"Pistol_Ducking_Aiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -1010,7 +1063,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1321
 		"Pistol_Ducking_Firing",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -1027,7 +1081,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1331
 		"Pistol_Ducking_FiringToAiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -1044,7 +1099,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1341
 		"Pistol_Ducking_ThrowingGrenade",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -1061,7 +1117,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1351
 		"Pistol_Ducking_ThrowingGrenadeToAiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -1078,7 +1135,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1361
 		"Pistol_Ducking_DuckStepping",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -1095,7 +1153,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1371
 		"Pistol_Ducking_MeleeAttack",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -1131,7 +1190,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1411
 		"Pistol_VerticalJumping_Aiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1155,7 +1215,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1413
 		"Pistol_VerticalJumping_Aiming_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1179,7 +1240,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1416
 		"Pistol_VerticalJumping_Aiming_ForwardToDownward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1203,7 +1265,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1417
 		"Pistol_VerticalJumping_Aiming_DownwardToForward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1227,7 +1290,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1421
 		"Pistol_VerticalJumping_Firing_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1251,7 +1315,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1422
 		"Pistol_VerticalJumping_Firing_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1275,7 +1340,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1423
 		"Pistol_VerticalJumping_Firing_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1299,7 +1365,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1431
 		"Pistol_VerticalJumping_FiringToAiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1323,7 +1390,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1432
 		"Pistol_VerticalJumping_FiringToAiming_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1347,7 +1415,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1433
 		"Pistol_VerticalJumping_FiringToAiming_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1371,7 +1440,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1441
 		"Pistol_VerticalJumping_ThrowingGrenade",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1395,7 +1465,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1451
 		"Pistol_VerticalJumping_ThrowingGrenadeToAiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1419,7 +1490,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1471
 		"Pistol_VerticalJumping_MeleeAttack",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1458,7 +1530,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1511
 		"Pistol_ForwardJumping_Aiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1482,7 +1555,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1513
 		"Pistol_ForwardJumping_Aiming_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1506,7 +1580,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1516
 		"Pistol_ForwardJumping_Aiming_ForwardToDownward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1530,7 +1605,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1517
 		"Pistol_ForwardJumping_Aiming_DownwardToForward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1554,7 +1630,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1521
 		"Pistol_ForwardJumping_Firing_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1578,7 +1655,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1522
 		"Pistol_ForwardJumping_Firing_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1602,7 +1680,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1523
 		"Pistol_ForwardJumping_Firing_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1626,7 +1705,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1531
 		"Pistol_ForwardJumping_FiringToAiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1650,7 +1730,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1532
 		"Pistol_ForwardJumping_FiringToAiming_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1674,7 +1755,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1533
 		"Pistol_ForwardJumping_FiringToAiming_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1698,7 +1780,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1541
 		"Pistol_ForwardJumping_ThrowingGrenade",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1722,7 +1805,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1551
 		"Pistol_ForwardJumping_ThrowingGrenadeToAiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1746,7 +1830,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1571
 		"Pistol_ForwardJumping_MeleeAttack",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1786,7 +1871,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1611
 		"Pistol_Falling_Aiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1804,7 +1890,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1613
 		"Pistol_Falling_Aiming_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1822,7 +1909,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1616
 		"Pistol_Falling_Aiming_ForwardToDownward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1840,7 +1928,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1617
 		"Pistol_Falling_Aiming_DownwardToForward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1858,7 +1947,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1617
 		"Pistol_Falling_Firing_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1876,7 +1966,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1622
 		"Pistol_Falling_Firing_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1894,7 +1985,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1623
 		"Pistol_Falling_Firing_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1912,7 +2004,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1631
 		"Pistol_Falling_FiringToAiming_Forward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1930,7 +2023,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1632
 		"Pistol_Falling_FiringToAiming_Upward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1948,7 +2042,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1633
 		"Pistol_Falling_FiringToAiming_Downward",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1966,7 +2061,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1641
 		"Pistol_Falling_ThrowingGrenade",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -1984,7 +2080,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1651
 		"Pistol_Falling_ThrowingGrenadeToAiming",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -2002,7 +2099,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1671
 		"Pistol_Falling_MeleeAttack",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->On();
 			topPistolRenderer_->On();
 			wholePistolRenderer_->Off();
@@ -2036,7 +2134,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1711
 		"Pistol_StandingToDucking",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -2053,7 +2152,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1811
 		"Pistol_RunningOrJumpingToStanding",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->On();
@@ -2065,7 +2165,8 @@ void Soldier::CreateSoldierStates()
 			soldierLifeCollisionBody_->GetTransform().SetLocalScale(soldierLifeCollisionBodyScale_Standing_);
 			soldierLifeCollisionBody_->GetTransform().SetLocalPosition(soldierLifeCollisionBodyPosition_Standing_);
 		},
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			wholePistolRenderer_->CurAnimationReset();
 		}
 	);
@@ -2073,7 +2174,8 @@ void Soldier::CreateSoldierStates()
 	soldierStateManager_.CreateState(		//1911
 		"Pistol_Redeploying",
 		nullptr,
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			legRenderer_->Off();
 			topPistolRenderer_->Off();
 			wholePistolRenderer_->Off();
@@ -2084,7 +2186,8 @@ void Soldier::CreateSoldierStates()
 			isDamageProof_ = true;
 			remainedDamageProofDuration_ = damageProofTimeLimit_;
 		},
-		[this](const StateInfo& _info)->void {
+		[this](const StateInfo& _info)->void 
+		{
 			redeployingRenderer_->CurAnimationReset();
 			redeployingRenderer_->Off();
 

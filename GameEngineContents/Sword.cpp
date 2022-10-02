@@ -6,9 +6,7 @@
 #include "Soldier.h"
 
 Sword::Sword()
-	: swordRendererLocalPosX_(0),
-	swordRendererLocalPosY_(55),
-	swordRendererLocalPosZ_(0),
+	: swordRendererLocalPos_(0, 55, 0),
 	flyingSwordRenderer_(nullptr),
 	stuckSwordRenderer_(nullptr),
 	swordCollisionBody_(nullptr),
@@ -37,21 +35,13 @@ void Sword::Start()
 	flyingSwordRenderer_->SetTexture("FlyingSword.png");
 	flyingSwordRenderer_->ScaleToTexture();
 	flyingSwordRenderer_->SetPivot(PivotMode::Center);
-	flyingSwordRenderer_->GetTransform().SetLocalPosition(
-		swordRendererLocalPosX_,
-		swordRendererLocalPosY_,
-		swordRendererLocalPosZ_ 
-	);
+	flyingSwordRenderer_->GetTransform().SetLocalPosition(swordRendererLocalPos_);
 
 	stuckSwordRenderer_ = CreateComponent<GameEngineTextureRenderer>("StuckSwordRenderer");
 	stuckSwordRenderer_->SetTexture("StuckSword.png");
 	stuckSwordRenderer_->ScaleToTexture();
 	stuckSwordRenderer_->SetPivot(PivotMode::Center);
-	stuckSwordRenderer_->GetTransform().SetLocalPosition(
-		swordRendererLocalPosX_,
-		swordRendererLocalPosY_,
-		swordRendererLocalPosZ_
-	);
+	stuckSwordRenderer_->GetTransform().SetLocalPosition(swordRendererLocalPos_);
 	stuckSwordRenderer_->Off();
 
 	swordCollisionBody_ = CreateComponent<GameEngineCollision>("SwordCollision");
@@ -59,14 +49,14 @@ void Sword::Start()
 	swordCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	swordCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	swordCollisionBody_->GetTransform().SetLocalScale(70, 70, 10);
-	swordCollisionBody_->GetTransform().SetLocalPosition(swordRendererLocalPosX_, swordRendererLocalPosY_, 0);
+	swordCollisionBody_->GetTransform().SetLocalPosition(swordRendererLocalPos_.x, swordRendererLocalPos_.y, 0.f);
 
 
 	renderPivotPointer_ = Indicator::CreateIndicator<Indicator>(
 		"RenderPivotPointer",
 		this,
 		float4::Cyan,
-		float4(swordRendererLocalPosX_, swordRendererLocalPosY_, -5),
+		float4(swordRendererLocalPos_.x, swordRendererLocalPos_.y, -5.f),
 		float4(5, 5, 1)
 		);
 

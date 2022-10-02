@@ -6,6 +6,7 @@
 #include "Soldier.h"
 #include "Arabian.h"
 #include "Mission1BG.h"
+#include "CamelRider.h"
 
 Mission1::Mission1()
 	: mission1BG_(nullptr),
@@ -19,6 +20,7 @@ Mission1::Mission1()
 	arabian3_(nullptr),
 	arabian4_(nullptr),
 	arabian5_(nullptr),
+	camelRider_(nullptr),
 	isCamelRiderDead_(false),
 	isTruckDestroyed_(true)
 {
@@ -80,6 +82,10 @@ void Mission1::Start()
 	arabian5_->GetTransform().SetWorldPosition(1925, 0, 0);
 
 
+	camelRider_ = CreateActor<CamelRider>(CollisionBodyOrder::Rebel, "CamelRider");
+	camelRider_->GetTransform().PixLocalNegativeX();
+	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 1200.f, 0.f, 0.f);
+
 }
 
 void Mission1::Update(float _deltaTime)
@@ -95,7 +101,7 @@ void Mission1::Update(float _deltaTime)
 		return;
 	}
 
-	if (true == GameEngineInput::GetInst()->IsDown("Test"))
+	if (true == camelRider_->IsDead() && false == isCamelRiderDead_)
 	{
 		isCamelRiderDead_ = true;
 	}

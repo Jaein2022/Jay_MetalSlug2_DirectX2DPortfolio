@@ -1,5 +1,6 @@
 #pragma once
-#include "GlobalHeader.h"
+#include "Rebel.h"
+
 
 
 enum class ArabianState
@@ -21,7 +22,7 @@ enum class ArabianState
 class Indicator;
 class PixelIndicator;
 class Soldier;
-class Arabian: public GameEngineActor
+class Arabian : public Rebel
 {
 	//이 클래스의 존재 이유: 적과의 교전, 적/플레이어 사망 기능 구현.
 public:
@@ -43,10 +44,12 @@ public:
 	void End() override;
 
 public:
-	inline void TakeDamage(int _damage)
-	{
-		hp_ -= _damage;
-	}
+	void TakeDamage(
+		int _damage,
+		GameEngineCollision* _soldierWeaponCollision,
+		GameEngineCollision* _rebelCollision
+	) override;
+
 
 private:
 	void CreateArabianAnimations();
@@ -58,8 +61,8 @@ private:
 	//추락 이동값 적용.
 	void Fall(float _deltaTime);
 
-	//플레이어와의 거리 판단.
-	void GetDistance(float _deltaTime);
+	//솔저와의 거리, 방향 판단.
+	void GetDistanceAndDirection(float _deltaTime);
 
 	//아라비안 스테이트 변환 및 업데이트.
 	void UpdateArabianState(float _deltaTime);
@@ -106,10 +109,7 @@ private:
 	bool isAirborne_;		//true: 공중에 떠 있는 상태. false: 착지 상태.
 	bool isEngaging_;		//true: 교전 중. false: 플레이어 인식 못함.
 
-	const int arabianRendererLocalPosX_;
-	const int arabianRendererLocalPosY_;
-	const int arabianRendererLocalPosZ_;
-
+	const float4 arabianRendererLocalPos_;
 
 	GameEngineTextureRenderer* arabianRenderer_;
 
@@ -138,7 +138,6 @@ private:
 	std::unordered_map<ArabianState, const char*> allArabianStates_;
 	//삽입, 순회, 삭제는 한번만 하고, 탐색은 런타임 내내 할 예정이므로 탐색 효율이 좋다고 하는 비정렬 맵 사용.
 	//사실 비정렬 맵을 써보고 싶어서 선택.
-	//해시 함수로 인한 문제가 생기면 즉시 일반 맵으로 복구시킬 것.
 
 	const float initialJumpSpeed_;
 	float fallingSpeed_;

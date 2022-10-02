@@ -44,9 +44,7 @@ private:
 	);
 private:
 
-	const int swordRendererLocalPosX_;
-	const int swordRendererLocalPosY_;
-	const int swordRendererLocalPosZ_;
+	const float4 swordRendererLocalPos_;
 
 	GameEngineTextureRenderer* flyingSwordRenderer_;
 	GameEngineTextureRenderer* stuckSwordRenderer_;

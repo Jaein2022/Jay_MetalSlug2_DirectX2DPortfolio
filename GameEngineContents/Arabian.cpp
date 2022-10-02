@@ -9,9 +9,7 @@ Arabian::Arabian()
 	: currentArabianState_(ArabianState::Idling),
 	isAirborne_(false),
 	isEngaging_(false),
-	arabianRendererLocalPosX_(0),
-	arabianRendererLocalPosY_(75),
-	arabianRendererLocalPosZ_(0),
+	arabianRendererLocalPos_(0, 75, 0),
 	arabianRenderer_(nullptr),
 	arabianLifeCollisionBody_(nullptr),
 	arabianCloseCombatCollisionBody_(nullptr),
@@ -81,7 +79,7 @@ void Arabian::Start()
 		"RenderPivotPointer",
 		this,
 		float4::Cyan,
-		float4(arabianRendererLocalPosX_, arabianRendererLocalPosY_, -5),
+		float4(arabianRendererLocalPos_.x, arabianRendererLocalPos_.y, -5.f),
 		float4(5, 5, 1)
 	);
 
@@ -94,7 +92,7 @@ void Arabian::Start()
 	);
 
 	arabianWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
-		"PlayerWorldPosPointer",
+		"ArabianWorldPosPointer",
 		this,
 		float4::Red,
 		float4(0, 0, -5),
@@ -172,7 +170,7 @@ void Arabian::Update(float _deltaTime)
 		Fall(_deltaTime);
 	}
 
-	GetDistance(_deltaTime);
+	GetDistanceAndDirection(_deltaTime);
 
 	if (recognitionDistance_ > horizontalDistance_ && false == isEngaging_ && false == isAirborne_)
 	{
@@ -186,6 +184,15 @@ void Arabian::Update(float _deltaTime)
 
 void Arabian::End()
 {
+}
+
+void Arabian::TakeDamage(
+	int _damage,
+	GameEngineCollision* _soldierWeaponCollision,
+	GameEngineCollision* _rebelCollision
+)
+{
+	hp_ -= _damage;
 }
 
 void Arabian::CheckGround()
@@ -277,7 +284,7 @@ void Arabian::Fall(float _deltaTime)
 	movementFor1Second_ += float4::Down * fallingSpeed_;
 }
 
-void Arabian::GetDistance(float _deltaTime)
+void Arabian::GetDistanceAndDirection(float _deltaTime)
 { 
 	float soldierWorldPosX = enemySoldier_->GetTransform().GetWorldPosition().x;
 

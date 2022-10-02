@@ -12,9 +12,7 @@ Soldier::Soldier()
 	top_(SoldierTopState::Aiming),
 	direction_(AimingDirection::Forward),
 	isAirborne_(false),
-	soldierRendererLocalPosX_(0),
-	soldierRendererLocalPosY_(75),
-	soldierRendererLocalPosZ_(0),
+	soldierRendererLocalPos_(0, 75, 0),
 	legRenderer_(nullptr),
 	topPistolRenderer_(nullptr),
 	wholePistolRenderer_(nullptr),
@@ -990,8 +988,9 @@ void Soldier::MeleeAttack()
 		CollisionType::CT_AABB,
 		CollisionBodyOrder::Rebel,
 		CollisionType::CT_AABB,
-		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->CollisionReturn {
-			_rebelCollision->GetActor<Arabian>()->TakeDamage(meleeAttackDamage_);
+		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->CollisionReturn
+		{
+			_rebelCollision->GetActor<Rebel>()->TakeDamage(meleeAttackDamage_, _thisCollision, _rebelCollision);
 			return CollisionReturn::Stop;
 		}
 	);

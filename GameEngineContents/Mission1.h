@@ -1,6 +1,7 @@
 #pragma once
 #include "GlobalHeader.h"
 
+class CamelRider;
 class Mission1BG;
 class Soldier;
 class Arabian;
@@ -49,6 +50,8 @@ private:
 	Arabian* arabian3_;
 	Arabian* arabian4_;
 	Arabian* arabian5_;
+
+	CamelRider* camelRider_;
 
 	bool isCamelRiderDead_;
 	bool isTruckDestroyed_;

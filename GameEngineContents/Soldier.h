@@ -85,11 +85,7 @@ private:
 
 	bool isAirborne_;		//false: 착지 상태. true: 공중에 떠 있는 상태.
 
-
-	const int soldierRendererLocalPosX_;
-	const int soldierRendererLocalPosY_;
-	const int soldierRendererLocalPosZ_;
-
+	const float4 soldierRendererLocalPos_;
 
 	GameEngineTextureRenderer* legRenderer_;
 	GameEngineTextureRenderer* topPistolRenderer_;

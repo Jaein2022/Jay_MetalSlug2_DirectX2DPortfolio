@@ -137,7 +137,7 @@ bool PistolBullet::CheckGroundHit()
 
 CollisionReturn PistolBullet::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)
 {
-	_rebelCollision->GetActor<Arabian>()->TakeDamage(damage_);
+	_rebelCollision->GetActor<Rebel>()->TakeDamage(damage_, _thisCollision, _rebelCollision);
 
 	pistolBulletRenderer_->Off();
 	pistolBulletCollisionBody_->Off();

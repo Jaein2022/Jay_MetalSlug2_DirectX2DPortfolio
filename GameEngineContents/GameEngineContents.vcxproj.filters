@@ -37,6 +37,9 @@
     <Filter Include="Mission\Background">
       <UniqueIdentifier>{cfd558e1-0973-404f-a2a8-ab0aaac86e14}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rebel\CamelRider">
+      <UniqueIdentifier>{20eb2815-5d99-4516-b233-2087950e25d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -84,6 +87,12 @@
     <ClInclude Include="Mission1BG.h">
       <Filter>Mission\Background</Filter>
     </ClInclude>
+    <ClInclude Include="CamelRider.h">
+      <Filter>Rebel\CamelRider</Filter>
+    </ClInclude>
+    <ClInclude Include="Rebel.h">
+      <Filter>Rebel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -130,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="Mission1BG.cpp">
       <Filter>Mission\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="CamelRider.cpp">
+      <Filter>Rebel\CamelRider</Filter>
+    </ClCompile>
+    <ClCompile Include="Rebel.cpp">
+      <Filter>Rebel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

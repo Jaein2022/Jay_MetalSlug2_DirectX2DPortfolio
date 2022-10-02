@@ -149,6 +149,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CamelRider.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="GlobalHeader.h" />
     <ClInclude Include="ContentsCore.h">
       <SubType>
@@ -172,6 +176,10 @@
     </ClInclude>
     <ClInclude Include="Indicator.h" />
     <ClInclude Include="PixelIndicator.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Rebel.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -199,6 +207,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CamelRider.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="ContentsCore.cpp">
       <SubType>
       </SubType>
@@ -220,6 +232,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Arabian_InitFunctions.cpp" />
+    <ClCompile Include="Rebel.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="TestBackground.cpp">
       <SubType>
       </SubType>
