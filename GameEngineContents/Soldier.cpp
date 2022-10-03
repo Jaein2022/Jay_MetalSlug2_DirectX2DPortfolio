@@ -990,7 +990,7 @@ void Soldier::MeleeAttack()
 		CollisionType::CT_AABB,
 		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->CollisionReturn
 		{
-			_rebelCollision->GetActor<Rebel>()->TakeDamage(meleeAttackDamage_, _thisCollision, _rebelCollision);
+			_rebelCollision->GetRoot<Rebel>()->TakeDamage(meleeAttackDamage_, _thisCollision, _rebelCollision);
 			return CollisionReturn::Stop;
 		}
 	);

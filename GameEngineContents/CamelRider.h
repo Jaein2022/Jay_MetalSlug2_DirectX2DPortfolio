@@ -81,11 +81,16 @@ private:
 
 	CamelRiderState currentCamelRiderState_;
 
+	Indicator* riderRenderPivot_;
+
 	GameEngineTextureRenderer* camelRenderer_;
 	GameEngineTextureRenderer* riderRenderer_;
 	GameEngineTextureRenderer* riderArmRenderer_;
 
+
 	const float4 camelRendererLocalPos_;
+	const float4 riderRenderPivotPos_Up_;
+	const float4 riderRenderPivotPos_Down_;
 	const float4 riderRendererLocalPos_Up_;
 	const float4 riderRendererLocalPos_Down_;
 	const float4 riderArmRendererLocalPos_Up_;
@@ -107,6 +112,7 @@ private:
 
 	GameEngineCollision* riderCollisionBody_;
 	GameEngineCollision* swordCollisionBody_;
+	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 	const float4 riderCollisionBodyScale_Up_;
 	const float4 riderCollisionBodyPosition_Up_;
@@ -123,6 +129,7 @@ private:
 
 	Soldier* enemySoldier_;
 	
+
 	char riderLocalDirection_;	//기수가 보는 방향.
 	//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
 
