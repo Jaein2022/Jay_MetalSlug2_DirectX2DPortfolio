@@ -6,6 +6,7 @@ enum class CamelRiderState
 	Up_Entrance,
 	Up_Idling,
 	Up_Running,
+	Up_RunningBackward,
 	Up_Turning,
 	Up_Firing,
 	Up_SwordBreaking,
@@ -17,6 +18,7 @@ enum class CamelRiderState
 	Dead
 };
 
+class Soldier;
 class PixelIndicator;
 class Indicator;
 class CamelRider: public Rebel
@@ -40,6 +42,11 @@ public:
 	void Update(float _deltaTime) override;
 	void End() override;
 
+	void TakeDamage(
+		int _damage,
+		GameEngineCollision* _soldierWeaponCollision,
+		GameEngineCollision* _rebelCollision
+	) override;
 
 private:
 	//착지할때 정확한 액터위치 조정/땅에 발이 안 닿아있으면 추락 판정.
@@ -57,15 +64,14 @@ private:
 	//모든 계산이 적용된 이동값을 실제로 적용하는 함수.
 	void MoveCamel(float _deltaTime);
 
-	void Run();
+	void SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...);
+
+	void Run();			//달리기.
+	void RunBackward();	//뒤로 달리기.
 
 	void Fire();
 
-	void TakeDamage(
-		int _damage,
-		GameEngineCollision* _soldierWeaponCollision,
-		GameEngineCollision* _rebelCollision
-	) override;
+
 
 
 private:
@@ -114,8 +120,12 @@ private:
 
 	int hp_;
 	int swordDuration_;
+
+	Soldier* enemySoldier_;
 	
-	char riderLocalDirection_;
+	char riderLocalDirection_;	//기수가 보는 방향.
+	//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
+
 
 	//Indicator* muzzle_;
 	//const float4 muzzlePosition_Up_;

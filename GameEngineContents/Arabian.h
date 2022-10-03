@@ -43,7 +43,6 @@ public:
 	void Update(float _deltaTime) override;
 	void End() override;
 
-public:
 	void TakeDamage(
 		int _damage,
 		GameEngineCollision* _soldierWeaponCollision,
@@ -147,7 +146,7 @@ private:
 	float shufflingSpeed_;
 
 	char shuffleDirection_;		//셔플 중일때 이동방향.
-	//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
+	//-1: 액터 월드방향의 역방향. 0: 방향전환 필요없음. 1: 액터 월드방향의 정방향.
 
 	float4 movementFor1Second_;	//1초 동안의 이동량. 델타타임과 플레이 속도는 MoveArabian()함수에서 한번만 계산한다.
 

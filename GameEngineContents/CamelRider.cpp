@@ -1,7 +1,7 @@
 #include "PreCompile.h"
 #include "CamelRider.h"
-
 #include "PixelIndicator.h"
+#include "Soldier.h"
 
 CamelRider::CamelRider()
 	: currentCamelRiderState_(CamelRiderState::Up_Idling),
@@ -34,6 +34,7 @@ CamelRider::CamelRider()
 	swordCollisionBodyPosition_Down_(float4(40, 115, 10)),
 	hp_(1),
 	swordDuration_(3),
+	enemySoldier_(nullptr),
 	riderLocalDirection_(1)
 {
 }
@@ -89,7 +90,9 @@ void CamelRider::Start()
 	swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
 
 
-
+	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(CollisionBodyOrder::Soldier).front();
+	//낙타기수 생성은 반드시 솔저 생성 이후로 할 것.
+	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생.
 
 
 
@@ -102,7 +105,7 @@ void CamelRider::Start()
 
 	if (0 == GameEngineTexture::Find("Rebel_Camel.png")->GetCutCount())
 	{
-		GameEngineTexture::Cut("Rebel_Camel.png", 10, 8);
+		GameEngineTexture::Cut("Rebel_Camel.png", 10, 10);
 	}
 	camelRenderer_->SetTexture("Rebel_Camel.png");
 	camelRenderer_->CreateFrameAnimation_CutTexture("Up_Idling",
@@ -115,25 +118,43 @@ void CamelRider::Start()
 	camelRenderer_->AnimationBindTime("Up_Running",
 		std::bind(&CamelRider::Run, this)
 	);
-	
+
+	camelRenderer_->CreateFrameAnimation_CutTexture("Up_RunningBackward",
+		FrameAnimation_Desc("Rebel_Camel.png", 30, 41, 0.05f, true)
+	);
+	camelRenderer_->AnimationBindTime("Up_RunningBackward",
+		std::bind(&CamelRider::RunBackward, this)
+	);
 	
 	camelRenderer_->CreateFrameAnimation_CutTexture("UpToDown",
-		FrameAnimation_Desc("Rebel_Camel.png", 30, 32, 0.1f, true)
+		FrameAnimation_Desc("Rebel_Camel.png", 50, 52, 0.075f, false)
 	);	
+	camelRenderer_->AnimationBindEnd("UpToDown",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			currentCamelRiderState_ = CamelRiderState::Down_Idling;
+		}
+	);
 	
 	
 	camelRenderer_->CreateFrameAnimation_CutTexture("Down_Idling",
-		FrameAnimation_Desc("Rebel_Camel.png", 40, 45, 0.3f, true)
+		FrameAnimation_Desc("Rebel_Camel.png", 60, 65, 0.3f, true)
 	);	
 	
 	
 	camelRenderer_->CreateFrameAnimation_CutTexture("DownToUp",
-		FrameAnimation_Desc("Rebel_Camel.png", 50, 52, 0.1f, true)
+		FrameAnimation_Desc("Rebel_Camel.png", 70, 72, 0.075f, false)
 	);	
+	camelRenderer_->AnimationBindEnd("DownToUp",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			currentCamelRiderState_ = CamelRiderState::Up_Idling;
+		}
+	);
 	
 	
 	camelRenderer_->CreateFrameAnimation_CutTexture("Dead",
-		FrameAnimation_Desc("Rebel_Camel.png", 60, 71, 0.1f, true)
+		FrameAnimation_Desc("Rebel_Camel.png", 80, 91, 0.05f, true)
 	);
 
 
@@ -166,11 +187,17 @@ void CamelRider::Start()
 	);	
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_Turning",
-		FrameAnimation_Desc("Rebel_CamelRider.png", 30, 33, 0.1f, true)
+		FrameAnimation_Desc("Rebel_CamelRider.png", 30, 33, 0.1f, false)
 	);	
+	riderRenderer_->AnimationBindEnd("Up_Turning",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			currentCamelRiderState_ = CamelRiderState::Up_Idling;
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("UpToDown",
-		FrameAnimation_Desc("Rebel_CamelRider.png", 40, 42, 0.5f, true)
+		FrameAnimation_Desc("Rebel_CamelRider.png", 40, 42, 0.075f, false)
 	);	
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Down_Idling",
@@ -182,7 +209,7 @@ void CamelRider::Start()
 	);	
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("DownToUp",
-		FrameAnimation_Desc("Rebel_CamelRider.png", 70, 72, 0.5f, true)
+		FrameAnimation_Desc("Rebel_CamelRider.png", 70, 72, 0.075f, false)
 	);	
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_SwordBreaking",
@@ -212,11 +239,11 @@ void CamelRider::Start()
 	);	
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("UpToDown_SwordBroken",
-		FrameAnimation_Desc("Rebel_CamelRider.png", 110, 112, 0.5f, true)
+		FrameAnimation_Desc("Rebel_CamelRider.png", 110, 112, 0.075f, false)
 	);	
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("DownToUp_SwordBroken",
-		FrameAnimation_Desc("Rebel_CamelRider.png", 120, 122, 0.5f, true)
+		FrameAnimation_Desc("Rebel_CamelRider.png", 120, 122, 0.075f, false)
 	);	
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Dead",
@@ -280,6 +307,8 @@ void CamelRider::Start()
 	riderArmRenderer_->ChangeFrameAnimation("Up_Idling");
 
 
+
+
 	camelRiderStateManager_.CreateState(
 		"Up_Entrance",
 		nullptr,
@@ -299,6 +328,12 @@ void CamelRider::Start()
 		{
 			riderCollisionBody_->On();
 			swordCollisionBody_->On();
+
+			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Up_);
+			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Up_);
+
+			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Up_);
+			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
 		}
 	);
 
@@ -366,6 +401,65 @@ void CamelRider::Start()
 	);
 
 	camelRiderStateManager_.CreateState(
+		"Up_RunningBackward",
+		nullptr,
+		[this](const StateInfo& _info)->void 
+		{
+			camelRenderer_->ChangeFrameAnimation("Up_RunningBackward");
+			riderRenderer_->ChangeFrameAnimation("Up_Idling");
+			riderArmRenderer_->On();
+			if (false == riderArmRenderer_->IsCurAnimation("Up_TakingDamage"))
+			{
+				(false == isSwordBroken_) ? riderArmRenderer_->ChangeFrameAnimation("Up_Idling")
+					: riderArmRenderer_->ChangeFrameAnimation("Up_Idling_Broken");
+			}
+
+			riderRenderer_->GetTransform().SetLocalPosition(riderRendererLocalPos_Up_);
+			riderArmRenderer_->GetTransform().SetLocalPosition(riderArmRendererLocalPos_Up_);
+
+			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Up_);
+			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Up_);
+
+			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Up_);
+			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
+
+			if (false == isSwordBroken_)
+			{
+				swordCollisionBody_->On();
+			}
+		}
+	);
+
+	camelRiderStateManager_.CreateState(
+		"Up_Turning",
+		nullptr,
+		[this](const StateInfo& _info)->void
+		{
+			camelRenderer_->ChangeFrameAnimation("Up_Idling");
+			(false == isSwordBroken_) ? riderRenderer_->ChangeFrameAnimation("Up_Turning")
+				: riderRenderer_->ChangeFrameAnimation("Up_Turning_SwordBroken");
+			riderArmRenderer_->Off();
+
+			riderRenderer_->GetTransform().SetLocalPosition(riderRendererLocalPos_Up_);
+
+			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Up_);
+			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Up_);
+
+			swordCollisionBody_->Off();
+		},
+		[this](const StateInfo& _info)->void
+		{
+			riderRenderer_->GetTransform().PixLocalNegativeX();
+			riderArmRenderer_->GetTransform().PixLocalNegativeX();
+			riderCollisionBody_->GetTransform().PixLocalNegativeX();
+			swordCollisionBody_->GetTransform().PixLocalNegativeX();
+		}
+	);
+		
+		
+		
+		
+		camelRiderStateManager_.CreateState(
 		"Up_Firing",
 		nullptr,
 		[this](const StateInfo& _info)->void 
@@ -420,16 +514,16 @@ void CamelRider::Start()
 		nullptr,
 		[this](const StateInfo& _info)->void 
 		{
-			(false == isSwordBroken_) ? camelRenderer_->ChangeFrameAnimation("UpToDown")
-				: camelRenderer_->ChangeFrameAnimation("UpToDown_Broken");
-			riderRenderer_->ChangeFrameAnimation("UpToDown");
+			camelRenderer_->ChangeFrameAnimation("UpToDown");
+			(false == isSwordBroken_) ? riderRenderer_->ChangeFrameAnimation("UpToDown")
+				: riderRenderer_->ChangeFrameAnimation("UpToDown_SwordBroken");
 			riderArmRenderer_->Off();
 
-			riderRenderer_->GetTransform().SetLocalPosition(riderRendererLocalPos_Up_);
-			riderArmRenderer_->GetTransform().SetLocalPosition(riderArmRendererLocalPos_Up_);
+			riderRenderer_->GetTransform().SetLocalPosition(riderRendererLocalPos_Down_);
+			riderArmRenderer_->GetTransform().SetLocalPosition(riderArmRendererLocalPos_Down_);
 
-			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Up_);
-			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Up_);
+			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Down_);
+			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Down_);
 
 			swordCollisionBody_->Off();
 		}
@@ -506,14 +600,13 @@ void CamelRider::Start()
 			camelRenderer_->ChangeFrameAnimation("Down_Idling");
 			riderRenderer_->ChangeFrameAnimation("Down_SwordBreaking");
 			riderArmRenderer_->Off();
-			//isSwordBroken_ = true;
 
 			riderRenderer_->GetTransform().SetLocalPosition(riderRendererLocalPos_Down_);
 			riderArmRenderer_->GetTransform().SetLocalPosition(riderArmRendererLocalPos_Down_);
 
 			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Down_);
 			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Down_);
-
+ 
 			swordCollisionBody_->Off();
 		}
 	);
@@ -523,16 +616,16 @@ void CamelRider::Start()
 		nullptr,
 		[this](const StateInfo& _info)->void
 		{
-			(false == isSwordBroken_) ? camelRenderer_->ChangeFrameAnimation("DownToUp_SwordBroken")
-				: camelRenderer_->ChangeFrameAnimation("DownToUp");
-			riderRenderer_->ChangeFrameAnimation("DownToUp");
+			camelRenderer_->ChangeFrameAnimation("DownToUp");
+			(false == isSwordBroken_) ? riderRenderer_->ChangeFrameAnimation("DownToUp")
+				: riderRenderer_->ChangeFrameAnimation("DownToUp_SwordBroken");
 			riderArmRenderer_->Off();
 
-			riderRenderer_->GetTransform().SetLocalPosition(riderRendererLocalPos_Up_);
-			riderArmRenderer_->GetTransform().SetLocalPosition(riderArmRendererLocalPos_Up_);
+			riderRenderer_->GetTransform().SetLocalPosition(riderRendererLocalPos_Down_);
+			riderArmRenderer_->GetTransform().SetLocalPosition(riderArmRendererLocalPos_Down_);
 
-			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Up_);
-			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Up_);
+			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Down_);
+			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Down_);
 
 			swordCollisionBody_->Off();
 		}
@@ -584,6 +677,16 @@ void CamelRider::Start()
 
 void CamelRider::Update(float _deltaTime)
 {
+	//float4 temp1 = riderArmRenderer_->GetTransform().GetWorldPosition();
+	//float4 temp2 = riderCollisionBody_->GetTransform().GetWorldPosition();
+	//float4 temp3 = swordCollisionBody_->GetTransform().GetWorldPosition();
+
+	//float4 temp4 = riderArmRenderer_->GetTransform().GetWorldScale();
+	//float4 temp5 = riderCollisionBody_->GetTransform().GetWorldScale();
+	//float4 temp6 = swordCollisionBody_->GetTransform().GetWorldScale();
+
+
+
 	CheckGround();
 	if (true == isAirborne_)
 	{
@@ -591,6 +694,22 @@ void CamelRider::Update(float _deltaTime)
 	}
 
 	GetDirection(_deltaTime);
+
+	if (true == GameEngineInput::GetInst()->IsDown("Test"))
+	{
+		if (CamelRiderState::Down_Idling == currentCamelRiderState_)
+		{
+			currentCamelRiderState_ = CamelRiderState::DownToUp;
+		}
+		else if (CamelRiderState::Up_Idling == currentCamelRiderState_)
+		{
+			currentCamelRiderState_ = CamelRiderState::UpToDown;
+		}
+
+		//currentCamelRiderState_ = CamelRiderState::Up_Turning;
+
+	}
+
 	UpdateCamelRiderState(_deltaTime);
 
 	MoveCamel(_deltaTime);
@@ -598,6 +717,46 @@ void CamelRider::Update(float _deltaTime)
 
 void CamelRider::End()
 {
+}
+
+void CamelRider::TakeDamage(
+	int _damage,
+	GameEngineCollision* _soldierWeaponCollision,
+	GameEngineCollision* _rebelCollision
+)
+{
+	if (_rebelCollision == swordCollisionBody_
+		&& static_cast<int>(CollisionBodyOrder::Soldier) != _soldierWeaponCollision->GetActor()->GetOrder())
+	{
+		swordDuration_ -= _damage;
+
+		if (0 < swordDuration_)
+		{
+			if (5 >= static_cast<int>(currentCamelRiderState_))
+			{
+				riderArmRenderer_->ChangeFrameAnimation("Up_TakingDamage", true);
+			}
+			else
+			{
+				riderArmRenderer_->ChangeFrameAnimation("Down_TakingDamage", true);
+			}
+		}
+		else
+		{
+			if (CamelRiderState::UpToDown > currentCamelRiderState_)
+			{
+				currentCamelRiderState_ = CamelRiderState::Up_SwordBreaking;
+			}
+			else
+			{
+				currentCamelRiderState_ = CamelRiderState::Down_SwordBreaking;
+			}
+		}
+	}
+	else
+	{
+		hp_ -= _damage;
+	}
 }
 
 void CamelRider::CheckGround()
@@ -608,28 +767,11 @@ void CamelRider::CheckGround()
 			&& (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 			&& (groundColor_.color_ <= camelRiderWorldPosPointer_->GetColorValue_UINT()))
 		{
-			//PixelColor magenta = PixelColor(255, 0, 255, 255);
-			//magenta.color_;		//4294902015
-			//PixelColor yellow = PixelColor(255, 255, 0, 255);
-			//yellow.color_;		//4278255615
-			//PixelColor cyan = PixelColor(0, 255, 255, 255);
-			//cyan.color_;			//4294967040
-
-
 			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-
-				//if (currentArabianState_ == ArabianState::JumpingBackward)
-				//{
-				//	currentArabianState_ = ArabianState::Shuffling;
-				//}
-				//else
-				//{
-				//	currentArabianState_ = ArabianState::FallingToIdling;
-				//}
 			}
 		}
 		else if (groundColor_.color_ <= camelRiderWorldPosPointer_->GetColorValue_UINT()
@@ -639,15 +781,6 @@ void CamelRider::CheckGround()
 			{
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-
-				//if (currentArabianState_ == ArabianState::JumpingBackward)
-				//{
-				//	currentArabianState_ = ArabianState::Shuffling;
-				//}
-				//else
-				//{
-				//	currentArabianState_ = ArabianState::FallingToIdling;
-				//}
 			}
 		}
 		else if (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
@@ -657,15 +790,6 @@ void CamelRider::CheckGround()
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-
-				//if (currentArabianState_ == ArabianState::JumpingBackward)
-				//{
-				//	currentArabianState_ = ArabianState::Shuffling;
-				//}
-				//else
-				//{
-				//	currentArabianState_ = ArabianState::FallingToIdling;
-				//}
 			}
 		}
 		else
@@ -673,7 +797,6 @@ void CamelRider::CheckGround()
 			if (false == isAirborne_)
 			{
 				isAirborne_ = true;
-				//currentArabianState_ = ArabianState::Falling;
 			}
 		}
 	}
@@ -688,6 +811,23 @@ void CamelRider::Fall(float _deltaTime)
 
 void CamelRider::GetDirection(float _deltaTime)
 {
+	float soldierWorldPosX = enemySoldier_->GetTransform().GetWorldPosition().x;
+
+	float thisWorldPosX = this->GetTransform().GetWorldPosition().x;
+
+
+	if (soldierWorldPosX < thisWorldPosX && 0 < riderRenderer_->GetTransform().GetWorldScale().x)
+	{
+		riderLocalDirection_ = 1;
+	}
+	else if (soldierWorldPosX > thisWorldPosX && 0 > riderRenderer_->GetTransform().GetWorldScale().x)
+	{
+		riderLocalDirection_ = -1;
+	}
+	else
+	{
+		riderLocalDirection_ = 0;
+	}
 }
 
 void CamelRider::UpdateCamelRiderState(float _deltaTime)
@@ -711,54 +851,72 @@ void CamelRider::MoveCamel(float _deltaTime)
 	movementFor1Second_ = float4::Zero;
 }
 
+void CamelRider::SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...)
+{
+	if (_maxStateIndex <= _minStateIndex)
+	{
+		MsgBoxAssert("최대값이 최소값보다 작거나 같습니다. 값을 다시 지정하세요.");
+		return;
+	}
+
+	if (_maxStateIndex >= static_cast<int>(CamelRiderState::Dead) || 1 > _maxStateIndex)
+	{
+		MsgBoxAssert("최대값이 스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
+		return;
+	}
+
+	int nextStateIndex
+		= GameEngineRandom::mainRandom_.GetRandomInt(_minStateIndex, _maxStateIndex);
+
+	if (0 < _exclusionCount)	//제외할 낙타기수스테이트가 1개 이상일때만 진입.
+	{
+		va_list exclusionList;		//제외할 낙타기수스테이트 리스트.
+		va_start(exclusionList, _exclusionCount);	//exclusionList 초기화.
+		CamelRiderState exclusion;		//제외할 낙타기수스테이트.
+
+		for (int i = 0; i < _exclusionCount; i++)
+		{
+			exclusion = va_arg(exclusionList, CamelRiderState);
+
+			if (static_cast<CamelRiderState>(nextStateIndex) == exclusion)
+			{
+				//랜덤으로 뽑은 숫자가 다음 스테이트에서 제외할 낙타기수스테이트 번호와 같다면 다시 뽑는다.
+				nextStateIndex = GameEngineRandom::mainRandom_.GetRandomInt(_minStateIndex, _maxStateIndex);
+				va_end(exclusionList);
+				va_start(exclusionList, _exclusionCount);
+				i = -1;
+				continue;
+			}
+
+			if (exclusion > CamelRiderState::Up_Idling)
+			{
+				MsgBoxAssert("제외값이 낙타기수 스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
+				return;
+			}
+		}
+		//랜덤으로 뽑은 숫자가 제외할 스테이트와 하나도 겹치지 않는다면 통과.
+		va_end(exclusionList);
+	}
+
+
+	if (0 >= nextStateIndex)
+	{
+		nextStateIndex = 0;
+	}
+
+	currentCamelRiderState_ = static_cast<CamelRiderState>(nextStateIndex);
+}
+
 void CamelRider::Run()
 {
 	movementFor1Second_ += float4::Right * GetTransform().GetWorldScale().x * runningSpeed_;
 }
 
+void CamelRider::RunBackward()
+{
+	movementFor1Second_ += float4::Left * GetTransform().GetWorldScale().x * runningSpeed_;
+}
+
 void CamelRider::Fire()
 {
 }
-
-void CamelRider::TakeDamage(
-	int _damage,
-	GameEngineCollision* _soldierWeaponCollision,
-	GameEngineCollision* _rebelCollision
-)
-{
-	if (_rebelCollision == swordCollisionBody_ 
-		&& static_cast<int>(CollisionBodyOrder::Soldier) != _soldierWeaponCollision->GetActor()->GetOrder())
-	{
-		swordDuration_ -= _damage;
-
-		if (0 < swordDuration_)
-		{
-			if (5 >= static_cast<int>(currentCamelRiderState_))
-			{
-				riderArmRenderer_->ChangeFrameAnimation("Up_TakingDamage");
-			}
-			else
-			{
-				riderArmRenderer_->ChangeFrameAnimation("Down_TakingDamage");
-			}
-		}
-		else
-		{
-			if (5 >= static_cast<int>(currentCamelRiderState_))
-			{
-				currentCamelRiderState_ = CamelRiderState::Up_SwordBreaking;
-			}
-			else
-			{
-				currentCamelRiderState_ = CamelRiderState::Down_SwordBreaking;
-			}
-		}
-	}
-	else
-	{
-		hp_ -= _damage;
-	}
-
-}
-
-
