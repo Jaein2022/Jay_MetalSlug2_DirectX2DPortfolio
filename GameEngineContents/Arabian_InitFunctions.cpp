@@ -32,34 +32,10 @@ void Arabian::CreateArabianAnimations()
 	);
 	arabianRenderer_->AnimationBindEnd("Shuffling",
 		[this](const FrameAnimation_Desc& _desc)->void 
-	{
-
+		{
 			shuffleDirection_ = -shuffleDirection_;
 
-			if (0 != nextWorldDirection_)
-			{
-				currentArabianState_ = ArabianState::Turning;
-				return;
-			}
-
-			if (groundColor_ > currentSteppingColor_)
-			{
-				SelectNextState(0, 6, 1, ArabianState::MeleeAttack);
-				return;
-			}
-
-			if (chargeDistance_ > horizontalDistance_)
-			{
-				SelectNextState(0, 3, 1, ArabianState::JumpingBackward);
-			}
-			else if (engagementDistance_ > horizontalDistance_)
-			{
-				SelectNextState(0, 4, 1, ArabianState::JumpingBackward);
-			}
-			else if (engagementDistance_ < horizontalDistance_ && true == isEngaging_)
-			{
-				currentArabianState_ = ArabianState::Running;
-			}
+			ReactInShuffling();
 		}
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Running",
@@ -251,7 +227,7 @@ void Arabian::CreateArabianStates()
 				return;
 			}
 
-			if (0 != nextWorldDirection_)
+			if (true == isArabiansDirectionWrong_)
 			{
 				currentArabianState_ = ArabianState::Turning;
 				return;
@@ -327,20 +303,15 @@ void Arabian::CreateArabianStates()
 		},
 		[this](const StateInfo& _info)->void 
 		{
-			if (-1 == nextWorldDirection_)
+			if (0 < this->GetTransform().GetWorldScale().x)
 			{
 				this->GetTransform().PixLocalNegativeX();
-				nextWorldDirection_ = 0;
+				isArabiansDirectionWrong_ = false;
 			}
-			else if (1 == nextWorldDirection_)
+			else if (0 > this->GetTransform().GetWorldScale().x)
 			{
 				this->GetTransform().PixLocalPositiveX();
-				nextWorldDirection_ = 0;
-			}
-			else
-			{
-				MsgBoxAssert("이런 회전방향은 있을 수 없습니다.");
-				return;
+				isArabiansDirectionWrong_ = false;
 			}
 		}
 	);

@@ -23,7 +23,7 @@ class PixelIndicator;
 class Indicator;
 class CamelRider: public Rebel
 {
-
+	friend class Mission1;
 public:
 	CamelRider();
 	~CamelRider();
@@ -56,7 +56,9 @@ private:
 	void Fall(float _deltaTime);
 
 	
-	void GetDirection(float _deltaTime);
+	void UpdateDirection(float _deltaTime);
+
+	void React();
 
 	//낙타기수 스테이트 변환 및 업데이트.
 	void UpdateCamelRiderState(float _deltaTime);
@@ -68,6 +70,7 @@ private:
 
 	void Run();			//달리기.
 	void RunBackward();	//뒤로 달리기.
+	void RunInDead();
 
 	void Fire();
 
@@ -109,6 +112,7 @@ private:
 	bool isEngaging_;		//true: 교전 중. false: 플레이어 인식 못함.
 	bool isSwordBroken_;	//true: 검 깨짐.
 
+	float4 pointOfDeath_;
 
 	GameEngineCollision* riderCollisionBody_;
 	GameEngineCollision* swordCollisionBody_;
@@ -129,14 +133,12 @@ private:
 
 	Soldier* enemySoldier_;
 	
-
-	char riderLocalDirection_;	//기수가 보는 방향.
-	//-1: 액터 월드방향의 역방향. 0: 에러. 1: 액터 월드방향의 정방향.
+	bool isRiderDirectionWrong_;	//true: 기수가 방향전환을 해야 한다.
 
 
 	//Indicator* muzzle_;
-	//const float4 muzzlePosition_Up_;
-	//const float4 muzzlePosition_Down_;
+	//const float4 muzzleLocalPosition_Up_;
+	//const float4 muzzleLocalPosition_Down_;
 
 
 

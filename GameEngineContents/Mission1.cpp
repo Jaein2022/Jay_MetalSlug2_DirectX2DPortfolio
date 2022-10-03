@@ -84,7 +84,8 @@ void Mission1::Start()
 
 	camelRider_ = CreateActor<CamelRider>(CollisionBodyOrder::Rebel, "CamelRider");
 	camelRider_->GetTransform().PixLocalNegativeX();
-	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 1200.f, 0.f, 0.f);
+
+	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 575.f, 0.f, 0.f);
 
 }
 
@@ -94,16 +95,17 @@ void Mission1::Update(float _deltaTime)
 	{
 		GetMainCameraActor()->FreeCameraModeOnOff();
 		currentFocusPointer_->Off();
-	}
-
-	if (true == GetMainCameraActor()->IsFreeCameraMode())
-	{
-		return;
+		destFocus_->Off();
 	}
 
 	if (true == camelRider_->IsDead() && false == isCamelRiderDead_)
 	{
 		isCamelRiderDead_ = true;
+	}
+
+	if (true == GetMainCameraActor()->IsFreeCameraMode())
+	{
+		return;
 	}
 
 
@@ -126,6 +128,10 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 		}
 		else
 		{
+			if (false == isDestFocusHolding_)
+			{
+				camelRider_->SelectNextState(0, 0, 0);
+			}
 			isDestFocusHolding_ = true;
 		}
 	}
@@ -159,8 +165,6 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 		if (PixelIndicator::GetPCTexture()->GetScale().x - GameEngineWindow::GetScale().x
 			>= destFocus_->GetTransform().GetWorldPosition().x)		//pc텍스처는 넘어가지 말 것.
 		{
-			//destFocus_->GetTransform().SetWorldMove(
-			//	float4::Right * _deltaTime * destFocusVelocity_ * playSpeed_);
 			
 			float4 destFocusWorldPosition = float4::Black;
 

@@ -38,20 +38,8 @@ CamelRider::CamelRider()
 	hp_(1),
 	swordDuration_(3),
 	enemySoldier_(nullptr),
-	riderLocalDirection_(1)
+	isRiderDirectionWrong_(false)
 {
-	//riderRendererLocalPos_Up_(-60, 197, 1),
-	//riderRendererLocalPos_Down_(-60, 95, -2),
-	//riderArmRendererLocalPos_Up_(-7, 257, 2),
-	//riderArmRendererLocalPos_Down_(0, 125, -1),
-	//riderCollisionBodyScale_Up_(float4(90, 90, 10)),
-	//riderCollisionBodyPosition_Up_(float4(-55, 245, 10)),
-	//riderCollisionBodyScale_Down_(float4(110, 100, 10)),
-	//riderCollisionBodyPosition_Down_(float4(-65, 120, 10)),
-	//swordCollisionBodyScale_Up_(float4(40, 135, 10)),
-	//swordCollisionBodyPosition_Up_(float4(30, 255, 10)),
-	//swordCollisionBodyScale_Down_(float4(60, 130, 10)),
-	//swordCollisionBodyPosition_Down_(float4(40, 115, 10)),
 }
 
 CamelRider::~CamelRider()
@@ -180,7 +168,7 @@ void CamelRider::Start()
 	);
 
 
-	camelRenderer_->ChangeFrameAnimation("Down_Idling");
+	camelRenderer_->ChangeFrameAnimation("Up_Idling");
 
 
 
@@ -200,14 +188,45 @@ void CamelRider::Start()
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_Entrance",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 0, 9, 0.1f, true)
 	);	
+	riderRenderer_->AnimationBindEnd("Up_Entrance",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			currentCamelRiderState_ = CamelRiderState::Up_Idling;
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_Idling",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 10, 13, 0.15f, true)
 	);	
+	riderRenderer_->AnimationBindEnd("Up_Idling",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			if (true == isEngaging_)
+			{
+				React();
+			}
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_Firing",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 20, 29, 0.1f, true)
 	);	
+	riderRenderer_->AnimationBindFrame("Up_Firing",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			if (6 == _desc.curFrame_)
+			{
+				Fire();
+			}
+		}
+	);
+	riderRenderer_->AnimationBindEnd("Up_Firing",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			React();
+		}
+	);
+
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_Turning",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 30, 33, 0.1f, false)
@@ -222,18 +241,52 @@ void CamelRider::Start()
 	riderRenderer_->CreateFrameAnimation_CutTexture("UpToDown",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 40, 42, 0.075f, false)
 	);	
+	riderRenderer_->AnimationBindEnd("UpToDown",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			React();
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Down_Idling",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 50, 53, 0.15f, true)
 	);	
+	riderRenderer_->AnimationBindEnd("Down_Idling",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			React();
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Down_Firing",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 60, 69, 0.1f, true)
 	);	
+	riderRenderer_->AnimationBindFrame("Down_Firing",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			if (6 == _desc.curFrame_)
+			{
+				Fire();
+			}
+		}
+	);
+	riderRenderer_->AnimationBindEnd("Down_Firing",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			React();
+		}
+	);
+
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("DownToUp",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 70, 72, 0.075f, false)
 	);	
+	riderRenderer_->AnimationBindEnd("DownToUp",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			React();
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_SwordBreaking",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 80, 85, 0.1f, false)
@@ -260,14 +313,32 @@ void CamelRider::Start()
 	riderRenderer_->CreateFrameAnimation_CutTexture("Up_Turning_SwordBroken",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 100, 103, 0.1f, true)
 	);	
+	riderRenderer_->AnimationBindEnd("Up_Turning_SwordBroken",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			currentCamelRiderState_ = CamelRiderState::Up_Idling;
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("UpToDown_SwordBroken",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 110, 112, 0.075f, false)
 	);	
+	riderRenderer_->AnimationBindEnd("UpToDown_SwordBroken",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			React();
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("DownToUp_SwordBroken",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 120, 122, 0.075f, false)
 	);	
+	riderRenderer_->AnimationBindEnd("DownToUp_SwordBroken",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			React();
+		}
+	);
 	
 	riderRenderer_->CreateFrameAnimation_CutTexture("Dead",
 		FrameAnimation_Desc("Rebel_CamelRider.png", 130, 142, 0.1f, false)
@@ -365,6 +436,8 @@ void CamelRider::Start()
 
 			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Up_);
 			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
+
+			isEngaging_ = true;
 		}
 	);
 
@@ -486,6 +559,7 @@ void CamelRider::Start()
 		},
 		[this](const StateInfo& _info)->void
 		{
+			isRiderDirectionWrong_ = false;
 			if (0.f < riderRenderPivot_->GetTransform().GetLocalScale().x)
 			{
 				riderRenderPivot_->GetTransform().PixLocalNegativeX();
@@ -498,9 +572,7 @@ void CamelRider::Start()
 	);
 		
 		
-		
-		
-		camelRiderStateManager_.CreateState(
+	camelRiderStateManager_.CreateState(
 		"Up_Firing",
 		nullptr,
 		[this](const StateInfo& _info)->void 
@@ -688,7 +760,7 @@ void CamelRider::Start()
 
 	camelRiderStateManager_.CreateState(
 		"Dead",
-		nullptr,
+		std::bind(&CamelRider::RunInDead, this),
 		[this](const StateInfo& _info)->void
 		{
 			riderRenderPivot_->GetTransform().SetLocalPosition(riderRenderPivotPos_Up_);
@@ -700,7 +772,9 @@ void CamelRider::Start()
 			riderCollisionBody_->Off();
 			swordCollisionBody_->Off();
 
-			this->Death(1.f);
+			pointOfDeath_ = riderRenderPivot_->GetTransform().GetWorldPosition();
+
+			this->Death(2.f);
 		}
 	);
 
@@ -740,31 +814,12 @@ void CamelRider::Update(float _deltaTime)
 		Fall(_deltaTime);
 	}
 
-	GetDirection(_deltaTime);
+	UpdateDirection(_deltaTime);
 
 	UpdateCamelRiderState(_deltaTime);
 
 	MoveCamel(_deltaTime);
 
-
-#ifdef _DEBUG
-	if (true == GameEngineInput::GetInst()->IsDown("Test"))
-	{
-		if (CamelRiderState::Down_Idling == currentCamelRiderState_)
-		{
-			currentCamelRiderState_ = CamelRiderState::DownToUp;
-		}
-		else if (CamelRiderState::Up_Idling == currentCamelRiderState_)
-		{
-			currentCamelRiderState_ = CamelRiderState::UpToDown;
-		}
-	}
-
-	if (true == GameEngineInput::GetInst()->IsDown("Special"))
-	{
-		currentCamelRiderState_ = CamelRiderState::Up_Turning;
-	}
-#endif // _DEBUG
 }
 
 void CamelRider::End()
@@ -861,24 +916,68 @@ void CamelRider::Fall(float _deltaTime)
 	movementFor1Second_ += float4::Down * fallingSpeed_;
 }
 
-void CamelRider::GetDirection(float _deltaTime)
+void CamelRider::UpdateDirection(float _deltaTime)
 {
 	float soldierWorldPosX = enemySoldier_->GetTransform().GetWorldPosition().x;
 
 	float thisWorldPosX = this->GetTransform().GetWorldPosition().x;
 
 
-	if (soldierWorldPosX < thisWorldPosX && 0 < riderRenderer_->GetTransform().GetWorldScale().x)
+	float temp1 = riderRenderPivot_->GetTransform().GetLocalScale().x;
+	float temp2 = riderRenderPivot_->GetTransform().GetWorldScale().x;
+
+	if (((soldierWorldPosX < thisWorldPosX && 0 > riderRenderPivot_->GetTransform().GetLocalScale().x)
+		|| (soldierWorldPosX > thisWorldPosX && 0 < riderRenderPivot_->GetTransform().GetLocalScale().x))
+		&& false == isRiderDirectionWrong_)
 	{
-		riderLocalDirection_ = 1;
+		isRiderDirectionWrong_ = true;
 	}
-	else if (soldierWorldPosX > thisWorldPosX && 0 > riderRenderer_->GetTransform().GetWorldScale().x)
+}
+
+void CamelRider::React()
+{
+	if (true == isRiderDirectionWrong_)
 	{
-		riderLocalDirection_ = -1;
+		if (static_cast<int>(CamelRiderState::UpToDown) <= static_cast<int>(currentCamelRiderState_))
+		{
+			currentCamelRiderState_ = CamelRiderState::DownToUp;
+		}
+		else if (CamelRiderState::DownToUp == currentCamelRiderState_)
+		{
+			currentCamelRiderState_ = CamelRiderState::Up_Idling;
+		}
+		else 
+		{
+			currentCamelRiderState_ = CamelRiderState::Up_Turning;
+		}
+		return;
+	}
+
+
+	if (static_cast<int>(CamelRiderState::Down_Idling) <= static_cast<int>(currentCamelRiderState_))
+	{
+		SelectNextState(8, 11, 1, CamelRiderState::Down_SwordBreaking);
 	}
 	else
 	{
-		riderLocalDirection_ = 0;
+		if (this->GetTransform().GetWorldPosition().x 
+			< this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x 
+				- (GameEngineWindow::GetInst()->GetScale().HX() * 0.5f))
+		{
+			//낙타기수가 윈도우 좌측 끝을 넘어가지 못하게 한다.
+			SelectNextState(1, 7, 3, CamelRiderState::Up_SwordBreaking, CamelRiderState::Up_Running);
+		}
+		else if (this->GetTransform().GetWorldPosition().x
+			> (this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x 
+				+ (GameEngineWindow::GetInst()->GetScale().HX() * 0.5f )))
+		{
+			//낙타기수가 윈도우 우측 끝을 넘어가면 돌아오게 한다.
+			currentCamelRiderState_ = CamelRiderState::Up_Running;
+		}
+		else
+		{
+			SelectNextState(1, 7, 2, CamelRiderState::Up_SwordBreaking, CamelRiderState::Up_Turning);
+		}
 	}
 }
 
@@ -905,13 +1004,13 @@ void CamelRider::MoveCamel(float _deltaTime)
 
 void CamelRider::SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...)
 {
-	if (_maxStateIndex <= _minStateIndex)
+	if (_maxStateIndex < _minStateIndex)
 	{
-		MsgBoxAssert("최대값이 최소값보다 작거나 같습니다. 값을 다시 지정하세요.");
+		MsgBoxAssert("최대값이 최소값보다 작습니다. 값을 다시 지정하세요.");
 		return;
 	}
 
-	if (_maxStateIndex >= static_cast<int>(CamelRiderState::Dead) || 1 > _maxStateIndex)
+	if (_maxStateIndex >= static_cast<int>(CamelRiderState::Dead) || 0 > _maxStateIndex)
 	{
 		MsgBoxAssert("최대값이 스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
 		return;
@@ -939,12 +1038,6 @@ void CamelRider::SelectNextState(int _minStateIndex, int _maxStateIndex, int _ex
 				i = -1;
 				continue;
 			}
-
-			if (exclusion > CamelRiderState::Up_Idling)
-			{
-				MsgBoxAssert("제외값이 낙타기수 스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
-				return;
-			}
 		}
 		//랜덤으로 뽑은 숫자가 제외할 스테이트와 하나도 겹치지 않는다면 통과.
 		va_end(exclusionList);
@@ -969,6 +1062,14 @@ void CamelRider::RunBackward()
 	movementFor1Second_ += float4::Left * GetTransform().GetWorldScale().x * runningSpeed_;
 }
 
+void CamelRider::RunInDead()
+{
+	movementFor1Second_ += float4::Right * GetTransform().GetWorldScale().x * runningSpeed_;
+	riderRenderPivot_->GetTransform().PixLocalPositiveX();
+	riderRenderPivot_->GetTransform().SetWorldPosition(pointOfDeath_);
+}
+
 void CamelRider::Fire()
 {
+	int i = 0;
 }

@@ -32,7 +32,7 @@ Arabian::Arabian()
 	enemySoldier_(nullptr),
 	currentTurningDelay_(0.f),
 	turningDelay_(1.f),
-	nextWorldDirection_(1),
+	isArabiansDirectionWrong_(false),
 	releasePoint_(nullptr),
 	releaseAngle_(60.f),
 	releaseVelocity_(5.f),
@@ -170,7 +170,7 @@ void Arabian::Update(float _deltaTime)
 		Fall(_deltaTime);
 	}
 
-	GetDistanceAndDirection(_deltaTime);
+	UpdateDistanceAndDirection(_deltaTime);
 
 	if (recognitionDistance_ > horizontalDistance_ && false == isEngaging_ && false == isAirborne_)
 	{
@@ -284,7 +284,7 @@ void Arabian::Fall(float _deltaTime)
 	movementFor1Second_ += float4::Down * fallingSpeed_;
 }
 
-void Arabian::GetDistanceAndDirection(float _deltaTime)
+void Arabian::UpdateDistanceAndDirection(float _deltaTime)
 { 
 	float soldierWorldPosX = enemySoldier_->GetTransform().GetWorldPosition().x;
 
@@ -293,31 +293,48 @@ void Arabian::GetDistanceAndDirection(float _deltaTime)
 
 	//static float currentTurningDelay; 모든 아라비안들이 방향전환 딜레이를 공유하는 문제 발생.
 
-	if (soldierWorldPosX < thisWorldPosX && 0 < this->GetTransform().GetWorldScale().x)
+	if ((soldierWorldPosX < thisWorldPosX && 0 < this->GetTransform().GetWorldScale().x)
+		|| (soldierWorldPosX > thisWorldPosX && 0 > this->GetTransform().GetWorldScale().x))
 	{
-		//아라비안 보는방향 오른쪽 && 솔저는 아라비안 왼쪽 위치.
 		currentTurningDelay_ += _deltaTime;
 		if (turningDelay_ <= currentTurningDelay_)
 		{
-			nextWorldDirection_ = -1;
-			currentTurningDelay_ = 0.f;
-		}
-	}
-	else if(soldierWorldPosX > thisWorldPosX && 0 > this->GetTransform().GetWorldScale().x)
-	{
-		//아라비안 보는방향 왼쪽 && 솔저는 아라비안 오른쪽 위치.
-		currentTurningDelay_ += _deltaTime;
-		if (turningDelay_ <= currentTurningDelay_)
-		{
-			nextWorldDirection_ = 1;
+			isArabiansDirectionWrong_ = true;
 			currentTurningDelay_ = 0.f;
 		}
 	}
 	else
 	{
 		//아라비안 보는 방향에 솔저 있으면 방향전환 리셋.
-		nextWorldDirection_ = 0;
 		currentTurningDelay_ = 0.f;
+	}
+}
+
+void Arabian::ReactInShuffling()
+{
+	if (true == isArabiansDirectionWrong_)
+	{
+		currentArabianState_ = ArabianState::Turning;
+		return;
+	}
+
+	if (groundColor_ > currentSteppingColor_)
+	{
+		SelectNextState(0, 6, 1, ArabianState::MeleeAttack);
+		return;
+	}
+
+	if (chargeDistance_ > horizontalDistance_)
+	{
+		SelectNextState(0, 3, 1, ArabianState::JumpingBackward);
+	}
+	else if (engagementDistance_ > horizontalDistance_)
+	{
+		SelectNextState(0, 4, 1, ArabianState::JumpingBackward);
+	}
+	else if (engagementDistance_ < horizontalDistance_ && true == isEngaging_)
+	{
+		currentArabianState_ = ArabianState::Running;
 	}
 }
 

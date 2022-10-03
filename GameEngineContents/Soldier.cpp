@@ -53,7 +53,7 @@ Soldier::Soldier()
 	isMeleeAttack1_(true),
 	causeOfDeath_(0),
 	isDamageProof_(false),
-	remainedDamageProofDuration_(0.f),
+	remainingDamageProofTime_(0.f),
 	damageProofTimeLimit_(3.f),
 	flickeringPeriod_(0.1f)
 {
@@ -761,14 +761,14 @@ void Soldier::UpdateSoldierState(float _deltaTime)
 	
 	if (true == isDamageProof_)
 	{
-		if (0.f >= remainedDamageProofDuration_)
+		if (0.f >= remainingDamageProofTime_)
 		{
 			isDamageProof_ = false;
-			remainedDamageProofDuration_ = 0.f;
+			remainingDamageProofTime_ = 0.f;
 		}
-		else if (0.f < remainedDamageProofDuration_)
+		else if (0.f < remainingDamageProofTime_)
 		{
-			remainedDamageProofDuration_ -= _deltaTime;
+			remainingDamageProofTime_ -= _deltaTime;
 		}
 	}
 
