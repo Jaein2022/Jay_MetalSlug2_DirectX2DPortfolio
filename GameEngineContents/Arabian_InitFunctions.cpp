@@ -340,6 +340,15 @@ void Arabian::CreateArabianStates()
 			arabianLifeCollisionBody_->Off();
 			arabianCloseCombatCollisionBody_->Off();
 
+			if (0 == GameEngineRandom::mainRandom_.GetRandomInt(0, 1))
+			{
+				GameEngineSound::SoundPlayOneshot("Rebel_Death1.mp3");
+			}
+			else
+			{
+				GameEngineSound::SoundPlayOneshot("Rebel_Death2.mp3");
+			}
+
 			if (true == isAirborne_)
 			{
 				int deathAnimationSelection = GameEngineRandom::mainRandom_.GetRandomInt(0, 1);

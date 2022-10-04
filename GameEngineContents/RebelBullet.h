@@ -29,8 +29,9 @@ private:
 	CollisionReturn Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _soldierCollision);
 
 private:
-	void SetFiringDirection(float _direction)
+	inline void SetFiringDirection(float _direction)
 	{
+		GameEngineSound::SoundPlayOneshot("CamelRider_Fire.mp3");
 		firingDirection_ = static_cast<char>(_direction);
 		if (0 == firingDirection_)
 		{

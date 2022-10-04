@@ -87,6 +87,11 @@ void Mission1::Start()
 
 	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 575.f, 0.f, 0.f);
 
+
+
+	GameEngineSound::SoundPlayOneshot("Mission1_Start.mp3");
+	mission1BgmPlayer_ = GameEngineSound::SoundPlayControl("JUDGMENT (Mission 1).mp3", -1);
+
 }
 
 void Mission1::Update(float _deltaTime)

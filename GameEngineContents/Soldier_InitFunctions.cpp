@@ -525,6 +525,7 @@ void Soldier::CreateSoldierStates()
 			wholePistolRenderer_->On();
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
+			GameEngineSound::SoundPlayOneshot("Tarma_Fall.mp3");
 
 			if (true == isAirborne_)
 			{
@@ -565,6 +566,7 @@ void Soldier::CreateSoldierStates()
 			wholePistolRenderer_->On();
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
+			GameEngineSound::SoundPlayOneshot("Tarma_Fall.mp3");
 
 			if (true == isAirborne_)
 			{
@@ -607,6 +609,7 @@ void Soldier::CreateSoldierStates()
 			wholePistolRenderer_->On();
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
+			GameEngineSound::SoundPlayOneshot("Tarma_Fall.mp3");
 
 			if (true == isAirborne_)
 			{
@@ -843,6 +846,8 @@ void Soldier::CreateSoldierStates()
 
 			legRenderer_->ChangeFrameAnimation("Standing");
 
+			GameEngineSound::SoundPlayOneshot("Knife_Cut2.mp3");
+
 			if (true == this->isMeleeAttack1_)
 			{
 				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
@@ -1065,6 +1070,8 @@ void Soldier::CreateSoldierStates()
 
 			legRenderer_->ChangeFrameAnimation("Running");
 
+			GameEngineSound::SoundPlayOneshot("Knife_Cut2.mp3");
+
 			if (true == this->isMeleeAttack1_)
 			{
 				topPistolRenderer_->ChangeFrameAnimation("Standing, Running, Jumping_MeleeAttack1");
@@ -1218,6 +1225,8 @@ void Soldier::CreateSoldierStates()
 			wholePistolRenderer_->On();
 			//topWeaponRenderer_->Off();
 			//wholeWeaponRenderer_->Off();
+
+			GameEngineSound::SoundPlayOneshot("Knife_Cut2.mp3");
 
 			if (true == this->isMeleeAttack1_)
 			{

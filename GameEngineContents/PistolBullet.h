@@ -34,6 +34,7 @@ private:
 private:
 	inline void SetFiringDirection(float _direction)
 	{
+		GameEngineSound::SoundPlayOneshot("Pistol_Fire.mp3");
 		firingDirection_ = float4::DegreeToDirection2D(_direction);
 	}
 

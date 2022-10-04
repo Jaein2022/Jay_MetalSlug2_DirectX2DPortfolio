@@ -775,7 +775,14 @@ void CamelRider::Start()
 		std::bind(&CamelRider::RunInDead, this),
 		[this](const StateInfo& _info)->void
 		{
-			riderRenderPivot_->GetTransform().SetLocalPosition(riderRenderPivotPos_Up_);
+			if (0 == GameEngineRandom::mainRandom_.GetRandomInt(0, 1))
+			{
+				GameEngineSound::SoundPlayOneshot("Rebel_Death1.mp3");
+			}
+			else
+			{
+				GameEngineSound::SoundPlayOneshot("Rebel_Death2.mp3");
+			}
 
 			camelRenderer_->ChangeFrameAnimation("Dead");
 			riderRenderer_->ChangeFrameAnimation("Dead");

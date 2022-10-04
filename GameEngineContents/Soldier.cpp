@@ -32,7 +32,7 @@ Soldier::Soldier()
 	ascendingSlopeChecker_(nullptr),
 	flatSlopeChecker_(nullptr),
 	descendingSlopeChecker_(nullptr),
-	muzzleIndicator_(nullptr),
+	muzzle_(nullptr),
 	pistolForwardMuzzlePosition_(100, 105, 10),
 	pistolUpwardMuzzlePosition_(-10, 220, 10),
 	pistolDownwardMuzzlePosition_(15, -5, 10),
@@ -130,7 +130,7 @@ void Soldier::Start()
 		float4(5, 5, 1)
 	);
 
-	muzzleIndicator_ = Indicator::CreateIndicator<Indicator>(
+	muzzle_ = Indicator::CreateIndicator<Indicator>(
 		"MuzzleIndicator",
 		this,
 		float4::Red,
@@ -153,8 +153,6 @@ void Soldier::Start()
 	soldierCloseCombatCollisionBody_->GetTransform().SetLocalPosition(60, 80, 10);
 
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
-
-
 
 	CreateSoldierAnimations();
 	CreateSoldierStates();
@@ -196,7 +194,6 @@ void Soldier::TakeDamage(int _rebelWeaponType)
 	{
 		return;
 	}
-
 	causeOfDeath_ = _rebelWeaponType;
 }
 
@@ -797,24 +794,24 @@ void Soldier::ControlMuzzle()
 
 		if (SoldierLegState::Ducking == leg_)
 		{
-			muzzleIndicator_->GetTransform().SetLocalPosition(pistolDuckingMuzzlePosition_);
+			muzzle_->GetTransform().SetLocalPosition(pistolDuckingMuzzlePosition_);
 		}
 		else
 		{
-			muzzleIndicator_->GetTransform().SetLocalPosition(pistolForwardMuzzlePosition_);
+			muzzle_->GetTransform().SetLocalPosition(pistolForwardMuzzlePosition_);
 		}
 		break;
 	}
 	case AimingDirection::Upward:
 	{
 		aimingAngle_ = 90;
-		muzzleIndicator_->GetTransform().SetLocalPosition(pistolUpwardMuzzlePosition_);
+		muzzle_->GetTransform().SetLocalPosition(pistolUpwardMuzzlePosition_);
 		break;
 	}
 	case AimingDirection::Downward:
 	{
 		aimingAngle_ = -90;
-		muzzleIndicator_->GetTransform().SetLocalPosition(pistolDownwardMuzzlePosition_);
+		muzzle_->GetTransform().SetLocalPosition(pistolDownwardMuzzlePosition_);
 		break;
 	}
 	case AimingDirection::ForwardToUpward:
@@ -829,7 +826,7 @@ void Soldier::ControlMuzzle()
 		break;
 	}
 
-	muzzleIndicator_->GetTransform().SetLocalRotation(0.f, 0.f, aimingAngle_);
+	muzzle_->GetTransform().SetLocalRotation(0.f, 0.f, aimingAngle_);
 
 }
 
@@ -961,12 +958,13 @@ void Soldier::Fire()
 	{
 	case SoldierWeaponType::Pistol:
 	{
+		//GameEngineSound::SoundPlayOneshot("Pistol_Fire.mp3");
 		PistolBullet* newBullet 
 			= this->GetLevel()->CreateActor<PistolBullet>(
 				CollisionBodyOrder::Soldier_Projectile, "PistolBullet");
 
-		newBullet->GetTransform().SetWorldPosition(muzzleIndicator_->GetTransform().GetWorldPosition());
-		newBullet->GetTransform().SetWorldRotation(muzzleIndicator_->GetTransform().GetWorldRotation());
+		newBullet->GetTransform().SetWorldPosition(muzzle_->GetTransform().GetWorldPosition());
+		newBullet->GetTransform().SetWorldRotation(muzzle_->GetTransform().GetWorldRotation());
 		newBullet->SetFiringDirection(aimingAngle_);
 		break;
 	}

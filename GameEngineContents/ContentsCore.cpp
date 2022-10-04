@@ -79,4 +79,13 @@ void ContentsCore::LoadContentsResource()
 		GameEngineTexture::Load(contentsTextures[i].GetFullPath());
 	}
 
+
+	contentsResourceDir.MoveToParent("ContentsResource");
+	contentsResourceDir.MoveToChild("Sound");
+
+	std::vector<GameEngineFile> contentsSounds = contentsResourceDir.GetAllFiles();
+	for (size_t i = 0; i < contentsSounds.size(); i++)
+	{
+		GameEngineSound::Load(contentsSounds[i].GetFullPath());
+	}
 }

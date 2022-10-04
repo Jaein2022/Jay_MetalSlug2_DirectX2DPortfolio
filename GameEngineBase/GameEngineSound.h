@@ -26,21 +26,21 @@ public:
 	static void Update();
 
 	//파일이 사운드보다 더 근본에 가까우므로 게임엔진사운드에서 게임엔진 파일도 받을 수 있게 구성한다.
-	static GameEngineSound* LoadResource(const GameEngineFile& _path);
-	static GameEngineSound* LoadResource(const std::string& _path);
-	static GameEngineSound* LoadResource(const std::string& _path, const std::string& _name);
-	static GameEngineSound* FindResources(const std::string& _name);
+	static GameEngineSound* Load(const GameEngineFile& _path);
+	static GameEngineSound* Load(const std::string& _path);
+	static GameEngineSound* Load(const std::string& _path, const std::string& _name);
+	static GameEngineSound* Find(const std::string& _name);
 
 	static void ResourceDestroy();
 
 protected:
-	bool Load(const std::string& _path);
+	bool LoadSound(const std::string& _path);
 
 
 private:
 	FMOD::Sound* sound_;
 
-	static std::map<std::string, GameEngineSound*> allResource_;
+	static std::map<std::string, GameEngineSound*> allSounds_;
 };
 
 class GameEngineSoundPlayer
@@ -57,6 +57,7 @@ public:
 
 
 public:
+
 	void Stop();
 	void PlaySpeed(float _speed);
 	void Volume(float _value);

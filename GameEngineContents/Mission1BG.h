@@ -58,7 +58,5 @@ private:
 	GameEngineTextureRenderer* part3_FirstBG_;
 	const float4 part3_FirstBG_InitPosition_;
 	GameEngineTextureRenderer* skyBG_3_;
-
-
 };
 

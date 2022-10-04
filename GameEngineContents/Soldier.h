@@ -116,7 +116,7 @@ private:
 	PixelColor currentGroundColor_;
 
 
-	Indicator* muzzleIndicator_;		//총구위치 표시기.
+	Indicator* muzzle_;		//총구.
 	const float4 pistolForwardMuzzlePosition_;	//전방 보고있을때 총구위치 
 	const float4 pistolUpwardMuzzlePosition_;	//위를 보고있을때총구위치 
 	const float4 pistolDownwardMuzzlePosition_;	//아래를 보고있을때총구위치 
@@ -148,6 +148,5 @@ private:
 	float remainingDamageProofTime_;	//남은 무적 지속시간.
 	const float damageProofTimeLimit_;	//무적 시간제한.
 	const float flickeringPeriod_;//깜빡임 주기.
-
 };
 

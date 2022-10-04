@@ -56,5 +56,7 @@ private:
 	bool isCamelRiderDead_;
 	bool isTruckDestroyed_;
 
+	GameEngineSoundPlayer mission1BgmPlayer_;
+
 };
 
