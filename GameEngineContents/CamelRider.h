@@ -135,10 +135,9 @@ private:
 	
 	bool isRiderDirectionWrong_;	//true: 기수가 방향전환을 해야 한다.
 
-
-	//Indicator* muzzle_;
-	//const float4 muzzleLocalPosition_Up_;
-	//const float4 muzzleLocalPosition_Down_;
+	Indicator* muzzle_;
+	const float4 muzzleLocalPosition_Up_;
+	const float4 muzzleLocalPosition_Down_;
 
 
 

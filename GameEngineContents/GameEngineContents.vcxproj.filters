@@ -25,9 +25,6 @@
     <Filter Include="Rebel\Arabian">
       <UniqueIdentifier>{5589f905-8bc1-4789-90e2-6580a7a1c810}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rebel\Arabian\ArabianWeapon">
-      <UniqueIdentifier>{537c1d21-6532-46b8-a872-bee04d1d8783}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Player\PlayerWeapon">
       <UniqueIdentifier>{731e46f8-23c3-4ed0-9e22-b7e0c9b2039f}</UniqueIdentifier>
     </Filter>
@@ -39,6 +36,9 @@
     </Filter>
     <Filter Include="Rebel\CamelRider">
       <UniqueIdentifier>{20eb2815-5d99-4516-b233-2087950e25d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rebel\RebelWeapon">
+      <UniqueIdentifier>{6bc087d8-3549-480e-a586-e4e2d45808f0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,9 +69,6 @@
     <ClInclude Include="Arabian.h">
       <Filter>Rebel\Arabian</Filter>
     </ClInclude>
-    <ClInclude Include="Sword.h">
-      <Filter>Rebel\Arabian\ArabianWeapon</Filter>
-    </ClInclude>
     <ClInclude Include="Soldier.h">
       <Filter>Player</Filter>
     </ClInclude>
@@ -92,6 +89,12 @@
     </ClInclude>
     <ClInclude Include="Rebel.h">
       <Filter>Rebel</Filter>
+    </ClInclude>
+    <ClInclude Include="Sword.h">
+      <Filter>Rebel\RebelWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="RebelBullet.h">
+      <Filter>Rebel\RebelWeapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -122,9 +125,6 @@
     <ClCompile Include="Arabian.cpp">
       <Filter>Rebel\Arabian</Filter>
     </ClCompile>
-    <ClCompile Include="Sword.cpp">
-      <Filter>Rebel\Arabian\ArabianWeapon</Filter>
-    </ClCompile>
     <ClCompile Include="Soldier_InitFunctions.cpp">
       <Filter>Player</Filter>
     </ClCompile>
@@ -145,6 +145,12 @@
     </ClCompile>
     <ClCompile Include="Rebel.cpp">
       <Filter>Rebel</Filter>
+    </ClCompile>
+    <ClCompile Include="Sword.cpp">
+      <Filter>Rebel\RebelWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="RebelBullet.cpp">
+      <Filter>Rebel\RebelWeapon</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

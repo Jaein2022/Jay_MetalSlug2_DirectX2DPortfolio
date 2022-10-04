@@ -446,11 +446,23 @@ void Soldier::CreateSoldierAnimations()
 
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidBullet_Ground",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.075f, false));
+	wholePistolRenderer_->AnimationBindStart("Fallen_BySolidBullet_Ground",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			fallingSpeed_ = -3.0f;
+			isAirborne_ = true;
+		}
+	);
+	wholePistolRenderer_->AnimationBindTime("Fallen_BySolidBullet_Ground",
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
+		{
+			movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+		}
+	);
 
 
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
-	//wholePistolRenderer_->GetPixelData().plusColor_ = float4(0.35f, 0.35f, 0.35f, 0.f);
 	wholePistolRenderer_->Off();
 
 
@@ -484,7 +496,7 @@ void Soldier::CreateSoldierAnimations()
 
 void Soldier::CreateSoldierStates()
 {
-	soldierStateManager_.CreateState(		//1010
+	soldierStateManager_.CreateState(		//1011
 		"Fallen_ByMeleeAttack",
 		[this](float _deltaTime, const StateInfo& _info)->void 
 		{
@@ -524,7 +536,7 @@ void Soldier::CreateSoldierStates()
 		}
 	);
 
-	soldierStateManager_.CreateState(		//1011
+	soldierStateManager_.CreateState(		//1012
 		"Fallen_ByFlyingSword",
 		[this](float _deltaTime, const StateInfo& _info)->void 
 		{
@@ -564,6 +576,48 @@ void Soldier::CreateSoldierStates()
 			soldierCloseCombatCollisionBody_->Off();
 		}
 	);
+
+
+	soldierStateManager_.CreateState(		//1013
+		"Fallen_BySolidBullet",
+		[this](float _deltaTime, const StateInfo& _info)->void
+		{
+			if (2.f <= _info.stateTime_)
+			{
+				weapon_ = SoldierWeaponType::Pistol;
+				leg_ = SoldierLegState::Redeploying;
+				top_ = SoldierTopState::Aiming;
+				direction_ = AimingDirection::Forward;
+				wholePistolRenderer_->CurAnimationReset();
+				causeOfDeath_ = 0;
+			}
+			else if (1.f <= _info.stateTime_ && false == isAirborne_)
+			{
+				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+			}
+		},
+		[this](const StateInfo& _info)->void
+		{
+			legRenderer_->Off();
+			topPistolRenderer_->Off();
+			wholePistolRenderer_->On();
+			//topWeaponRenderer_->Off();
+			//wholeWeaponRenderer_->Off();
+
+			if (true == isAirborne_)
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Fallen_BySolidAttack_Midair");
+			}
+			else
+			{
+				wholePistolRenderer_->ChangeFrameAnimation("Fallen_BySolidBullet_Ground");
+			}
+
+
+			soldierLifeCollisionBody_->Off();
+			soldierCloseCombatCollisionBody_->Off();
+		}
+		);
 
 
 

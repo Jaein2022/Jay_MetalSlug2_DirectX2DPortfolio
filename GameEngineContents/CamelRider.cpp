@@ -2,6 +2,7 @@
 #include "CamelRider.h"
 #include "PixelIndicator.h"
 #include "Soldier.h"
+#include "RebelBullet.h"
 
 CamelRider::CamelRider()
 	: currentCamelRiderState_(CamelRiderState::Up_Idling),
@@ -38,7 +39,10 @@ CamelRider::CamelRider()
 	hp_(1),
 	swordDuration_(3),
 	enemySoldier_(nullptr),
-	isRiderDirectionWrong_(false)
+	isRiderDirectionWrong_(false),
+	muzzle_(nullptr),
+	muzzleLocalPosition_Up_(125, 43, 10),
+	muzzleLocalPosition_Down_(135, 30, 10)
 {
 }
 
@@ -57,7 +61,7 @@ void CamelRider::Start()
 		float4::Black,
 		float4(0, 5, -5),
 		float4(5, 5, 1)
-		);
+	);
 
 	camelRiderWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
 		"CamelRiderWorldPosPointer",
@@ -65,7 +69,7 @@ void CamelRider::Start()
 		float4::Red,
 		float4(0, 0, -5),
 		float4(5, 5, 1)
-		);
+	);
 
 	lowerLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"LowerLandingChecker",
@@ -73,15 +77,23 @@ void CamelRider::Start()
 		float4::Black,
 		float4(0, -5, -5),
 		float4(5, 5, 1)
-		);
+	);
 
-	riderRenderPivot_ = Indicator::CreateIndicator<PixelIndicator>(
+	riderRenderPivot_ = Indicator::CreateIndicator<Indicator>(
 		"RiderRenderPivot",
 		this,
 		float4::Cyan,
 		float4(riderRenderPivotPos_Up_),
 		float4(1, 1, 1)
-		);
+	);
+
+	muzzle_ = Indicator::CreateIndicator<Indicator>(
+		"Muzzle",
+		riderRenderPivot_,
+		float4::Red,
+		float4(muzzleLocalPosition_Up_),
+		float4(5, 5, 1)
+	);
 
 	riderCollisionBody_ = CreateComponent<GameEngineCollision>("RiderCollisionBody");
 	riderCollisionBody_->ChangeOrder(this->GetOrder());
@@ -500,7 +512,7 @@ void CamelRider::Start()
 
 			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Up_);
 			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Up_);
 			if (false == isSwordBroken_)
 			{
 				swordCollisionBody_->On();
@@ -532,7 +544,7 @@ void CamelRider::Start()
 
 			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Up_);
 			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Up_);
 			if (false == isSwordBroken_)
 			{
 				swordCollisionBody_->On();
@@ -596,7 +608,7 @@ void CamelRider::Start()
 
 			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Up_);
 			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Up_);
 			if (false == isSwordBroken_)
 			{
 				swordCollisionBody_->On();
@@ -620,7 +632,7 @@ void CamelRider::Start()
 
 			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Up_);
 			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Up_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Up_);
 			swordCollisionBody_->Off();
 		}
 	);
@@ -643,7 +655,7 @@ void CamelRider::Start()
 
 			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Down_);
 			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Down_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Down_);
 			swordCollisionBody_->Off();
 		}
 	);
@@ -674,7 +686,7 @@ void CamelRider::Start()
 
 			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Down_);
 			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Down_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Down_);
 			if (false == isSwordBroken_)
 			{
 				swordCollisionBody_->On();
@@ -707,7 +719,7 @@ void CamelRider::Start()
 
 			swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Down_);
 			swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Down_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Down_);
 			if (false == isSwordBroken_)
 			{
 				swordCollisionBody_->On();
@@ -731,7 +743,7 @@ void CamelRider::Start()
 
 			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Down_);
 			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Down_);
- 
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Down_);
 			swordCollisionBody_->Off();
 		}
 	);
@@ -753,7 +765,7 @@ void CamelRider::Start()
 
 			riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Down_);
 			riderCollisionBody_->GetTransform().SetLocalPosition(riderCollisionBodyPosition_Down_);
-
+			muzzle_->GetTransform().SetLocalPosition(muzzleLocalPosition_Down_);
 			swordCollisionBody_->Off();
 		}
 	);
@@ -1071,5 +1083,23 @@ void CamelRider::RunInDead()
 
 void CamelRider::Fire()
 {
-	int i = 0;
+	RebelBullet* newRebelBullet = this->GetLevel()->CreateActor<RebelBullet>(
+		CollisionBodyOrder::RebelAttack_SolidBullet,
+		"RebelBullet"
+	);
+
+	newRebelBullet->GetTransform().SetWorldPosition(this->muzzle_->GetTransform().GetWorldPosition());
+
+	float riderRenderPivotWorldDirection = this->riderRenderPivot_->GetTransform().GetWorldScale().x;
+
+	if (0.f > riderRenderPivotWorldDirection)
+	{
+		newRebelBullet->GetTransform().PixLocalPositiveX();
+	}
+	else
+	{
+		newRebelBullet->GetTransform().PixLocalNegativeX();
+	}
+
+	newRebelBullet->SetFiringDirection(riderRenderPivotWorldDirection);
 }

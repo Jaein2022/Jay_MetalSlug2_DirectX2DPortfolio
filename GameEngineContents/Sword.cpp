@@ -196,9 +196,9 @@ void Sword::CheckGround()
 	}
 }
 
-CollisionReturn Sword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)
+CollisionReturn Sword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _soldierCollision)
 {
-	_playerCollision->GetActor<Soldier>()->TakeDamage(this->GetOrder());
+	_soldierCollision->GetActor<Soldier>()->TakeDamage(this->GetOrder());
 
 	this->Death();
 

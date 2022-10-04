@@ -5,6 +5,8 @@ class PixelIndicator;
 class PistolBullet: public GameEngineActor
 {
 	//이 클래스의 존재 이유: 권총 총알.
+	friend class Soldier;
+
 public:
 	PistolBullet();
 	~PistolBullet();
@@ -23,15 +25,18 @@ public:
 	void Update(float _deltaTime) override;
 	void End() override;
 
-public:
+
+
+private:
+	bool CheckGroundHit();
+	CollisionReturn Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision);
+
+private:
 	inline void SetFiringDirection(float _direction)
 	{
 		firingDirection_ = float4::DegreeToDirection2D(_direction);
 	}
 
-private:
-	bool CheckGroundHit();
-	CollisionReturn Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision);
 
 private:
 	const float bulletSpeed_;

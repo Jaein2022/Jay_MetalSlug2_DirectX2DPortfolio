@@ -28,9 +28,9 @@ void PistolBullet::Start()
 	pistolBulletCollisionBody_ = CreateComponent<GameEngineCollision>("PistolBulletCollision");
 	pistolBulletCollisionBody_->ChangeOrder(this->GetOrder());
 	pistolBulletCollisionBody_->SetCollisionMode(CollisionMode::Single);
+	pistolBulletCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	pistolBulletCollisionBody_->GetTransform().SetLocalScale(40, 24, 10);
 	pistolBulletCollisionBody_->GetTransform().SetLocalPosition(0, 0, 0);
-	pistolBulletCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 
@@ -90,8 +90,7 @@ void PistolBullet::Start()
 		float4(5, 5, 1)
 	);
 
-	this->Death(1.f);
-
+	this->Death(2.f);
 }
 
 void PistolBullet::Update(float _deltaTime)
@@ -108,8 +107,6 @@ void PistolBullet::Update(float _deltaTime)
 		firingDirection_ = float4::Zero;
 	}
 
-	
-
 	pistolBulletCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
 		CollisionBodyOrder::Rebel,
@@ -117,6 +114,26 @@ void PistolBullet::Update(float _deltaTime)
 		std::bind(&PistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
 	);
 
+	if (this->GetTransform().GetWorldPosition().x + 20.f
+		< (-GameEngineWindow::GetInst()->GetScale().HX()
+			+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x))
+	{
+		this->Death();		//총알은 윈도우 좌측경계를 넘어가자마자 소멸.
+	}
+
+	if (this->GetTransform().GetWorldPosition().x - 20.f
+		> (GameEngineWindow::GetInst()->GetScale().HX()
+			+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x))
+	{
+		this->Death();		//총알은 윈도우 우측경계를 넘어가자마자 소멸.
+	}
+
+	if (this->GetTransform().GetWorldPosition().y + 12.f
+			> (GameEngineWindow::GetInst()->GetScale().HY()
+				+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().y))
+	{
+		this->Death();		//총알은 윈도우 상방경계를 넘어가자마자 소멸.
+	}
 
 }
 

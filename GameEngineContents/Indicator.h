@@ -23,23 +23,23 @@ protected:
 	Indicator& operator=(const Indicator&& _other) = delete;
 
 public:
-	template <typename PointerType>
-	static PointerType* CreateIndicator(
+	template <typename IndicatorType>
+	static IndicatorType* CreateIndicator(
 		const std::string& _name,
-		GameEngineActor* _parentActor,
+		GameEngineUpdateObject* _parentObject,
 		const float4& _color,
 		const float4& _localPosition,
 		const float4& _localScale
 	)
 	{
-		Indicator* newIndicator = new PointerType();
+		Indicator* newIndicator = new IndicatorType();
 		newIndicator->SetName(_name);
 		newIndicator->color_ = _color;
-		newIndicator->SetParent(_parentActor);
+		newIndicator->SetParent(_parentObject);
 		newIndicator->GetTransform().SetLocalScale(_localScale);
 		newIndicator->GetTransform().SetLocalPosition(_localPosition);
 		newIndicator->Start();
-		return dynamic_cast<PointerType*>(newIndicator);
+		return dynamic_cast<IndicatorType*>(newIndicator);
 	}
 
 	static void RenderingOnOffSwitch()

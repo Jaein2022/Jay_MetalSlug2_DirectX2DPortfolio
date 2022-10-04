@@ -551,9 +551,10 @@ float Arabian::GetSlope(char _localDirection)
 
 void Arabian::ThrowSword()
 {
-	Sword* newSword 
-		= this->GetLevel()->CreateActor<Sword>(
-			CollisionBodyOrder::RebelAttack_FlyingSword, "FlyingSword");
+	Sword* newSword = this->GetLevel()->CreateActor<Sword>(
+		CollisionBodyOrder::RebelAttack_FlyingSword,
+		"FlyingSword"
+	);
 
 	newSword->GetTransform().SetWorldPosition(releasePoint_->GetTransform().GetWorldPosition());
 

@@ -60,7 +60,7 @@ void GameEngineRenderer::Start()
 
 void GameEngineRenderer::PushRendererToMainCamera()
 {
-	this->GetParent<GameEngineActor>()->GetLevel()->PushRendererToMainCamera(this);
+	this->GetActor()->GetLevel()->PushRendererToMainCamera(this);
 }
 
 void GameEngineRenderer::PushRendererToUICamera()
