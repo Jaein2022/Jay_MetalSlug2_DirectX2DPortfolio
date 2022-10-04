@@ -446,18 +446,22 @@ void Soldier::CreateSoldierAnimations()
 
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidBullet_Ground",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 169, 0.075f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 168, 0.075f, false)
+	); 
 	wholePistolRenderer_->AnimationBindStart("Fallen_BySolidBullet_Ground",
 		[this](const FrameAnimation_Desc& _desc)->void
 		{
-			fallingSpeed_ = -3.0f;
+			fallingSpeed_ = -4.0f;
 			isAirborne_ = true;
 		}
 	);
 	wholePistolRenderer_->AnimationBindTime("Fallen_BySolidBullet_Ground",
 		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
 		{
-			movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+			if (14 > _desc.curFrame_)
+			{
+				movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+			}
 		}
 	);
 
