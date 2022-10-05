@@ -7,6 +7,7 @@
 #include "Arabian.h"
 #include "Mission1BG.h"
 #include "CamelRider.h"
+#include "UI.h"
 
 Mission1::Mission1()
 	: mission1BG_(nullptr),
@@ -37,7 +38,8 @@ Mission1::Mission1()
 	arabian20_(nullptr),
 	camelRider_(nullptr),
 	isCamelRiderDead_(false),
-	isTruckDestroyed_(false)
+	isTruckDestroyed_(false),
+	ui_(nullptr)
 {
 }
 
@@ -139,8 +141,18 @@ void Mission1::Start()
 
 
 
+	ui_ = CreateActor<UI>(CollisionBodyOrder::UI, "UI");
+	ui_->GetTransform().SetWorldPosition(0, 0, -20);
+
+
+
+
 	GameEngineSound::SoundPlayOneshot("Mission1_Start.mp3");
 	mission1BgmPlayer_ = GameEngineSound::SoundPlayControl("JUDGMENT (Mission 1).mp3", -1);
+
+
+
+
 
 }
 

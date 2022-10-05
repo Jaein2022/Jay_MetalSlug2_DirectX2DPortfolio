@@ -40,6 +40,9 @@
     <Filter Include="Rebel\RebelWeapon">
       <UniqueIdentifier>{6bc087d8-3549-480e-a586-e4e2d45808f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{41f605e7-10bd-46de-be36-dadeb8dc623d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -96,6 +99,9 @@
     <ClInclude Include="RebelBullet.h">
       <Filter>Rebel\RebelWeapon</Filter>
     </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -151,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="RebelBullet.cpp">
       <Filter>Rebel\RebelWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

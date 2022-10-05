@@ -127,20 +127,32 @@ void Arabian::CreateArabianAnimations()
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("JumpDeath",
-		FrameAnimation_Desc("Rebel_Arabian.png", 120, 130, 0.075f, true)
+		FrameAnimation_Desc("Rebel_Arabian.png", 120, 130, 0.075f, false)
 	);
-	arabianRenderer_->AnimationBindFrame("JumpDeath",
-		std::bind(&Arabian::MoveInJumpDeath, this, std::placeholders::_1)
-	);
-	arabianRenderer_->AnimationBindEnd("JumpDeath",
-		[this](const FrameAnimation_Desc& _desc)->void 
+
+	arabianRenderer_->AnimationBindTime("JumpDeath",
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void 
 		{
-			this->Death();
+			if (10 == _desc.curFrame_)
+			{
+				if (false == isAirborne_)
+				{
+					Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+					if (1.f <= _desc.frameTime_)
+					{
+						this->Death();
+					}
+				}
+			}
+			else
+			{
+				MoveInJumpDeath(_desc);
+			}
 		}
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Death1",
-		FrameAnimation_Desc("Rebel_Arabian.png", 140, 151, 0.075f, true)
+		FrameAnimation_Desc("Rebel_Arabian.png", 140, 151, 0.075f, false)
 	);
 	arabianRenderer_->AnimationBindEnd("Death1",
 		[this](const FrameAnimation_Desc& _desc)->void 
@@ -150,12 +162,19 @@ void Arabian::CreateArabianAnimations()
 	);
 
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Death2",
-		FrameAnimation_Desc("Rebel_Arabian.png", 160, 179, 0.075f, true)
+		FrameAnimation_Desc("Rebel_Arabian.png", 160, 179, 0.075f, false)
 	);
-	arabianRenderer_->AnimationBindEnd("Death2",
-		[this](const FrameAnimation_Desc& _desc)->void 
+	arabianRenderer_->AnimationBindTime("Death2",
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void 
 		{
-			this->Death();
+			if (19 == _desc.curFrame_ && false == isAirborne_)
+			{
+				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+				if (1.f <= _desc.frameTime_)
+				{
+					this->Death();
+				}
+			}
 		}
 	);
 

@@ -4,6 +4,9 @@
 #include "GameEngineTexture.h"
 #include "GameEngineRenderSet.h"
 
+ID3D11RenderTargetView* GameEngineRenderTarget::prevRenderTargetView_ = nullptr;
+ID3D11DepthStencilView* GameEngineRenderTarget::prevDepthStencilView_ = nullptr;
+
 GameEngineRenderTarget::GameEngineRenderTarget() 
 	: depthStencilView_(nullptr),
 	depthTexture_(nullptr),
@@ -205,5 +208,33 @@ void GameEngineRenderTarget::EffectProcess()
 		{
 			effect->Effect(this);
 		}
+	}
+}
+
+void GameEngineRenderTarget::GetPrevRenderTarget()
+{
+	GameEngineDevice::GetContext()->OMGetRenderTargets(
+		1,
+		&prevRenderTargetView_,
+		&prevDepthStencilView_
+	);
+}
+
+void GameEngineRenderTarget::SetPrevRenderTarget()
+{
+	GameEngineDevice::GetContext()->OMSetRenderTargets(
+		1,
+		&prevRenderTargetView_,
+		prevDepthStencilView_
+	);
+
+	if (nullptr != prevRenderTargetView_)
+	{
+		prevRenderTargetView_->Release();
+	}
+
+	if (nullptr != prevDepthStencilView_)
+	{
+		prevDepthStencilView_->Release();
 	}
 }

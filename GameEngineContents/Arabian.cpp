@@ -40,7 +40,10 @@ Arabian::Arabian()
 	recognitionDistance_(900.f),
 	engagementDistance_(600.f),
 	chargeDistance_(400.f),
-	hp_(1)
+	hp_(1),
+	flickeringPeriod_(0.05f),
+	remainingPeriod_(0.f),
+	flickeringSwitch_(true)
 {
 }
 
@@ -571,20 +574,20 @@ void Arabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 {
 	if (8 <= _desc.curFrame_)
 	{
-		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 1.f / _desc.interval_;
+		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 1.f;
 
 		if (false == isAirborne_)
 		{
-			movementFor1Second_ += float4::Up * GetSlope(-1) * 1.f / _desc.interval_;
+			movementFor1Second_ += float4::Up * GetSlope(-1) * 1.f;
 		}
 	}
 	else
 	{
-		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 5.f / _desc.interval_;
+		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 5.f;
 
 		if (false == isAirborne_)
 		{
-			movementFor1Second_ += float4::Up * GetSlope(-1) * 5.f / _desc.interval_;
+			movementFor1Second_ += float4::Up * GetSlope(-1) * 5.f;
 		}
 	}
 }
@@ -605,5 +608,38 @@ void Arabian::MeleeAttack()
 void Arabian::JumpBackWard()
 {
 	movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 4.5f;
+}
+
+void Arabian::Flicker(float _deltaTime, bool _isFlickeringOn, const float4& _plusColor, const float4& _originalColor)
+{
+	if (false == _isFlickeringOn && true == flickeringSwitch_)
+	{
+		remainingPeriod_ = 0.f;
+	}
+
+	if (0 >= remainingPeriod_)
+	{
+		flickeringSwitch_ = !flickeringSwitch_;
+
+		remainingPeriod_ = flickeringPeriod_;
+	}
+	else
+	{
+		if (true == _isFlickeringOn)
+		{
+			remainingPeriod_ -= _deltaTime;
+		}
+		return;
+	}
+
+	if (true == flickeringSwitch_)
+	{
+		arabianRenderer_->GetPixelData().plusColor_ = _plusColor;
+		
+	}
+	else
+	{
+		arabianRenderer_->GetPixelData().plusColor_ = _originalColor;
+	}
 }
 

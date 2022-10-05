@@ -147,6 +147,10 @@ private:
 	bool isDamageProof_;	//true: 무적상태. 
 	float remainingDamageProofTime_;	//남은 무적 지속시간.
 	const float damageProofTimeLimit_;	//무적 시간제한.
-	const float flickeringPeriod_;//깜빡임 주기.
+	const float flickeringPeriod_;		//깜빡임 주기.
+	float remainingPeriod_;
+	bool flickeringSwitch_;
+
+	GameEngineTextureRenderer* player1SignRenderer_;
 };
 

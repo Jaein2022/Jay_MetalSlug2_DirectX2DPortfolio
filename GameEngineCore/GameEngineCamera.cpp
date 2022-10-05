@@ -104,7 +104,6 @@ void GameEngineCamera::Start()
 
 bool ZSort(GameEngineRenderer* _rendererA, GameEngineRenderer* _rendererB)
 {
-	//
 	return _rendererA->GetTransform().GetWorldPosition().z > _rendererB->GetTransform().GetWorldPosition().z;
 }
 
@@ -120,9 +119,9 @@ void GameEngineCamera::Render(float _deltaTime)
 
 	//오브젝트들을 재배치할 뷰행렬을 구한다.
 	viewMatrix_.LookToLH(
-		this->GetParent<GameEngineActor>()->GetTransform().GetLocalPosition(),
-		this->GetParent<GameEngineActor>()->GetTransform().GetForwardVector(),
-		this->GetParent<GameEngineActor>()->GetTransform().GetUpVector()
+		this->GetActor()->GetTransform().GetLocalPosition(),
+		this->GetActor()->GetTransform().GetForwardVector(),
+		this->GetActor()->GetTransform().GetUpVector()
 	);
 
 	//투영모드에 맞게 오브젝트들을 축소할 투영행렬을 구한다.
@@ -165,8 +164,9 @@ void GameEngineCamera::Render(float _deltaTime)
 	{
 		float scaleTime = GameEngineTime::GetDeltaTimeF(rendererGroupPair.first);
 
-		std::list<GameEngineRenderer*>& sortingRendererList = rendererGroupPair.second;
-		sortingRendererList.sort(ZSort);	//<-이거 있고 없고의 차이가 뭐길래 투명이 제대로 적용되지??
+		//std::list<GameEngineRenderer*>& sortingRendererList = rendererGroupPair.second;
+		//sortingRendererList.sort(ZSort);	//<-이거 있고 없고의 차이가 뭐길래 투명이 제대로 적용되지??
+		rendererGroupPair.second.sort(ZSort);
 
 		for (GameEngineRenderer* const renderer : rendererGroupPair.second)
 			//이 위치의 const는 renderer가 가리키는 메모리 위치를 변경할 수 없게 하겠다는 의미이다. 

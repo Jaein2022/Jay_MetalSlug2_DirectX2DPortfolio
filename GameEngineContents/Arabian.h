@@ -103,7 +103,14 @@ private:
 	void MeleeAttack();
 
 	//백점프 애니메이션 중 움직임.
-	void JumpBackWard();	
+	void JumpBackWard();
+
+	void Flicker(		//깜빡임.
+		float _deltaTime,
+		bool _isFlickeringOn,
+		const float4& _plusColor,
+		const float4& _originalColor = float4::Zero
+	);
 
 
 private:
@@ -177,6 +184,10 @@ private:
 	const float chargeDistance_;		//돌진거리.
 
 	int hp_;
+
+	const float flickeringPeriod_;//깜빡임 주기.
+	float remainingPeriod_;
+	bool flickeringSwitch_;
 
 };
 

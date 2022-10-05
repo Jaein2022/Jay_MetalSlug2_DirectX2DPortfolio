@@ -44,6 +44,10 @@ class GameEngineRenderTarget : public GameEngineRes<GameEngineRenderTarget>
 	//게임엔진텍스쳐는 자기가 가진 텍스쳐와 그 서브리소스들만 가지고 관리하는 클래스이고,
 	//게임엔진렌더타겟은 이 프레임워크내 모든 렌더타겟뷰를 관리하는 클래스이다. 
 
+
+	static ID3D11RenderTargetView* prevRenderTargetView_;
+	static ID3D11DepthStencilView* prevDepthStencilView_;
+
 private:
 	GameEngineRenderTarget();
 	~GameEngineRenderTarget();
@@ -92,6 +96,8 @@ public:
 	void Effect(class GameEngineRenderSet& _renderSet);
 	void EffectProcess();
 
+	static void GetPrevRenderTarget();
+	static void SetPrevRenderTarget();
 
 public:
 	GameEngineTexture* GetDepthTexture()

@@ -1,6 +1,7 @@
 #pragma once
 #include "GlobalHeader.h"
 
+class UI;
 class CamelRider;
 class Mission1BG;
 class Soldier;
@@ -73,5 +74,6 @@ private:
 
 	GameEngineSoundPlayer mission1BgmPlayer_;
 
+	UI* ui_;
 };
 

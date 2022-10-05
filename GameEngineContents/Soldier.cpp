@@ -55,7 +55,10 @@ Soldier::Soldier()
 	isDamageProof_(false),
 	remainingDamageProofTime_(0.f),
 	damageProofTimeLimit_(3.f),
-	flickeringPeriod_(0.1f)
+	flickeringPeriod_(0.1f),
+	remainingPeriod_(0.f),
+	flickeringSwitch_(true),
+	player1SignRenderer_(nullptr)
 {
 }
 
@@ -999,30 +1002,27 @@ void Soldier::Flicker(
 	const float4& _originalColor /*= float4::Zero*/
 )
 {
-	static float passedTime;
-	static bool flickeringSwitch;
-
-	if (false == _isFlickeringOn && true == flickeringSwitch)
+	if (false == _isFlickeringOn && true == flickeringSwitch_)
 	{
-		passedTime = flickeringPeriod_;
+		remainingPeriod_ = 0.f;
 	}
 
-	if (flickeringPeriod_ <= passedTime)
+	if (0 >= remainingPeriod_)
 	{
-		flickeringSwitch = !flickeringSwitch;
+		flickeringSwitch_ = !flickeringSwitch_;
 
-		passedTime = 0.f;
+		remainingPeriod_ = flickeringPeriod_;
 	}
 	else
 	{
 		if (true == _isFlickeringOn)
 		{
-			passedTime += _deltaTime;
+			remainingPeriod_ -= _deltaTime;
 		}
 		return;
 	}
 
-	if (true == flickeringSwitch)
+	if (true == flickeringSwitch_)
 	{
 		for (std::list<GameEngineTextureRenderer*>::iterator iter = allTextureRenderers_.begin();
 			iter != allTextureRenderers_.end(); iter++)

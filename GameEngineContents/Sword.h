@@ -65,6 +65,9 @@ private:
 
 	float rotationSpeed_;
 	const float flickeringPeriod_;
+	float remainingPeriod_;
+	bool flickeringSwitch_;
+
 	float4 releaseSpeed_;
 
 };

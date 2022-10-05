@@ -425,18 +425,19 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->AnimationBindTime("Fallen_ByMeleeAttack_Ground",
 		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
 		{
-			if (18 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
-			{
-				weapon_ = SoldierWeaponType::Pistol;
-				leg_ = SoldierLegState::Redeploying;
-				top_ = SoldierTopState::Aiming;
-				direction_ = AimingDirection::Forward;
-				causeOfDeath_ = 0;
-				wholePistolRenderer_->CurAnimationReset();
-			}
-			else if (18 == _desc.curFrame_)
+			if (18 == _desc.curFrame_)
 			{
 				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+
+				if (1.f <= _desc.frameTime_)
+				{
+					weapon_ = SoldierWeaponType::Pistol;
+					leg_ = SoldierLegState::Redeploying;
+					top_ = SoldierTopState::Aiming;
+					direction_ = AimingDirection::Forward;
+					causeOfDeath_ = 0;
+					wholePistolRenderer_->CurAnimationReset();
+				}
 			}
 		}
 	);
@@ -446,18 +447,19 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->AnimationBindTime("Fallen_ByFlyingSword_Ground",
 		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
 		{
-			if (18 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
-			{
-				weapon_ = SoldierWeaponType::Pistol;
-				leg_ = SoldierLegState::Redeploying;
-				top_ = SoldierTopState::Aiming;
-				direction_ = AimingDirection::Forward;
-				causeOfDeath_ = 0;
-				wholePistolRenderer_->CurAnimationReset();
-			}
-			else if (18 == _desc.curFrame_)
+			if (18 == _desc.curFrame_)
 			{
 				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+
+				if (1.f <= _desc.frameTime_)
+				{
+					weapon_ = SoldierWeaponType::Pistol;
+					leg_ = SoldierLegState::Redeploying;
+					top_ = SoldierTopState::Aiming;
+					direction_ = AimingDirection::Forward;
+					causeOfDeath_ = 0;
+					wholePistolRenderer_->CurAnimationReset();
+				}
 			}
 		}
 	);
@@ -465,11 +467,14 @@ void Soldier::CreateSoldierAnimations()
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidAttack_Midair",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.075f, false));
-	wholePistolRenderer_->AnimationBindStart("Fallen_BySolidAttack_Midair",
+	wholePistolRenderer_->AnimationBindFrame("Fallen_BySolidAttack_Midair",
 		[this](const FrameAnimation_Desc& _desc)->void 
 		{
-			fallingSpeed_ = 0.5f;
-			movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+			if (1 == _desc.curFrame_)
+			{
+				fallingSpeed_ = 0.5f;
+				movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+			}
 		}
 	);
 	wholePistolRenderer_->AnimationBindTime("Fallen_BySolidAttack_Midair",
@@ -481,18 +486,19 @@ void Soldier::CreateSoldierAnimations()
 			}
 			else
 			{
-				if (9 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
-				{
-					weapon_ = SoldierWeaponType::Pistol;
-					leg_ = SoldierLegState::Redeploying;
-					top_ = SoldierTopState::Aiming;
-					direction_ = AimingDirection::Forward;
-					causeOfDeath_ = 0;
-					wholePistolRenderer_->CurAnimationReset();
-				}
-				else if (9 == _desc.curFrame_)
+				if (9 == _desc.curFrame_)
 				{
 					Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+
+					if (1.f <= _desc.frameTime_)
+					{
+						weapon_ = SoldierWeaponType::Pistol;
+						leg_ = SoldierLegState::Redeploying;
+						top_ = SoldierTopState::Aiming;
+						direction_ = AimingDirection::Forward;
+						causeOfDeath_ = 0;
+						wholePistolRenderer_->CurAnimationReset();
+					}
 				}
 			}
 		}
@@ -502,11 +508,14 @@ void Soldier::CreateSoldierAnimations()
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidBullet_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 150, 168, 0.075f, false)
 	); 
-	wholePistolRenderer_->AnimationBindStart("Fallen_BySolidBullet_Ground",
+	wholePistolRenderer_->AnimationBindFrame("Fallen_BySolidBullet_Ground",
 		[this](const FrameAnimation_Desc& _desc)->void
 		{
-			fallingSpeed_ = -4.0f;
-			isAirborne_ = true;
+			if (1 == _desc.curFrame_)
+			{
+				fallingSpeed_ = -4.0f;
+				isAirborne_ = true;
+			}
 		}
 	);
 	wholePistolRenderer_->AnimationBindTime("Fallen_BySolidBullet_Ground",
@@ -517,23 +526,22 @@ void Soldier::CreateSoldierAnimations()
 				movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
 			}
 
-			if (18 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
-			{
-				weapon_ = SoldierWeaponType::Pistol;
-				leg_ = SoldierLegState::Redeploying;
-				top_ = SoldierTopState::Aiming;
-				direction_ = AimingDirection::Forward;
-				causeOfDeath_ = 0;
-				wholePistolRenderer_->CurAnimationReset();
-			}
-			else if (18 == _desc.curFrame_)
+			if (18 == _desc.curFrame_ )
 			{
 				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+
+				if (1.f <= _desc.frameTime_)
+				{
+					weapon_ = SoldierWeaponType::Pistol;
+					leg_ = SoldierLegState::Redeploying;
+					top_ = SoldierTopState::Aiming;
+					direction_ = AimingDirection::Forward;
+					causeOfDeath_ = 0;
+					wholePistolRenderer_->CurAnimationReset();
+				}
 			}
 		}
 	);
-
-
 	wholePistolRenderer_->ChangeFrameAnimation("Ducking_Aiming1_Forward");
 	wholePistolRenderer_->Off();
 
@@ -557,6 +565,7 @@ void Soldier::CreateSoldierAnimations()
 			leg_ = SoldierLegState::Ducking;
 			top_ = SoldierTopState::Aiming;
 			direction_ = AimingDirection::Forward;
+			player1SignRenderer_->On();
 		}
 	);
 	redeployingRenderer_->ChangeFrameAnimation("Redeploying");
@@ -564,6 +573,43 @@ void Soldier::CreateSoldierAnimations()
 
 
 	allTextureRenderers_ = this->GetConvertedChildren<GameEngineTextureRenderer>();
+
+
+	player1SignRenderer_ = CreateComponent<GameEngineTextureRenderer>("player1SignRenderer_");
+	if (0 == GameEngineTexture::Find("Player1Sign.png")->GetCutCount())
+	{
+		GameEngineTexture::Cut("Player1Sign.png", 8, 1);
+	}
+	player1SignRenderer_->SetTexture("Player1Sign.png");
+	player1SignRenderer_->SetPivot(PivotMode::Center);
+	player1SignRenderer_->GetTransform().SetLocalScale(120, 124, 1);
+	player1SignRenderer_->GetTransform().SetLocalPosition(0, 150 + 62, 0);
+	player1SignRenderer_->CreateFrameAnimation_CutTexture("Player1Sign", 
+		FrameAnimation_Desc("Player1Sign.png", { 0, 1, 2, 3, 4, 4, 4, 5, 6, 7 }, 0.1f, true)
+	);
+	player1SignRenderer_->AnimationBindTime("Player1Sign", 
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
+		{
+			if (0 < this->GetTransform().GetWorldScale().x)
+			{
+				player1SignRenderer_->GetTransform().PixLocalPositiveX();
+			}
+			else
+			{
+				player1SignRenderer_->GetTransform().PixLocalNegativeX();
+			}
+
+			if (4.0f <= player1SignRenderer_->GetAccTime())
+			{
+				player1SignRenderer_->CurAnimationReset();
+				player1SignRenderer_->ResetAccTime();
+				player1SignRenderer_->Off();
+			}
+		}
+	);
+	player1SignRenderer_->ChangeFrameAnimation("Player1Sign");
+	player1SignRenderer_->Off();
+
 }
 
 void Soldier::CreateSoldierStates()

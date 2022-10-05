@@ -34,7 +34,7 @@ void Mission1BG::Start()
 	part1_FirstBG_->SetPivot(PivotMode::LeftBot);
 	part1_FirstBG_->ScaleToTexture();
 	part1_FirstBG_->GetTransform().SetLocalPosition(part1_FirstBG_InitPosition_);
-	//part1_FirstBG_->Off();
+	part1_FirstBG_->Off();
 
 	//part1_FirstBG_Footstep_ = CreateComponent<GameEngineTextureRenderer>("Part1_FirstBG_Footstep");
 	//part1_FirstBG_Footstep_->SetTexture("Mission1_Part1_FirstBG_Footstep.png");
@@ -60,7 +60,7 @@ void Mission1BG::Start()
 	part1_ThirdBG_2_->SetPivot(PivotMode::LeftBot);
 	part1_ThirdBG_2_->ScaleToTexture();
 	part1_ThirdBG_2_->GetTransform().SetLocalPosition(2000, 445, 10);
-	//part1_ThirdBG_2_->Off();
+	part1_ThirdBG_2_->Off();
 
 	part1_Sign_ = CreateComponent<GameEngineTextureRenderer>("Part1_Sign");
 	part1_Sign_->SetTexture("Mission1_Part1_Sign.png");
@@ -84,7 +84,7 @@ void Mission1BG::Start()
 		0,
 		GameEngineWindow::GetScale().IY() - 384,
 		15);
-	//skyBG_1_->Off();
+	skyBG_1_->Off();
 
 
 	part2_FirstBG_ = CreateComponent<GameEngineTextureRenderer>("Part2_FirstBG");
@@ -92,7 +92,7 @@ void Mission1BG::Start()
 	part2_FirstBG_->SetPivot(PivotMode::LeftBot);
 	part2_FirstBG_->ScaleToTexture();
 	part2_FirstBG_->GetTransform().SetLocalPosition(part2_FirstBG_InitPosition_);
-	//part2_FirstBG_->Off();
+	part2_FirstBG_->Off();
 
 
 	skyBG_2_ = CreateComponent<GameEngineTextureRenderer>("SkyBG_2");
@@ -103,7 +103,7 @@ void Mission1BG::Start()
 		3300,
 		GameEngineWindow::GetScale().IY() - 289,
 		17);
-	//skyBG_2_->Off();
+	skyBG_2_->Off();
 
 	part3_FirstBG_ = CreateComponent<GameEngineTextureRenderer>("Part3_FirstBG");
 	part3_FirstBG_->SetTexture("Mission1_Part3_FirstBG.png");
