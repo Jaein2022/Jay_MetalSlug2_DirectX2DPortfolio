@@ -52,11 +52,11 @@ void Mission1::Start()
 	destFocus_ = CreateActor<IndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(3200, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(000, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
 	//시작시 카메라 위치 변경이 필요하면 여기에서.
 
 	soldier_Mission1_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "Soldier_Mission1");
-	soldier_Mission1_->GetTransform().SetWorldPosition(3000, 200, 0);
+	soldier_Mission1_->GetTransform().SetWorldPosition(-200, 200, 0);
 	
 #ifndef _DEBUG
 	destFocus_->GetTransform().SetWorldPosition(

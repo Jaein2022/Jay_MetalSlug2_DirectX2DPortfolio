@@ -170,7 +170,7 @@ void Soldier::Update(float _deltaTime)
 	if (0 == causeOfDeath_)
 	{
 		Flicker(_deltaTime, isDamageProof_, float4(0.25f, 0.25f, 0.25f, 0.f));		
-		if (SoldierState::Pistol_Redeploying != currentSoldierState_)
+		if (SoldierLegState::Redeploying != leg_)
 		{
 			UpdateInputInfo();
 			ConvertInputToSoldierStates();

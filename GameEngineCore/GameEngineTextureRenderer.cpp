@@ -57,13 +57,19 @@ void FrameAnimation::Update(float _deltaTime)
 				if (true == info_.isLoop_)
 				{
 					info_.curFrame_ = 0;
+					info_.frameTime_ -= info_.interval_;
 				}
 				else
 				{
 					info_.curFrame_ = static_cast<UINT>(info_.frames_.size() - 1);
 				}
 			}
-			info_.frameTime_ -= info_.interval_;
+			//info_.frameTime_ -= info_.interval_;
+
+			else
+			{
+				info_.frameTime_ -= info_.interval_;
+			}
 		}
 	}
 

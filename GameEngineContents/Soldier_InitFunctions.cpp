@@ -422,16 +422,54 @@ void Soldier::CreateSoldierAnimations()
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByMeleeAttack_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 100, 118, 0.05f, false));
+	wholePistolRenderer_->AnimationBindTime("Fallen_ByMeleeAttack_Ground",
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
+		{
+			if (18 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
+			{
+				weapon_ = SoldierWeaponType::Pistol;
+				leg_ = SoldierLegState::Redeploying;
+				top_ = SoldierTopState::Aiming;
+				direction_ = AimingDirection::Forward;
+				causeOfDeath_ = 0;
+				wholePistolRenderer_->CurAnimationReset();
+			}
+			else if (18 == _desc.curFrame_)
+			{
+				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+			}
+		}
+	);
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_ByFlyingSword_Ground",
 		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 120, 138, 0.05f, false));
+	wholePistolRenderer_->AnimationBindTime("Fallen_ByFlyingSword_Ground",
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
+		{
+			if (18 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
+			{
+				weapon_ = SoldierWeaponType::Pistol;
+				leg_ = SoldierLegState::Redeploying;
+				top_ = SoldierTopState::Aiming;
+				direction_ = AimingDirection::Forward;
+				causeOfDeath_ = 0;
+				wholePistolRenderer_->CurAnimationReset();
+			}
+			else if (18 == _desc.curFrame_)
+			{
+				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+			}
+		}
+	);
+
 
 	wholePistolRenderer_->CreateFrameAnimation_CutTexture("Fallen_BySolidAttack_Midair",
-		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.05f, false));
+		FrameAnimation_Desc("Tarma_Whole_Pistol.png", 140, 149, 0.075f, false));
 	wholePistolRenderer_->AnimationBindStart("Fallen_BySolidAttack_Midair",
 		[this](const FrameAnimation_Desc& _desc)->void 
 		{
-			fallingSpeed_ = -1.f;
+			fallingSpeed_ = 0.5f;
+			movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
 		}
 	);
 	wholePistolRenderer_->AnimationBindTime("Fallen_BySolidAttack_Midair",
@@ -440,6 +478,22 @@ void Soldier::CreateSoldierAnimations()
 			if (true == isAirborne_)
 			{
 				movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+			}
+			else
+			{
+				if (9 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
+				{
+					weapon_ = SoldierWeaponType::Pistol;
+					leg_ = SoldierLegState::Redeploying;
+					top_ = SoldierTopState::Aiming;
+					direction_ = AimingDirection::Forward;
+					causeOfDeath_ = 0;
+					wholePistolRenderer_->CurAnimationReset();
+				}
+				else if (9 == _desc.curFrame_)
+				{
+					Flicker(_deltaTime, true, float4(0, 0, 0, -1));
+				}
 			}
 		}
 	);
@@ -461,6 +515,20 @@ void Soldier::CreateSoldierAnimations()
 			if (14 > _desc.curFrame_)
 			{
 				movementFor1Second_ += float4::Right * -this->GetTransform().GetWorldScale().x * runningSpeed_;
+			}
+
+			if (18 == _desc.curFrame_ && 1.f <= _desc.frameTime_)
+			{
+				weapon_ = SoldierWeaponType::Pistol;
+				leg_ = SoldierLegState::Redeploying;
+				top_ = SoldierTopState::Aiming;
+				direction_ = AimingDirection::Forward;
+				causeOfDeath_ = 0;
+				wholePistolRenderer_->CurAnimationReset();
+			}
+			else if (18 == _desc.curFrame_)
+			{
+				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 			}
 		}
 	);
@@ -502,22 +570,7 @@ void Soldier::CreateSoldierStates()
 {
 	soldierStateManager_.CreateState(		//1011
 		"Fallen_ByMeleeAttack",
-		[this](float _deltaTime, const StateInfo& _info)->void 
-		{
-			if (2.f <= _info.stateTime_)
-			{
-				weapon_ = SoldierWeaponType::Pistol;
-				leg_ = SoldierLegState::Redeploying;
-				top_ = SoldierTopState::Aiming;
-				direction_ = AimingDirection::Forward;
-				wholePistolRenderer_->CurAnimationReset();
-				causeOfDeath_ = 0;
-			}
-			else if (1.f <= _info.stateTime_ && false == isAirborne_)
-			{
-				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
-			}
-		},
+		nullptr,
 		[this](const StateInfo& _info)->void 
 		{
 			legRenderer_->Off();
@@ -543,22 +596,7 @@ void Soldier::CreateSoldierStates()
 
 	soldierStateManager_.CreateState(		//1012
 		"Fallen_ByFlyingSword",
-		[this](float _deltaTime, const StateInfo& _info)->void 
-		{
-			if (2.f <= _info.stateTime_)
-			{
-				weapon_ = SoldierWeaponType::Pistol;
-				leg_ = SoldierLegState::Redeploying;
-				top_ = SoldierTopState::Aiming;
-				direction_ = AimingDirection::Forward;
-				wholePistolRenderer_->CurAnimationReset();
-				causeOfDeath_ = 0;
-			}
-			else if (1.f <= _info.stateTime_ && false == isAirborne_)
-			{
-				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
-			}
-		},
+		nullptr,
 		[this](const StateInfo& _info)->void 
 		{
 			legRenderer_->Off();
@@ -586,22 +624,7 @@ void Soldier::CreateSoldierStates()
 
 	soldierStateManager_.CreateState(		//1013
 		"Fallen_BySolidBullet",
-		[this](float _deltaTime, const StateInfo& _info)->void
-		{
-			if (2.f <= _info.stateTime_)
-			{
-				weapon_ = SoldierWeaponType::Pistol;
-				leg_ = SoldierLegState::Redeploying;
-				top_ = SoldierTopState::Aiming;
-				direction_ = AimingDirection::Forward;
-				wholePistolRenderer_->CurAnimationReset();
-				causeOfDeath_ = 0;
-			}
-			else if (1.f <= _info.stateTime_ && false == isAirborne_)
-			{
-				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
-			}
-		},
+		nullptr,
 		[this](const StateInfo& _info)->void
 		{
 			legRenderer_->Off();
