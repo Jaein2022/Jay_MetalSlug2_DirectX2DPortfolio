@@ -361,13 +361,13 @@ void Arabian::MoveArabian(float _deltaTime)
 
 void Arabian::SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclusionCount, ...)
 {
-	if (_maxStateIndex <= _minStateIndex)
+	if (_maxStateIndex < _minStateIndex)
 	{
-		MsgBoxAssert("최대값이 최소값보다 작거나 같습니다. 값을 다시 지정하세요.");
+		MsgBoxAssert("최대값이 최소값보다 작습니다. 값을 다시 지정하세요.");
 		return;
 	}
 
-	if (_maxStateIndex >= static_cast<int>(ArabianState::Dead) || 1 > _maxStateIndex)
+	if (_maxStateIndex >= static_cast<int>(ArabianState::Dead) || 0 > _maxStateIndex)
 	{
 		MsgBoxAssert("최대값이 스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
 		return;
@@ -394,12 +394,6 @@ void Arabian::SelectNextState(int _minStateIndex, int _maxStateIndex, int _exclu
 				va_start(exclusionList, _exclusionCount);
 				i = -1;
 				continue;
-			}
-
-			if (exclusion > ArabianState::Idling)
-			{
-				MsgBoxAssert("제외값이 아라비안스테이트 범위를 벗어났습니다. 값을 다시 지정하세요.");
-				return;
 			}
 		}
 		//랜덤으로 뽑은 숫자가 제외할 스테이트와 하나도 겹치지 않는다면 통과.

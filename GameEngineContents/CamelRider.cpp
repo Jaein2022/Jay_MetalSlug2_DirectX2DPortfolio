@@ -37,7 +37,7 @@ CamelRider::CamelRider()
 	swordCollisionBodyScale_Down_(60, 130, 10),
 	swordCollisionBodyPosition_Down_(100, 20, 15),
 	hp_(1),
-	swordDuration_(3),
+	swordDuration_(8),
 	enemySoldier_(nullptr),
 	isRiderDirectionWrong_(false),
 	muzzle_(nullptr),

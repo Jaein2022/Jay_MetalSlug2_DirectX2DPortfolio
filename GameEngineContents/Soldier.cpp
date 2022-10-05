@@ -180,8 +180,6 @@ void Soldier::Update(float _deltaTime)
 	UpdateSoldierState(_deltaTime);
 	ControlMuzzle();
 	MoveSoldier(_deltaTime);
-
-
 }
 
 void Soldier::End()

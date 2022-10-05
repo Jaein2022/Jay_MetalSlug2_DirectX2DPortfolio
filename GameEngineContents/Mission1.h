@@ -50,6 +50,21 @@ private:
 	Arabian* arabian3_;
 	Arabian* arabian4_;
 	Arabian* arabian5_;
+	Arabian* arabian6_;
+	Arabian* arabian7_;
+	Arabian* arabian8_;
+	Arabian* arabian9_;
+	Arabian* arabian10_;
+	Arabian* arabian11_;
+	Arabian* arabian12_;
+	Arabian* arabian13_;
+	Arabian* arabian14_;
+	Arabian* arabian15_;
+	Arabian* arabian16_;
+	Arabian* arabian17_;
+	Arabian* arabian18_;
+	Arabian* arabian19_;
+	Arabian* arabian20_;
 
 	CamelRider* camelRider_;
 

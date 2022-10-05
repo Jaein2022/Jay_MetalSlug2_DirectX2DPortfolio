@@ -25,6 +25,8 @@ class Soldier;
 class Arabian : public Rebel
 {
 	//이 클래스의 존재 이유: 적과의 교전, 적/플레이어 사망 기능 구현.
+
+	friend class Mission1;
 public:
 	Arabian();
 	~Arabian();
@@ -103,6 +105,13 @@ private:
 	//백점프 애니메이션 중 움직임.
 	void JumpBackWard();	
 
+
+private:
+	inline void SetRecognitionDistance(float _distance)
+	{
+		recognitionDistance_ = _distance;
+	}
+
 private:
 
 	ArabianState currentArabianState_;
@@ -163,7 +172,7 @@ private:
 	float releaseVelocity_;			//검 투척 속도.
 
 	float horizontalDistance_;			//플레이어와의 수평 거리. 높이는 반영하지 않음.
-	const float recognitionDistance_;	//인식거리.
+	float recognitionDistance_;	//인식거리.
 	const float engagementDistance_;	//교전거리.
 	const float chargeDistance_;		//돌진거리.
 

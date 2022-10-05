@@ -20,6 +20,21 @@ Mission1::Mission1()
 	arabian3_(nullptr),
 	arabian4_(nullptr),
 	arabian5_(nullptr),
+	arabian6_(nullptr),
+	arabian7_(nullptr),
+	arabian8_(nullptr),
+	arabian9_(nullptr),
+	arabian10_(nullptr),
+	arabian11_(nullptr),
+	arabian12_(nullptr),
+	arabian13_(nullptr),
+	arabian14_(nullptr),
+	arabian15_(nullptr),
+	arabian16_(nullptr),
+	arabian17_(nullptr),
+	arabian18_(nullptr),
+	arabian19_(nullptr),
+	arabian20_(nullptr),
 	camelRider_(nullptr),
 	isCamelRiderDead_(false),
 	isTruckDestroyed_(false)
@@ -52,34 +67,69 @@ void Mission1::Start()
 	destFocus_ = CreateActor<IndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(000, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(3200, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
 	//시작시 카메라 위치 변경이 필요하면 여기에서.
 
 	soldier_Mission1_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "Soldier_Mission1");
-	soldier_Mission1_->GetTransform().SetWorldPosition(-200, 200, 0);
-	
-#ifndef _DEBUG
-	destFocus_->GetTransform().SetWorldPosition(
-		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
-
-	soldier_Mission1_->GetTransform().SetWorldPosition(
-		500 - GameEngineWindow::GetInst()->GetScale().HIX(), 200, 0);
-#endif // !_DEBUG
-
-
+	soldier_Mission1_->GetTransform().SetWorldPosition(3000, 200, 0);
 
 
 	arabian1_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian1");
 	arabian2_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian2");
 	arabian3_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian3");
 	arabian4_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian4");
-	arabian5_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian5");
+	arabian5_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian5");	
 
+	
 	arabian1_->GetTransform().SetWorldPosition(925, 0, 0);
 	arabian2_->GetTransform().SetWorldPosition(1025, 0, 0);
 	arabian3_->GetTransform().SetWorldPosition(1600, 0, 0);
-	arabian4_->GetTransform().SetWorldPosition(1900, 0, 0);
-	arabian5_->GetTransform().SetWorldPosition(1925, 0, 0);
+	arabian4_->GetTransform().SetWorldPosition(1700, 0, 0);
+	arabian5_->GetTransform().SetWorldPosition(1725, 0, 0);
+
+
+#ifndef _DEBUG
+	destFocus_->GetTransform().SetWorldPosition(
+		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+
+	soldier_Mission1_->GetTransform().SetWorldPosition(
+		500 - GameEngineWindow::GetInst()->GetScale().HIX(), 200, 0);
+
+	arabian6_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian6");
+	arabian7_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian7");
+	arabian8_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian8");
+	arabian9_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian9");
+	arabian10_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian10");
+
+	arabian6_->GetTransform().SetWorldPosition(1850, 0, 0);
+	arabian7_->GetTransform().SetWorldPosition(1925, 0, 0);
+	arabian8_->GetTransform().SetWorldPosition(2200, 0, 0);
+	arabian9_->GetTransform().SetWorldPosition(2525, 0, 0);
+	arabian10_->GetTransform().SetWorldPosition(2600, 0, 0);
+
+	arabian11_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian11");
+	arabian12_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian12");
+	arabian13_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian13");
+	arabian14_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian14");
+	arabian15_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian15");
+	arabian16_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian6");
+	arabian17_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian7");
+	arabian18_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian8");
+	arabian19_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian9");
+	arabian20_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian10");
+
+	arabian11_->GetTransform().SetWorldPosition(3210, 0, 0);
+	arabian12_->GetTransform().SetWorldPosition(3250, 0, 0);
+	arabian13_->GetTransform().SetWorldPosition(3400, 0, 0);
+	arabian14_->GetTransform().SetWorldPosition(3450, 0, 0);
+	arabian15_->GetTransform().SetWorldPosition(3550, 0, 0);
+	arabian16_->GetTransform().SetWorldPosition(3700, 0, 0);
+	arabian17_->GetTransform().SetWorldPosition(3825, 0, 0);
+	arabian18_->GetTransform().SetWorldPosition(3850, 0, 0);
+	arabian19_->GetTransform().SetWorldPosition(3875, 0, 0);
+	arabian20_->GetTransform().SetWorldPosition(3900, 0, 0);
+
+#endif // !_DEBUG
 
 
 	camelRider_ = CreateActor<CamelRider>(CollisionBodyOrder::Rebel, "CamelRider");
@@ -179,6 +229,11 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 				_deltaTime
 			);
 			destFocusWorldPosition.y = destFocus_->GetTransform().GetWorldPosition().y;
+			if (4100.f < destFocus_->GetTransform().GetWorldPosition().x)
+			{
+				destFocusWorldPosition.y = 60.f;
+			}
+
 			destFocusWorldPosition.z = destFocus_->GetTransform().GetWorldPosition().z;
 
 			destFocus_->GetTransform().SetWorldPosition(destFocusWorldPosition);
