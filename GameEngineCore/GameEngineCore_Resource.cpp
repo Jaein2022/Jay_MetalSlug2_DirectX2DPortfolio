@@ -170,8 +170,8 @@ void EngineSubSetting()
 	//D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL: 기존 깊이데이터와 비교 함.
 	//이걸 제로로 바꾸면 왜 깊이테스트가 제대로 안 되는 걸까??
 
-	alwaysDepthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
-	//D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS: 비교했을때 값이 작은것을 통과시킴.
+	alwaysDepthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
+	//D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS: 항상 통과시킴.
 
 	alwaysDepthStencilDesc.StencilEnable = false;
 	//false: 스텐실 테스트 안함.
