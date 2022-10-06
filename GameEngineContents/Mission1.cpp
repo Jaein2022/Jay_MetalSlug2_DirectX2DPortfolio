@@ -69,11 +69,11 @@ void Mission1::Start()
 	destFocus_ = CreateActor<IndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(4700, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(3100, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
 	//시작시 카메라 위치 변경이 필요하면 여기에서.
 
 	soldier_Mission1_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "Soldier_Mission1");
-	soldier_Mission1_->GetTransform().SetWorldPosition(4500, 200, 0);
+	soldier_Mission1_->GetTransform().SetWorldPosition(3000, 200, 0);
 
 
 	arabian1_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian1");
@@ -189,7 +189,7 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x
 		<= destFocus_->GetTransform().GetWorldPosition().x)
 	{
-		if (true /*== isCamelRiderDead_*/)
+		if (true == isCamelRiderDead_)
 		{
 			isDestFocusHolding_ = false;
 		}
