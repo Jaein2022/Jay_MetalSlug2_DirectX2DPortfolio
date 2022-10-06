@@ -3,7 +3,7 @@
 
 Mission1BG::Mission1BG()
 	: part1_FirstBG_(nullptr),
-	part1_FirstBG_InitPosition_(float4::Zero),
+	part1_FirstBG_InitPosition_(1, 0, 0),
 	part1_FirstBG_Footstep_(nullptr),
 	part1_SecondBG_(nullptr),
 	part1_ThirdBG_1_(nullptr),
@@ -12,11 +12,12 @@ Mission1BG::Mission1BG()
 	part1_SteppableObject_(nullptr),
 	skyBG_1_(nullptr),
 	part2_FirstBG_(nullptr),
-	part2_FirstBG_InitPosition_(4205, 61, -1),
+	part2_FirstBG_InitPosition_(4205, 65, -1),
 	skyBG_2_(nullptr),
 	part3_FirstBG_(nullptr),
-	part3_FirstBG_InitPosition_(6000, 61, 0),
-	skyBG_3_(nullptr)
+	part3_FirstBG_InitPosition_(6000, 64, 0),
+	skyBG_3_(nullptr),
+	patchUpRenderer_(nullptr)
 {
 }
 
@@ -120,6 +121,15 @@ void Mission1BG::Start()
 		GameEngineWindow::GetScale().IY() - 289,	//모스크포대 배치한 후에 하늘배경 3번 y좌표 재조정.
 		17);
 
+	patchUpRenderer_ = CreateComponent<GameEngineTextureRenderer>("PathcUpRenderer");
+	patchUpRenderer_->SetTexture("PatchUp.png");
+	patchUpRenderer_->SetPivot(PivotMode::LeftBot);
+	patchUpRenderer_->ScaleToTexture();
+	patchUpRenderer_->GetTransform().SetLocalPosition(
+		4705, 
+		0,
+		1
+	);
 
 
 

@@ -37,7 +37,7 @@ Soldier::Soldier()
 	pistolUpwardMuzzlePosition_(-10, 220, 10),
 	pistolDownwardMuzzlePosition_(15, -5, 10),
 	pistolDuckingMuzzlePosition_(95, 65, 10),
-	initialJumpSpeed_(7.f),
+	initialJumpSpeed_(5.75f),
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
 	duckStepSpeed_(1.f),

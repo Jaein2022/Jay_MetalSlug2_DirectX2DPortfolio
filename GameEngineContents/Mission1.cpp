@@ -186,7 +186,7 @@ void Mission1::End()
 
 void Mission1::UpdateDestFocusMovement(float _deltaTime)
 {
-	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x
+	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x - 5.f
 		<= destFocus_->GetTransform().GetWorldPosition().x)
 	{
 		if (true == isCamelRiderDead_)

@@ -583,7 +583,7 @@ void Arabian::MoveInJumpDeath(const FrameAnimation_Desc& _desc)
 	}
 	else
 	{
-		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 5.f;
+		movementFor1Second_ += float4::Right * -GetTransform().GetWorldScale().x * 2.f;
 
 		if (false == isAirborne_)
 		{
