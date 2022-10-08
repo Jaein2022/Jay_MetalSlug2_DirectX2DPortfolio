@@ -84,11 +84,34 @@ void Mission1::Start()
 
 	
 	arabian1_->GetTransform().SetWorldPosition(925, 0, 0);
-	arabian2_->GetTransform().SetWorldPosition(1025, 0, 0);
-	arabian3_->GetTransform().SetWorldPosition(1600, 0, 0);
-	arabian4_->GetTransform().SetWorldPosition(1700, 0, 0);
-	arabian5_->GetTransform().SetWorldPosition(1725, 0, 0);
+	arabian1_->SetRecognitionDistance(750);
 
+	arabian2_->GetTransform().SetWorldPosition(1050, 0, 0);
+	arabian2_->SetRecognitionDistance(650);
+
+	arabian3_->GetTransform().SetWorldPosition(1600, -200, 0);
+	arabian3_->SetRecognitionDistance(650);
+
+	arabian4_->GetTransform().SetWorldPosition(1700, -200, 0);
+	arabian4_->SetRecognitionDistance(650);
+
+	arabian5_->GetTransform().SetWorldPosition(1725, -200, 0);
+	arabian5_->SetRecognitionDistance(650);
+
+
+
+	camelRider_ = CreateActor<CamelRider>(CollisionBodyOrder::Rebel, "CamelRider");
+	camelRider_->GetTransform().PixLocalNegativeX();
+
+	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 575.f, 0.f, 0.f);
+
+
+
+	ui_ = CreateActor<UI>(CollisionBodyOrder::UI, "UI");
+	ui_->GetTransform().SetWorldPosition(0, 0, -5);
+
+
+	mission1BgmPlayer_ = GameEngineSound::SoundPlayControl("JUDGMENT (Mission 1).mp3", -1);
 
 #ifndef _DEBUG
 	destFocus_->GetTransform().SetWorldPosition(
@@ -109,6 +132,13 @@ void Mission1::Start()
 	arabian9_->GetTransform().SetWorldPosition(2525, 0, 0);
 	arabian10_->GetTransform().SetWorldPosition(2600, 0, 0);
 
+	arabian6_->SetRecognitionDistance(610);
+	arabian7_->SetRecognitionDistance(610);
+	arabian8_->SetRecognitionDistance(610);
+	arabian9_->SetRecognitionDistance(610);
+	arabian10_->SetRecognitionDistance(610);
+
+
 	arabian11_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian11");
 	arabian12_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian12");
 	arabian13_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian13");
@@ -120,35 +150,39 @@ void Mission1::Start()
 	arabian19_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian9");
 	arabian20_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian10");
 
-	arabian11_->GetTransform().SetWorldPosition(3210, 0, 0);
-	arabian12_->GetTransform().SetWorldPosition(3250, 0, 0);
-	arabian13_->GetTransform().SetWorldPosition(3400, 0, 0);
-	arabian14_->GetTransform().SetWorldPosition(3450, 0, 0);
-	arabian15_->GetTransform().SetWorldPosition(3550, 0, 0);
+	arabian11_->GetTransform().SetWorldPosition(3450, 0, 0);
+	arabian12_->GetTransform().SetWorldPosition(3500, 0, 0);
+	arabian13_->GetTransform().SetWorldPosition(3550, 0, 0);
+	arabian14_->GetTransform().SetWorldPosition(3600, 0, 0);
+	arabian15_->GetTransform().SetWorldPosition(3650, 0, 0);
 	arabian16_->GetTransform().SetWorldPosition(3700, 0, 0);
-	arabian17_->GetTransform().SetWorldPosition(3825, 0, 0);
-	arabian18_->GetTransform().SetWorldPosition(3850, 0, 0);
-	arabian19_->GetTransform().SetWorldPosition(3875, 0, 0);
+	arabian17_->GetTransform().SetWorldPosition(3750, 0, 0);
+	arabian18_->GetTransform().SetWorldPosition(3800, 0, 0);
+	arabian19_->GetTransform().SetWorldPosition(3850, 0, 0);
 	arabian20_->GetTransform().SetWorldPosition(3900, 0, 0);
+
+	arabian11_->SetRecognitionDistance(605);
+	arabian12_->SetRecognitionDistance(605);
+	arabian13_->SetRecognitionDistance(605);
+	arabian14_->SetRecognitionDistance(605);
+	arabian15_->SetRecognitionDistance(605);
+	arabian16_->SetRecognitionDistance(605);
+	arabian17_->SetRecognitionDistance(605);
+	arabian18_->SetRecognitionDistance(605);
+	arabian19_->SetRecognitionDistance(605);
+	arabian20_->SetRecognitionDistance(605);
+
+
+	GameEngineSound::SoundPlayOneshot("Mission1_Start.mp3");
+
 
 #endif // !_DEBUG
 
 
-	camelRider_ = CreateActor<CamelRider>(CollisionBodyOrder::Rebel, "CamelRider");
-	camelRider_->GetTransform().PixLocalNegativeX();
-
-	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 575.f, 0.f, 0.f);
-
-
-
-	ui_ = CreateActor<UI>(CollisionBodyOrder::UI, "UI");
-	ui_->GetTransform().SetWorldPosition(0, 0, -5);
 
 
 
 
-	GameEngineSound::SoundPlayOneshot("Mission1_Start.mp3");
-	mission1BgmPlayer_ = GameEngineSound::SoundPlayControl("JUDGMENT (Mission 1).mp3", -1);
 
 
 

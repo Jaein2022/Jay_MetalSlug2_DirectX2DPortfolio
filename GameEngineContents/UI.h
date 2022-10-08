@@ -1,5 +1,6 @@
 #pragma once
 
+class Mission1;
 class UI: public GameEngineActor
 {
 	//이 클래스의 존재 이유: UI
@@ -21,17 +22,16 @@ public:
 	void Update(float _deltaTime) override;
 	void End() override;
 
+private:
+	void Flicker_InsertCoinRenderer(float _deltaTime);
+	void UpdateUIRenderers();
 
 private:
 	const float4 upperStandardPoint_;
 	const float letterSize_;
 
 	GameEngineUIRenderer* slugDurablitiy_EmptyRenderer_;
-	
-	GameEngineUIRenderer* remainingRedeployUI_1_Renderer_;
-	GameEngineUIRenderer* remainingRedeployUI_U_Renderer_;
-	GameEngineUIRenderer* remainingRedeployUI_P_Renderer_;
-	GameEngineUIRenderer* remainingRedeployUI_EqualMarkRenderer_;
+	GameEngineUIRenderer* remainingRedeployUIRenderer_;
 	GameEngineUIRenderer* remainingRedeployCountRenderer_;
 	const float4 remainingRedeployUI_MulColor_;
 	const float4 remainingRedeployUI_PlusColor_; 
@@ -44,8 +44,18 @@ private:
 	GameEngineUIRenderer* score5thDigitRenderer_;
 	int score_;
 
-	GameEngineUIRenderer* munitionStatusRenderer_;
+	GameEngineUIRenderer* munitionStatusWindowRenderer_;
+
+	GameEngineUIRenderer* bulletCount1stDigitRenderer_;
+	GameEngineUIRenderer* bulletCount2ndDigitRenderer_;
+	GameEngineUIRenderer* bulletCount3rdDigitRenderer_;
+
 	GameEngineUIRenderer* infinityMarkRenderer_;
+	int bulletCount_;
+
+
+
+
 	GameEngineUIRenderer* bombCount1stDigitRenderer_;
 	GameEngineUIRenderer* bombCount2ndDigitRenderer_;
 	const float4 munitionStatusUI_MulColor_;
@@ -53,22 +63,18 @@ private:
 	int bombCount_;
 
 
-	GameEngineUIRenderer* remainingTime1stDigitRenderer_;
-	GameEngineUIRenderer* remainingTime2ndDigitRenderer_;
+	GameEngineUIRenderer* remainingPlayTime1stDigitRenderer_;
+	GameEngineUIRenderer* remainingPlayTime2ndDigitRenderer_;
+	int remainingPlayTime_;
 
+	GameEngineUIRenderer* insertCoinRenderer_;
+	const float flickeringInterval_InsertCoin_On_;
+	const float flickeringInterval_InsertCoin_Off_;
+	float remainingFlickeringTime_;
 
-	GameEngineUIRenderer* insertCoin_I_Renderer_;
-	GameEngineUIRenderer* insertCoin_N_Renderer_;
-	GameEngineUIRenderer* insertCoin_S_Renderer_;
-	GameEngineUIRenderer* insertCoin_E_Renderer_;
-	GameEngineUIRenderer* insertCoin_R_Renderer_;
-	GameEngineUIRenderer* insertCoin_T_Renderer_;
-
-	GameEngineUIRenderer* insertCoin_C_Renderer_;
-	GameEngineUIRenderer* insertCoin_O_Renderer_;
-	GameEngineUIRenderer* insertCoin_I_Renderer2_;
-	GameEngineUIRenderer* insertCoin_N_Renderer2_;
-
-
+	GameEngineUIRenderer* credits__0Renderer_;
+	GameEngineUIRenderer* creditsRenderer_;
+	GameEngineUIRenderer* creditsCountRenderer_;
+	int creditsCount_;
 };
 
