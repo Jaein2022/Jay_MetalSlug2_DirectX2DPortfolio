@@ -1,5 +1,6 @@
 #pragma once
 #include "GameEngineDefaultRenderer.h"
+#include "GameEngineTexture.h"
 
 enum class PivotMode
 {
@@ -97,6 +98,18 @@ public:
 		frameTime_(0.f),
 		renderer_(nullptr)
 	{
+		size_t textureCutCount = GameEngineTexture::Find(_textureName)->GetCutCount();
+		if (0 >= textureCutCount)
+		{
+			MsgBoxAssert("텍스처를 먼저 잘라야 합니다.");
+			return;
+		}
+
+		frames_.reserve(textureCutCount);
+		for (size_t i = 0; i < textureCutCount; i++)
+		{
+			frames_.push_back(static_cast<UINT>(i));
+		}
 	}
 };
 

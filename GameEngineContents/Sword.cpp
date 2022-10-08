@@ -32,12 +32,21 @@ void Sword::Start()
 	this->GetTransform().SetLocalScale(1, 1, 1);
 	this->GetTransform().SetWorldScale(1, 1, 1);
 
+	if (0 == GameEngineTexture::Find("FlyingSword.png")->GetCutCount())
+	{
+		GameEngineTexture::Cut("FlyingSword.png", 3, 1);
+	}
 
 	flyingSwordRenderer_ = CreateComponent<GameEngineTextureRenderer>("FlyingSwordRenderer");
 	flyingSwordRenderer_->SetTexture("FlyingSword.png");
-	flyingSwordRenderer_->ScaleToTexture();
 	flyingSwordRenderer_->SetPivot(PivotMode::Center);
+	flyingSwordRenderer_->CreateFrameAnimation_CutTexture("Fly",
+		FrameAnimation_Desc("FlyingSword.png", 0.05f)
+	);
+	flyingSwordRenderer_->GetTransform().SetLocalScale(40, 132, 1);
 	flyingSwordRenderer_->GetTransform().SetLocalPosition(swordRendererLocalPos_);
+	flyingSwordRenderer_->ChangeFrameAnimation("Fly");
+
 
 	stuckSwordRenderer_ = CreateComponent<GameEngineTextureRenderer>("StuckSwordRenderer");
 	stuckSwordRenderer_->SetTexture("StuckSword.png");

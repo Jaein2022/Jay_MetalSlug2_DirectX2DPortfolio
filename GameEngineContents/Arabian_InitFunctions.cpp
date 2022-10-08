@@ -22,7 +22,7 @@ void Arabian::CreateArabianAnimations()
 	);
 	arabianRenderer_->AnimationBindEnd("PreparingToAttack",
 		[this](const FrameAnimation_Desc& _desc)->void 
-	{
+		{
 			currentArabianState_ = ArabianState::Shuffling;
 		}
 	);
