@@ -6,7 +6,10 @@ class PixelIndicator;
 class Indicator;
 class Soldier : public GameEngineActor
 {
-	//이 클래스의 존재 이유: 
+	//이 클래스의 존재 이유: 플레이어.
+
+	friend class Mission1;
+
 public:
 	Soldier();
 	~Soldier();
@@ -69,6 +72,13 @@ private:
 	);
 
 private:
+	inline void SetSoldierWorldPosLimit(float _limit)
+	{
+		soldierWorldPosLimit_X_ = _limit;
+	}
+
+
+private:
 
 	SoldierState currentSoldierState_;
 
@@ -104,7 +114,7 @@ private:
 
 
 	PixelIndicator* upperLandingChecker_;		
-	PixelIndicator* soldierWorldPosPointer_;	//액터의 월드포지션 표시.
+	PixelIndicator* midLandingChecker_;		//액터의 월드포지션도 표시.
 	PixelIndicator* lowerLandingChecker_;		
 
 	const int slopeCheckerLocalPosX_;		//경사체커들의 로컬포스 X값. 0 넣지 말 것!
@@ -113,13 +123,11 @@ private:
 	PixelIndicator* flatSlopeChecker_;
 	PixelIndicator* descendingSlopeChecker_;
 
-	PixelColor currentGroundColor_;
-
 
 	Indicator* muzzle_;		//총구.
 	const float4 pistolForwardMuzzlePosition_;	//전방 보고있을때 총구위치 
-	const float4 pistolUpwardMuzzlePosition_;	//위를 보고있을때총구위치 
-	const float4 pistolDownwardMuzzlePosition_;	//아래를 보고있을때총구위치 
+	const float4 pistolUpwardMuzzlePosition_;	//위를 보고있을때 총구위치 
+	const float4 pistolDownwardMuzzlePosition_;	//아래를 보고있을때 총구위치 
 	const float4 pistolDuckingMuzzlePosition_;	//쪼그려 앉았을때 총구위치 
 
 	const float initialJumpSpeed_;
@@ -134,6 +142,11 @@ private:
 
 	GameEngineCollision* soldierLifeCollisionBody_;
 	GameEngineCollision* soldierCloseCombatCollisionBody_;
+	
+	GameEngineCollision* frontCheckCollisionBody_;	//밟을 수 있는 충돌체 감지용 충돌체.
+	GameEngineCollision* lowerLandingCheckCollisionBody_;	//밟을 수 있는 충돌체 감지용 충돌체.
+	GameEngineCollision* upperLandingCheckCollisionBody_;	//밟을 수 있는 충돌체 감지용 충돌체.
+
 
 	const float4 soldierLifeCollisionBodyScale_Standing_;		//솔저 라이프 충돌체 서있을때 로컬 크기.
 	const float4 soldierLifeCollisionBodyPosition_Standing_;	//솔저 라이프 충돌체 서있을때 로컬 위치.
@@ -152,5 +165,7 @@ private:
 	bool flickeringSwitch_;
 
 	GameEngineTextureRenderer* player1SignRenderer_;
+
+	float soldierWorldPosLimit_X_;		//미션 차원에서 설정하는 가로 이동 제한
 };
 

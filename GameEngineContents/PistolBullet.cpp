@@ -30,7 +30,7 @@ void PistolBullet::Start()
 	pistolBulletCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	pistolBulletCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	pistolBulletCollisionBody_->GetTransform().SetLocalScale(40, 24, 10);
-	pistolBulletCollisionBody_->GetTransform().SetLocalPosition(0, 0, 0);
+	pistolBulletCollisionBody_->GetTransform().SetLocalPosition(-20, 0, 0);
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 

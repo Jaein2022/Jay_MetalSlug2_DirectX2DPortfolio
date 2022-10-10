@@ -134,11 +134,11 @@ private:
 	GameEngineCollision* arabianCloseCombatCollisionBody_;
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
-	Indicator* renderPivotPointer_;		//액터의 렌더피봇 표시.
+	//Indicator* renderPivotPointer_;		//액터의 렌더피봇 표시.
 
 
 	PixelIndicator* upperLandingChecker_;
-	PixelIndicator* arabianWorldPosPointer_;	//액터의 월드포지션 표시.
+	PixelIndicator* midLandingChecker_;		//액터의 월드포지션도 표시.
 	PixelIndicator* lowerLandingChecker_;
 
 	const int slopeCheckerLocalPosX_;		//경사체커들의 로컬포스 X값. 0 넣지 말 것!

@@ -18,7 +18,7 @@ CamelRider::CamelRider()
 	riderArmRendererLocalPos_Up_(53, 60, 7),
 	riderArmRendererLocalPos_Down_(60, 30, 4),
 	upperLandingChecker_(nullptr),
-	camelRiderWorldPosPointer_(nullptr),
+	midLandingChecker_(nullptr),
 	lowerLandingChecker_(nullptr),
 	fallingSpeed_(0.f),
 	runningSpeed_(4.0f),
@@ -63,7 +63,7 @@ void CamelRider::Start()
 		float4(5, 5, 1)
 	);
 
-	camelRiderWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
+	midLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"CamelRiderWorldPosPointer",
 		this,
 		float4::Red,
@@ -96,7 +96,7 @@ void CamelRider::Start()
 	);
 
 	riderCollisionBody_ = CreateComponent<GameEngineCollision>("RiderCollisionBody");
-	riderCollisionBody_->ChangeOrder(this->GetOrder());
+	riderCollisionBody_->ChangeOrder(ObjectOrder::Rebel);
 	riderCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	riderCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	riderCollisionBody_->GetTransform().SetLocalScale(riderCollisionBodyScale_Up_);
@@ -105,7 +105,7 @@ void CamelRider::Start()
 
 
 	swordCollisionBody_ = CreateComponent<GameEngineCollision>("SwordCollisionBody");
-	swordCollisionBody_->ChangeOrder(this->GetOrder());
+	swordCollisionBody_->ChangeOrder(ObjectOrder::RebelMachine);
 	swordCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	swordCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	swordCollisionBody_->GetTransform().SetLocalScale(swordCollisionBodyScale_Up_);
@@ -889,9 +889,9 @@ void CamelRider::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (groundColor_.color_ <= camelRiderWorldPosPointer_->GetColorValue_UINT()))
+		if (true == upperLandingChecker_->IsOnGroundPixel()
+			&& true == lowerLandingChecker_->IsOnGroundPixel()
+			&& true == midLandingChecker_->IsOnGroundPixel())
 		{
 			if (true == isAirborne_)
 			{
@@ -900,8 +900,8 @@ void CamelRider::CheckGround()
 				fallingSpeed_ = 0.f;
 			}
 		}
-		else if (groundColor_.color_ <= camelRiderWorldPosPointer_->GetColorValue_UINT()
-			&& groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (true == lowerLandingChecker_->IsOnGroundPixel()
+			&& true == midLandingChecker_->IsOnGroundPixel())
 		{
 			if (true == isAirborne_)
 			{
@@ -909,7 +909,7 @@ void CamelRider::CheckGround()
 				fallingSpeed_ = 0.f;
 			}
 		}
-		else if (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (true == midLandingChecker_->IsOnGroundPixel())
 		{
 			if (true == isAirborne_)
 			{

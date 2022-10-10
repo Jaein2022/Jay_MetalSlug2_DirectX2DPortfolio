@@ -70,12 +70,7 @@ private:
 
 	CamelRider* camelRider_;
 
-	bool isCamelRiderDead_;
-
-
 	Truck* troopTruck_;
-
-	bool isTruckDestroyed_;
 
 	GameEngineSoundPlayer mission1BgmPlayer_;
 

@@ -26,6 +26,8 @@ public:
 	//텍스처의 좌측하단이 윈도우의 좌측하단에 닿아있는 상태 기준.
 	UINT GetColorValue_UINT();
 
+
+
 public:
 	//미션 시작 전에 반드시 호출할 것.
 	static void SetPCTexture(GameEngineTexture* _pixelCollisionTexture)
@@ -54,16 +56,17 @@ public:
 		return pcTexture_;
 	}
 
-	inline bool IsOnSteppablePixel(PixelColor _currentSteppingColor = steppablePixelColor_)
-	{
-		return _currentSteppingColor.color_ <= this->GetColorValue_UINT();
-	}
-
+	//땅 픽셀인지 판정.
 	inline bool IsOnGroundPixel()	
 	{
 		return groundColor_.color_ <= this->GetColorValue_UINT();
 	}
 
+	//땅 포함 밟고설 수 있는 픽셀인지 판정.
+	inline bool IsOnSteppablePixel(PixelColor _currentSteppingColor = steppablePixelColor_)
+	{
+		return _currentSteppingColor.color_ <= this->GetColorValue_UINT();
+	}
 
 private:
 

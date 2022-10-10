@@ -13,6 +13,8 @@ class PixelIndicator;
 class Truck : public Rebel
 {
 	//이 클래스의 존재 이유: 병력수송트럭.
+
+	friend class Mission1;
 public:
 	Truck();
 	~Truck();
@@ -49,6 +51,18 @@ private:
 	void UpdateTruckState(float _deltaTime);
 
 	void MoveTruck(float _deltaTime);
+
+
+private:
+	inline void SetTruckState(TruckState _truckState)
+	{
+		currentTruckState_ = _truckState;
+	}
+
+	inline bool IsDestroyed()
+	{
+		return TruckState::Destroyed == currentTruckState_;
+	}
 
 private: 
 	GameEngineStateManager truckStateManager_;

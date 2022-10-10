@@ -12,14 +12,14 @@ Truck::Truck()
 	isAirborne_(true),
 	fallingSpeed_(0.f),
 	truckRenderer_(nullptr),
-	truckRendererLocalPos_(0, 160, 0),
+	truckRendererLocalPos_(0, 160, 2),
 	truckDurabilityCollisionBody_(nullptr),
 	truckDurability_(15),
 	truckSlopeCollisionBody_(nullptr),
 	truckWreckageCollisionBody1_(nullptr),
 	truckWreckageCollisionBody2_(nullptr),
 	truckWreckageCollisionBody3_(nullptr),
-	drivingSpeed_(2.5f)
+	drivingSpeed_(2.f)
 {
 }
 
@@ -38,24 +38,28 @@ void Truck::Start()
 	truckDurabilityCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	truckDurabilityCollisionBody_->GetTransform().SetLocalScale(460, 300, 10);
 	truckDurabilityCollisionBody_->GetTransform().SetLocalPosition(0, 150, 10);
+	truckDurabilityCollisionBody_->Off();
 
 
 
 
 	truckWreckageCollisionBody1_ = CreateComponent<GameEngineCollision>("TruckWreckageCollisionBody1");
 	truckWreckageCollisionBody1_->ChangeOrder(ObjectOrder::SteppableObject);
+	truckWreckageCollisionBody1_->SetCollisionMode(CollisionMode::Multiple);
 	truckWreckageCollisionBody1_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 1.f, 0.5f));
-	truckWreckageCollisionBody1_->GetTransform().SetLocalScale(300, 110, 10);
-	truckWreckageCollisionBody1_->GetTransform().SetLocalPosition(-75, 55, 10);
+	truckWreckageCollisionBody1_->GetTransform().SetLocalScale(260, 110, 10);
+	truckWreckageCollisionBody1_->GetTransform().SetLocalPosition(-100, 55, 10);
 
 	truckWreckageCollisionBody2_ = CreateComponent<GameEngineCollision>("TruckWreckageCollisionBody2");
 	truckWreckageCollisionBody2_->ChangeOrder(ObjectOrder::SteppableObject);
+	truckWreckageCollisionBody2_->SetCollisionMode(CollisionMode::Multiple);
 	truckWreckageCollisionBody2_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 1.f, 0.5f));
-	truckWreckageCollisionBody2_->GetTransform().SetLocalScale(90, 180, 10);
-	truckWreckageCollisionBody2_->GetTransform().SetLocalPosition(120, 90, 10);
+	truckWreckageCollisionBody2_->GetTransform().SetLocalScale(120, 180, 10);
+	truckWreckageCollisionBody2_->GetTransform().SetLocalPosition(100, 90, 10);
 
 	truckWreckageCollisionBody3_ = CreateComponent<GameEngineCollision>("TruckWreckageCollisionBody3");
 	truckWreckageCollisionBody3_->ChangeOrder(ObjectOrder::SteppableObject);
+	truckWreckageCollisionBody3_->SetCollisionMode(CollisionMode::Multiple);
 	truckWreckageCollisionBody3_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 1.f, 0.5f));
 	truckWreckageCollisionBody3_->GetTransform().SetLocalScale(65, 120, 10);
 	truckWreckageCollisionBody3_->GetTransform().SetLocalPosition(200, 60, 10);
@@ -100,11 +104,26 @@ void Truck::Start()
 	truckRenderer_->GetTransform().SetLocalPosition(truckRendererLocalPos_);
 	truckRenderer_->SetTexture("TroopTruck.png");
 	truckRenderer_->CreateFrameAnimation_CutTexture("Idling",
-		FrameAnimation_Desc("TroopTruck.png", 0, 0, 0.5f, true)
+		FrameAnimation_Desc("TroopTruck.png", 0, 0, 1.0f, true)
 	);
+	truckRenderer_->AnimationBindTime("Idling",
+		[this](const FrameAnimation_Desc& _desc, float _deltaTime)->void
+		{
+			if (1.f <= _desc.frameTime_)
+			{
+				currentTruckState_ = TruckState::Deploying;
+				truckDurabilityCollisionBody_->On();
+			}
+		}
+	);
+
 
 	truckRenderer_->CreateFrameAnimation_CutTexture("Driving",
 		FrameAnimation_Desc("TroopTruck.png", 10, 13, 0.1f, true)
+	);
+	truckRenderer_->AnimationBindTime(
+		"Driving",
+		std::bind(&Truck::Drive, this)
 	);
 
 	truckRenderer_->CreateFrameAnimation_CutTexture("Deploying",
@@ -121,12 +140,20 @@ void Truck::Start()
 
 	truckStateManager_.CreateState(
 		"Idling",
-		nullptr
+		nullptr,
+		[this](const StateInfo& _info)->void
+		{
+			truckRenderer_->ChangeFrameAnimation("Idling");
+		}
 	);
 
 	truckStateManager_.CreateState(
 		"Driving",
-		nullptr
+		nullptr,
+		[this](const StateInfo& _info)->void
+		{
+			truckRenderer_->ChangeFrameAnimation("Driving");
+		}
 	);
 
 	truckStateManager_.CreateState(
@@ -145,6 +172,10 @@ void Truck::Start()
 		{
 			truckRenderer_->ChangeFrameAnimation("Destroyed");
 			truckDurabilityCollisionBody_->Off();
+			//truckSlopeCollisionBody_->Off();
+			truckWreckageCollisionBody1_->GetTransform().SetLocalScale(260, 100, 10);	
+			truckWreckageCollisionBody2_->GetTransform().SetLocalScale(120, 180, 10);
+			truckWreckageCollisionBody3_->GetTransform().SetLocalScale(65, 120, 10);
 		}
 	);
 
@@ -264,6 +295,12 @@ void Truck::Fall(float _deltaTime)
 
 void Truck::Drive()
 {
+	if (5650.f >= this->GetTransform().GetWorldPosition().x)
+	{
+		currentTruckState_ = TruckState::Idling;
+		return;
+	}
+
 	movementFor1Second_ += float4::Left * drivingSpeed_;
 }
 

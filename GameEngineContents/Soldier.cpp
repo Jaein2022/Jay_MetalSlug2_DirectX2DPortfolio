@@ -25,7 +25,7 @@ Soldier::Soldier()
 	isAttackKeyDown_(false),
 	isSpecialKeyDown_(false),
 	upperLandingChecker_(nullptr),
-	soldierWorldPosPointer_(nullptr),
+	midLandingChecker_(nullptr),
 	lowerLandingChecker_(nullptr),
 	slopeCheckerLocalPosX_(10),	//0 금지!	
 	slopeChecker_(nullptr),
@@ -45,6 +45,9 @@ Soldier::Soldier()
 	aimingAngle_(0.f),
 	soldierLifeCollisionBody_(nullptr),
 	soldierCloseCombatCollisionBody_(nullptr),
+	frontCheckCollisionBody_(nullptr),
+	lowerLandingCheckCollisionBody_(nullptr),
+	upperLandingCheckCollisionBody_(nullptr),
 	soldierLifeCollisionBodyScale_Standing_(80, 150, 10),
 	soldierLifeCollisionBodyPosition_Standing_(0, 75, 10),
 	soldierLifeCollisionBodyScale_Ducking_(100, 100, 10),
@@ -58,7 +61,8 @@ Soldier::Soldier()
 	flickeringPeriod_(0.1f),
 	remainingPeriod_(0.f),
 	flickeringSwitch_(true),
-	player1SignRenderer_(nullptr)
+	player1SignRenderer_(nullptr),
+	soldierWorldPosLimit_X_(-1)
 {
 }
 
@@ -85,7 +89,7 @@ void Soldier::Start()
 		float4(5, 5, 1)
 	);
 
-	soldierWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
+	midLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"SoldierWorldPosPointer",
 		this,
 		float4::Red,
@@ -155,6 +159,28 @@ void Soldier::Start()
 	soldierCloseCombatCollisionBody_->GetTransform().SetLocalScale(120, 160, 10);
 	soldierCloseCombatCollisionBody_->GetTransform().SetLocalPosition(60, 80, 10);
 
+	frontCheckCollisionBody_ = CreateComponent<GameEngineCollision>("FrontCheckCollisionBody");
+	frontCheckCollisionBody_->ChangeOrder(this->GetOrder());
+	frontCheckCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
+	frontCheckCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 1.f, 0.f, 0.5f));
+	frontCheckCollisionBody_->GetTransform().SetLocalScale(3, 3, 10);
+	frontCheckCollisionBody_->GetTransform().SetLocalPosition(42, 50, 10);
+
+	lowerLandingCheckCollisionBody_ = CreateComponent<GameEngineCollision>("LowerLandingCheckCollisionBody");
+	lowerLandingCheckCollisionBody_->ChangeOrder(this->GetOrder());
+	lowerLandingCheckCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
+	lowerLandingCheckCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 1.f, 0.f, 0.5f));
+	lowerLandingCheckCollisionBody_->GetTransform().SetLocalScale(50, 3, 10);
+	lowerLandingCheckCollisionBody_->GetTransform().SetLocalPosition(-10, -5, 10);
+
+	upperLandingCheckCollisionBody_ = CreateComponent<GameEngineCollision>("UpperLandingCheckCollisionBody");
+	upperLandingCheckCollisionBody_->ChangeOrder(this->GetOrder());
+	upperLandingCheckCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
+	upperLandingCheckCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 1.f, 0.f, 0.5f));
+	upperLandingCheckCollisionBody_->GetTransform().SetLocalScale(50, 3, 10);
+	upperLandingCheckCollisionBody_->GetTransform().SetLocalPosition(-10, 5, 10);
+
+
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
 	CreateSoldierAnimations();
@@ -202,9 +228,22 @@ void Soldier::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((steppablePixelColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (steppablePixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (steppablePixelColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()))
+		if ((true == upperLandingChecker_->IsOnSteppablePixel()
+			&& true == lowerLandingChecker_->IsOnSteppablePixel()
+			&& true == midLandingChecker_->IsOnSteppablePixel())
+			|| (true == soldierLifeCollisionBody_->IsCollision(
+				CollisionType::CT_AABB,
+				ObjectOrder::SteppableObject,
+				CollisionType::CT_AABB)
+				&& true == lowerLandingCheckCollisionBody_->IsCollision(
+					CollisionType::CT_AABB,
+					ObjectOrder::SteppableObject,
+					CollisionType::CT_AABB) 
+				&& true == upperLandingCheckCollisionBody_->IsCollision(
+					CollisionType::CT_AABB,
+					ObjectOrder::SteppableObject,
+					CollisionType::CT_AABB))
+		)
 		{
 			//PixelColor magenta = PixelColor(255, 0, 255, 255);
 			//magenta.color_;		//4294902015
@@ -244,8 +283,16 @@ void Soldier::CheckGround()
 				}
 			}
 		}
-		else if (steppablePixelColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()
-			&& steppablePixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if ((true == lowerLandingChecker_->IsOnSteppablePixel()
+			&& true == midLandingChecker_->IsOnSteppablePixel()) 
+			|| (true == soldierLifeCollisionBody_->IsCollision(
+				CollisionType::CT_AABB,
+				ObjectOrder::SteppableObject,
+				CollisionType::CT_AABB) 
+				&& true == lowerLandingCheckCollisionBody_->IsCollision(
+					CollisionType::CT_AABB,
+					ObjectOrder::SteppableObject,
+					CollisionType::CT_AABB)))
 		{
 			if (true == isAirborne_)
 			{
@@ -276,7 +323,11 @@ void Soldier::CheckGround()
 				}
 			}
 		}
-		else if (steppablePixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (true == lowerLandingChecker_->IsOnSteppablePixel() 
+			|| true == lowerLandingCheckCollisionBody_->IsCollision(
+				CollisionType::CT_AABB,
+				ObjectOrder::SteppableObject,
+				CollisionType::CT_AABB))
 		{
 			if (true == isAirborne_)
 			{
@@ -313,6 +364,7 @@ void Soldier::CheckGround()
 			if (false == isAirborne_)
 			{
 				leg_ = SoldierLegState::Falling;
+				top_ = SoldierTopState::Aiming;
 				isAirborne_ = true;
 			}
 		}
@@ -833,41 +885,20 @@ void Soldier::ControlMuzzle()
 
 void Soldier::MoveSoldier(float _deltaTime)
 {
-	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * playSpeed_);
-	movementFor1Second_ = float4::Zero;
-}
-
-void Soldier::Run()
-{
-	if (this->GetTransform().GetWorldPosition().x - 50.f/*캐릭터 좌우크기 절반*/
-			< (- GameEngineWindow::GetInst()->GetScale().HX() 
-				+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
-		&& -1 == horizontalInputValue_)
+	if (-1 != soldierWorldPosLimit_X_)
 	{
-		return;		//플레이어는 윈도우 좌측경계를 넘어갈 수 없음.
+		if (this->GetTransform().GetWorldPosition().x >= soldierWorldPosLimit_X_)
+		{
+			movementFor1Second_.x = soldierWorldPosLimit_X_ - this->GetTransform().GetWorldPosition().x;
+		}
 	}
 
-	if (this->GetTransform().GetWorldPosition().x + 50.f/*캐릭터 좌우크기 절반*/
-			> (GameEngineWindow::GetInst()->GetScale().HX()
-				+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
-		&& 1 == horizontalInputValue_)
-	{
-		return;		//플레이어는 윈도우 우측경계를 넘어갈 수 없음.
-	}
-
-	movementFor1Second_ += float4::Right * horizontalInputValue_ * runningSpeed_;
-
-	movementFor1Second_ += float4::Up * GetSlope() * runningSpeed_;
-}
-
-void Soldier::DuckStep()
-{
 	if (this->GetTransform().GetWorldPosition().x - 50.f/*캐릭터 좌우크기 절반*/
 		< (-GameEngineWindow::GetInst()->GetScale().HX()
 			+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
 		&& -1 == horizontalInputValue_)
 	{
-		return;		//플레이어는 윈도우 좌측경계를 넘어갈 수 없음.
+		movementFor1Second_.x = 0.f;		//플레이어는 윈도우 좌측경계를 넘어갈 수 없음.
 	}
 
 	if (this->GetTransform().GetWorldPosition().x + 50.f/*캐릭터 좌우크기 절반*/
@@ -875,9 +906,31 @@ void Soldier::DuckStep()
 			+ this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x)
 		&& 1 == horizontalInputValue_)
 	{
-		return;		//플레이어는 윈도우 우측경계를 넘어갈 수 없음.
+		movementFor1Second_.x = 0.f;		//플레이어는 윈도우 우측경계를 넘어갈 수 없음.
 	}
 
+	if (true == frontCheckCollisionBody_->IsCollision(
+		CollisionType::CT_AABB,
+		ObjectOrder::SteppableObject,
+		CollisionType::CT_AABB)
+		)
+	{
+		movementFor1Second_.x = 0.f;
+	}
+
+	this->GetTransform().SetWorldMove(movementFor1Second_ * _deltaTime * playSpeed_);
+	movementFor1Second_ = float4::Zero;
+}
+
+void Soldier::Run()
+{
+	movementFor1Second_ += float4::Right * horizontalInputValue_ * runningSpeed_;
+
+	movementFor1Second_ += float4::Up * GetSlope() * runningSpeed_;
+}
+
+void Soldier::DuckStep()
+{
 	movementFor1Second_ += float4::Right * horizontalInputValue_ * duckStepSpeed_;
 
 	movementFor1Second_ += float4::Up * GetSlope() * duckStepSpeed_;
@@ -887,13 +940,22 @@ float Soldier::GetSlope()
 {
 	if (false == isAirborne_)
 	{
+		if (true == soldierLifeCollisionBody_->IsCollision(
+			CollisionType::CT_AABB,
+			ObjectOrder::SteppableObject,
+			CollisionType::CT_AABB)
+		)
+		{
+			return 0.f;		//밟을수 있는 콜리전에 경사가 생기기 전까지는 이렇게 땜빵.
+		}
+
 		int beginPosY = 0;
 		int endPosY = 0;
 		int slopeCheckPosY = 0;
 
-		if (steppablePixelColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
-			&& steppablePixelColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& steppablePixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		if (true == ascendingSlopeChecker_->IsOnSteppablePixel()
+			&& true == flatSlopeChecker_->IsOnSteppablePixel()
+			&& true == descendingSlopeChecker_->IsOnSteppablePixel())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
 				slopeCheckerLocalPosX_,
@@ -911,13 +973,13 @@ float Soldier::GetSlope()
 				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			}
 		}
-		else if (steppablePixelColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& steppablePixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (true == flatSlopeChecker_->IsOnSteppablePixel()
+			&& true == descendingSlopeChecker_->IsOnSteppablePixel())
 		{
 			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 		}
-		else if (steppablePixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (true == descendingSlopeChecker_->IsOnSteppablePixel())
 		{
 			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
@@ -935,7 +997,7 @@ float Soldier::GetSlope()
 				slopeCheckPosY,
 				-5
 			);
-			if (steppablePixelColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (true == slopeChecker_->IsOnSteppablePixel())
 			{
 				break;
 			}

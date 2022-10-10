@@ -100,7 +100,7 @@ private:
 	const float4 riderArmRendererLocalPos_Down_;
 
 	PixelIndicator* upperLandingChecker_;
-	PixelIndicator* camelRiderWorldPosPointer_;	//액터의 월드포지션 표시.
+	PixelIndicator* midLandingChecker_;		//액터의 월드포지션도 표시.
 	PixelIndicator* lowerLandingChecker_;
 
 	float fallingSpeed_;

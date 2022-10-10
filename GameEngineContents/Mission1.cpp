@@ -38,9 +38,7 @@ Mission1::Mission1()
 	arabian19_(nullptr),
 	arabian20_(nullptr),
 	camelRider_(nullptr),
-	isCamelRiderDead_(false),
 	troopTruck_(nullptr),
-	isTruckDestroyed_(false),
 	ui_(nullptr)
 {
 }
@@ -109,7 +107,7 @@ void Mission1::Start()
 
 
 	troopTruck_ = CreateActor<Truck>(ObjectOrder::RebelMachine, "TroopTruck");
-	troopTruck_->GetTransform().SetWorldPosition(5600, 0, 0);
+	troopTruck_->GetTransform().SetWorldPosition(6250, 0, 0);
 
 
 
@@ -129,11 +127,11 @@ void Mission1::Start()
 	soldier_Mission1_->GetTransform().SetWorldPosition(
 		500 - GameEngineWindow::GetInst()->GetScale().HIX(), 200, 0);
 
-	arabian6_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian6");
-	arabian7_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian7");
-	arabian8_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian8");
-	arabian9_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian9");
-	arabian10_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian10");
+	arabian6_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian6");
+	arabian7_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian7");
+	arabian8_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian8");
+	arabian9_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian9");
+	arabian10_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian10");
 
 	arabian6_->GetTransform().SetWorldPosition(1850, 0, 0);
 	arabian7_->GetTransform().SetWorldPosition(1925, 0, 0);
@@ -148,16 +146,16 @@ void Mission1::Start()
 	arabian10_->SetRecognitionDistance(610);
 
 
-	arabian11_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian11");
-	arabian12_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian12");
-	arabian13_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian13");
-	arabian14_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian14");
-	arabian15_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian15");
-	arabian16_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian6");
-	arabian17_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian7");
-	arabian18_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian8");
-	arabian19_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian9");
-	arabian20_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian10");
+	arabian11_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian11");
+	arabian12_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian12");
+	arabian13_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian13");
+	arabian14_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian14");
+	arabian15_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian15");
+	arabian16_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian16");
+	arabian17_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian17");
+	arabian18_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian18");
+	arabian19_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian19");
+	arabian20_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian20");
 
 	arabian11_->GetTransform().SetWorldPosition(3450, 0, 0);
 	arabian12_->GetTransform().SetWorldPosition(3500, 0, 0);
@@ -208,11 +206,6 @@ void Mission1::Update(float _deltaTime)
 		destFocus_->Off();
 	}
 
-	if (true == camelRider_->IsDead() && false == isCamelRiderDead_)
-	{
-		isCamelRiderDead_ = true;
-	}
-
 	if (true == GetMainCameraActor()->IsFreeCameraMode())
 	{
 		return;
@@ -232,7 +225,10 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x - 5.f
 		<= destFocus_->GetTransform().GetWorldPosition().x)
 	{
-		if (true /*== isCamelRiderDead_*/)
+#ifdef _DEBUG
+		//isDestFocusHolding_ = false;
+#else
+		if (true == camelRider_->IsDead())
 		{
 			isDestFocusHolding_ = false;
 		}
@@ -244,17 +240,24 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 			}
 			isDestFocusHolding_ = true;
 		}
+#endif // _DEBUG
 	}
 
 	if (mission1BG_->GetPart2RightEnd() - GameEngineWindow::GetScale().x
 		<= destFocus_->GetTransform().GetWorldPosition().x)
 	{
-		if (true == isTruckDestroyed_)
+		if (true == troopTruck_->IsDestroyed())
 		{
+			soldier_Mission1_->SetSoldierWorldPosLimit(-1.f);
 			isDestFocusHolding_ = false;
 		}
 		else
 		{
+			if (false == isDestFocusHolding_)
+			{
+				troopTruck_->SetTruckState(TruckState::Driving);
+			}
+			soldier_Mission1_->SetSoldierWorldPosLimit(troopTruck_->GetTransform().GetWorldPosition().x - 325.f);
 			isDestFocusHolding_ = true;
 		}
 	}

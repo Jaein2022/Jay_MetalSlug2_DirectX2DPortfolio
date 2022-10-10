@@ -13,9 +13,9 @@ Arabian::Arabian()
 	arabianRenderer_(nullptr),
 	arabianLifeCollisionBody_(nullptr),
 	arabianCloseCombatCollisionBody_(nullptr),
-	renderPivotPointer_(nullptr),
+	//renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
-	arabianWorldPosPointer_(nullptr),
+	midLandingChecker_(nullptr),
 	lowerLandingChecker_(nullptr),
 	slopeCheckerLocalPosX_(10),				//0 ±ÝÁö!	
 	slopeChecker_(nullptr),
@@ -63,14 +63,14 @@ void Arabian::Start()
 	}
 
 	arabianLifeCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianLifeCollision");
-	arabianLifeCollisionBody_->ChangeOrder(this->GetOrder());
+	arabianLifeCollisionBody_->ChangeOrder(ObjectOrder::Rebel);
 	arabianLifeCollisionBody_->SetCollisionMode(CollisionMode::Single);
 	arabianLifeCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(0.f, 1.f, 0.f, 0.5f));
 	arabianLifeCollisionBody_->GetTransform().SetLocalScale(80, 150, 10);
 	arabianLifeCollisionBody_->GetTransform().SetLocalPosition(0, 75, 10);
 
 	arabianCloseCombatCollisionBody_ = CreateComponent<GameEngineCollision>("ArabianCloseCombatCollisionBody");
-	arabianCloseCombatCollisionBody_->ChangeOrder(this->GetOrder() + 1);
+	arabianCloseCombatCollisionBody_->ChangeOrder(ObjectOrder::RebelAttack_MeleeAttack);
 	arabianCloseCombatCollisionBody_->SetCollisionMode(CollisionMode::Multiple);
 	arabianCloseCombatCollisionBody_->SetDebugSetting(CollisionType::CT_AABB, float4(1.f, 0.f, 0.f, 0.5f));
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(160, 190, 10);
@@ -78,13 +78,13 @@ void Arabian::Start()
 
 
 
-	renderPivotPointer_ = Indicator::CreateIndicator<Indicator>(
-		"RenderPivotPointer",
-		this,
-		float4::Cyan,
-		float4(arabianRendererLocalPos_.x, arabianRendererLocalPos_.y, -5.f),
-		float4(5, 5, 1)
-	);
+	//renderPivotPointer_ = Indicator::CreateIndicator<Indicator>(
+	//	"RenderPivotPointer",
+	//	this,
+	//	float4::Cyan,
+	//	float4(arabianRendererLocalPos_.x, arabianRendererLocalPos_.y, -5.f),
+	//	float4(5, 5, 1)
+	//);
 
 	upperLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"UpperLandingCheck",
@@ -94,7 +94,7 @@ void Arabian::Start()
 		float4(5, 5, 1)
 	);
 
-	arabianWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
+	midLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"ArabianWorldPosPointer",
 		this,
 		float4::Red,
@@ -202,9 +202,9 @@ void Arabian::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((currentSteppingPixelColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (currentSteppingPixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (currentSteppingPixelColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()))
+		if (true == upperLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_)
+			&& true == lowerLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_)
+			&& true == midLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_))
 		{
 			//PixelColor magenta = PixelColor(255, 0, 255, 255);
 			//magenta.color_;		//4294902015
@@ -219,7 +219,7 @@ void Arabian::CheckGround()
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingPixelColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = midLandingChecker_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -231,14 +231,14 @@ void Arabian::CheckGround()
 				}
 			}
 		}
-		else if (currentSteppingPixelColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()
-			&& currentSteppingPixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (true == lowerLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_)
+			&& true == midLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_))
 		{
 			if (true == isAirborne_)
 			{
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingPixelColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = midLandingChecker_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -250,14 +250,14 @@ void Arabian::CheckGround()
 				}
 			}
 		}
-		else if (currentSteppingPixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (true == midLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_))
 		{
 			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingPixelColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = midLandingChecker_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{

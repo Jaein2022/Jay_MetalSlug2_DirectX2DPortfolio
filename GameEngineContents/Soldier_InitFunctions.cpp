@@ -11,7 +11,7 @@ void Soldier::CreateSoldierAnimations()
 	legRenderer_->GetTransform().SetLocalPosition(
 		soldierRendererLocalPos_.x,
 		soldierRendererLocalPos_.y,
-		soldierRendererLocalPos_.z + 5.f
+		soldierRendererLocalPos_.z + 1.f
 	);
 
 	if (0 == GameEngineTexture::Find("Tarma_Leg.png")->GetCutCount())
