@@ -110,7 +110,7 @@ void Sword::Update(float _deltaTime)
 	{
 		swordCollisionBody_->IsCollision(
 			CollisionType::CT_AABB,
-			CollisionBodyOrder::Soldier,
+			ObjectOrder::Soldier,
 			CollisionType::CT_AABB,
 			std::bind(&Sword::Hit, this, std::placeholders::_1, std::placeholders::_2)
 		);
@@ -209,7 +209,7 @@ void Sword::CheckGround()
 
 CollisionReturn Sword::Hit(GameEngineCollision* _thisCollision, GameEngineCollision* _soldierCollision)
 {
-	_soldierCollision->GetActor<Soldier>()->TakeDamage(this->GetOrder());
+	_soldierCollision->GetRoot<Soldier>()->TakeDamage(this->GetOrder());
 
 	this->Death();
 

@@ -37,7 +37,7 @@ CamelRider::CamelRider()
 	swordCollisionBodyScale_Down_(60, 130, 10),
 	swordCollisionBodyPosition_Down_(100, 20, 15),
 	hp_(1),
-	swordDuration_(8),
+	swordDurability(8),
 	enemySoldier_(nullptr),
 	isRiderDirectionWrong_(false),
 	muzzle_(nullptr),
@@ -112,7 +112,7 @@ void CamelRider::Start()
 	swordCollisionBody_->GetTransform().SetLocalPosition(swordCollisionBodyPosition_Up_);
 
 
-	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(CollisionBodyOrder::Soldier).front();
+	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(ObjectOrder::Soldier).front();
 	//낙타기수 생성은 반드시 솔저 생성 이후로 할 것.
 	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생.
 
@@ -852,11 +852,11 @@ void CamelRider::TakeDamage(
 )
 {
 	if (_rebelCollision == swordCollisionBody_
-		&& static_cast<int>(CollisionBodyOrder::Soldier) != _soldierWeaponCollision->GetActor()->GetOrder())
+		&& static_cast<int>(ObjectOrder::Soldier) != _soldierWeaponCollision->GetActor()->GetOrder())
 	{
-		swordDuration_ -= _damage;
+		swordDurability -= _damage;
 
-		if (0 < swordDuration_)
+		if (0 < swordDurability)
 		{
 			if (5 >= static_cast<int>(currentCamelRiderState_))
 			{
@@ -1091,7 +1091,7 @@ void CamelRider::RunInDead()
 void CamelRider::Fire()
 {
 	RebelBullet* newRebelBullet = this->GetLevel()->CreateActor<RebelBullet>(
-		CollisionBodyOrder::RebelAttack_SolidBullet,
+		ObjectOrder::RebelAttack_SolidBullet,
 		"RebelBullet"
 	);
 

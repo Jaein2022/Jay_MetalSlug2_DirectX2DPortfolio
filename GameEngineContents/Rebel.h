@@ -18,7 +18,11 @@ private:
 
 
 public:	
-	virtual void TakeDamage(int _damage, GameEngineCollision* _soldierWeaponCollision, GameEngineCollision* _rebelCollision) = 0;
+	virtual void TakeDamage(
+		int _damage, 
+		GameEngineCollision* _soldierWeaponCollision,
+		GameEngineCollision* _rebelCollision
+	) = 0;
 
 
 private:

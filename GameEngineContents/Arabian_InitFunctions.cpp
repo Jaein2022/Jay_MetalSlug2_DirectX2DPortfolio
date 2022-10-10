@@ -218,7 +218,7 @@ void Arabian::CreateArabianStates()
 
 			if (true == arabianCloseCombatCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
-				CollisionBodyOrder::Soldier,
+				ObjectOrder::Soldier,
 				CollisionType::CT_AABB)
 				)
 			{
@@ -238,7 +238,7 @@ void Arabian::CreateArabianStates()
 
 			if (true == arabianCloseCombatCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
-				CollisionBodyOrder::Soldier,
+				ObjectOrder::Soldier,
 				CollisionType::CT_AABB)
 				)
 			{

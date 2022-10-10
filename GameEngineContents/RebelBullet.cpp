@@ -52,7 +52,7 @@ void RebelBullet::Update(float _deltaTime)
 
 	bulletCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		CollisionBodyOrder::Soldier,
+		ObjectOrder::Soldier,
 		CollisionType::CT_AABB,
 		std::bind(&RebelBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
 	);

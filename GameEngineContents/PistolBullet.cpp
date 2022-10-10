@@ -97,6 +97,20 @@ void PistolBullet::Update(float _deltaTime)
 {
 	this->GetTransform().SetWorldMove(firingDirection_ * bulletSpeed_ * _deltaTime * playSpeed_);
 
+	pistolBulletCollisionBody_->IsCollision(
+		CollisionType::CT_AABB,
+		ObjectOrder::Rebel,
+		CollisionType::CT_AABB,
+		std::bind(&PistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
+	);
+
+	pistolBulletCollisionBody_->IsCollision(
+		CollisionType::CT_AABB,
+		ObjectOrder::RebelMachine,
+		CollisionType::CT_AABB,
+		std::bind(&PistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
+	);
+
 	if (true == CheckGroundHit() && false == glancingHitSparkRenderer_->IsUpdate())
 	{
 		pistolBulletRenderer_->Off();
@@ -106,13 +120,6 @@ void PistolBullet::Update(float _deltaTime)
 		glancingHitSparkRenderer_->GetTransform().SetWorldRotation(0, 0, -90);
 		firingDirection_ = float4::Zero;
 	}
-
-	pistolBulletCollisionBody_->IsCollision(
-		CollisionType::CT_AABB,
-		CollisionBodyOrder::Rebel,
-		CollisionType::CT_AABB,
-		std::bind(&PistolBullet::Hit, this, std::placeholders::_1, std::placeholders::_2)
-	);
 
 	if (this->GetTransform().GetWorldPosition().x + 20.f
 		< (-GameEngineWindow::GetInst()->GetScale().HX()
@@ -144,7 +151,16 @@ void PistolBullet::End()
 
 bool PistolBullet::CheckGroundHit()
 {
-	if (groundColor_.color_ <=  groundChecker_->GetColorValue_UINT())
+	if (true == groundChecker_->IsOnGroundPixel())
+	{
+		return true;
+	}
+
+	if (true == pistolBulletCollisionBody_->IsCollision(
+		CollisionType::CT_AABB,
+		ObjectOrder::SteppableObject,
+		CollisionType::CT_AABB)
+	)
 	{
 		return true;
 	}

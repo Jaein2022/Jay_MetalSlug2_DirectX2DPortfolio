@@ -22,7 +22,7 @@ Arabian::Arabian()
 	ascendingSlopeChecker_(nullptr),
 	flatSlopeChecker_(nullptr),
 	descendingSlopeChecker_(nullptr),
-	currentSteppingColor_(0, 255, 255, 255),
+	currentSteppingPixelColor_(0, 255, 255, 255),
 	initialJumpSpeed_(1.5f),
 	fallingSpeed_(0.f),
 	runningSpeed_(3.f),
@@ -150,7 +150,7 @@ void Arabian::Start()
 		float4(5, 5, 1)
 	);
 
-	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(CollisionBodyOrder::Soldier).front();
+	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(ObjectOrder::Soldier).front();
 	//아라비안 생성은 반드시 솔저 생성 이후로 할 것.
 	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생.
 
@@ -202,9 +202,9 @@ void Arabian::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((currentSteppingColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (currentSteppingColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (currentSteppingColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()))
+		if ((currentSteppingPixelColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
+			&& (currentSteppingPixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+			&& (currentSteppingPixelColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()))
 		{
 			//PixelColor magenta = PixelColor(255, 0, 255, 255);
 			//magenta.color_;		//4294902015
@@ -219,7 +219,7 @@ void Arabian::CheckGround()
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -231,14 +231,14 @@ void Arabian::CheckGround()
 				}
 			}
 		}
-		else if (currentSteppingColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()
-			&& currentSteppingColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (currentSteppingPixelColor_.color_ <= arabianWorldPosPointer_->GetColorValue_UINT()
+			&& currentSteppingPixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -250,14 +250,14 @@ void Arabian::CheckGround()
 				}
 			}
 		}
-		else if (currentSteppingColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (currentSteppingPixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = arabianWorldPosPointer_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -321,7 +321,7 @@ void Arabian::ReactInShuffling()
 		return;
 	}
 
-	if (groundColor_ > currentSteppingColor_)
+	if (groundColor_ > currentSteppingPixelColor_)
 	{
 		SelectNextState(0, 6, 1, ArabianState::MeleeAttack);
 		return;
@@ -432,12 +432,12 @@ void Arabian::Jump(const FrameAnimation_Desc& _desc)
 	{
 		fallingSpeed_ = -initialJumpSpeed_;
 		isAirborne_ = true;
-		currentSteppingColor_
+		currentSteppingPixelColor_
 			= PixelColor(
-				static_cast<unsigned char>(currentSteppingColor_.r + 2),
-				currentSteppingColor_.g,
-				currentSteppingColor_.b,
-				currentSteppingColor_.a
+				static_cast<unsigned char>(currentSteppingPixelColor_.r + 2),
+				currentSteppingPixelColor_.g,
+				currentSteppingPixelColor_.b,
+				currentSteppingPixelColor_.a
 			);
 
 	}
@@ -483,9 +483,9 @@ float Arabian::GetSlope(char _localDirection)
 		int endPosY = 0;
 		int slopeCheckPosY = 0;
 
-		if (currentSteppingColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
-			&& currentSteppingColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& currentSteppingColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		if (currentSteppingPixelColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
+			&& currentSteppingPixelColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& currentSteppingPixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
 				slopeCheckerLocalPosX_ * _localDirection,
@@ -493,7 +493,7 @@ float Arabian::GetSlope(char _localDirection)
 				-5
 			);
 
-			if (currentSteppingColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (currentSteppingPixelColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				return 0.f;
 			}
@@ -503,13 +503,13 @@ float Arabian::GetSlope(char _localDirection)
 				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			}
 		}
-		else if (currentSteppingColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& currentSteppingColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (currentSteppingPixelColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& currentSteppingPixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 		}
-		else if (currentSteppingColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (currentSteppingPixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
@@ -528,7 +528,7 @@ float Arabian::GetSlope(char _localDirection)
 				-5
 			);
 
-			if (currentSteppingColor_.color_ <= slopeChecker_->GetColorValue_UINT())
+			if (currentSteppingPixelColor_.color_ <= slopeChecker_->GetColorValue_UINT())
 			{
 				break;
 			}
@@ -549,7 +549,7 @@ float Arabian::GetSlope(char _localDirection)
 void Arabian::ThrowSword()
 {
 	Sword* newSword = this->GetLevel()->CreateActor<Sword>(
-		CollisionBodyOrder::RebelAttack_FlyingSword,
+		ObjectOrder::RebelAttack_FlyingSword,
 		"FlyingSword"
 	);
 
@@ -596,7 +596,7 @@ void Arabian::MeleeAttack()
 {
 	arabianCloseCombatCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		CollisionBodyOrder::Soldier,
+		ObjectOrder::Soldier,
 		CollisionType::CT_AABB,
 		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _playerCollision)->CollisionReturn {
 			_playerCollision->GetActor<Soldier>()->TakeDamage(arabianCloseCombatCollisionBody_->GetOrder());

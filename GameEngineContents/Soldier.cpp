@@ -202,9 +202,9 @@ void Soldier::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((steppableObjectColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (steppableObjectColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (steppableObjectColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()))
+		if ((steppablePixelColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
+			&& (steppablePixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+			&& (steppablePixelColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()))
 		{
 			//PixelColor magenta = PixelColor(255, 0, 255, 255);
 			//magenta.color_;		//4294902015
@@ -244,8 +244,8 @@ void Soldier::CheckGround()
 				}
 			}
 		}
-		else if (steppableObjectColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()
-			&& steppableObjectColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (steppablePixelColor_.color_ <= soldierWorldPosPointer_->GetColorValue_UINT()
+			&& steppablePixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
@@ -276,7 +276,7 @@ void Soldier::CheckGround()
 				}
 			}
 		}
-		else if (steppableObjectColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (steppablePixelColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
 		{
 			if (true == isAirborne_)
 			{
@@ -652,7 +652,7 @@ void Soldier::ConvertInputToSoldierStates()
 		{
 			if (true == soldierCloseCombatCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
-				CollisionBodyOrder::Rebel,
+				ObjectOrder::Rebel,
 				CollisionType::CT_AABB, 
 				nullptr)
 			)
@@ -891,9 +891,9 @@ float Soldier::GetSlope()
 		int endPosY = 0;
 		int slopeCheckPosY = 0;
 
-		if (steppableObjectColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
-			&& steppableObjectColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& steppableObjectColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		if (steppablePixelColor_.color_ <= ascendingSlopeChecker_->GetColorValue_UINT()
+			&& steppablePixelColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& steppablePixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			slopeChecker_->GetTransform().SetLocalPosition(
 				slopeCheckerLocalPosX_,
@@ -901,7 +901,7 @@ float Soldier::GetSlope()
 				-5
 			);
 
-			if (steppableObjectColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (steppablePixelColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				return 0.f;
 			}
@@ -911,13 +911,13 @@ float Soldier::GetSlope()
 				endPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			}
 		}
-		else if (steppableObjectColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
-			&& steppableObjectColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (steppablePixelColor_.color_ <= flatSlopeChecker_->GetColorValue_UINT()
+			&& steppablePixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = ascendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 		}
-		else if (steppableObjectColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
+		else if (steppablePixelColor_.color_ <= descendingSlopeChecker_->GetColorValue_UINT())
 		{
 			beginPosY = flatSlopeChecker_->GetTransform().GetLocalPosition().IY();
 			endPosY = descendingSlopeChecker_->GetTransform().GetLocalPosition().IY();
@@ -935,7 +935,7 @@ float Soldier::GetSlope()
 				slopeCheckPosY,
 				-5
 			);
-			if (steppableObjectColor_.color_ == slopeChecker_->GetColorValue_UINT())
+			if (steppablePixelColor_.color_ == slopeChecker_->GetColorValue_UINT())
 			{
 				break;
 			}
@@ -962,7 +962,7 @@ void Soldier::Fire()
 		//GameEngineSound::SoundPlayOneshot("Pistol_Fire.mp3");
 		PistolBullet* newBullet 
 			= this->GetLevel()->CreateActor<PistolBullet>(
-				CollisionBodyOrder::Soldier_Projectile, "PistolBullet");
+				ObjectOrder::Soldier_Projectile, "PistolBullet");
 
 		newBullet->GetTransform().SetWorldPosition(muzzle_->GetTransform().GetWorldPosition());
 		newBullet->GetTransform().SetWorldRotation(muzzle_->GetTransform().GetWorldRotation());
@@ -985,7 +985,7 @@ void Soldier::MeleeAttack()
 {
 	soldierCloseCombatCollisionBody_->IsCollision(
 		CollisionType::CT_AABB,
-		CollisionBodyOrder::Rebel,
+		ObjectOrder::Rebel,
 		CollisionType::CT_AABB,
 		[this](GameEngineCollision* _thisCollision, GameEngineCollision* _rebelCollision)->CollisionReturn
 		{

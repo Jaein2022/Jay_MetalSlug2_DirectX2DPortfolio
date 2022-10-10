@@ -54,6 +54,16 @@ public:
 		return pcTexture_;
 	}
 
+	inline bool IsOnSteppablePixel(PixelColor _currentSteppingColor = steppablePixelColor_)
+	{
+		return _currentSteppingColor.color_ <= this->GetColorValue_UINT();
+	}
+
+	inline bool IsOnGroundPixel()	
+	{
+		return groundColor_.color_ <= this->GetColorValue_UINT();
+	}
+
 
 private:
 

@@ -129,7 +129,7 @@ private:
 	const float4 swordCollisionBodyPosition_Down_;
 
 	int hp_;
-	int swordDuration_;
+	int swordDurability;
 
 	Soldier* enemySoldier_;
 	

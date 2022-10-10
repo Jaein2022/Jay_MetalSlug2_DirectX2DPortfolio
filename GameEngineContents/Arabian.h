@@ -147,7 +147,7 @@ private:
 	PixelIndicator* flatSlopeChecker_;
 	PixelIndicator* descendingSlopeChecker_;
 
-	PixelColor currentSteppingColor_;
+	PixelColor currentSteppingPixelColor_;
 
 
 	GameEngineStateManager arabianStateManager_;

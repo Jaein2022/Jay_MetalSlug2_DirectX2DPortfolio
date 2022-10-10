@@ -26,14 +26,14 @@ void TestLevel::Start()
 {
 	PixelIndicator::SetPCTexture("TestBG_PC.png");
 
-	testPlayer_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "TestPlayer");
+	testPlayer_ = CreateActor<Soldier>(ObjectOrder::Soldier, "TestPlayer");
 	testPlayer_->GetTransform().SetWorldPosition(1500, 0, 0);
 
 
-	testArabian_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "TestArabian");
+	testArabian_ = CreateActor<Arabian>(ObjectOrder::Rebel, "TestArabian");
 	testArabian_->GetTransform().SetWorldPosition(1925, 0, 0);
 
-	testBackground_ = CreateActor<TestBackground>(CollisionBodyOrder::Background, "TestBackground");
+	testBackground_ = CreateActor<TestBackground>(ObjectOrder::Background, "TestBackground");
 
 
 	currentFocusPointer_ = Indicator::CreateIndicator<Indicator>(
@@ -44,7 +44,7 @@ void TestLevel::Start()
 		float4(15, 15, 1)
 	);
 
-	destFocus_ = CreateActor<IndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
+	destFocus_ = CreateActor<IndicatorBase>(ObjectOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
 		float4(1500, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));

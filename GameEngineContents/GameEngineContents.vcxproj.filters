@@ -43,6 +43,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{41f605e7-10bd-46de-be36-dadeb8dc623d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Rebel\Vehicle">
+      <UniqueIdentifier>{027bc9f9-a74f-4275-88f5-382d94240c4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PreCompile.h">
@@ -102,6 +105,9 @@
     <ClInclude Include="UI.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="Truck.h">
+      <Filter>Rebel\Vehicle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -160,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="UI.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Truck.cpp">
+      <Filter>Rebel\Vehicle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

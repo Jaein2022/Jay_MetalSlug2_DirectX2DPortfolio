@@ -7,6 +7,7 @@
 #include "Arabian.h"
 #include "Mission1BG.h"
 #include "CamelRider.h"
+#include "Truck.h"
 #include "UI.h"
 
 Mission1::Mission1()
@@ -38,6 +39,7 @@ Mission1::Mission1()
 	arabian20_(nullptr),
 	camelRider_(nullptr),
 	isCamelRiderDead_(false),
+	troopTruck_(nullptr),
 	isTruckDestroyed_(false),
 	ui_(nullptr)
 {
@@ -51,7 +53,7 @@ void Mission1::Start()
 {
 	PixelIndicator::SetPCTexture("Mission1_PCBG.png");
 
-	mission1BG_ = CreateActor<Mission1BG>(CollisionBodyOrder::Background, "Mission1BG");
+	mission1BG_ = CreateActor<Mission1BG>(ObjectOrder::Background, "Mission1BG");
 	mission1BG_->GetTransform().SetWorldPosition(
 		-GameEngineWindow::GetScale().HX(),
 		-GameEngineWindow::GetScale().HY(),
@@ -66,21 +68,21 @@ void Mission1::Start()
 		float4(15, 15, 1)
 		);
 
-	destFocus_ = CreateActor<IndicatorBase>(CollisionBodyOrder::UI, "DestFocus");
+	destFocus_ = CreateActor<IndicatorBase>(ObjectOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(3100, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(4700, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
 	//시작시 카메라 위치 변경이 필요하면 여기에서.
 
-	soldier_Mission1_ = CreateActor<Soldier>(CollisionBodyOrder::Soldier, "Soldier_Mission1");
-	soldier_Mission1_->GetTransform().SetWorldPosition(3000, 200, 0);
+	soldier_Mission1_ = CreateActor<Soldier>(ObjectOrder::Soldier, "Soldier_Mission1");
+	soldier_Mission1_->GetTransform().SetWorldPosition(4500, 200, 0);
 
 
-	arabian1_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian1");
-	arabian2_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian2");
-	arabian3_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian3");
-	arabian4_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian4");
-	arabian5_ = CreateActor<Arabian>(CollisionBodyOrder::Rebel, "Arabian5");	
+	arabian1_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian1");
+	arabian2_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian2");
+	arabian3_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian3");
+	arabian4_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian4");
+	arabian5_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian5");	
 
 	
 	arabian1_->GetTransform().SetWorldPosition(925, 0, 0);
@@ -100,18 +102,25 @@ void Mission1::Start()
 
 
 
-	camelRider_ = CreateActor<CamelRider>(CollisionBodyOrder::Rebel, "CamelRider");
+	camelRider_ = CreateActor<CamelRider>(ObjectOrder::Rebel, "CamelRider");
 	camelRider_->GetTransform().PixLocalNegativeX();
 
 	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 575.f, 0.f, 0.f);
 
 
+	troopTruck_ = CreateActor<Truck>(ObjectOrder::RebelMachine, "TroopTruck");
+	troopTruck_->GetTransform().SetWorldPosition(5600, 0, 0);
 
-	ui_ = CreateActor<UI>(CollisionBodyOrder::UI, "UI");
+
+
+	ui_ = CreateActor<UI>(ObjectOrder::UI, "UI");
 	ui_->GetTransform().SetWorldPosition(0, 0, -5);
 
 
 	mission1BgmPlayer_ = GameEngineSound::SoundPlayControl("JUDGMENT (Mission 1).mp3", -1);
+
+
+
 
 #ifndef _DEBUG
 	destFocus_->GetTransform().SetWorldPosition(
@@ -223,7 +232,7 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x - 5.f
 		<= destFocus_->GetTransform().GetWorldPosition().x)
 	{
-		if (true == isCamelRiderDead_)
+		if (true /*== isCamelRiderDead_*/)
 		{
 			isDestFocusHolding_ = false;
 		}

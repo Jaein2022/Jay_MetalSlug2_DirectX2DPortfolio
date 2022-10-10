@@ -8,6 +8,7 @@ class Soldier;
 class Arabian;
 class IndicatorBase;
 class Indicator;
+class Truck;
 class Mission1 : public GameEngineLevel
 {
 	//이 클래스의 존재 이유: 미션 1.
@@ -70,6 +71,10 @@ private:
 	CamelRider* camelRider_;
 
 	bool isCamelRiderDead_;
+
+
+	Truck* troopTruck_;
+
 	bool isTruckDestroyed_;
 
 	GameEngineSoundPlayer mission1BgmPlayer_;
