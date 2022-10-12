@@ -12,6 +12,7 @@ Truck::Truck()
 	isAirborne_(true),
 	fallingSpeed_(0.f),
 	truckRenderer_(nullptr),
+	truckTarpRenderer_(nullptr),
 	truckRendererLocalPos_(0, 160, 2),
 	truckDurabilityCollisionBody_(nullptr),
 	truckDurability_(15),
@@ -93,6 +94,18 @@ void Truck::Start()
 
 
 
+	truckTarpRenderer_ = CreateComponent<GameEngineTextureRenderer>("TruckTarpRenderer");
+	truckTarpRenderer_->SetTexture("TroopTruckTarp.png");
+	truckTarpRenderer_->SetPivot(PivotMode::Center);
+	truckTarpRenderer_->GetTransform().SetLocalScale(320, 224, 1);
+	truckTarpRenderer_->GetTransform().SetLocalPosition(
+		truckRendererLocalPos_.x - 68.f,
+		truckRendererLocalPos_.y + 32.f,
+		truckRendererLocalPos_.z - 2.f
+	);
+	truckTarpRenderer_->Off();
+
+
 	if (0 == GameEngineTexture::Find("TroopTruck.png")->GetCutCount())
 	{
 		GameEngineTexture::Cut("TroopTruck.png", 10, 5);
@@ -112,7 +125,7 @@ void Truck::Start()
 			if (1.f <= _desc.frameTime_)
 			{
 				currentTruckState_ = TruckState::Deploying;
-				truckDurabilityCollisionBody_->On();
+				truckDurabilityCollisionBody_->Off();
 			}
 		}
 	);
@@ -121,13 +134,25 @@ void Truck::Start()
 	truckRenderer_->CreateFrameAnimation_CutTexture("Driving",
 		FrameAnimation_Desc("TroopTruck.png", 10, 13, 0.1f, true)
 	);
-	truckRenderer_->AnimationBindTime(
-		"Driving",
+	truckRenderer_->AnimationBindTime("Driving",
 		std::bind(&Truck::Drive, this)
 	);
 
 	truckRenderer_->CreateFrameAnimation_CutTexture("Deploying",
 		FrameAnimation_Desc("TroopTruck.png", 20, 31, 0.1f, false)
+	);
+	truckRenderer_->AnimationBindFrame("Deploying",
+		[this](const FrameAnimation_Desc& _desc)->void
+		{
+			if (12 == _desc.curFrame_)
+			{
+				truckTarpRenderer_->On();
+			}
+			else
+			{
+				truckTarpRenderer_->Off();
+			}
+		}
 	);
 
 	truckRenderer_->CreateFrameAnimation_CutTexture("Destroyed",
@@ -144,6 +169,7 @@ void Truck::Start()
 		[this](const StateInfo& _info)->void
 		{
 			truckRenderer_->ChangeFrameAnimation("Idling");
+			truckTarpRenderer_->Off();
 		}
 	);
 
@@ -153,6 +179,7 @@ void Truck::Start()
 		[this](const StateInfo& _info)->void
 		{
 			truckRenderer_->ChangeFrameAnimation("Driving");
+			truckTarpRenderer_->Off();
 		}
 	);
 
@@ -171,6 +198,7 @@ void Truck::Start()
 		[this](const StateInfo& _info)->void
 		{
 			truckRenderer_->ChangeFrameAnimation("Destroyed");
+			truckTarpRenderer_->Off();
 			truckDurabilityCollisionBody_->Off();
 			//truckSlopeCollisionBody_->Off();
 			truckWreckageCollisionBody1_->GetTransform().SetLocalScale(260, 100, 10);	

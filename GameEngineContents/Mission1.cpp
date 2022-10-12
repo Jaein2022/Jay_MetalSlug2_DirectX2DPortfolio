@@ -9,12 +9,12 @@
 #include "CamelRider.h"
 #include "Truck.h"
 #include "UI.h"
+#include "DevelopmentTool.h"
 
 Mission1::Mission1()
 	: mission1BG_(nullptr),
 	currentFocusPointer_(nullptr),
 	destFocus_(nullptr),
-	destFocusVelocity_(3.f),
 	isDestFocusHolding_(false),
 	soldier_Mission1_(nullptr),
 	arabian1_(nullptr),
@@ -193,7 +193,7 @@ void Mission1::Start()
 
 
 
-
+	//GameEngineGUI::CreateGUIWindow<DevelopmentTool>("Development Tool", this);
 
 }
 

@@ -15,6 +15,8 @@ class Truck : public Rebel
 	//이 클래스의 존재 이유: 병력수송트럭.
 
 	friend class Mission1;
+	friend class DevelopmentTool;
+
 public:
 	Truck();
 	~Truck();
@@ -82,6 +84,7 @@ private:
 	float fallingSpeed_;
 
 	GameEngineTextureRenderer* truckRenderer_;
+	GameEngineTextureRenderer* truckTarpRenderer_;
 	const float4 truckRendererLocalPos_;
 
 	GameEngineCollision* truckDurabilityCollisionBody_;

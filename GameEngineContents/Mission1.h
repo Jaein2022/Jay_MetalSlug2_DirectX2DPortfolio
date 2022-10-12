@@ -1,6 +1,7 @@
 #pragma once
 #include "GlobalHeader.h"
 
+class DevelopmentTool;
 class UI;
 class CamelRider;
 class Mission1BG;
@@ -12,6 +13,8 @@ class Truck;
 class Mission1 : public GameEngineLevel
 {
 	//이 클래스의 존재 이유: 미션 1.
+	friend class DevelopmentTool;
+
 public:
 	Mission1();
 	~Mission1();
@@ -42,7 +45,6 @@ private:
 	Indicator* currentFocusPointer_;
 	IndicatorBase* destFocus_;
 
-	const float destFocusVelocity_;
 	bool isDestFocusHolding_;
 
 	Soldier* soldier_Mission1_;
@@ -75,5 +77,6 @@ private:
 	GameEngineSoundPlayer mission1BgmPlayer_;
 
 	UI* ui_;
+
 };
 
