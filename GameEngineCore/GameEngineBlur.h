@@ -1,5 +1,5 @@
 #pragma once
-#include "GameEngineRenderSet.h"
+#include "GameEngineShaderResourceHelper.h"
 
 class GameEngineRenderTarget;
 class GameEngineBlur
@@ -25,6 +25,9 @@ public:
 
 private:
 	GameEngineRenderTarget* copiedRenderTarget_;
-	GameEngineRenderSet effectRenderSet_;
+
+	GameEngineShaderResourceHelper shaderResourceHelper_;
+
+	GameEngineRenderingPipeLine* renderingPipeLine_;
 
 };

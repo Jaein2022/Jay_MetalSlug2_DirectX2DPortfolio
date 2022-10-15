@@ -14,8 +14,8 @@ enum class ArabianState
 	Jumping,
 	Turning,
 	Falling,
-	FallingToIdling,
-	Idling,
+	FallingToWaiting,
+	Waiting,
 	Dead
 };
 
@@ -62,7 +62,7 @@ private:
 	//추락 이동값 적용.
 	void Fall(float _deltaTime);
 
-	//솔저와의 거리, 방향 판단.
+	//플레이어와의 거리, 방향 판단.
 	void UpdateDistanceAndDirection(float _deltaTime);
 
 	void ReactInShuffling();
@@ -134,8 +134,6 @@ private:
 	GameEngineCollision* arabianCloseCombatCollisionBody_;
 	//픽셀충돌 제외한 모든 충돌체는 월드크기 z값, 월드좌표 z값 10으로 고정.
 
-	//Indicator* renderPivotPointer_;		//액터의 렌더피봇 표시.
-
 
 	PixelIndicator* upperLandingChecker_;
 	PixelIndicator* midLandingChecker_;		//액터의 월드포지션도 표시.
@@ -159,7 +157,7 @@ private:
 	const float initialJumpSpeed_;
 	float fallingSpeed_;
 
-	float runningSpeed_;
+	const float runningSpeed_;
 
 	float shufflingSpeed_;
 

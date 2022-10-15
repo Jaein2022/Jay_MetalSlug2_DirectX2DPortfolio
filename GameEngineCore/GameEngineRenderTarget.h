@@ -93,7 +93,6 @@ public:
 	void Effect(	//기존 렌더타겟에, 다른 렌더타겟에 있던 픽셀정보들을 옮겨붙이는 함수. 
 		GameEngineRenderingPipeLine* _otherPipeLine,
 		GameEngineShaderResourceHelper* _shaderResourceHelper);
-	void Effect(class GameEngineRenderSet& _renderSet);
 	void EffectProcess();
 
 	static void GetPrevRenderTarget();

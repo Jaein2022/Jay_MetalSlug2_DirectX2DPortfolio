@@ -6,7 +6,7 @@ class GameEngineConstantBuffer : public GameEngineRes<GameEngineConstantBuffer>
 	//상수 버퍼 생성 및 관리 클래스.
 
 	//상수 버퍼(Constant buffer): 버텍스셰이더 및 픽셀셰이더에서 사용될 상수들을 모아 놓은 버퍼. 
-	// 여기서 상수는 게임엔진렌더링디바이스 클래스에 있는 RenderStart()함수를 호출한 이후, 
+	// 여기서 상수는 게임엔진디바이스 클래스에 있는 RenderStart()함수를 호출한 이후, 
 	// RenderEnd()함수가 호출될때까지, 그러니까 렌더링파이프라인이 진행되는 동안 변하지 않는 값들을 가리키는 말이다.
 	// 한마디로, 램에서 GPU로 넘겨주고자 하는 데이터 모음.
 	//상수 버퍼를 사용하는 이유는 셰이더에서 매번 사용되는 상수들을 cpp 파일에서 전달해주어야 한다고 가정할 때,
@@ -15,7 +15,8 @@ class GameEngineConstantBuffer : public GameEngineRes<GameEngineConstantBuffer>
 	//상수 버퍼의 메모리 구조상, 크기가 반드시 최소 하드웨어 할당 크기(16 바이트)의 배수여야 한다.
 
 	//상수버퍼 자체와 상수버퍼 세팅 구조를 헷갈리지 말 것.
-
+	//상수버퍼는 셰이더가 컴파일되고 생성되는 시점에 같이 생성된다.
+	//렌더러마다 각각의 상수버퍼를 전부 다 만들 수는 없으므로 돌려 쓴다.
 
 public:
 	GameEngineConstantBuffer();

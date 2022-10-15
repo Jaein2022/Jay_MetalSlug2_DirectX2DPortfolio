@@ -1,6 +1,7 @@
 #pragma once
 #include "GlobalHeader.h"
 
+class Berserker;
 class DevelopmentTool;
 class UI;
 class CamelRider;
@@ -71,8 +72,12 @@ private:
 	Arabian* arabian20_;
 
 	CamelRider* camelRider_;
+	bool isCamelRiderDead_;
 
 	Truck* troopTruck_;
+	bool isTruckDestroyed_;
+
+	Berserker* berserker1_;
 
 	GameEngineSoundPlayer mission1BgmPlayer_;
 

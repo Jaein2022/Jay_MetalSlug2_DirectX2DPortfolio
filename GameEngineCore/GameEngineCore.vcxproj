@@ -246,10 +246,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="GameEngineRenderSet.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="GameEngineRenderTarget.h">
       <SubType>
       </SubType>
@@ -427,10 +423,6 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="GameEngineRenderingPipeLine.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="GameEngineRenderSet.cpp">
       <SubType>
       </SubType>
     </ClCompile>

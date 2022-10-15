@@ -3,7 +3,7 @@
 class Mission1;
 class DevelopmentTool: public GameEngineGUIWindow
 {
-	//이 클래스의 존재 이유: 각종 개발 편의도구 모음.
+	//이 클래스의 존재 이유: 그때그때 필요한 각종 개발 편의도구 모음.
 public:
 	DevelopmentTool();
 	~DevelopmentTool();

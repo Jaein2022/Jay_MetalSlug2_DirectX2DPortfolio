@@ -2,6 +2,7 @@
 #include "DevelopmentTool.h"
 #include "Mission1.h"
 #include "Truck.h"
+#include "Berserker.h"
 
 DevelopmentTool::DevelopmentTool(): mission1_(nullptr)
 {
@@ -18,15 +19,34 @@ void DevelopmentTool::Initialize(GameEngineLevel* _level)
 
 void DevelopmentTool::OnGUI(GameEngineLevel* _level, float _deltaTime)
 {
-	if (true == ImGui::Button("On/Off Switch"))
+
+	if (true == ImGui::Button("Waiting_SittingDown"))
 	{
-		if (true == mission1_->troopTruck_->truckTarpRenderer_->IsUpdate())
-		{
-			mission1_->troopTruck_->truckTarpRenderer_->Off();
-		}
-		else
-		{
-			mission1_->troopTruck_->truckTarpRenderer_->On();
-		}
-	}
+		this->mission1_->berserker1_->SetBerserkerState(BerserkerState::Waiting_SittingDown);
+	}	
+	
+	if (true == ImGui::Button("Waiting_Standing"))
+	{
+		this->mission1_->berserker1_->SetBerserkerState(BerserkerState::Waiting_Standing);
+	}	
+	
+	if (true == ImGui::Button("Idling"))
+	{
+		this->mission1_->berserker1_->SetBerserkerState(BerserkerState::Idling);
+	}	
+	
+	if (true == ImGui::Button("Running"))
+	{
+		this->mission1_->berserker1_->SetBerserkerState(BerserkerState::Running);
+	}	
+	
+	if (true == ImGui::Button("Turning"))
+	{
+		this->mission1_->berserker1_->SetBerserkerState(BerserkerState::Turning);
+	}	
+	
+	if (true == ImGui::Button("MeleeAttack"))
+	{
+		this->mission1_->berserker1_->SetBerserkerState(BerserkerState::MeleeAttack);
+	}	
 }

@@ -2,7 +2,6 @@
 #include "GameEngineRenderTarget.h"
 #include "GameEngineDevice.h"
 #include "GameEngineTexture.h"
-#include "GameEngineRenderSet.h"
 
 ID3D11RenderTargetView* GameEngineRenderTarget::prevRenderTargetView_ = nullptr;
 ID3D11DepthStencilView* GameEngineRenderTarget::prevDepthStencilView_ = nullptr;
@@ -193,11 +192,6 @@ void GameEngineRenderTarget::Effect(GameEngineRenderingPipeLine* _otherPipeLine,
 	_shaderResourceHelper->AllResourcesSetting();
 	_otherPipeLine->Rendering();
 	_shaderResourceHelper->AllResourcesReset();
-}
-
-void GameEngineRenderTarget::Effect(GameEngineRenderSet& _renderSet)
-{
-	Effect(_renderSet.renderingPipeLine_, &_renderSet.shaderResourceHelper_);
 }
 
 void GameEngineRenderTarget::EffectProcess()

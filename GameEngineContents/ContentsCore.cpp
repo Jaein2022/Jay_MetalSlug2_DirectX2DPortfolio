@@ -33,8 +33,7 @@ void ContentsCore::Start()
 	//GameEngineDebug::ConsoleOpen(); 콘솔창이 필요하면 복원.
 
 
-	//GameEngineTime::SetFrameLimit(60);	프레임 제한이 필요하면 복원.
-	//그런데 프레임 제한을 거니 프레임 드랍이 너무 심하므로 사용 금지.
+	//GameEngineTime::SetFrameLimit(60);	//프레임 제한이 필요하면 복원.
 
 
 

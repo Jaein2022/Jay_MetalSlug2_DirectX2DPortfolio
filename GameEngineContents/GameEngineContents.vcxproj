@@ -149,6 +149,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Berserker.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="CamelRider.h">
       <SubType>
       </SubType>
@@ -223,6 +227,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Berserker.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="CamelRider.cpp">
       <SubType>
       </SubType>

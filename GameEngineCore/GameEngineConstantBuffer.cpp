@@ -77,7 +77,7 @@ void GameEngineConstantBuffer::ChangeData(const void* _data, size_t _dataSize) c
 {
 	if (nullptr == _data)
 	{
-		MsgBoxAssertString(this->GetNameCopy() + ": 세팅할 데이터가 없습니다.");
+		MsgBoxAssertString(this->GetNameCopy() + ": 세팅해주기로 한 상수버퍼가 없습니다.");
 		return;
 	}
 

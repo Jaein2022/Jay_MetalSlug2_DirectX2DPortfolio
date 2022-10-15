@@ -114,7 +114,7 @@ void GameEngineCore::CoreUpdate(GameEngineCore* _userCore)
 
 	GameEngineInput::GetInst()->Update(deltaTime);
 
-	if (true == GameEngineTime::IsUnderFrameLimit())
+	if (true == GameEngineTime::IsUpdateOn())
 	{
 		//컨텐츠 제작자가 엔진 수준에서 뭔가 하고 싶을때 여기서 한다.
 		_userCore->Update(deltaTime);

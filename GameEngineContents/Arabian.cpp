@@ -6,14 +6,13 @@
 #include "Soldier.h"
 
 Arabian::Arabian()
-	: currentArabianState_(ArabianState::Idling),
+	: currentArabianState_(ArabianState::Waiting),
 	isAirborne_(false),
 	isEngaging_(false),
 	arabianRendererLocalPos_(0, 75, 0),
 	arabianRenderer_(nullptr),
 	arabianLifeCollisionBody_(nullptr),
 	arabianCloseCombatCollisionBody_(nullptr),
-	//renderPivotPointer_(nullptr),
 	upperLandingChecker_(nullptr),
 	midLandingChecker_(nullptr),
 	lowerLandingChecker_(nullptr),
@@ -76,16 +75,6 @@ void Arabian::Start()
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalScale(160, 190, 10);
 	arabianCloseCombatCollisionBody_->GetTransform().SetLocalPosition(80, 95, 10);
 
-
-
-	//renderPivotPointer_ = Indicator::CreateIndicator<Indicator>(
-	//	"RenderPivotPointer",
-	//	this,
-	//	float4::Cyan,
-	//	float4(arabianRendererLocalPos_.x, arabianRendererLocalPos_.y, -5.f),
-	//	float4(5, 5, 1)
-	//);
-
 	upperLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"UpperLandingCheck",
 		this,
@@ -95,7 +84,7 @@ void Arabian::Start()
 	);
 
 	midLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
-		"ArabianWorldPosPointer",
+		"MidLandingChecker",
 		this,
 		float4::Red,
 		float4(0, 0, -5),
@@ -219,7 +208,7 @@ void Arabian::CheckGround()
 				this->GetTransform().SetWorldMove(float4::Up * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingPixelColor_ = midLandingChecker_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = lowerLandingChecker_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -227,7 +216,7 @@ void Arabian::CheckGround()
 				}
 				else
 				{
-					currentArabianState_ = ArabianState::FallingToIdling;
+					currentArabianState_ = ArabianState::FallingToWaiting;
 				}
 			}
 		}
@@ -238,7 +227,7 @@ void Arabian::CheckGround()
 			{
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingPixelColor_ = midLandingChecker_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = lowerLandingChecker_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -246,18 +235,18 @@ void Arabian::CheckGround()
 				}
 				else
 				{
-					currentArabianState_ = ArabianState::FallingToIdling;
+					currentArabianState_ = ArabianState::FallingToWaiting;
 				}
 			}
 		}
-		else if (true == midLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_))
+		else if (true == lowerLandingChecker_->IsOnSteppablePixel(currentSteppingPixelColor_))
 		{
 			if (true == isAirborne_)
 			{
 				this->GetTransform().SetWorldMove(float4::Down * 5.f);
 				isAirborne_ = false;
 				fallingSpeed_ = 0.f;
-				currentSteppingPixelColor_ = midLandingChecker_->GetColorValue_UINT();
+				currentSteppingPixelColor_ = lowerLandingChecker_->GetColorValue_UINT();
 
 				if (currentArabianState_ == ArabianState::JumpingBackward)
 				{
@@ -265,7 +254,7 @@ void Arabian::CheckGround()
 				}
 				else
 				{
-					currentArabianState_ = ArabianState::FallingToIdling;
+					currentArabianState_ = ArabianState::FallingToWaiting;
 				}
 			}
 		}
@@ -617,7 +606,7 @@ void Arabian::Flicker(float _deltaTime, bool _isFlickeringOn, const float4& _plu
 		remainingPeriod_ = 0.f;
 	}
 
-	if (0 >= remainingPeriod_)
+	if (0.f >= remainingPeriod_)
 	{
 		flickeringSwitch_ = !flickeringSwitch_;
 

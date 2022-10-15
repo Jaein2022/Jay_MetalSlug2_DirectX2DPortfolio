@@ -50,7 +50,8 @@ void PistolBullet::Start()
 	effectiveHitSparkRenderer_->CreateFrameAnimation_CutTexture("EffectiveHitSpark", 
 		FrameAnimation_Desc("Spark_EffectiveHit.png", 0, 9, 0.02f, false));
 	effectiveHitSparkRenderer_->AnimationBindEnd("EffectiveHitSpark",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			this->Death();
 		}
 	);
@@ -71,7 +72,8 @@ void PistolBullet::Start()
 	glancingHitSparkRenderer_->CreateFrameAnimation_CutTexture("GlancingHitSpark", 
 		FrameAnimation_Desc("Spark_GlancingHit.png", 0, 9, 0.02f, false));
 	glancingHitSparkRenderer_->AnimationBindEnd("GlancingHitSpark",
-		[this](const FrameAnimation_Desc& _desc)->void {
+		[this](const FrameAnimation_Desc& _desc)->void 
+		{
 			this->Death();
 		}
 	);

@@ -34,9 +34,6 @@
     <Filter Include="Mission\Background">
       <UniqueIdentifier>{cfd558e1-0973-404f-a2a8-ab0aaac86e14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rebel\CamelRider">
-      <UniqueIdentifier>{20eb2815-5d99-4516-b233-2087950e25d7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Rebel\RebelWeapon">
       <UniqueIdentifier>{6bc087d8-3549-480e-a586-e4e2d45808f0}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,12 @@
     </Filter>
     <Filter Include="Rebel\Vehicle">
       <UniqueIdentifier>{027bc9f9-a74f-4275-88f5-382d94240c4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rebel\CamelRider">
+      <UniqueIdentifier>{20eb2815-5d99-4516-b233-2087950e25d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rebel\Berserker">
+      <UniqueIdentifier>{775f70e2-dbb7-4003-9205-d5da2df5a010}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +114,9 @@
     <ClInclude Include="DevelopmentTool.h">
       <Filter>ContentsGlobal</Filter>
     </ClInclude>
+    <ClInclude Include="Berserker.h">
+      <Filter>Rebel\Berserker</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PreCompile.cpp">
@@ -175,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="DevelopmentTool.cpp">
       <Filter>ContentsGlobal</Filter>
+    </ClCompile>
+    <ClCompile Include="Berserker.cpp">
+      <Filter>Rebel\Berserker</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

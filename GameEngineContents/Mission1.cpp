@@ -10,6 +10,7 @@
 #include "Truck.h"
 #include "UI.h"
 #include "DevelopmentTool.h"
+#include "Berserker.h"
 
 Mission1::Mission1()
 	: mission1BG_(nullptr),
@@ -38,7 +39,10 @@ Mission1::Mission1()
 	arabian19_(nullptr),
 	arabian20_(nullptr),
 	camelRider_(nullptr),
+	isCamelRiderDead_(false),
 	troopTruck_(nullptr),
+	isTruckDestroyed_(false),
+	berserker1_(nullptr),
 	ui_(nullptr)
 {
 }
@@ -109,6 +113,9 @@ void Mission1::Start()
 	troopTruck_ = CreateActor<Truck>(ObjectOrder::RebelMachine, "TroopTruck");
 	troopTruck_->GetTransform().SetWorldPosition(6250, 0, 0);
 
+
+	berserker1_ = CreateActor <Berserker>(ObjectOrder::Rebel, "Berserker1");
+	berserker1_->GetTransform().SetWorldPosition(5100, 0, 0);
 
 
 	ui_ = CreateActor<UI>(ObjectOrder::UI, "UI");
@@ -193,7 +200,7 @@ void Mission1::Start()
 
 
 
-	//GameEngineGUI::CreateGUIWindow<DevelopmentTool>("Development Tool", this);
+	GameEngineGUI::CreateGUIWindow<DevelopmentTool>("Development Tool", this);
 
 }
 
@@ -223,7 +230,8 @@ void Mission1::End()
 void Mission1::UpdateDestFocusMovement(float _deltaTime)
 {
 	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x - 5.f
-		<= destFocus_->GetTransform().GetWorldPosition().x)
+		<= destFocus_->GetTransform().GetWorldPosition().x 
+		&& false == isCamelRiderDead_)
 	{
 #ifdef _DEBUG
 		//isDestFocusHolding_ = false;
@@ -231,6 +239,7 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 		if (true == camelRider_->IsDead())
 		{
 			isDestFocusHolding_ = false;
+			isCamelRiderDead_ = true;
 		}
 		else
 		{
@@ -244,12 +253,14 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 	}
 
 	if (mission1BG_->GetPart2RightEnd() - GameEngineWindow::GetScale().x
-		<= destFocus_->GetTransform().GetWorldPosition().x)
+		<= destFocus_->GetTransform().GetWorldPosition().x
+		&& false == isTruckDestroyed_)
 	{
 		if (true == troopTruck_->IsDestroyed())
 		{
 			soldier_Mission1_->SetSoldierWorldPosLimit(-1.f);
 			isDestFocusHolding_ = false;
+			isTruckDestroyed_ = true;
 		}
 		else
 		{

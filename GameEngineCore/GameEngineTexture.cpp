@@ -304,7 +304,7 @@ PixelColor GameEngineTexture::GetPixelToPixelColor(int _x, int _y)
 
 	case DXGI_FORMAT_R8G8B8A8_UNORM:
 	{
-		int index = _y * static_cast<int>(scratchImage_.GetMetadata().width) + _x;
+		size_t index = _y * scratchImage_.GetMetadata().width + _x;
 		color = color + (index * 4);
 
 		returnColor.r = color[0];
@@ -432,7 +432,7 @@ PixelColor GameEngineTexture::GetPixelToPixelColor(int _x, int _y)
 	//	break;
 	case DXGI_FORMAT_B8G8R8A8_UNORM:
 	{
-		int index = _y * static_cast<int>(scratchImage_.GetMetadata().width) + _x;
+		size_t index = _y * scratchImage_.GetMetadata().width + _x;
 		color = color + (index * 4);
 
 		returnColor.r = color[2];

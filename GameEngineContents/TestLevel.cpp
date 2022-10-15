@@ -27,11 +27,11 @@ void TestLevel::Start()
 	PixelIndicator::SetPCTexture("TestBG_PC.png");
 
 	testPlayer_ = CreateActor<Soldier>(ObjectOrder::Soldier, "TestPlayer");
-	testPlayer_->GetTransform().SetWorldPosition(1500, 0, 0);
+	testPlayer_->GetTransform().SetWorldPosition(500, 0, 0);
 
 
 	testArabian_ = CreateActor<Arabian>(ObjectOrder::Rebel, "TestArabian");
-	testArabian_->GetTransform().SetWorldPosition(1925, 0, 0);
+	testArabian_->GetTransform().SetWorldPosition(925, 0, 0);
 
 	testBackground_ = CreateActor<TestBackground>(ObjectOrder::Background, "TestBackground");
 
@@ -47,7 +47,7 @@ void TestLevel::Start()
 	destFocus_ = CreateActor<IndicatorBase>(ObjectOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(1500, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(520, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
 	//시작 카메라 위치 변경이 필요하면 여기에서.
 
 	

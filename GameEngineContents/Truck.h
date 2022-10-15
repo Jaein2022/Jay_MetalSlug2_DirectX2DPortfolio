@@ -76,7 +76,7 @@ private:
 
 
 	PixelIndicator* upperLandingChecker_;
-	PixelIndicator* truckWorldPosPointer_;	//액터의 월드포지션 표시.
+	PixelIndicator* midLandingChecker_;	//액터의 월드포지션 표시.
 	PixelIndicator* lowerLandingChecker_;
 
 	bool isAirborne_;

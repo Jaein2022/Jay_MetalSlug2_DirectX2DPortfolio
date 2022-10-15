@@ -295,7 +295,7 @@ void GameEngineShaderResourceHelper::AllResourcesReset()
 void GameEngineShaderResourceHelper::ShaderCheck(GameEngineShader* _shader)
 {
 	for (const std::pair<std::string, GameEngineConstantBufferSetter>& setterPair
-		: _shader->constantBufferMap_)
+		: _shader->constantBufferSetterMap_)
 	{
 		std::multimap<std::string, GameEngineConstantBufferSetter>::iterator insertIter =
 			constantBufferSetterMap_.insert(std::make_pair(setterPair.first, setterPair.second));
@@ -304,7 +304,7 @@ void GameEngineShaderResourceHelper::ShaderCheck(GameEngineShader* _shader)
 	}
 
 	for (const std::pair<std::string, GameEngineTextureSetter>& setterPair
-		: _shader->textureMap_)
+		: _shader->textureSetterMap_)
 	{
 		std::multimap<std::string, GameEngineTextureSetter>::iterator insertIter
 			= textureSetterMap_.insert(std::make_pair(setterPair.first, setterPair.second));
@@ -315,7 +315,7 @@ void GameEngineShaderResourceHelper::ShaderCheck(GameEngineShader* _shader)
 
 
 	for (const std::pair<std::string, GameEngineSamplerSetter>& setterPair
-		: _shader->samplerMap_)
+		: _shader->samplerSetterMap_)
 	{
 		std::multimap<std::string, GameEngineSamplerSetter>::iterator insertIter
 			= samplerSetterMap_.insert(std::make_pair(setterPair.first, setterPair.second));

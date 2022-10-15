@@ -14,7 +14,7 @@ void Arabian::CreateArabianAnimations()
 		GameEngineTexture::Cut("Rebel_Arabian.png", 10, 18);
 	}
 	arabianRenderer_->SetTexture("Rebel_Arabian.png");
-	arabianRenderer_->CreateFrameAnimation_CutTexture("Idling",
+	arabianRenderer_->CreateFrameAnimation_CutTexture("Waiting",
 		FrameAnimation_Desc("Rebel_Arabian.png", 0, 8, 0.15f, true)
 	);
 	arabianRenderer_->CreateFrameAnimation_CutTexture("PreparingToAttack",
@@ -61,13 +61,13 @@ void Arabian::CreateArabianAnimations()
 	arabianRenderer_->CreateFrameAnimation_CutTexture("Falling",
 		FrameAnimation_Desc("Rebel_Arabian.png", 58, 58, 1.f, true)
 	);
-	arabianRenderer_->CreateFrameAnimation_CutTexture("FallingToIdling",
+	arabianRenderer_->CreateFrameAnimation_CutTexture("FallingToWaiting",
 		FrameAnimation_Desc("Rebel_Arabian.png", 59, 63, 0.1f, false)
 	);
-	arabianRenderer_->AnimationBindEnd("FallingToIdling",
+	arabianRenderer_->AnimationBindEnd("FallingToWaiting",
 		[this](const FrameAnimation_Desc& _desc)->void 
 		{
-			currentArabianState_ = ArabianState::Idling;
+			currentArabianState_ = ArabianState::Waiting;
 		}
 	);
 
@@ -179,13 +179,13 @@ void Arabian::CreateArabianAnimations()
 	);
 
 
-	arabianRenderer_->ChangeFrameAnimation("Idling");
+	arabianRenderer_->ChangeFrameAnimation("Waiting");
 }
 
 void Arabian::CreateArabianStates()
 {
 	arabianStateManager_.CreateState(
-		"Idling",
+		"Waiting",
 		[this](float _deltaTime, const StateInfo& _info)->void 
 		{
 			if (true == isEngaging_)
@@ -195,9 +195,9 @@ void Arabian::CreateArabianStates()
 		},
 		[this](const StateInfo& _info)->void 
 		{
-			arabianRenderer_->ChangeFrameAnimation("Idling");
+			arabianRenderer_->ChangeFrameAnimation("Waiting");
 		}
-		);
+	);
 
 	arabianStateManager_.CreateState(
 		"Shuffling",
@@ -281,11 +281,11 @@ void Arabian::CreateArabianStates()
 		}
 	);
 	arabianStateManager_.CreateState(
-		"FallingToIdling",
+		"FallingToWaiting",
 		nullptr,
 		[this](const StateInfo& _info)->void 
 		{
-			arabianRenderer_->ChangeFrameAnimation("FallingToIdling");
+			arabianRenderer_->ChangeFrameAnimation("FallingToWaiting");
 		},
 		[this](const StateInfo& _info)->void 
 		{

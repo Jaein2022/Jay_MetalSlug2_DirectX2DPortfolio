@@ -55,14 +55,15 @@ protected:
 	static void CoreUpdate(GameEngineCore* _userCore);	//프로그램 갱신.
 	static void CoreEnd(GameEngineCore* _userCore);	//프로그램 종료.
 
+	//엔진 기본제공 리소스 초기화 함수.
 	static void EngineResourceInitialize();
 	//사각형, 육면체, 에러텍스쳐 등등, 엔진 수준에서 기본적으로 지원되어야 하는 리소스를 준비하는 함수.
 
+	//엔진 기본제공 리소스 정리 함수.
 	static void EngineResourceDestroy();
-	//사각형, 육면체, 에러텍스쳐 등등, 엔진 수준에서 기본적으로 지원되어야 하는 리소스를 삭제하는 함수.
 
-	static void InitializeLevel(GameEngineLevel* _level, const std::string& _levelName);
 	//헤더 추가하기 싫어서 초기화를 CPP에서 하려고 만든 함수.
+	static void InitializeLevel(GameEngineLevel* _level, const std::string& _levelName);
 
 protected:	//컨텐츠코어만 사용해야 하는 함수들.
 	virtual std::string GetWindowTitle()

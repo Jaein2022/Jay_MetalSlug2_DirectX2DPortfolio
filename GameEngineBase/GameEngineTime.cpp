@@ -4,15 +4,18 @@
 GameEngineTime* GameEngineTime::inst_ = new GameEngineTime();
 
 GameEngineTime::GameEngineTime() 
-	: deltaTime_Double_(0.0),
-	deltaTime_Float_(0.00f),
+	: deltaTimeD_(0.00),
+	deltaTimeF_(0.00f),
 	globalTimeScale_(1.f),
 	averageFPS_(0),
-	remainedFPSUpdateInterval_(0.0),
-	loopCount_(0),
+	sumDeltaTimeF_(0.f),
+	fpsCheckTime_(0.0),
+	curFrameTime_(1.0),
+	frameInterval_(0.0),
+	frameCount_(0),
 	totalFPS_(0),
-	frameLimit_(-1),
-	isUnderFrameLimit_(true)
+	isUpdateOn_(true),
+	frameLimit_(-1)
 {
 }
 
@@ -25,11 +28,10 @@ void GameEngineTime::Reset()
 	prev_ = std::chrono::steady_clock::now();
 
 	averageFPS_ = 0;
-	remainedFPSUpdateInterval_ = 1.0;
-	loopCount_ = 0;
+	fpsCheckTime_ = 1.0;
 	totalFPS_ = 0;
-
-	isUnderFrameLimit_ = true;
+	frameCount_ = 0;
+	isUpdateOn_ = true;
 
 	Update();
 }
@@ -51,39 +53,62 @@ void GameEngineTime::Update()
 
 	//std::ratio<Num, Denom = 1>: Num / Denom의 형태로 입력받은 분수나 비율을 표현, 계산하는 클래스. 
 
-	deltaTime_Double_ = time_span.count();
-	deltaTime_Float_ = static_cast<float>(deltaTime_Double_);
+	deltaTimeD_ = time_span.count();
+	deltaTimeF_ = static_cast<float>(deltaTimeD_);
 	//std::chrono::duration::count(): duration<double>형태로 저장된 델타타임이 몇 틱인지 계산한다. 
 	// duration클래스 생성자의 두번째 템플릿 매개변수 Period에 아무 값도 넣어주지 않았으므로 초당 1틱으로 계산된다.
 	//std::chrono::duration<Rep, Period>::count(): duration형식의 변수에 저장된 시간이 몇 틱인지 반환하는 함수. 
 
 	prev_ = current;
 
-	remainedFPSUpdateInterval_ -= deltaTime_Double_;
-	if (DBL_EPSILON < deltaTime_Double_ && true == isUnderFrameLimit_)	
-		//델타타임이 극도로 작은 값이거나 초당 프레임 제한을 넘겼다면 무시.
-	{
-		++loopCount_;
-		totalFPS_ += static_cast<int>(1.0 / deltaTime_Double_);
-	}
-
-	if (0 >= remainedFPSUpdateInterval_ && 0 < loopCount_)	//1초간 평균 프레임 수 계산.
-	{
-		averageFPS_ = totalFPS_ / loopCount_;
-
-		remainedFPSUpdateInterval_ = 1.0;
-		loopCount_ = 0;
-		totalFPS_ = 0;
-
-		isUnderFrameLimit_ = true;
-	}
+	fpsCheckTime_ -= deltaTimeD_;
 
 	if (-1 == frameLimit_)	//프레임 제한을 할 생각이 없다는 의미.
 	{
-		isUnderFrameLimit_ = true;
+		isUpdateOn_ = true;
+
+		if (DBL_EPSILON <= deltaTimeD_)	//델타타임이 극도로 작은 값이라면 무시.
+		{
+			++frameCount_;
+			totalFPS_ += static_cast<int>(1.0 / deltaTimeD_);
+
+			if (0 >= fpsCheckTime_)	//1초간 평균 프레임 수 계산.
+			{
+				averageFPS_ = totalFPS_ / frameCount_;		//초당 평균 프레임 수 갱신.
+
+				fpsCheckTime_ = 1.0;	//남은 FPS갱신 간격 1초로 복구.
+				frameCount_ = 0;
+				totalFPS_ = 0;
+			}
+		}
 	}
-	else if (loopCount_ >= frameLimit_)	//초당 프레임 수가 프레임 제한을 넘어서면 프레임 제한을 건다.
+	else
 	{
-		isUnderFrameLimit_ = false;
+		if (DBL_EPSILON <= deltaTimeD_)	//델타타임이 극도로 작은 값이라면 무시.
+		{
+			curFrameTime_ -= deltaTimeD_;
+			sumDeltaTimeF_ += deltaTimeF_;
+
+			if (0.f >= curFrameTime_)
+			{
+				isUpdateOn_ = true;
+				++frameCount_;
+
+				sumDeltaTimeF_ = static_cast<float>(frameInterval_ - curFrameTime_);
+				curFrameTime_ = frameInterval_;
+
+				if (0 >= fpsCheckTime_)	//1초간 평균 프레임 수 계산.
+				{
+					averageFPS_ = frameCount_;		//초당 평균 프레임 수 갱신.
+					fpsCheckTime_ = 1.0;	//남은 FPS갱신 간격 1초로 복구.
+					frameCount_ = 0;
+					totalFPS_ = 0;
+				}
+			}
+			else
+			{
+				isUpdateOn_ = false;
+			}
+		}
 	}
 }

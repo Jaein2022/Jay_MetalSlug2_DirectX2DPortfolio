@@ -537,15 +537,13 @@ void ShaderCompile()
 
 void GameEngineCore::EngineResourceInitialize()
 {
-	//사각형, 육면체, 에러텍스쳐 등등, 엔진 수준에서 기본적으로 지원되어야 하는 리소스를 준비하는 함수.
-	EngineTextureLoad();
-	EngineInputLayout();
-	EngineMesh();
-	EngineSubSetting();
-	ShaderCompile();
+	EngineTextureLoad();	//샘플러를 생성하고 텍스처를 불러오는 함수.
+	EngineInputLayout();	//엔진 기본제공 인풋 레이아웃을 저장하는 함수.
+	EngineMesh();			//엔진 기본제공 사각형과 육면체 메쉬를 생성하는 함수.
+	EngineSubSetting();		//엔진 기본제공 래스터라이저, 블렌드, 깊이스텐실을 생성하는 함수.
+	ShaderCompile();		//엔진 기본제공 HLSL코드를 컴파일해서 셰이더와 셰이더리소스를 생성, 연결하는 함수.
 
-	EngineRenderingPipeLine();
-	//셰이더 로딩.
+	EngineRenderingPipeLine();	//엔진 기본제공 렌더링 파이프라인들을 생성하는 함수.
 }
 
 void GameEngineCore::EngineResourceDestroy()

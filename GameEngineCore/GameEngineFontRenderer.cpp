@@ -13,7 +13,8 @@ GameEngineFontRenderer::GameEngineFontRenderer()
 	fontColor_(float4::White),
 	textPosition_(float4::Zero),
 	lr_(LeftAndRightSort::Left),
-	tb_(TopAndBotSort::Top)
+	tb_(TopAndBotSort::Top),
+	mode_(FontPositionMode::Window)
 
 {
 }

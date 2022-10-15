@@ -23,7 +23,7 @@ class GameEngineTransform;
 class GameEngineCollision;
 class GameEngineLevel : public GameEngineNameObject, public GameEngineUpdateObject
 {
-	//레벨: 액터들이 움직이는 배경.
+	//레벨: 모든 형태의 업데이트오브젝트들을 관리하는 오브젝트.
 
 	friend class GameEngineCore;
 	friend GameEngineRenderer;
@@ -124,18 +124,34 @@ public:
 
 private:
 	void LevelUpdate(float _deltaTime);
-	void ActorsUpdate(float _deltaTime);
-	void Render(float _deltaTime);		//메인카메라가 가진 렌더러들의 정보대로 렌더하는 함수.
-	void RemoveActor(GameEngineActor* _actor);	//allActors_맵에서 액터를 제거하는 함수.
-	void Release(float _deltaTime);	//이 프레임워크의 정식 오브젝트 삭제 절차.
 
-private:
-	void PushRenderer(GameEngineRenderer* _renderer, int _cameraOrder);	//메인카메라에 렌더러를 등록하는 함수. 
-	void PushCamera(GameEngineCamera* _camera, int _cameraOrder);	//해당 레벨의 메인카메라를 등록하는 함수.
-	void PushCollision(GameEngineCollision* _collision, int _collisionOrder);
-	void OverChildMove(GameEngineLevel* _nextLevel);	//오브젝트를 다음 레벨로 이전시키는 함수.
-	void ActorLevelStartEvent();
-	void ActorLevelEndEvent();
+	//이 레벨이 가진 액터들을 업데이트하는 함수.
+	void ActorsUpdate(float _deltaTime);
+
+	//이 레벨의 카메라들이 가진 렌더러들의 렌더링 정보대로 각각의 카메라들이 가진 렌더타겟에 렌더해서 
+	// 백버퍼 렌더타겟으로 합치고 전면 버퍼와 교체까지 하는 함수.
+	void Render(float _deltaTime);
+
+	//allActors_맵에서 액터를 제거하는 함수.
+	void RemoveActor(GameEngineActor* _actor);
+
+	//이 프레임워크의 정식 오브젝트 삭제 절차.
+	void Release(float _deltaTime);
+
+	//카메라에 렌더러를 등록하는 함수. 
+	void PushRenderer(GameEngineRenderer* _renderer, int _cameraOrder);
+
+	//이 레벨에 카메라를 등록하는 함수.
+	void PushCamera(GameEngineCamera* _camera, int _cameraOrder);
+
+	//이 레벨에 충돌체를 등록하는 함수.
+	void PushCollision(GameEngineCollision* _collision, int _order);
+
+	//오브젝트를 다음 레벨로 이전시키는 함수.
+	void OverChildMove(GameEngineLevel* _nextLevel);
+
+	void ActorLevelStartEvent();	//
+	void ActorLevelEndEvent();		//
 
 private:
 	void PushCamera(GameEngineCamera* _camera, CameraOrder _order)

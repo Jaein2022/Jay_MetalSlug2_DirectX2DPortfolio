@@ -56,6 +56,8 @@ void GameEngineStatusWindow::OnGUI(GameEngineLevel* _level, float _deltaTime)
 	std::string currentFPS = "Current FPS : " + std::to_string(GameEngineTime::GetFPS());
 	ImGui::Text(currentFPS.c_str());
 
+	std::string currentDeltaTime = "Current DeltaTime : " + std::to_string(GameEngineTime::GetDeltaTimeF());
+	ImGui::Text(currentDeltaTime.c_str());
 
 	if (true == ImGui::Button("Collision Debug Switch"))
 	{

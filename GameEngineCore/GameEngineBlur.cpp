@@ -2,7 +2,7 @@
 #include "GameEngineBlur.h"
 #include "GameEngineRenderTarget.h"
 
-GameEngineBlur::GameEngineBlur() : copiedRenderTarget_(nullptr)
+GameEngineBlur::GameEngineBlur() : copiedRenderTarget_(nullptr), renderingPipeLine_(nullptr)
 {
 }
 
@@ -24,8 +24,22 @@ void GameEngineBlur::EffectInit()
 		float4::Zero
 	);
 
-	effectRenderSet_.SetPipeLine("Blur");
-	effectRenderSet_.shaderResourceHelper_.SetConstantBuffer_New(
+	//effectRenderSet_.SetPipeLine("Blur");
+	//effectRenderSet_.shaderResourceHelper_.SetConstantBuffer_New(
+	//	"WindowScale",
+	//	GameEngineWindow::GetInst()->GetScale()
+	//);
+
+	renderingPipeLine_ = GameEngineRenderingPipeLine::Find("Blur");
+	if (nullptr == renderingPipeLine_)
+	{
+		MsgBoxAssert("Blur: 그런 이름의 렌더링 파이프라인이 존재하지 않습니다.");
+		return;
+	}
+
+	shaderResourceHelper_.ResourceCheck(this->renderingPipeLine_);
+
+	shaderResourceHelper_.SetConstantBuffer_New(
 		"WindowScale",
 		GameEngineWindow::GetInst()->GetScale()
 	);
@@ -35,9 +49,9 @@ void GameEngineBlur::Effect(GameEngineRenderTarget* _renderTarget)
 {
 	copiedRenderTarget_->Copy(_renderTarget);
 
-	effectRenderSet_.shaderResourceHelper_.SetTexture("Tex", copiedRenderTarget_->GetRenderTargetTexture(0));
+	this->shaderResourceHelper_.SetTexture("Tex", copiedRenderTarget_->GetRenderTargetTexture(0));
 
 	_renderTarget->Clear();
 	_renderTarget->Setting();
-	_renderTarget->Effect(this->effectRenderSet_);
+	_renderTarget->Effect(this->renderingPipeLine_, &this->shaderResourceHelper_);
 }

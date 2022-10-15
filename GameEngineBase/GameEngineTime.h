@@ -28,7 +28,7 @@ public:
 
 	static void Destroy()
 	{
-		//값형으로 안 하고 포인터 형식으로 싱글턴을 만드는 이유: 제거 시점을 내 마음대로 통제하기 위해서.
+		//값형으로 안 하고 포인터 형식으로 싱글톤을 만드는 이유: 제거 시점을 내 마음대로 통제하기 위해서.
 		//싱글톤 삭제'만' 원하는 타이밍에 한다.
 		if (nullptr != inst_)
 		{
@@ -39,22 +39,29 @@ public:
 
 	static inline double GetDeltaTimeD()
 	{
-		return inst_->deltaTime_Double_;
+		return inst_->deltaTimeD_;
 	}
 
 	static inline float GetDeltaTimeF()
 	{
-		if (0.05f <= inst_->deltaTime_Float_)
+		if (0.05f <= inst_->deltaTimeF_)
 		{
-			inst_->deltaTime_Float_ = 0.05f;
+			inst_->deltaTimeF_ = 0.05f;
 		}
 
-		return inst_->deltaTime_Float_ * inst_->globalTimeScale_;
+		if (-1 == inst_->frameLimit_)
+		{
+			return inst_->deltaTimeF_ * inst_->globalTimeScale_;
+			//프레임 제한이 없는 상황에서 globalTimeScale_이 곱해진 델타타임 반환.
+		}
+
+		return inst_->sumDeltaTimeF_ * inst_->globalTimeScale_;
+		//프레임 제한이 있는 상황에서 globalTimeScale_이 곱해진 누적 델타타임 반환.
 	}
 
 	static inline float GetDeltaTimeF(int _index)
 	{
-		return inst_->deltaTime_Float_ * inst_->GetTimeScale(_index);
+		return inst_->deltaTimeF_ * inst_->GetTimeScale(_index);
 	}
 	template <typename EnumType>
 	inline void GetDeltaTimeF(EnumType _type)
@@ -95,11 +102,17 @@ public:
 	static inline void SetFrameLimit(int _frameLimit)
 	{
 		inst_->frameLimit_ = _frameLimit;
+
+		if (-1 != inst_->frameLimit_)
+		{
+			inst_->frameInterval_ = 1.0 / static_cast<double>(inst_->frameLimit_);
+			inst_->curFrameTime_ = inst_->frameInterval_;
+		}
 	}
 
-	static inline bool IsUnderFrameLimit()
+	static inline bool IsUpdateOn()
 	{
-		return inst_->isUnderFrameLimit_;
+		return inst_->isUpdateOn_;
 	}
 
 private:
@@ -115,23 +128,25 @@ private:
 	// 단방향(monotonic)으로만 시간이 흘러가므로 절대 역행하지 않고, duration이 음수가 나올 수도 없다.
 
 
-	double deltaTime_Double_;				//델타타임: 지난 루프를 한번 수행 할 때 걸린 시간.
-	float deltaTime_Float_;				//델타타임: 지난 루프를 한번 수행 할 때 걸린 시간.
+	double deltaTimeD_;				//델타타임: 지난 루프를 한번 수행 할 때 걸린 시간.
+	float deltaTimeF_;				//델타타임: 지난 루프를 한번 수행 할 때 걸린 시간.
 	//컴퓨터의 성능이 좋을수록 델타타임 값이 작아지므로, 컴퓨터 성능 격차로 인해 각자 다른 속도로 루프를 수행한다고 해도 
 	//성능에 반비례해서 델타타임 값이 작게 잡히고, 그로 인해 컴퓨터 성능 상관없이 같은 시간 같은 게임 진행속도를 보여주게 된다.
 
 	std::map<int, float> timeScale_;
 
-	float globalTimeScale_;			//게임 전체 속도 조정용 배수.
-
+	float globalTimeScale_;		//게임 전체 속도 조정용 배수.
 
 	int averageFPS_;					//초당 평균 프레임 갱신 횟수.
-	double remainedFPSUpdateInterval_;	//현재 남은 FPS 갱신 주기.
-	int loopCount_;				//1초간 수행한 전체 루프 수.
+	float sumDeltaTimeF_;	//프레임 제한이 있을때 사용되는 프레임간 누적 델타타임.
+	double fpsCheckTime_;	//외부 영향을 받지 않는 정확한 FPS 측정용 시간계산 변수.
+	double curFrameTime_;	//현재 남은 다음 프레임 갱신 주기.
+	double frameInterval_;	//프레임 제한이 걸렸을 때 적용되는 프레임간 간격. 
+	int frameCount_;				//1초간 수행한 전체 루프 수.
 	int totalFPS_;			//1초간 집계된 FPS의 총합.
 
-	int frameLimit_;
-	bool isUnderFrameLimit_;
+	bool isUpdateOn_;		//프레임 제한 중인가 여부. true면 제한을 걸지 않는다.
+	int frameLimit_;			//초당 프레임 제한 기준. -1이면 제한하지 않음.
 
 
 };

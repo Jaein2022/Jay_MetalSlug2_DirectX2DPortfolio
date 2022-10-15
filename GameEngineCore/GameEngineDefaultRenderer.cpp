@@ -23,13 +23,13 @@ void GameEngineDefaultRenderer::Render(float _deltaTime)
 	this->shaderResourceHelper_.AllResourcesReset();
 }
 
-void GameEngineDefaultRenderer::SetPipeLine(const std::string& _name)
+void GameEngineDefaultRenderer::SetPipeLine(const std::string& _renderingPipeLineName)
 {
-	renderingPipeLine_ = GameEngineRenderingPipeLine::Find(_name);
+	renderingPipeLine_ = GameEngineRenderingPipeLine::Find(_renderingPipeLineName);
 
 	if (nullptr == renderingPipeLine_)
 	{
-		MsgBoxAssertString(_name + ": 그런 이름의 렌더링 파이프라인이 없습니다.");
+		MsgBoxAssertString(_renderingPipeLineName + ": 그런 이름의 렌더링 파이프라인이 없습니다.");
 		return;
 	}
 

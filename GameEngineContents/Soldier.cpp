@@ -365,6 +365,7 @@ void Soldier::CheckGround()
 			{
 				leg_ = SoldierLegState::Falling;
 				top_ = SoldierTopState::Aiming;
+				direction_ = AimingDirection::Forward;
 				isAirborne_ = true;
 			}
 		}
@@ -887,7 +888,7 @@ void Soldier::MoveSoldier(float _deltaTime)
 {
 	if (-1 != soldierWorldPosLimit_X_)
 	{
-		if (this->GetTransform().GetWorldPosition().x >= soldierWorldPosLimit_X_)
+		if (this->GetTransform().GetWorldPosition().x >= soldierWorldPosLimit_X_ && -1 != horizontalInputValue_)
 		{
 			movementFor1Second_.x = soldierWorldPosLimit_X_ - this->GetTransform().GetWorldPosition().x;
 		}

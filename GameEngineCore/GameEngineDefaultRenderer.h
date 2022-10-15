@@ -29,7 +29,10 @@ private:
 
 public:
 	virtual void Render(float _deltaTime) override;
-	void SetPipeLine(const std::string& _name);
+
+	//렌더러가 필요한 렌더링 파이프라인과 셰이더리소스헬퍼를 등록하고 
+	//엔진 기본제공 상수버퍼인 "TRANSFORMDATA"와 "RENDEROPTION"를 연결하는 함수.
+	void SetPipeLine(const std::string& _renderingPipeLineName);
 	GameEngineRenderingPipeLine* GetPipeLine();
 	GameEngineRenderingPipeLine* GetClonePipeLine();
 

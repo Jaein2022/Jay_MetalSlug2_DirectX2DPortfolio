@@ -17,7 +17,6 @@
 #include <GameEngineCore\GameEngineTextureRenderer.h>
 #include <GameEngineCore\GameEngineUIRenderer.h>
 #include <GameEngineCore\GameEngineFontRenderer.h>
-#include <GameEngineCore\GameEngineRenderSet.h>
 
 #include <GameEngineCore\GameEngineFont.h>
 #include <GameEngineCore\GameEngineTexture.h>

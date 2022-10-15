@@ -202,8 +202,6 @@ void GameEngineDevice::CreateSwapChain()
 	// 레퍼런스 카운트가 0이 될 때만 진짜 메모리 해제를 해서 
 	// 댕글링 포인터가 생길 가능성을 없애는 방식의 포인터이다.
 
-	//텍스쳐도 버퍼의 한 종류?? 그럼 리소스뷰들은 전부 버퍼의 하위분류??
-	//->리소스는 버퍼와 텍스쳐로 나누고, 텍스쳐로 리소스뷰들을 만드므로 리소스뷰들은 버퍼가 아니라 리소스의 하위분류이다.
 	ID3D11Texture2D* backBufferTexture = nullptr;	//화면에 최종적으로 내보내는 텍스쳐.
 	if (S_OK != swapChain_->GetBuffer(	//스왑체인의 백버퍼들 중 하나에 접근할 수있게 해주는 함수.
 		0,								//0번 버퍼에 접근.
@@ -227,7 +225,7 @@ void GameEngineDevice::CreateSwapChain()
 void GameEngineDevice::RenderStart()
 {
 	backBufferRenderTarget_->Clear();
-	//백버퍼에 남아있던 이전 이미지는 전부 한 색으로 덮어서 지운다.
+	//백버퍼에 남아있던 이전 픽셀정보들은 전부 한 색으로 덮어서 지운다.
 
 	backBufferRenderTarget_->Setting();
 	//다시 렌더링 할 준비를 한다.

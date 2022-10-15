@@ -7,6 +7,33 @@
 #include "GameEngineSampler.h"
 #include "GameEngineStructuredBuffer.h"
 
+void GameEngineConstantBufferSetter::Setting() const
+{
+	constantBuffer_->ChangeData(settingDataToGPU_, byteWidth_);
+
+	settingFunction_();	//스위치문 한번 덜 쓰려고 펑셔널 사용.
+}
+
+void GameEngineTextureSetter::Setting() const
+{
+	settingFunction_();	//스위치문 한번 덜 쓰려고 펑셔널 사용.
+}
+
+void GameEngineTextureSetter::Reset() const
+{
+	resetFunction_();	//스위치문 한번 덜 쓰려고 펑셔널 사용.
+}
+
+void GameEngineSamplerSetter::Setting() const
+{
+	settingFunction_();	//스위치문 한번 덜 쓰려고 펑셔널 사용.
+}
+
+//void GameEngineStructuredBufferSetter::Setting() const
+//{
+//	settingFunction_();	//스위치문 한번 덜 쓰려고 펑셔널 사용.
+//}
+
 GameEngineShader::GameEngineShader()
 	: shaderVersion_(""),
 	entryPoint_(""),
@@ -75,12 +102,12 @@ GameEngineConstantBufferSetter& GameEngineShader::GetConstantBufferSetter(const 
 {
 	std::string uppercaseSetterName = GameEngineString::ToUpperReturn(_name);
 
-	if (constantBufferMap_.end() == constantBufferMap_.find(uppercaseSetterName))
+	if (constantBufferSetterMap_.end() == constantBufferSetterMap_.find(uppercaseSetterName))
 	{
 		MsgBoxAssertString(_name + ": 그런 이름의 상수버퍼가 존재하지 않습니다.");
 	}
 
-	return constantBufferMap_[uppercaseSetterName];
+	return constantBufferSetterMap_[uppercaseSetterName];
 }
 
 void GameEngineShader::CreateVersion(const std::string& _shaderType, UINT _versionHigh, UINT _versionLow)
@@ -207,13 +234,13 @@ void GameEngineShader::ShaderResCheck()
 			newCBufferSetter.parentShaderType_ = this->shaderType_;
 			newCBufferSetter.constantBuffer_ = GameEngineConstantBuffer::CreateAndFind(
 				uppercaseResourceName,	//만들려는 상수버퍼가 없으면 만들고, 이미 있으면 공유한다.
-				cBufferDesc				//같은 이름, 같은 크기의 상수 버퍼는 포인터를 공유한다.
+				cBufferDesc		//같은 이름, 같은 크기의 상수 버퍼는 셰이더리소스헬퍼들이 포인터를 공유한다.
 			);			// 그래서 이미 만들어져 있는걸 또 만들어도 터뜨리지 않고 대신 이미 만들어져 있는걸 공유한다.
 
 			newCBufferSetter.bindPoint_ = resInfo.BindPoint;
 
 			std::pair<std::map<std::string, GameEngineConstantBufferSetter>::iterator, bool> insertResult =
-				constantBufferMap_.insert(std::make_pair(uppercaseResourceName, newCBufferSetter));
+				constantBufferSetterMap_.insert(std::make_pair(uppercaseResourceName, newCBufferSetter));
 			//맵에 겹치는 키값을 가진 원소를 삽입하려고 하면 중복된 키값을 가진 원소를 가리키는 
 			//이터레이터와 false가 든 페어를 반환하고 삽입 시도는 무시된다.
 			//삽입이 성공했다면 삽입한 원소를 가리키는 이터레이터와 true를 가진 페어를 반환한다.
@@ -222,7 +249,7 @@ void GameEngineShader::ShaderResCheck()
 			if (false == insertResult.second)
 			{
 				MsgBoxAssertString(std::string(resInfo.Name) + ": 이미 같은 이름의 상수버퍼 세터가 존재합니다.");
-				//중복으로 만드는일이 생겨선 안된다.
+				//상수버퍼 세터를 중복으로 만드는일이 생겨선 안된다.
 				return;
 			}
 
@@ -239,7 +266,7 @@ void GameEngineShader::ShaderResCheck()
 			newTextureSetter.bindPoint_ = resInfo.BindPoint;
 
 			std::pair<std::map<std::string, GameEngineTextureSetter>::iterator, bool> insertResult
-				= textureMap_.insert(std::make_pair(uppercaseResourceName, newTextureSetter));
+				= textureSetterMap_.insert(std::make_pair(uppercaseResourceName, newTextureSetter));
 			//맵에 겹치는 키값을 가진 원소를 삽입하려고 하면 중복된 키값을 가진 원소를 가리키는 
 			//이터레이터와 false가 든 페어를 반환하고 삽입 시도는 무시된다.
 			//삽입이 성공했다면 삽입한 원소를 가리키는 이터레이터와 true를 가진 페어를 반환한다.
@@ -263,7 +290,7 @@ void GameEngineShader::ShaderResCheck()
 			newSamplerSetter.bindPoint_ = resInfo.BindPoint;
 
 			std::pair<std::map<std::string, GameEngineSamplerSetter>::iterator, bool> insertResult
-				= samplerMap_.insert(std::make_pair(uppercaseResourceName, newSamplerSetter));
+				= samplerSetterMap_.insert(std::make_pair(uppercaseResourceName, newSamplerSetter));
 			//맵에 겹치는 키값을 가진 원소를 삽입하려고 하면 중복된 키값을 가진 원소를 가리키는 
 			//이터레이터와 false가 든 페어를 반환하고 삽입 시도는 무시된다.
 			//삽입이 성공했다면 삽입한 원소를 가리키는 이터레이터와 true를 가진 페어를 반환한다.
@@ -277,42 +304,42 @@ void GameEngineShader::ShaderResCheck()
 			break;
 		}
 
-		case D3D_SIT_STRUCTURED:
-		{
-			//구조화버퍼는 구조적인 특성상 대용량 메모리를 사용하는것이 기본인데, 
-			//동적 할당되는 특성상 미리 만들수도 없다.
+		//case D3D_SIT_STRUCTURED:
+		//{
+		//	//구조화버퍼는 구조적인 특성상 대용량 메모리를 사용하는것이 기본인데, 
+		//	//동적 할당되는 특성상 미리 만들수도 없다.
 
-			ID3D11ShaderReflectionConstantBuffer* cBufferPtr = compileInfo->GetConstantBufferByName(resInfo.Name);
-			D3D11_SHADER_BUFFER_DESC shaderBufferDesc = { 0 };
-			cBufferPtr->GetDesc(&shaderBufferDesc);
+		//	ID3D11ShaderReflectionConstantBuffer* cBufferPtr = compileInfo->GetConstantBufferByName(resInfo.Name);
+		//	D3D11_SHADER_BUFFER_DESC shaderBufferDesc = { 0 };
+		//	cBufferPtr->GetDesc(&shaderBufferDesc);
 
-			GameEngineStructuredBufferSetter newSBufferSetter;
-			newSBufferSetter.parentShader_ = this;
-			newSBufferSetter.SetName(uppercaseResourceName);
-			newSBufferSetter.parentShaderType_ = this->shaderType_;
+		//	GameEngineStructuredBufferSetter newSBufferSetter;
+		//	newSBufferSetter.parentShader_ = this;
+		//	newSBufferSetter.SetName(uppercaseResourceName);
+		//	newSBufferSetter.parentShaderType_ = this->shaderType_;
 
-			// 아직은 데이터의 사이즈는 알수있어도 이걸로 몇개짜리 버퍼를 만들지는 알수가 없다.
+		//	// 아직은 데이터의 사이즈는 알수있어도 이걸로 몇개짜리 버퍼를 만들지는 알수가 없다.
 
-			newSBufferSetter.structuredBuffer_ = GameEngineStructuredBuffer::CreateAndFind(
-				uppercaseResourceName,	//
-				shaderBufferDesc,		//
-				0						//
-			);
-			newSBufferSetter.bindPoint_ = resInfo.BindPoint;
+		//	newSBufferSetter.structuredBuffer_ = GameEngineStructuredBuffer::CreateAndFind(
+		//		uppercaseResourceName,	//
+		//		shaderBufferDesc,		//
+		//		0						//
+		//	);
+		//	newSBufferSetter.bindPoint_ = resInfo.BindPoint;
 
-			std::pair<std::map<std::string, GameEngineStructuredBufferSetter>::iterator, bool> insertResult
-				= structuredBufferMap_.insert(
-					std::make_pair(uppercaseResourceName, newSBufferSetter)
-				);
+		//	std::pair<std::map<std::string, GameEngineStructuredBufferSetter>::iterator, bool> insertResult
+		//		= structuredBufferSetterMap_.insert(
+		//			std::make_pair(uppercaseResourceName, newSBufferSetter)
+		//		);
 
-			if (false == insertResult.second)
-			{
-				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 구조화 버퍼 세터가 존재합니다.");
-				return;
-			}
+		//	if (false == insertResult.second)
+		//	{
+		//		MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 구조화 버퍼 세터가 존재합니다.");
+		//		return;
+		//	}
 
-			break;
-		}
+		//	break;
+		//}
 
 		default:
 		{
@@ -321,31 +348,4 @@ void GameEngineShader::ShaderResCheck()
 		}
 		}
 	}
-}
-
-void GameEngineConstantBufferSetter::Setting() const
-{
-	constantBuffer_->ChangeData(settingDataToGPU_, byteWidth_);
-
-	settingFunction_();
-}
-
-void GameEngineTextureSetter::Setting() const
-{
-	settingFunction_();
-}
-
-void GameEngineTextureSetter::Reset() const
-{
-	resetFunction_();
-}
-
-void GameEngineSamplerSetter::Setting() const
-{
-	settingFunction_();
-}
-
-void GameEngineStructuredBufferSetter::Setting() const
-{
-	settingFunction_();
 }

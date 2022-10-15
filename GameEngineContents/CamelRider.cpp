@@ -909,7 +909,7 @@ void CamelRider::CheckGround()
 				fallingSpeed_ = 0.f;
 			}
 		}
-		else if (true == midLandingChecker_->IsOnGroundPixel())
+		else if (true == lowerLandingChecker_->IsOnGroundPixel())
 		{
 			if (true == isAirborne_)
 			{

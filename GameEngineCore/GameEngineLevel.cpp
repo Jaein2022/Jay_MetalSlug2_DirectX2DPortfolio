@@ -153,6 +153,7 @@ void GameEngineLevel::Render(float _deltaTime)
 		if (nullptr != cameras_[i])
 		{
 			cameras_[i]->Render(_deltaTime);
+			//렌더러들이 가진 렌더링 정보를 각 카메라별로 가진 렌더타겟에 옮긴다.
 		}
 	}
 
@@ -161,6 +162,7 @@ void GameEngineLevel::Render(float _deltaTime)
 		if (nullptr != cameras_[i])
 		{
 			cameras_[i]->GetCameraRenderTarget()->EffectProcess();
+			//카메라별로 가지고 있는 렌더타겟에, 가지고 있는 블러 등의 후처리 효과가 있다면 적용한다.
 		}
 	}
 
@@ -169,13 +171,15 @@ void GameEngineLevel::Render(float _deltaTime)
 		if (nullptr != cameras_[i])
 		{
 			GameEngineDevice::GetBackBuffer()->Merge(cameras_[i]->cameraRenderTarget_, 0);
-			//다른 카메라들이 가진 렌더타겟들을 백버퍼 렌더타겟으로 합친다.
+			//다른 카메라들이 가진 렌더타겟의 렌더링 정보들을 백버퍼 렌더타겟으로 합친다.
 		}
 	}
 
 	GameEngineDevice::GetBackBuffer()->EffectProcess();
+	//백버퍼 렌더타겟이 가진, 윈도우 전체에 적용해야 하는 후처리 효과가 있다면 여기서 적용한다.
 
 	GameEngineDebug::Debug3DRender();
+	//DebugRender()로 등록된 디버깅 정보는 실제로는 여기서 백버퍼 렌더타겟으로 옮겨진다.
 
 	GameEngineGUI::Render(this, _deltaTime);
 
@@ -199,10 +203,10 @@ void GameEngineLevel::Release(float _deltaTime)
 	for (GameEngineUpdateObject* object : deleteObjects_)
 	{
 		object->ReleaseHierarchy();
-		//이전 루프에서 사망판정되서 objectsInDeletion_에 저장된 모든 오브젝트들과 그 자식들을 전부 삭제한다.
+		//이전 루프에서 사망판정되서 deleteObjects_에 저장된 모든 오브젝트들과 그 자식들을 전부 삭제한다.
 	}
 	deleteObjects_.clear();
-	//오브젝트들을 전부 삭제했다면 objectsInDeletion_리스트를 비운다.
+	//오브젝트들을 전부 삭제했다면 deleteObjects_리스트를 비운다.
 
 
 	for (size_t i = 0; i < cameras_.size(); i++)
@@ -246,9 +250,15 @@ void GameEngineLevel::Release(float _deltaTime)
 
 			if (true == (*actorIter)->IsDead())
 			{
-				//delete (*listIter); 왜 그냥 삭제를 안하고 이렇게 복잡한 삭제/정리 체계를 만들고 있었지??
-				actorIter = actorGroupIter->second.erase(actorIter);
 				//액터가 사망판정받았다면 allActors_맵에서 제거.
+				actorIter = actorGroupIter->second.erase(actorIter);
+				//delete (*actorIter); 왜 그냥 삭제를 안하고 이렇게 복잡한 삭제/정리 체계를 만들고 있지??
+				//->레벨 아래로 액터 업데이트오브젝트 밑에 각종 기능을 가진 컴포넌트 업데이트오브젝트들이 
+				// 적층식으로 쌓이고 상호 등록, 관리되는 현재 구조상 무분별하게 삭제하면
+				// 업데이트오브젝트 구조가 무너지고 메모리 누수를 막을 수 없게 된다.
+				//따라서, 오브젝트를 삭제할 때 업데이트오브젝트 적층 구조에서 완전히 떼어낸 과정을 거친 후 삭제해야 하고
+				// 떼어내는 과정을 거쳐야 하기 때문에 삭제하고자하는 루프에서 바로 삭제하지 않고
+				// deleteObjects_ 리스트에 넣은 후 다음 루프에서 삭제하는 절차가 필요하다.
 			}
 			else
 			{

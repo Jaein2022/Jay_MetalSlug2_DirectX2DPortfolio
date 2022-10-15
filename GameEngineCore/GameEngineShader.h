@@ -47,7 +47,8 @@ class GameEngineConstantBufferSetter : public ShaderResSetter
 
 public:
 	GameEngineConstantBuffer* constantBuffer_;
-	//
+	//이 프레임워크에서 상수버퍼는 돌려 쓰는 구조로 되어 있다??
+
 
 	//Map()함수를 통해 GPU로 보내질, 각각의 상수버퍼들이 가진 데이터의 주소값. 
 	const void* settingDataToGPU_;
@@ -114,18 +115,18 @@ public:
 	}
 };
 
-class GameEngineStructuredBuffer;
-class GameEngineStructuredBufferSetter : public ShaderResSetter
-{
-public:
-	void Setting() const;
-
-	GameEngineStructuredBuffer* structuredBuffer_;
-
-	GameEngineStructuredBufferSetter() : structuredBuffer_(nullptr)
-	{
-	}
-};
+//class GameEngineStructuredBuffer;
+//class GameEngineStructuredBufferSetter : public ShaderResSetter
+//{
+//public:
+//	void Setting() const;
+//
+//	GameEngineStructuredBuffer* structuredBuffer_;
+//
+//	GameEngineStructuredBufferSetter() : structuredBuffer_(nullptr)
+//	{
+//	}
+//};
 
 
 class GameEngineShader
@@ -147,6 +148,7 @@ private:
 
 
 public:
+	//지정한 경로의 HLSL코드를 해석하고 그 내용대로 셰이더와 셰이더리소스를 만드는 함수.
 	static void AutoCompile(const std::string& _path);
 
 public:
@@ -154,10 +156,15 @@ public:
 
 
 protected:
+	//읽어들인 HLSL코드를 컴파일하는데 필요한 HLSL 버전을 생성하는 함수.
 	void CreateVersion(const std::string& _shaderType, UINT _versionHigh, UINT _versionLow);
-	void CompileHLSLCode(const std::string& _path);	//ShaderCompile()함수를 대체하는, 셰이더 클래스 공용 HLSL코드 컴파일 함수.
-	void ShaderResCheck();	//내가 입력한 셰이더코드와 실제 셰이더코드가 같은지 확인하는 함수.
-	//없어도 작동은 하지만 조금이라도 문제가 생겼을 때 잡아낼 수가 없으므로 이 함수로 문제 여지를 미리 차단한다.
+
+	//ShaderCompile()함수를 대체하는, 셰이더 공용 HLSL코드 컴파일 함수.
+	void CompileHLSLCode(const std::string& _path);	
+	
+	//내가 입력한 셰이더코드의 내용대로 셰이더의 리소스가 있는지 확인하고, 없다면 생성하는 함수.
+	void ShaderResCheck();
+	//이 과정을 통해 이 프레임워크의 셰이더는 스스로가 어떤 셰이더리소스를 필요로 하는지 전부 알 수 있다.
 
 protected:
 	std::string entryPoint_;	//HLSL 코드의 진입점함수 이름.
@@ -165,14 +172,19 @@ protected:
 	ID3DBlob* binaryCode_;	//HLSL 코드를 컴파일한 결과물(바이트코드).
 	ShaderType shaderType_;		//이 셰이더의 종류.
 
-	std::map<std::string, GameEngineConstantBufferSetter> constantBufferMap_;
-	std::map<std::string, GameEngineTextureSetter> textureMap_;
-	std::map<std::string, GameEngineSamplerSetter> samplerMap_;
-	std::map<std::string, GameEngineStructuredBufferSetter> structuredBufferMap_;
+	std::map<std::string, GameEngineConstantBufferSetter> constantBufferSetterMap_;
+	std::map<std::string, GameEngineTextureSetter> textureSetterMap_;
+	std::map<std::string, GameEngineSamplerSetter> samplerSetterMap_;
+	//std::map<std::string, GameEngineStructuredBufferSetter> structuredBufferSetterMap_;
 
 	//셰이더리소스세터들을 값형으로 저장한 이유는??
 	//->셰이더 리소스 종류가 다양하지 않아서 값형으로 보관해도 많은 컨테이너들을 만들 필요가 없고, 
 	// 각각의 리소스들을 분리해서 보다 세밀하게 관리할 수 있다는 장점을 이용할 수 있기 때문.
+
+	//std::map<std::string, ShaderResSetter*> resSetterMap_;
+	//이렇게 동적할당해서 셰이더리소스들을 보관한다면, 다형성을 이용해서 ShaderResSetter를 상속받은 모든 셰이더리소스들을 
+	// 하나의 컨테이너로 더 적은 메모리로 관리할 수 있다.
+	// 하지만 그정도로 최적화된 메모리관리가 아직은 필요 없으므로 위와같이 저장한다.
 
 protected:
 	inline void SetEntrtyPoint(const std::string& _entryPoint)

@@ -6,7 +6,7 @@
 Truck::Truck()
 	: currentTruckState_(TruckState::Deploying),
 	upperLandingChecker_(nullptr),
-	truckWorldPosPointer_(nullptr),
+	midLandingChecker_(nullptr),
 	lowerLandingChecker_(nullptr),
 	movementFor1Second_(float4::Zero),
 	isAirborne_(true),
@@ -76,7 +76,7 @@ void Truck::Start()
 	);
 
 
-	truckWorldPosPointer_ = Indicator::CreateIndicator<PixelIndicator>(
+	midLandingChecker_ = Indicator::CreateIndicator<PixelIndicator>(
 		"TruckWorldPosPointer",
 		this,
 		float4::Red,
@@ -125,7 +125,7 @@ void Truck::Start()
 			if (1.f <= _desc.frameTime_)
 			{
 				currentTruckState_ = TruckState::Deploying;
-				truckDurabilityCollisionBody_->Off();
+				truckDurabilityCollisionBody_->On();
 			}
 		}
 	);
@@ -275,9 +275,9 @@ void Truck::CheckGround()
 {
 	if (0 <= fallingSpeed_)
 	{
-		if ((groundColor_.color_ <= upperLandingChecker_->GetColorValue_UINT())
-			&& (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
-			&& (groundColor_.color_ <= truckWorldPosPointer_->GetColorValue_UINT()))
+		if (true == upperLandingChecker_->IsOnSteppablePixel()
+			&& true == lowerLandingChecker_->IsOnSteppablePixel()
+			&& true == midLandingChecker_->IsOnSteppablePixel())
 		{
 			if (true == isAirborne_)
 			{
@@ -286,8 +286,8 @@ void Truck::CheckGround()
 				fallingSpeed_ = 0.f;
 			}
 		}
-		else if (groundColor_.color_ <= truckWorldPosPointer_->GetColorValue_UINT()
-			&& groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (true == lowerLandingChecker_->IsOnSteppablePixel()
+			&& true == midLandingChecker_->IsOnSteppablePixel())
 		{
 			if (true == isAirborne_)
 			{
@@ -295,7 +295,7 @@ void Truck::CheckGround()
 				fallingSpeed_ = 0.f;
 			}
 		}
-		else if (groundColor_.color_ <= lowerLandingChecker_->GetColorValue_UINT())
+		else if (true == lowerLandingChecker_->IsOnSteppablePixel())
 		{
 			if (true == isAirborne_)
 			{

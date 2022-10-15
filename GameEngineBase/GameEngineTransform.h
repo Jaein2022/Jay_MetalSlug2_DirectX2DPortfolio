@@ -58,8 +58,8 @@ struct TransformData
 	float4 worldPositionVector_;	//월드좌표상 위치. 이동량을 반영해야 하므로 w는 1으로 설정한다.
 
 
-	float4x4 worldWorldMatrix_;
 	//오브젝트의 로컬 크기, 로컬 자전, 로컬 이동행렬에 부모의 월드행렬까지 반영된 최종 월드 행렬.
+	float4x4 worldWorldMatrix_;
 	//여기에 카메라 컴포넌트의 뷰행렬과 투영행렬까지 거치고 나야 비로소 모니터에 띄울 수 있게 된다.
 	//부모의 월드행렬까지 반영하면서 자연스럽게 공전까지 반영되므로 따로 분리된 공전행렬을 만들 필요가 없다.
 

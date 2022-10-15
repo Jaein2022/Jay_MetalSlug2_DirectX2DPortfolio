@@ -17,8 +17,11 @@ public:
 
 
 public:
+	//이 오브젝트에게 부모를 달아주고, 부모 오브젝트의 children_ 리스트에 이 오브젝트를 등록하는 함수.
 	virtual void SetParent(GameEngineUpdateObject* _newParent);
-	virtual void ReleaseHierarchy(); //이 오브젝트와 그 자식들을 최종 삭제하는 함수.
+
+	//이 오브젝트와 그 자식들을 최종 삭제하는 함수.
+	virtual void ReleaseHierarchy(); 
 
 	// 이 오브젝트가 프레임구조안에서 돌때 거치는 절차.
 	virtual void Update(float _deltaTime) = 0;
@@ -47,6 +50,7 @@ public:
 		isUpdate_ == true ? OnEvent() : OffEvent();
 	}
 
+	//특정 오브젝트가 업데이트중인지 아닌지 받아보는 함수.
 	inline bool IsUpdate()
 	{
 		if (nullptr == parent_)
@@ -109,6 +113,7 @@ public:
 		this->deadTime_ = _time;
 	}
 
+	//특정 시간 후 사망 판정되는 오브젝트의 남은 시간이 얼마인지 갱신하는 함수.
 	void ReleaseUpdate(float _deltaTime)
 	{
 		if (false == isReleaseUpdate_)
@@ -129,6 +134,7 @@ public:
 		return this->order_;
 	}
 
+	//업데이트 순서 설정.
 	virtual inline void SetOrder(int _order)
 	{
 		this->order_ = _order;
@@ -147,12 +153,14 @@ public:
 		return parent_;
 	}
 
+	//레벨 바로 아래 등록된 오브젝트까지 거슬러 올라가, 그 오브젝트를 형변환해서 반환받는 함수.
 	template<typename ParentType>
 	ParentType* GetRoot()
 	{
 		return dynamic_cast<ParentType*>(GetRoot());
 	}
 
+	//레벨 바로 아래 등록된 오브젝트까지 거슬러 올라가, 그 오브젝트를 반환받는 함수.
 	GameEngineUpdateObject* GetRoot()
 	{
 		GameEngineUpdateObject* currentObject = this;
@@ -167,10 +175,10 @@ public:
 
 
 protected:
-	//이 오브젝트가 동작을 하기 시작할때 호출하는 함수.
+	//이 오브젝트가 업데이트를 하기 시작할때 호출하는 함수.
 	virtual void OnEvent() {}
 
-	//이 오브젝트가 동작을 정지할 때 호출하는 함수.
+	//이 오브젝트가 업데이트를 정지할 때 호출하는 함수.
 	virtual void OffEvent() {}
 
 	//이 오브젝트가 생성될때 거치는 절차들을 실행하는 함수.
@@ -185,14 +193,15 @@ protected:
 	void AllOnEvent();
 	void AllOffEvent();
 
-	void ReleaseObject(std::list<GameEngineUpdateObject*>& _releaseList);
 	//사망판정받은 오브젝트와 그 자식들을 업데이트 루프에서 떼어내 삭제 대상 리스트에 등록하는 함수.
-	//여기에 넣은 오브젝트들은 다음 루프에서 삭제된다. 바로 삭제되지 않는것에 유의.
+	//여기에 넣은 오브젝트들은 다음 루프에서 삭제된다. 바로 삭제되지 않는것에 주의할 것.
+	void ReleaseObject(std::list<GameEngineUpdateObject*>& _releaseList);
 
-	virtual void DetachObject();
 	//이 오브젝트를 부모 오브젝트의 children_리스트에서 제거하는 함수.
+	virtual void DetachObject();
 
 protected:
+	//이 오브젝트의 자식들 중 특정 형태의 자식들만 받아보는 함수.
 	template<typename ConvertType>
 	std::list<ConvertType*> GetConvertedChildren()
 	{
@@ -217,7 +226,7 @@ private:
 	int order_;			//업데이트 순서.
 	bool isReleaseUpdate_;	//true: 특정 오브젝트가 일정 시간후 사망.
 	float deadTime_;	//지정 오브젝트의 사망 예정 시간. 이 시간이 0이나 음수가 되면 사망.
-	float accTime_;		//오브젝트 생성 시전으로부터 지난 시간.
+	float accTime_;		//오브젝트 생성 시점으로부터 지난 시간.
 
 	bool isUpdate_;	//true: 업데이트 참여. false: 업데이트 제외.
 	bool isDead_;	//true: 사망 판정 받음. false: 사망 판정 안 받음. 사망처리가 아닌 사망 판정임에 주의.
