@@ -72,7 +72,7 @@ protected:
 	bool isOriginal_;
 
 protected:
-	static ResType* CreateNamedRes(const std::string& _resName = "")
+	static ResType* CreateNamedRes(const std::string& _resName)
 	{
 		ResType* newRes = CreateRes(_resName);
 		std::pair<std::map<std::string, ResType*>::iterator, bool> insertResult =

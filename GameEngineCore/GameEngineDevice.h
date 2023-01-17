@@ -23,9 +23,14 @@ private:
 
 
 public:
-	static void Initialize();	//디바이스 초기화.
-	static void RenderStart();	//한 싸이클이 끝나고 백버퍼 렌더타겟을 리셋하는 함수.
-	static void RenderEnd();	//모든 렌더링 과정을 거친 백버퍼를 전면 버퍼와 교체하는 함수.
+	//디바이스 생성.
+	static void Initialize();	
+
+	//한 싸이클이 끝나고 백버퍼 렌더타겟을 리셋하는 함수.
+	static void RenderStart();	
+
+	//모든 렌더링 과정을 거친 백버퍼를 전면 버퍼와 교체하는 함수.
+	static void RenderEnd();	
 
 public:
 

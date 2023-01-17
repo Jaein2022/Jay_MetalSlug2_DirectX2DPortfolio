@@ -54,7 +54,6 @@ bool GameEngineShaderResourceHelper::IsTexture(const std::string& _name)
 	{
 		return true;
 	}
-
 }
 
 bool GameEngineShaderResourceHelper::IsSampler(const std::string& _name)
@@ -69,7 +68,6 @@ bool GameEngineShaderResourceHelper::IsSampler(const std::string& _name)
 	{
 		return true;
 	}
-
 }
 
 void GameEngineShaderResourceHelper::SetConstantBuffer_Link(
@@ -105,8 +103,8 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_Link(
 
 		iter->second.settingDataToGPU_ = _data;
 		iter->second.byteWidth_ = _dataSize;
-		//상수버퍼의 주소값과 크기를 얕은 복사로 셰이더리소스헬퍼에게 넘겨 저장하게 한다.
-		//상수버퍼의 정보가 바뀌면 변경된 정보가 자동 갱신된다.
+		//상수버퍼의 주소값과 크기를 얕은 복사(값만 복사하는 복사)로 셰이더리소스헬퍼에게 넘겨 저장하게 한다.
+		//상수버퍼의 정보가 바뀌면 변경된 상수버퍼 정보가 자동 갱신된다.
 	}
 }
 
@@ -156,7 +154,6 @@ void GameEngineShaderResourceHelper::SetConstantBuffer_New(
 
 		iter->second.byteWidth_ = _dataSize;
 	}
-
 }
 
 GameEngineTexture* GameEngineShaderResourceHelper::SetTexture(
@@ -258,7 +255,6 @@ GameEngineSampler* GameEngineShaderResourceHelper::SetSampler(const std::string&
 		MsgBoxAssertString(_samplerSetterName + ": 그런 이름의 샘플러 세터가 존재하지 않습니다.");
 		return nullptr;
 	}
-
 
 	return SetSampler(_samplerSetterName, GameEngineSampler::Find(_samplerName));
 }
@@ -450,5 +446,4 @@ void GameEngineShaderResourceHelper::BindSampler(GameEngineSamplerSetter& _sampl
 		MsgBoxAssert("아직 준비되지 않은 셰이더 타입입니다.");
 		return;
 	}
-
 }

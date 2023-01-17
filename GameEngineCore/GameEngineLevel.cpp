@@ -101,7 +101,7 @@ void GameEngineLevel::AllClear()
 void GameEngineLevel::LevelUpdate(float _deltaTime)
 {
 	this->AddAccTime(_deltaTime);
-	this->Update(_deltaTime);		//레벨과 그 자식 클래스들이 가진 요소들 중 액터 제외한 것들을 업데이트 하는 함수.
+	this->Update(_deltaTime);		//레벨과 그 자식 클래스들이 가진 오브젝트들 중 액터 제외한 것들을 업데이트 하는 함수.
 	this->ActorsUpdate(_deltaTime);	//레벨이 가진 액터들을 업데이트하는 함수.
 	this->Render(_deltaTime);
 	this->Release(_deltaTime);

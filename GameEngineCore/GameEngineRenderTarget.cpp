@@ -166,7 +166,7 @@ void GameEngineRenderTarget::Setting()
 		return;
 	}
 
-	GameEngineDevice::GetContext()->OMSetRenderTargets(		//지정한 렌더타겟뷰를 렌더링 파이프라인에 연결하는 함수.
+	GameEngineDevice::GetContext()->OMSetRenderTargets(		//지정한 렌더타겟뷰를 디바이스 컨텍스트에 연결하는 함수.
 		static_cast<UINT>(renderTargetViews_.size()),	//연결할	렌더타겟뷰 수. 0~8개 지정 가능.
 		&renderTargetViews_[0],			//렌더타겟뷰 배열 주소.
 		depthStencilView_

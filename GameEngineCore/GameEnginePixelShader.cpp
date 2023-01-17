@@ -55,6 +55,7 @@ GameEnginePixelShader* GameEnginePixelShader::Load(
     newRes->SetEntrtyPoint(_entryPoint);
     newRes->CompileHLSLCode(_path);
     newRes->CreatePixelShader();
+    newRes->ShaderResCheck();
     return newRes;
 }
 
@@ -70,6 +71,4 @@ void GameEnginePixelShader::CreatePixelShader()
         MsgBoxAssert("픽셀셰이더 생성 실패.");
         return;
     }
-
-    ShaderResCheck();
 }

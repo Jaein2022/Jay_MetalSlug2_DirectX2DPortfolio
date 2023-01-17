@@ -7,8 +7,8 @@
 
 GameEngineRenderer::GameEngineRenderer()
 	: camera_(nullptr),
-	cameraOrder_(CameraOrder::MainCamera),
 	renderOption_(),
+	cameraOrder_(CameraOrder::MainCamera),
 	renderingOrder_(0)
 {
 }

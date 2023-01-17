@@ -85,12 +85,15 @@ public:
 	void CreateDepthTexture(int _index);
 	void SetDepthTexture(GameEngineTexture* _depthTexture);
 
-	void Clear();	//교체된 전면버퍼 렌더타겟뷰를 한 색상으로 덮어서 초기화하는 함수.
-	void Setting();	//해당 리소스를 렌더링 파이프라인에 연결하는 함수.
+	//백버퍼 렌더타겟뷰를 한 색상으로 덮어서 초기화하는 함수.
+	void Clear();	
+
+	//이 렌더타겟뷰를 디바이스 컨텍스트에 연결하는 함수.
+	void Setting();
 
 	void Copy(GameEngineRenderTarget* _otherRenderTarget, int _index = 0);
 	void Merge(GameEngineRenderTarget* _otherRenderTarget, int _index = 0);
-	void Effect(	//기존 렌더타겟에, 다른 렌더타겟에 있던 픽셀정보들을 옮겨붙이는 함수. 
+	void Effect(	//기존 렌더타겟에, 다른 렌더타겟에 있던 픽셀정보들을 복사하는 함수. 
 		GameEngineRenderingPipeLine* _otherPipeLine,
 		GameEngineShaderResourceHelper* _shaderResourceHelper);
 	void EffectProcess();

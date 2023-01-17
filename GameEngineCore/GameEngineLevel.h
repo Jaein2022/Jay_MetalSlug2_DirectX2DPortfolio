@@ -23,7 +23,7 @@ class GameEngineTransform;
 class GameEngineCollision;
 class GameEngineLevel : public GameEngineNameObject, public GameEngineUpdateObject
 {
-	//레벨: 모든 형태의 업데이트오브젝트들을 관리하는 오브젝트.
+	//레벨: 모든 형태의 업데이트오브젝트들을 관리하는 오브젝트이자, 가지고 있는 모든 오브젝트들의 업데이트를 호출하는 주체.
 
 	friend class GameEngineCore;
 	friend GameEngineRenderer;
@@ -55,6 +55,7 @@ public:
 		return cameras_[static_cast<int>(CameraOrder::MainCamera)];
 	}
 
+	//UI카메라 컴포넌트를 가져오는 함수.
 	GameEngineCamera* GetUICamera()
 	{
 		return cameras_[static_cast<int>(CameraOrder::UICamera)];
@@ -150,8 +151,11 @@ private:
 	//오브젝트를 다음 레벨로 이전시키는 함수.
 	void OverChildMove(GameEngineLevel* _nextLevel);
 
-	void ActorLevelStartEvent();	//
-	void ActorLevelEndEvent();		//
+	//레벨이 교체되서 첫 업데이트를 시작할 때 액터들이 가진 AllLevelStartEvent() 함수들을 전부 호출하는 함수.
+	void ActorLevelStartEvent();
+
+	//레벨이 교체되서 더이상 업데이트를 하지 않을 때 액터들이 가진 AllLevelEndEvent() 함수들을 전부 호출하는 함수.
+	void ActorLevelEndEvent();		
 
 private:
 	void PushCamera(GameEngineCamera* _camera, CameraOrder _order)
@@ -181,16 +185,17 @@ private:
 	}
 
 private:
-	std::map<int, std::list<GameEngineActor*>> allActors_;
 	//이 레벨의 모든 액터들이 저장된 맵.
+	std::map<int, std::list<GameEngineActor*>> allActors_;
 
-	std::list<GameEngineUpdateObject*> deleteObjects_;
 	//삭제 예정인 모든 오브젝트들이 종류 불문하고 잠시 저장되는 일종의 휴지통.
+	std::list<GameEngineUpdateObject*> deleteObjects_;
 
+	//이 레벨이 사용하는 모든 카메라들.
+	std::vector<GameEngineCamera*> cameras_;	
 
-	std::vector<GameEngineCamera*> cameras_;	//이 레벨이 사용하는 모든 카메라들.
-
-	std::map<int, std::list<GameEngineCollision*>> allCollisions_;	//이 레벨의 모든 충돌체들.	
+	//이 레벨의 모든 충돌체들.	
+	std::map<int, std::list<GameEngineCollision*>> allCollisions_;	
 };
 
 

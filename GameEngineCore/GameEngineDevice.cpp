@@ -11,7 +11,6 @@ GameEngineRenderTarget* GameEngineDevice::backBufferRenderTarget_ = nullptr;
 void GameEngineDevice::Initialize()
 {
 	CreateDevice();
-	//CreateSwapChain();
 }
 
 void GameEngineDevice::CreateDevice()
@@ -112,12 +111,12 @@ void GameEngineDevice::CreateSwapChain()
 	//스왑체인에선 버퍼 스왑만 설정하고, 샘플링이 필요하다면 백버퍼에 해야 하므로 스왑체인 설정을 만지는 건 아무 의미 없다. 
 
 	scInfo.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
-	//버퍼 사용 방식: 화면에 출력할 렌더타겟으로 | 셰이더를 거친 결과물을 받는 용도로.
+	//스왑체인이 가진 버퍼 사용 방식: 화면에 출력할 렌더타겟으로 | 셰이더를 거친 결과물을 받는 용도로.
 
 	scInfo.OutputWindow = GameEngineWindow::GetHWND();
 	//지정한 렌더타겟을 출력할 윈도우의 핸들.
 
-	scInfo.BufferCount = 2;		//사용할 버퍼 개수: 2개.
+	scInfo.BufferCount = 2;		//스왑체인이 가진 버퍼 중 사용할 버퍼 개수: 전면 버퍼와 백버퍼 2개.
 
 	scInfo.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	//백버퍼 전환방식: 백버퍼의 이미지를 플립 방식으로 전면 버퍼에 복사하고, 백버퍼의 기존 이미지는 버린다.
@@ -131,6 +130,7 @@ void GameEngineDevice::CreateSwapChain()
 	//}		DXGI_SWAP_EFFECT;
 	//	일일히 복사하는 bitblt방식보다 하드웨어적으로 전후 버퍼를 교체하는 플립 방식이 더 효율적이며, 
 	//	DirectX12부터는 플립 방식만 쓰인다고 한다.
+	// 설명을 봐서는 플립 방식은 백버퍼와 전면버퍼의 메모리 주소값만 교체해주는 방식인것 같다.
 
 
 	scInfo.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
@@ -225,7 +225,7 @@ void GameEngineDevice::CreateSwapChain()
 void GameEngineDevice::RenderStart()
 {
 	backBufferRenderTarget_->Clear();
-	//백버퍼에 남아있던 이전 픽셀정보들은 전부 한 색으로 덮어서 지운다.
+	//백버퍼 렌더타겟에 남아있던 이전 픽셀정보들은 전부 한 색으로 덮어서 지운다.
 
 	backBufferRenderTarget_->Setting();
 	//다시 렌더링 할 준비를 한다.

@@ -7,7 +7,6 @@
 #include "GameEngineRenderTarget.h"
 #include "GameEngineVertexes.h"
 #include "GameEngineConstantBuffer.h"
-#include "GameEngineStructuredBuffer.h"
 
 #include "GameEngineRenderingPipeLine.h"
 #include "GameEngineVertexBuffer.h"
@@ -541,7 +540,8 @@ void GameEngineCore::EngineResourceInitialize()
 	EngineInputLayout();	//엔진 기본제공 인풋 레이아웃을 저장하는 함수.
 	EngineMesh();			//엔진 기본제공 사각형과 육면체 메쉬를 생성하는 함수.
 	EngineSubSetting();		//엔진 기본제공 래스터라이저, 블렌드, 깊이스텐실을 생성하는 함수.
-	ShaderCompile();		//엔진 기본제공 HLSL코드를 컴파일해서 셰이더와 셰이더리소스를 생성, 연결하는 함수.
+	ShaderCompile();		//엔진 기본제공 HLSL코드를 컴파일해서 셰이더와 셰이더리소스세터를 생성하고, 
+	//셰이더리소스세터에 리소스를 연결하는 함수.
 
 	EngineRenderingPipeLine();	//엔진 기본제공 렌더링 파이프라인들을 생성하는 함수.
 }
@@ -561,7 +561,6 @@ void GameEngineCore::EngineResourceDestroy()
 	GameEngineBlend::ResourceDestroy();
 
 	GameEngineConstantBuffer::ResourceDestroy();
-	GameEngineStructuredBuffer::ResourceDestroy();
 
 	GameEngineRenderTarget::ResourceDestroy();
 	GameEngineTexture::ResourceDestroy();

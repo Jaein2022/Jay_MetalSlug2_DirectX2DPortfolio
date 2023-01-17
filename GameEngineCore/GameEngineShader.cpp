@@ -5,7 +5,6 @@
 #include "GameEngineConstantBuffer.h"
 #include "GameEngineTexture.h"
 #include "GameEngineSampler.h"
-#include "GameEngineStructuredBuffer.h"
 
 void GameEngineConstantBufferSetter::Setting() const
 {
@@ -28,11 +27,6 @@ void GameEngineSamplerSetter::Setting() const
 {
 	settingFunction_();	//스위치문 한번 덜 쓰려고 펑셔널 사용.
 }
-
-//void GameEngineStructuredBufferSetter::Setting() const
-//{
-//	settingFunction_();	//스위치문 한번 덜 쓰려고 펑셔널 사용.
-//}
 
 GameEngineShader::GameEngineShader()
 	: shaderVersion_(""),
@@ -175,8 +169,8 @@ void GameEngineShader::ShaderResCheck()
 										// 대한 정보를 추출해서 셰이더 리플렉션이라는 인터페이스를 통해 반환하는 함수.
 		binaryCode_->GetBufferPointer(),		//컴파일된 HLSL 코드의 포인터.
 		binaryCode_->GetBufferSize(),			//컴파일된 HLSL 코드의 크기.
-		IID_ID3D11ShaderReflection,				//반환할때 참조할 ID3D11ShaderReflection의 인터페이스 식별자(GUID).
-		reinterpret_cast<void**>(&compileInfo)	//반환받을 ID3D11ShaderReflection의 포인터.
+		IID_ID3D11ShaderReflection,				//추출한 HLSL 코드 정보를 반환할때 참조할 ID3D11ShaderReflection의 인터페이스 식별자(GUID).
+		reinterpret_cast<void**>(&compileInfo)	//추출한 HLSL 코드 정보를 반환받을 ID3D11ShaderReflection의 포인터.
 	))
 	{
 		MsgBoxAssert("셰이더 정보 추출 실패.");
@@ -187,12 +181,14 @@ void GameEngineShader::ShaderResCheck()
 
 	D3D11_SHADER_DESC shaderInfo = { 0 };
 	compileInfo->GetDesc(&shaderInfo);
+	//IUnknown* 형태로 저장되어 DirectX 외부에서 사용할 수 없는 compileInfo에서 
+	// D3D11_SHADER_DESC 형식으로 셰이더 정보를 추출한다.
 
 
 	//typedef struct _D3D11_SHADER_INPUT_BIND_DESC
 	//{
-	//	LPCSTR                      Name;			리소스 이름.
-	//	D3D_SHADER_INPUT_TYPE       Type;			리소스 종류(텍스쳐, 상수버퍼 등등...)
+	//	LPCSTR                      Name;			셰이더가 사용하는 리소스 이름.
+	//	D3D_SHADER_INPUT_TYPE       Type;			셰이더가 사용하는 리소스 종류(텍스쳐, 상수버퍼 등등...)
 	//	UINT                        BindPoint;		해당 리소스의 레지스터 등록 번호.
 	//	UINT                        BindCount;		연결할 리소스 개수.
 	//	UINT                        uFlags;			Input binding flags
@@ -203,9 +199,12 @@ void GameEngineShader::ShaderResCheck()
 	D3D11_SHADER_INPUT_BIND_DESC resInfo = { 0 };
 
 	for (UINT i = 0; i < shaderInfo.BoundResources; i++)
-		//shaderInfo.BoundResources: 이 셰이더에서 '사용된' 총 리소스 양. 사용되지 않은 리소스는 무시된다.
+		//shaderInfo.BoundResources: 이 셰이더에서 '사용된' 총 리소스 개수. 사용되지 않은 리소스는 무시된다.
 	{
 		compileInfo->GetResourceBindingDesc(i, &resInfo);
+		//DirectX 외부에서 사용할 수 없는 compileInfo에서 D3D11_SHADER_INPUT_BIND_DESC 형식으로 
+		// 셰이더가 사용하게 될 리소스의 세부정보를 추출한다.
+
 		std::string uppercaseResourceName = GameEngineString::ToUpperReturn(resInfo.Name);
 
 		switch (resInfo.Type)
@@ -213,7 +212,7 @@ void GameEngineShader::ShaderResCheck()
 		case D3D_SIT_CBUFFER:
 		{
 			ID3D11ShaderReflectionConstantBuffer* cBufferPtr = compileInfo->GetConstantBufferByName(resInfo.Name);
-
+			//DirectX 외부에서 사용할 수 없는 compileInfo에서 상수버퍼를 추출한다.
 
 			//typedef struct _D3D11_SHADER_BUFFER_DESC
 			//{
@@ -226,18 +225,30 @@ void GameEngineShader::ShaderResCheck()
 			//} D3D11_SHADER_BUFFER_DESC;
 			D3D11_SHADER_BUFFER_DESC cBufferDesc = { 0 };
 			cBufferPtr->GetDesc(&cBufferDesc);
+			//ID3D11ShaderReflectionConstantBuffer*도 여전히 외부에서 정보를 사용할 수 없으므로 
+			// 상수버퍼를 사용하는데 필요한 정보를 D3D11_SHADER_BUFFER_DESC 형식으로 추출한다.
 
 
 			GameEngineConstantBufferSetter newCBufferSetter;
+			//새 상수버퍼세터를 생성하고, 세터에 셰이더가 상수버퍼 및 상수버퍼를 사용하는데 필요한 정보들을 저장한다.
+
 			newCBufferSetter.parentShader_ = this;
+			//이 상수버퍼세터를 생성하는 셰이더를 부모 셰이더로 한다.
+
 			newCBufferSetter.SetName(uppercaseResourceName);
+			//리소스세터의 이름은 HLSL코드 내에 선언된 자기 리소스타입 변수 이름을 그대로 따라간다.
+
 			newCBufferSetter.parentShaderType_ = this->shaderType_;
+			//부모 셰이더가 어떤 셰이더인지 저장한다.
+
 			newCBufferSetter.constantBuffer_ = GameEngineConstantBuffer::CreateAndFind(
 				uppercaseResourceName,	//만들려는 상수버퍼가 없으면 만들고, 이미 있으면 공유한다.
 				cBufferDesc		//같은 이름, 같은 크기의 상수 버퍼는 셰이더리소스헬퍼들이 포인터를 공유한다.
 			);			// 그래서 이미 만들어져 있는걸 또 만들어도 터뜨리지 않고 대신 이미 만들어져 있는걸 공유한다.
 
+
 			newCBufferSetter.bindPoint_ = resInfo.BindPoint;
+
 
 			std::pair<std::map<std::string, GameEngineConstantBufferSetter>::iterator, bool> insertResult =
 				constantBufferSetterMap_.insert(std::make_pair(uppercaseResourceName, newCBufferSetter));
@@ -248,7 +259,7 @@ void GameEngineShader::ShaderResCheck()
 
 			if (false == insertResult.second)
 			{
-				MsgBoxAssertString(std::string(resInfo.Name) + ": 이미 같은 이름의 상수버퍼 세터가 존재합니다.");
+				MsgBoxAssertString(std::string(resInfo.Name) + ": 이 셰이더에 이미 같은 이름의 상수버퍼 세터가 존재합니다.");
 				//상수버퍼 세터를 중복으로 만드는일이 생겨선 안된다.
 				return;
 			}
@@ -259,21 +270,34 @@ void GameEngineShader::ShaderResCheck()
 		case D3D_SIT_TEXTURE:
 		{
 			GameEngineTextureSetter newTextureSetter;
+			//새 텍스처세터를 생성하고, 세터에 셰이더가 텍스처 및 텍스처를 사용하는데 필요한 정보들을 저장한다.
+
 			newTextureSetter.parentShader_ = this;
+			//이 텍스처세터를 생성하는 셰이더를 부모 셰이더로 한다.
+
 			newTextureSetter.SetName(uppercaseResourceName);
+			//리소스세터의 이름은 HLSL코드 내에 선언된 자기 리소스타입 변수 이름을 그대로 따라간다.
+
 			newTextureSetter.parentShaderType_ = this->shaderType_;
+			//부모 셰이더가 어떤 셰이더인지 저장한다.
+
 			newTextureSetter.texture_ = GameEngineTexture::Find("NSet.png");//<-텍스쳐가 아예 없다는 경고가 뜨면 여기로.
+			//나중에 지정할 텍스처가 무엇이든 일단 엔진 기본제공 텍스처인 "NSet.png"를 텍스처세터에 저장해서 
+			// 추가적인 텍스처 세팅이 없으면 경고 차원에서 "NSet.png"가 렌더링되게 한다.
+			
 			newTextureSetter.bindPoint_ = resInfo.BindPoint;
+
 
 			std::pair<std::map<std::string, GameEngineTextureSetter>::iterator, bool> insertResult
 				= textureSetterMap_.insert(std::make_pair(uppercaseResourceName, newTextureSetter));
+			//생성한 텍스처세터를 저장한다.
 			//맵에 겹치는 키값을 가진 원소를 삽입하려고 하면 중복된 키값을 가진 원소를 가리키는 
 			//이터레이터와 false가 든 페어를 반환하고 삽입 시도는 무시된다.
 			//삽입이 성공했다면 삽입한 원소를 가리키는 이터레이터와 true를 가진 페어를 반환한다.
 
 			if (false == insertResult.second)
 			{
-				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 텍스처 세터가 존재합니다.");
+				MsgBoxAssertString(std::string(resInfo.Name) + ": 이 셰이더에 이미 같은 이름의 텍스처 세터가 존재합니다.");
 				return;
 			}
 
@@ -283,63 +307,38 @@ void GameEngineShader::ShaderResCheck()
 		case D3D_SIT_SAMPLER:
 		{
 			GameEngineSamplerSetter newSamplerSetter;
+			//새 샘플러세터를 생성하고, 세터에 셰이더가 샘플러 및 샘플러를 사용하는데 필요한 정보들을 저장한다.
+
 			newSamplerSetter.parentShader_ = this;
+			//이 샘플러세터를 생성하는 셰이더를 부모 셰이더로 한다.
+
 			newSamplerSetter.SetName(uppercaseResourceName);
+			//리소스세터의 이름은 HLSL코드 내에 선언된 자기 리소스타입 변수 이름을 그대로 따라간다.
+
 			newSamplerSetter.parentShaderType_ = this->shaderType_;
+			//부모 셰이더가 어떤 셰이더인지 저장한다.
+
 			newSamplerSetter.sampler_ = GameEngineSampler::Find("EngineSampler_Linear");
+			//이 샘플러세터가 가질 샘플러로 일단 엔진 기본제공 샘플러인 "EngineSampler_Linear"를 지정하고
+			// 다른 샘플러가 필요하면 이 셰이더를 가진 렌더러 차원에서 다른것으로 바꿔준다.
+
 			newSamplerSetter.bindPoint_ = resInfo.BindPoint;
 
 			std::pair<std::map<std::string, GameEngineSamplerSetter>::iterator, bool> insertResult
 				= samplerSetterMap_.insert(std::make_pair(uppercaseResourceName, newSamplerSetter));
+			//생성한 샘플러세터를 저장한다.
 			//맵에 겹치는 키값을 가진 원소를 삽입하려고 하면 중복된 키값을 가진 원소를 가리키는 
 			//이터레이터와 false가 든 페어를 반환하고 삽입 시도는 무시된다.
 			//삽입이 성공했다면 삽입한 원소를 가리키는 이터레이터와 true를 가진 페어를 반환한다.
 
 			if (false == insertResult.second)
 			{
-				MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 텍스처 세터가 존재합니다.");
+				MsgBoxAssertString(std::string(resInfo.Name) + ": 이 셰이더에 이미 같은 이름의 샘플러 세터가 존재합니다.");
 				return;
 			}
 
 			break;
 		}
-
-		//case D3D_SIT_STRUCTURED:
-		//{
-		//	//구조화버퍼는 구조적인 특성상 대용량 메모리를 사용하는것이 기본인데, 
-		//	//동적 할당되는 특성상 미리 만들수도 없다.
-
-		//	ID3D11ShaderReflectionConstantBuffer* cBufferPtr = compileInfo->GetConstantBufferByName(resInfo.Name);
-		//	D3D11_SHADER_BUFFER_DESC shaderBufferDesc = { 0 };
-		//	cBufferPtr->GetDesc(&shaderBufferDesc);
-
-		//	GameEngineStructuredBufferSetter newSBufferSetter;
-		//	newSBufferSetter.parentShader_ = this;
-		//	newSBufferSetter.SetName(uppercaseResourceName);
-		//	newSBufferSetter.parentShaderType_ = this->shaderType_;
-
-		//	// 아직은 데이터의 사이즈는 알수있어도 이걸로 몇개짜리 버퍼를 만들지는 알수가 없다.
-
-		//	newSBufferSetter.structuredBuffer_ = GameEngineStructuredBuffer::CreateAndFind(
-		//		uppercaseResourceName,	//
-		//		shaderBufferDesc,		//
-		//		0						//
-		//	);
-		//	newSBufferSetter.bindPoint_ = resInfo.BindPoint;
-
-		//	std::pair<std::map<std::string, GameEngineStructuredBufferSetter>::iterator, bool> insertResult
-		//		= structuredBufferSetterMap_.insert(
-		//			std::make_pair(uppercaseResourceName, newSBufferSetter)
-		//		);
-
-		//	if (false == insertResult.second)
-		//	{
-		//		MsgBoxAssertString(std::string(resInfo.Name) + ":  이미 같은 이름의 구조화 버퍼 세터가 존재합니다.");
-		//		return;
-		//	}
-
-		//	break;
-		//}
 
 		default:
 		{

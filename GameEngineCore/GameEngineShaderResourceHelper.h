@@ -29,7 +29,7 @@ private:
 
 
 public:
-	//리소스 준비 단계에 외부 렌더링 파이프라인의 셰이더들이 가진 셰이더리소스들을 셰이더리소스헬퍼에 등록하고, 렌더링 파이프라인에 연결하는 함수.
+	//매개변수로 들어온 렌더링 파이프라인이 필요로 하는 셰이더리소스들을 셰이더리소스헬퍼에 등록하는 함수.
 	void ResourceCheck(GameEngineRenderingPipeLine* _pipeLine);
 
 	//이 셰이더 리소스 세터가 주어진 이름의 상수버퍼를 가지고 있는가를 외부에서 확인하는 함수.
@@ -54,15 +54,11 @@ public:
 	GameEngineSampler* SetSampler(const std::string& _samplerSetterName, const std::string& _samplerName);
 
 
-	//해당 셰이더리소스헬퍼가 가진 모든 상수버퍼, 텍스처, 샘플러를 매 루프마다 갱신하고 정점셰이더나 픽셀셰이더에 연결하는 함수.
+	//이 셰이더리소스헬퍼가 가진 모든 셰이더리소스들을 렌더링 파이프라인에 연결하는 함수.
 	void AllResourcesSetting();
+	//
 
 	void AllResourcesReset();
-
-	
-
-
-
 
 public:
 	template<typename Resource>
@@ -79,13 +75,19 @@ public:
 
 
 protected:
-	//셰이더가 가진 셰이더리소스들을 셰이더리소스헬퍼에 등록하고, 렌더링 파이프라인에 해당 셰이더에 연결하는 함수. 
+	//리소스 준비시점에, 짝으로 배치된 렌더링 파이프라인의 셰이더가 필요로 하는 셰이더리소스들을 셰이더리소스헬퍼에 등록하고, 
+	// 매 렌더링마다 갱신된 셰이더리소스들을 렌더링 파이프라인에 각 셰이더들이 요구했던대로 렌더링 파이프라인에 연결하는 함수. 
 	void ShaderCheck(GameEngineShader* _shader);
 
 
 private:
+	//상수버퍼를 가지고 있다가 상수버퍼세터가 settingFunction을 통해 상수버퍼를 요구하면 렌더링 파이프라인에 연결하는 함수. 
 	void BindConstantBuffer(GameEngineConstantBufferSetter& _cBufferSetter, GameEngineConstantBuffer* _cBuffer);
+	
+	//텍스처를 가지고 있다가 텍스처세터가 settingFunction을 통해 텍스처를 요구하면 렌더링 파이프라인에 연결하는 함수.
 	void BindTexture(GameEngineTextureSetter& _textureSetter, GameEngineTexture* _texture);
+	
+	//샘플러를 가지고 있다가 샘플러세터가 settingFunction을 통해 샘플러를 요구하면 렌더링 파이프라인에 연결하는 함수.
 	void BindSampler(GameEngineSamplerSetter& _samplerSetter, GameEngineSampler* _sampler);
 
 private:
@@ -96,12 +98,12 @@ private:
 	//셰이더 리소스 세터들의 저장, 관리를 멀티맵으로 한 이유:
 	//그냥 std::map으로는 중복되는 리소스세터 이름을 키값으로 쓸 수 없지만 std::multimap으로는 저장할 수 있다는 특성을 이용해,
 	// 이름만 똑같은 다른 상수버퍼세터나 텍스쳐세터 등의 리소스세터들을 여러 셰이더들이 동시에 사용하게 되는 경우에도 원활하게 저장하기 위해서.
-	//->같은 이름 다른 리소스세터가 가진 를 정점셰이더와 픽셀셰이더가 동시에 사용할 수 있게 한다.
+	//->같은 이름 다른 리소스세터가 가진 데이터만 다른 같은 리소스를 정점셰이더와 픽셀셰이더가 동시에 사용할 수 있게 한다.
 
 	//셰이더 리소스 세터들을 참조형이 아닌 값형으로 저장하는 이유:
 	//셰이더마다 각각의 셰이더 리소스 세터들을 만들어서 저장해야 하는데,
 	// 포인터 형태로 저장하면 각각의 셰이더 리소스 세터가 아니라, 
-	// 같은 셰이더 리소스 세터를 가리키는 각각의 '포인터 변수'를 만들어 저장하기 때문이다.
+	// 하나의 셰이더 리소스 세터를 가리키는 각각의 '포인터 변수'를 만들어 저장하기 때문이다.
 	// 그걸 막기 위해 값형으로 저장한다.
 
 };

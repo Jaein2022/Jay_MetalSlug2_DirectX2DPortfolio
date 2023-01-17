@@ -57,7 +57,8 @@ protected:
 
 	//엔진 기본제공 리소스 초기화 함수.
 	static void EngineResourceInitialize();
-	//사각형, 육면체, 에러텍스쳐 등등, 엔진 수준에서 기본적으로 지원되어야 하는 리소스를 준비하는 함수.
+	//사각형, 육면체, 에러텍스쳐, 렌더링 파이프라인, 각종 셰이더 등, 
+	// 엔진 수준에서 기본적으로 지원되어야 하는 리소스를 준비하는 함수.
 
 	//엔진 기본제공 리소스 정리 함수.
 	static void EngineResourceDestroy();

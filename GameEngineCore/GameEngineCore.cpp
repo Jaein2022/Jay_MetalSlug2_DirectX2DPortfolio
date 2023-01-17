@@ -81,7 +81,6 @@ void GameEngineCore::CoreStart(GameEngineCore* _userCore)
 
 void GameEngineCore::CoreUpdate(GameEngineCore* _userCore)
 {
-
 	if (nullptr != nextLevel_)
 	{
 		if (nullptr != currentLevel_)
