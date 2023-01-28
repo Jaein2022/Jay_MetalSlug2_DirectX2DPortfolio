@@ -1020,18 +1020,18 @@ public:
 		this->arr2D[0][3] = 0.f;
 
 		this->arr2D[1][0] = 0.f;
-		this->arr2D[1][1] = _height * 0.5f;
+		this->arr2D[1][1] = -_height * 0.5f;
 		this->arr2D[1][2] = 0.f;
 		this->arr2D[1][3] = 0.f;
 
 		this->arr2D[2][0] = 0.f;
 		this->arr2D[2][1] = 0.f;
-		this->arr2D[2][2] = 0.5f;
+		this->arr2D[2][2] = _maxZ - _minZ;
 		this->arr2D[2][3] = 0.f;
 
 		this->arr2D[3][0] = _width * 0.5f + _left;
 		this->arr2D[3][1] = _height * 0.5f + _right;
-		this->arr2D[3][2] = 0.5f;
+		this->arr2D[3][2] = _minZ;
 		this->arr2D[3][3] = 1.f;
 
 	}
