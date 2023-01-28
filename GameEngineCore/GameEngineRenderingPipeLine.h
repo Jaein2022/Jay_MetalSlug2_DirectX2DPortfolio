@@ -12,8 +12,6 @@ class GameEngineBlend;
 class GameEngineRenderingPipeLine : public GameEngineRes<GameEngineRenderingPipeLine>
 {
 	//이 클래스의 존재 이유는??
-	//이 클래스는 메테리얼과 사실상 같다??
-	// 버텍스버퍼, 인덱스버퍼로 만든 폴리곤의 사이사이를 채우는 셰이더들을 가진...
 
 public:
 	GameEngineRenderingPipeLine();

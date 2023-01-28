@@ -67,24 +67,6 @@
     <Filter Include="Resource\Texture">
       <UniqueIdentifier>{a9f03bc7-c690-49e1-bb70-58fbdf645a09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ThirdParty\FW1FontWrapper">
-      <UniqueIdentifier>{e30fabbf-30d5-48db-961b-c41329ee6c38}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ThirdParty\FW1FontWrapper\Inc%28Header%29">
-      <UniqueIdentifier>{1dbce513-e204-4d05-aa08-28a81c6f4596}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ThirdParty\FW1FontWrapper\Bin%28Library%29">
-      <UniqueIdentifier>{e5c28ee2-f0aa-440e-8e22-da8670f48357}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ThirdParty\FW1FontWrapper\Bin%28Library%29\Debug">
-      <UniqueIdentifier>{aef9b385-9e31-41ea-baa7-30b14363acf3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ThirdParty\FW1FontWrapper\Bin%28Library%29\Release">
-      <UniqueIdentifier>{d400f0b4-88c9-481f-8b6d-16bb4d0b09d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource\Font">
-      <UniqueIdentifier>{a80a276b-2d17-4421-b261-ee0c098bbf96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Debug">
       <UniqueIdentifier>{411a0449-8112-47a0-bc0b-944f75cd0b99}</UniqueIdentifier>
     </Filter>
@@ -238,16 +220,6 @@
       <Filter>Object\Component\Rendering\Contents</Filter>
     </ClInclude>
     <ClInclude Include="GEngine.h" />
-    <ClInclude Include="CoreMinimal.h" />
-    <ClInclude Include="GameEngineFontRenderer.h">
-      <Filter>Object\Component\Rendering\Contents</Filter>
-    </ClInclude>
-    <ClInclude Include="GameEngineFont.h">
-      <Filter>Resource\Font</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\FW1FontWrapper\Include\FW1FontWrapper.h">
-      <Filter>ThirdParty\FW1FontWrapper\Inc%28Header%29</Filter>
-    </ClInclude>
     <ClInclude Include="GameEngineCollision.h">
       <Filter>Object\Component\Collision</Filter>
     </ClInclude>
@@ -389,12 +361,6 @@
       <Filter>Object\Component\Rendering\Contents</Filter>
     </ClCompile>
     <ClCompile Include="GEngine.cpp" />
-    <ClCompile Include="GameEngineFontRenderer.cpp">
-      <Filter>Object\Component\Rendering\Contents</Filter>
-    </ClCompile>
-    <ClCompile Include="GameEngineFont.cpp">
-      <Filter>Resource\Font</Filter>
-    </ClCompile>
     <ClCompile Include="GameEngineCollision.cpp">
       <Filter>Object\Component\Collision</Filter>
     </ClCompile>
@@ -428,18 +394,6 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="ThirdParty\DirectXTex\Bin\Debug\DirectXTex.pdb">
       <Filter>ThirdParty\DirectXTex\Bin%28Library%29\Debug</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="ThirdParty\FW1FontWrapper\Bin\Release\FW1FontWrapper.dll">
-      <Filter>ThirdParty\FW1FontWrapper\Bin%28Library%29\Release</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="ThirdParty\FW1FontWrapper\Bin\Release\FW1FontWrapper.lib">
-      <Filter>ThirdParty\FW1FontWrapper\Bin%28Library%29\Release</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="ThirdParty\FW1FontWrapper\Bin\Debug\FW1FontWrapper.dll">
-      <Filter>ThirdParty\FW1FontWrapper\Bin%28Library%29\Debug</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="ThirdParty\FW1FontWrapper\Bin\Debug\FW1FontWrapper.lib">
-      <Filter>ThirdParty\FW1FontWrapper\Bin%28Library%29\Debug</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -17,7 +17,6 @@
 #include "GameEnginePixelShader.h"
 #include "GameEngineDepthStencil.h"
 #include "GameEngineBlend.h"
-#include "GameEngineFont.h"
 
 void EngineInputLayout()
 {
@@ -514,7 +513,7 @@ void EngineMesh()
 
 
 
-	GameEngineFont::Load("돋움");
+	//GameEngineFont::Load("돋움");
 }
 
 void ShaderCompile()
@@ -567,7 +566,6 @@ void GameEngineCore::EngineResourceDestroy()
 	GameEngineFolderTexture::ResourceDestroy();
 	GameEngineSampler::ResourceDestroy();
 	GameEngineSound::ResourceDestroy();
-	GameEngineFont::ResourceDestroy();
 
 	GameEngineDevice::Destroy();
 	//모든 리소스들은 다이렉트X 디바이스의 지원이 있어야 존재할 수 있으므로,
