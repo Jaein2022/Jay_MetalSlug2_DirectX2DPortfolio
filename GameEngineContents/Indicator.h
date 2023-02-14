@@ -26,7 +26,7 @@ public:
 	template <typename IndicatorType>
 	static IndicatorType* CreateIndicator(
 		const std::string& _name,
-		GameEngineUpdateObject* _parentObject,
+		GameEngineUpdateObject* _parentActor,
 		const float4& _color,
 		const float4& _localPosition,
 		const float4& _localScale
@@ -35,7 +35,7 @@ public:
 		Indicator* newIndicator = new IndicatorType();
 		newIndicator->SetName(_name);
 		newIndicator->color_ = _color;
-		newIndicator->SetParent(_parentObject);
+		newIndicator->SetParent(_parentActor);
 		newIndicator->GetTransform().SetLocalScale(_localScale);
 		newIndicator->GetTransform().SetLocalPosition(_localPosition);
 		newIndicator->Start();

@@ -82,7 +82,7 @@ public:
 		}
 	}
 
-	//특정 오브젝트가 생성된 시점으로부터 얼마나 시간이 지났는지 측정하는 함수.
+	//이 오브젝트가 생성된 시점으로부터 얼마나 시간이 지났는지 측정하는 함수.
 	void AddAccTime(float _deltaTime)
 	{
 		this->accTime_ += _deltaTime;
@@ -224,7 +224,7 @@ protected:
 
 private:
 	int order_;			//업데이트 순서.
-	bool isReleaseUpdate_;	//true: 특정 오브젝트가 일정 시간후 사망.
+	bool isReleaseUpdate_;	//true: 이 오브젝트가 일정 시간후 사망.
 	float deadTime_;	//지정 오브젝트의 사망 예정 시간. 이 시간이 0이나 음수가 되면 사망.
 	float accTime_;		//오브젝트 생성 시점으로부터 지난 시간.
 
