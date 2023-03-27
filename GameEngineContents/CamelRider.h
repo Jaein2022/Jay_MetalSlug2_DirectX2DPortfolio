@@ -74,6 +74,23 @@ private:
 
 	void Fire();
 
+private:
+	void ResetRebelState() override
+	{
+		currentCamelRiderState_ = CamelRiderState::Up_Idling;
+		hp_ = 1;
+		swordDurability_ = 8;
+
+		this->isSwordBroken_ = false;
+		this->isEngaging_ = false;
+		this->On();
+		
+		camelRenderer_->On();
+		riderRenderer_->On();
+		riderArmRenderer_->On();
+		riderCollisionBody_->On();
+		swordCollisionBody_->On();
+	}
 
 
 
@@ -129,7 +146,7 @@ private:
 	const float4 swordCollisionBodyPosition_Down_;
 
 	int hp_;
-	int swordDurability;
+	int swordDurability_;
 
 	Soldier* enemySoldier_;
 	

@@ -38,6 +38,20 @@ public:
 		return part3_FirstBG_InitPosition_.x + part3_FirstBG_->GetCurrentTexture()->GetScale().x;
 	}
 
+	inline void SwitchPCTextureRendering()
+	{
+		if (true == isShowingPCTextureRenderer_)
+		{
+			pcTextureRenderer_->GetTransform().SetLocalPosition(1, 0, 2);
+			isShowingPCTextureRenderer_ = false;
+		}
+		else
+		{
+			pcTextureRenderer_->GetTransform().SetLocalPosition(1, 0, -2);
+			isShowingPCTextureRenderer_ = true;
+		}
+	}
+
 private:
 	GameEngineTextureRenderer* part1_FirstBG_;
 	const float4 part1_FirstBG_InitPosition_;
@@ -60,6 +74,9 @@ private:
 	GameEngineTextureRenderer* skyBG_3_;
 
 	GameEngineTextureRenderer* patchUpRenderer_;
+
+	GameEngineTextureRenderer* pcTextureRenderer_;
+	bool isShowingPCTextureRenderer_;
 
 };
 

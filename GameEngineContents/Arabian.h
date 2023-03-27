@@ -119,6 +119,19 @@ private:
 		recognitionDistance_ = _distance;
 	}
 
+	void ResetRebelState() override
+	{
+		this->hp_ = 1;
+		this->currentArabianState_ = ArabianState::Waiting;
+		this->isEngaging_ = false;
+		arabianRenderer_->On();
+		arabianRenderer_->GetPixelData().plusColor_ = float4::Zero;
+		arabianLifeCollisionBody_->On();
+		arabianCloseCombatCollisionBody_->On();
+
+		this->On();
+	}
+
 private:
 
 	ArabianState currentArabianState_;

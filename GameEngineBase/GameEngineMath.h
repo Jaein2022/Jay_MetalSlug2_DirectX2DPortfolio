@@ -67,7 +67,6 @@ public:
 	static const float4 Black;	//0001
 	static const float4 White;	//1111
 
-	//무명유니온의 장점??
 	union
 	{
 		struct

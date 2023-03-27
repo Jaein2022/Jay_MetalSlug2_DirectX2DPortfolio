@@ -37,7 +37,7 @@ CamelRider::CamelRider()
 	swordCollisionBodyScale_Down_(60, 130, 10),
 	swordCollisionBodyPosition_Down_(100, 20, 15),
 	hp_(1),
-	swordDurability(8),
+	swordDurability_(8),
 	enemySoldier_(nullptr),
 	isRiderDirectionWrong_(false),
 	muzzle_(nullptr),
@@ -114,7 +114,7 @@ void CamelRider::Start()
 
 	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(ObjectOrder::Soldier).front();
 	//낙타기수 생성은 반드시 솔저 생성 이후로 할 것.
-	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생.
+	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생할 수 있음.
 
 
 
@@ -793,7 +793,7 @@ void CamelRider::Start()
 
 			pointOfDeath_ = riderRenderPivot_->GetTransform().GetWorldPosition();
 
-			this->Death(2.f);
+			riderRenderPivot_->GetTransform().PixLocalPositiveX();
 		}
 	);
 
@@ -854,9 +854,9 @@ void CamelRider::TakeDamage(
 	if (_rebelCollision == swordCollisionBody_
 		&& static_cast<int>(ObjectOrder::Soldier) != _soldierWeaponCollision->GetActor()->GetOrder())
 	{
-		swordDurability -= _damage;
+		swordDurability_ -= _damage;
 
-		if (0 < swordDurability)
+		if (0 < swordDurability_)
 		{
 			if (5 >= static_cast<int>(currentCamelRiderState_))
 			{
@@ -1038,11 +1038,11 @@ void CamelRider::SelectNextState(int _minStateIndex, int _maxStateIndex, int _ex
 	int nextStateIndex
 		= GameEngineRandom::mainRandom_.GetRandomInt(_minStateIndex, _maxStateIndex);
 
-	if (0 < _exclusionCount)	//제외할 낙타기수스테이트가 1개 이상일때만 진입.
+	if (0 < _exclusionCount)	//제외할 낙타기수 스테이트가 1개 이상일때만 진입.
 	{
-		va_list exclusionList;		//제외할 낙타기수스테이트 리스트.
+		va_list exclusionList;		//제외할 낙타기수 스테이트 리스트.
 		va_start(exclusionList, _exclusionCount);	//exclusionList 초기화.
-		CamelRiderState exclusion;		//제외할 낙타기수스테이트.
+		CamelRiderState exclusion;		//제외할 낙타기수 스테이트.
 
 		for (int i = 0; i < _exclusionCount; i++)
 		{
@@ -1050,7 +1050,7 @@ void CamelRider::SelectNextState(int _minStateIndex, int _maxStateIndex, int _ex
 
 			if (static_cast<CamelRiderState>(nextStateIndex) == exclusion)
 			{
-				//랜덤으로 뽑은 숫자가 다음 스테이트에서 제외할 낙타기수스테이트 번호와 같다면 다시 뽑는다.
+				//랜덤으로 뽑은 숫자가 다음 스테이트에서 제외할 낙타기수 스테이트 번호와 같다면 다시 뽑는다.
 				nextStateIndex = GameEngineRandom::mainRandom_.GetRandomInt(_minStateIndex, _maxStateIndex);
 				va_end(exclusionList);
 				va_start(exclusionList, _exclusionCount);
@@ -1084,8 +1084,13 @@ void CamelRider::RunBackward()
 void CamelRider::RunInDead()
 {
 	movementFor1Second_ += float4::Right * GetTransform().GetWorldScale().x * runningSpeed_;
-	riderRenderPivot_->GetTransform().PixLocalPositiveX();
 	riderRenderPivot_->GetTransform().SetWorldPosition(pointOfDeath_);
+
+	if (this->GetTransform().GetWorldPosition().x + 200.f
+		< this->GetLevel()->GetMainCameraActorTransform().GetWorldPosition().x - GameEngineWindow::GetScale().HX())
+	{
+		this->Off();
+	}
 }
 
 void CamelRider::Fire()

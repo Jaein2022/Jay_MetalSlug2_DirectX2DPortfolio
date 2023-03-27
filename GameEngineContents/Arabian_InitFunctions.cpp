@@ -140,7 +140,7 @@ void Arabian::CreateArabianAnimations()
 					Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 					if (1.f <= _desc.frameTime_)
 					{
-						this->Death();
+						this->Off();
 					}
 				}
 			}
@@ -157,7 +157,7 @@ void Arabian::CreateArabianAnimations()
 	arabianRenderer_->AnimationBindEnd("Death1",
 		[this](const FrameAnimation_Desc& _desc)->void 
 		{
-			this->Death();
+			this->Off();
 		}
 	);
 
@@ -172,7 +172,7 @@ void Arabian::CreateArabianAnimations()
 				Flicker(_deltaTime, true, float4(0, 0, 0, -1));
 				if (1.f <= _desc.frameTime_)
 				{
-					this->Death();
+					this->Off();
 				}
 			}
 		}

@@ -42,7 +42,7 @@ public:
 		return dynamic_cast<IndicatorType*>(newIndicator);
 	}
 
-	static void RenderingOnOffSwitch()
+	static void SwitchRendering()
 	{
 		isRendering_ = !isRendering_;
 	}

@@ -59,7 +59,8 @@ void Mission1::Start()
 	mission1BG_->GetTransform().SetWorldPosition(
 		-GameEngineWindow::GetScale().HX(),
 		-GameEngineWindow::GetScale().HY(),
-		40.f);
+		40.f
+	);
 	//윈도우 왼쪽 아래를 배경액터 위치로 설정.
 
 	currentFocusPointer_ = Indicator::CreateIndicator<Indicator>(
@@ -68,16 +69,17 @@ void Mission1::Start()
 		float4::Black,
 		float4(0, 0, 5),	//절대 변경하지 말 것.
 		float4(15, 15, 1)
-		);
+	);
 
 	destFocus_ = CreateActor<IndicatorBase>(ObjectOrder::UI, "DestFocus");
 	destFocus_->SetPointerColor(float4::Yellow);
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(4700, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(00, 0, GetMainCameraActorTransform().GetWorldPosition().IZ())
+	);
 	//시작시 카메라 위치 변경이 필요하면 여기에서.
 
 	soldier_Mission1_ = CreateActor<Soldier>(ObjectOrder::Soldier, "Soldier_Mission1");
-	soldier_Mission1_->GetTransform().SetWorldPosition(4500, 200, 0);
+	soldier_Mission1_->GetTransform().SetWorldPosition(500 - GameEngineWindow::GetInst()->GetScale().HIX(), 200, 0);
 
 
 	arabian1_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian1");
@@ -91,16 +93,16 @@ void Mission1::Start()
 	arabian1_->SetRecognitionDistance(750);
 
 	arabian2_->GetTransform().SetWorldPosition(1050, 0, 0);
-	arabian2_->SetRecognitionDistance(650);
+	arabian2_->SetRecognitionDistance(550);
 
 	arabian3_->GetTransform().SetWorldPosition(1600, -200, 0);
-	arabian3_->SetRecognitionDistance(650);
+	arabian3_->SetRecognitionDistance(400);
 
 	arabian4_->GetTransform().SetWorldPosition(1700, -200, 0);
-	arabian4_->SetRecognitionDistance(650);
+	arabian4_->SetRecognitionDistance(400);
 
 	arabian5_->GetTransform().SetWorldPosition(1725, -200, 0);
-	arabian5_->SetRecognitionDistance(650);
+	arabian5_->SetRecognitionDistance(400);
 
 
 
@@ -124,15 +126,22 @@ void Mission1::Start()
 
 	mission1BgmPlayer_ = GameEngineSound::SoundPlayControl("JUDGMENT (Mission 1).mp3", -1);
 
-
+	GameEngineSound::SoundPlayOneshot("Mission1_Start.mp3");
 
 
 #ifndef _DEBUG
+
+	this->GetMainCameraActor()->GetTransform().SetWorldPosition(0, 0, -100);
+
 	destFocus_->GetTransform().SetWorldPosition(
-		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ()));
+		float4(0, 0, -100)
+	);
 
 	soldier_Mission1_->GetTransform().SetWorldPosition(
-		500 - GameEngineWindow::GetInst()->GetScale().HIX(), 200, 0);
+		500 - GameEngineWindow::GetInst()->GetScale().HIX(),
+		200,
+		0
+	);
 
 	arabian6_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian6");
 	arabian7_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian7");
@@ -151,7 +160,6 @@ void Mission1::Start()
 	arabian8_->SetRecognitionDistance(610);
 	arabian9_->SetRecognitionDistance(610);
 	arabian10_->SetRecognitionDistance(610);
-
 
 	arabian11_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian11");
 	arabian12_ = CreateActor<Arabian>(ObjectOrder::Rebel, "Arabian12");
@@ -186,19 +194,7 @@ void Mission1::Start()
 	arabian19_->SetRecognitionDistance(605);
 	arabian20_->SetRecognitionDistance(605);
 
-
-	GameEngineSound::SoundPlayOneshot("Mission1_Start.mp3");
-
-
 #endif // !_DEBUG
-
-
-
-
-
-
-
-
 
 	GameEngineGUI::CreateGUIWindow<DevelopmentTool>("Development Tool", this);
 
@@ -227,16 +223,99 @@ void Mission1::End()
 {
 }
 
+void Mission1::Reset()
+{
+	destFocus_->GetTransform().SetWorldPosition(
+		float4(0, 0, GetMainCameraActorTransform().GetWorldPosition().IZ())
+	);
+	isDestFocusHolding_ = false;
+
+	soldier_Mission1_->GetTransform().SetWorldPosition(
+		500 - GameEngineWindow::GetInst()->GetScale().HIX(),
+		200,
+		0
+	);
+
+	arabian1_->GetTransform().SetWorldPosition(925, 0, 0);
+	arabian1_->ResetRebelState();
+
+	arabian2_->GetTransform().SetWorldPosition(1050, 0, 0);
+	arabian2_->ResetRebelState();
+
+	arabian3_->GetTransform().SetWorldPosition(1600, -200, 0);
+	arabian3_->ResetRebelState();
+
+	arabian4_->GetTransform().SetWorldPosition(1700, -200, 0);
+	arabian4_->ResetRebelState();
+
+	arabian5_->GetTransform().SetWorldPosition(1725, -200, 0);
+	arabian5_->ResetRebelState();
+
+	camelRider_->GetTransform().PixLocalNegativeX();
+	camelRider_->GetTransform().SetWorldPosition(mission1BG_->GetPart1RightEnd() - 575.f, 0.f, 0.f);
+	camelRider_->ResetRebelState();
+	isCamelRiderDead_ = false;
+
+	troopTruck_->GetTransform().SetWorldPosition(6250, 0, 0);
+	troopTruck_->ResetRebelState();
+	isTruckDestroyed_ = false;
+
+	//berserker1_->GetTransform().SetWorldPosition(5100, 0, 0);
+	//berserker1_->ResetRebelState();
+
+
+#ifndef _DEBUG
+
+	arabian6_->GetTransform().SetWorldPosition(1850, 0, 0);
+	arabian7_->GetTransform().SetWorldPosition(1925, 0, 0);
+	arabian8_->GetTransform().SetWorldPosition(2200, 0, 0);
+	arabian9_->GetTransform().SetWorldPosition(2525, 0, 0);
+	arabian10_->GetTransform().SetWorldPosition(2600, 0, 0);
+
+	arabian6_->ResetRebelState();
+	arabian7_->ResetRebelState();
+	arabian8_->ResetRebelState();
+	arabian9_->ResetRebelState();
+	arabian10_->ResetRebelState();
+
+	arabian11_->GetTransform().SetWorldPosition(3450, 0, 0);
+	arabian12_->GetTransform().SetWorldPosition(3500, 0, 0);
+	arabian13_->GetTransform().SetWorldPosition(3550, 0, 0);
+	arabian14_->GetTransform().SetWorldPosition(3600, 0, 0);
+	arabian15_->GetTransform().SetWorldPosition(3650, 0, 0);
+	arabian16_->GetTransform().SetWorldPosition(3700, 0, 0);
+	arabian17_->GetTransform().SetWorldPosition(3750, 0, 0);
+	arabian18_->GetTransform().SetWorldPosition(3800, 0, 0);
+	arabian19_->GetTransform().SetWorldPosition(3850, 0, 0);
+	arabian20_->GetTransform().SetWorldPosition(3900, 0, 0);
+
+	arabian11_->ResetRebelState();
+	arabian12_->ResetRebelState();
+	arabian13_->ResetRebelState();
+	arabian14_->ResetRebelState();
+	arabian15_->ResetRebelState();
+	arabian16_->ResetRebelState();
+	arabian17_->ResetRebelState();
+	arabian18_->ResetRebelState();
+	arabian19_->ResetRebelState();
+	arabian20_->ResetRebelState();
+
+#endif // !_DEBUG
+
+	mission1BgmPlayer_.Stop();
+	mission1BgmPlayer_ = GameEngineSound::SoundPlayControl("JUDGMENT (Mission 1).mp3", -1);
+	
+	GameEngineSound::SoundPlayOneshot("Mission1_Start.mp3");
+
+}
+
 void Mission1::UpdateDestFocusMovement(float _deltaTime)
 {
 	if (mission1BG_->GetPart1RightEnd() - GameEngineWindow::GetScale().x - 5.f
 		<= destFocus_->GetTransform().GetWorldPosition().x 
 		&& false == isCamelRiderDead_)
 	{
-#ifdef _DEBUG
-		//isDestFocusHolding_ = false;
-#else
-		if (true == camelRider_->IsDead())
+		if (false == camelRider_->IsUpdate())
 		{
 			isDestFocusHolding_ = false;
 			isCamelRiderDead_ = true;
@@ -249,7 +328,6 @@ void Mission1::UpdateDestFocusMovement(float _deltaTime)
 			}
 			isDestFocusHolding_ = true;
 		}
-#endif // _DEBUG
 	}
 
 	if (mission1BG_->GetPart2RightEnd() - GameEngineWindow::GetScale().x

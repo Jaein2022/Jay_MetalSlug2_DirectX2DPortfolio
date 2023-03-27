@@ -32,9 +32,7 @@ void ContentsCore::Start()
 
 	//GameEngineDebug::ConsoleOpen(); 콘솔창이 필요하면 복원.
 
-
 	//GameEngineTime::SetFrameLimit(60);	//프레임 제한이 필요하면 복원.
-
 
 
 	if (false == GameEngineInput::GetInst()->IsKey("Left"))

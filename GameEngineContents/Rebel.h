@@ -24,6 +24,9 @@ public:
 		GameEngineCollision* _rebelCollision
 	) = 0;
 
+protected:
+	virtual void ResetRebelState() = 0;
+
 
 private:
 

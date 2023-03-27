@@ -1,8 +1,10 @@
 #include "PreCompile.h"
 #include "DevelopmentTool.h"
 #include "Mission1.h"
+#include "Mission1BG.h"
 #include "Truck.h"
 #include "Berserker.h"
+#include "Indicator.h"
 
 DevelopmentTool::DevelopmentTool(): mission1_(nullptr)
 {
@@ -19,7 +21,25 @@ void DevelopmentTool::Initialize(GameEngineLevel* _level)
 
 void DevelopmentTool::OnGUI(GameEngineLevel* _level, float _deltaTime)
 {
+	ImGui::Text("Base Development Tool");
+	if (true == ImGui::Button("Show/Hide Indicators"))
+	{
+		Indicator::SwitchRendering();
+	}
 
+	if (true == ImGui::Button("Show/Hide PCTexture"))
+	{
+		this->mission1_->mission1BG_->SwitchPCTextureRendering();
+	}
+	ImGui::NewLine();
+
+	if (true == ImGui::Button("Reset"))
+	{
+		this->mission1_->Reset();
+	}
+	ImGui::NewLine();
+
+	ImGui::Text("Current Enemy: Berserker.");
 	if (true == ImGui::Button("Waiting_SittingDown"))
 	{
 		this->mission1_->berserker1_->SetBerserkerState(BerserkerState::Waiting_SittingDown);

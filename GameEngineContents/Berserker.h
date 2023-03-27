@@ -87,6 +87,11 @@ private:
 		currentBerserkerState_ = _newState;
 	}
 
+	void ResetRebelState() override
+	{
+		currentBerserkerState_ = BerserkerState::Idling;
+	}
+
 
 private:
 	BerserkerState currentBerserkerState_;

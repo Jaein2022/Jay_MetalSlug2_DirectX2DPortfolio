@@ -30,8 +30,11 @@ public:
 
 	//void TakeWeapon(int _weaponType);
 	//void ReleasePrisoner(int _prisonerType);
-	void TakeDamage(int _rebelWeaponType);	//데미지 받는 함수. 플레이어는 무적 상태가 아니면 한방에 죽으므로 뭐로 맞았는지 정보를 받는다.
-	//스스로는 호출 금지.
+
+	//데미지 받는 함수. 플레이어는 무적 상태가 아니면 한방에 죽으므로 뭐로 맞았는지 정보를 받는다. 스스로는 호출 금지.
+	void TakeDamage(int _rebelWeaponType);	
+
+	
 
 
 private:
@@ -70,6 +73,8 @@ private:
 		const float4& _plusColor,
 		const float4& _originalColor = float4::Zero
 	);
+
+	void ResetSoldier();
 
 private:
 	inline void SetSoldierWorldPosLimit(float _limit)

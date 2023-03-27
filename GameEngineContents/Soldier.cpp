@@ -327,7 +327,8 @@ void Soldier::CheckGround()
 			|| true == lowerLandingCheckCollisionBody_->IsCollision(
 				CollisionType::CT_AABB,
 				ObjectOrder::SteppableObject,
-				CollisionType::CT_AABB))
+				CollisionType::CT_AABB)
+		)
 		{
 			if (true == isAirborne_)
 			{
@@ -1101,4 +1102,8 @@ void Soldier::Flicker(
 			(*iter)->GetPixelData().plusColor_ = _originalColor;
 		}
 	}
+}
+
+void Soldier::ResetSoldier()
+{
 }

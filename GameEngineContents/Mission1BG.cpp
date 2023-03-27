@@ -17,7 +17,9 @@ Mission1BG::Mission1BG()
 	part3_FirstBG_(nullptr),
 	part3_FirstBG_InitPosition_(6000, 64, 0),
 	skyBG_3_(nullptr),
-	patchUpRenderer_(nullptr)
+	patchUpRenderer_(nullptr),
+	pcTextureRenderer_(nullptr),
+	isShowingPCTextureRenderer_(false)
 {
 }
 
@@ -121,7 +123,7 @@ void Mission1BG::Start()
 		GameEngineWindow::GetScale().IY() - 289,	//모스크포대 배치한 후에 하늘배경 3번 y좌표 재조정.
 		17);
 
-	patchUpRenderer_ = CreateComponent<GameEngineTextureRenderer>("PathcUpRenderer");
+	patchUpRenderer_ = CreateComponent<GameEngineTextureRenderer>("PatchUpRenderer");
 	patchUpRenderer_->SetTexture("PatchUp.png");
 	patchUpRenderer_->SetPivot(PivotMode::LeftBot);
 	patchUpRenderer_->ScaleToTexture();
@@ -132,8 +134,15 @@ void Mission1BG::Start()
 	);
 
 
+	pcTextureRenderer_ = CreateComponent<GameEngineTextureRenderer>();
+	pcTextureRenderer_->SetTexture("Mission1_PCBG.png");
+	pcTextureRenderer_->SetPivot(PivotMode::LeftBot);
+	pcTextureRenderer_->ScaleToTexture();
+	pcTextureRenderer_->GetTransform().SetLocalPosition(1, 0, 2);
+
 
 #ifndef _DEBUG
+
 	part1_FirstBG_->On();
 	part1_SecondBG_->On();
 	part1_ThirdBG_1_->On();
@@ -149,15 +158,24 @@ void Mission1BG::Start()
 	part3_FirstBG_->On();
 	skyBG_3_->On();
 
-#endif // !_DEBUG
-
-
+#endif 
 
 
 }
 
 void Mission1BG::Update(float _deltaTime)
 {
+	//if (true == GameEngineInput::GetInst()->IsDown("Test"))
+	//{
+	//	if (true == pcTextureRenderer_->IsUpdate())
+	//	{
+	//		pcTextureRenderer_->Off();
+	//	}
+	//	else
+	//	{
+	//		pcTextureRenderer_->On();
+	//	}
+	//}
 }
 
 void Mission1BG::End()

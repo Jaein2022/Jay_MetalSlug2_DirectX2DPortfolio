@@ -141,7 +141,7 @@ void Arabian::Start()
 
 	enemySoldier_ = this->GetLevel()->GetConvertedGroup<Soldier>(ObjectOrder::Soldier).front();
 	//아라비안 생성은 반드시 솔저 생성 이후로 할 것.
-	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생.
+	//솔저(플레이어)가 한명 이상으로 늘어나면 문제 발생할 가능성 높음.
 
 	if (nullptr == enemySoldier_)
 	{

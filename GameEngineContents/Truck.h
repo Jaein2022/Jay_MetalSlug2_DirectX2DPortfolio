@@ -66,6 +66,12 @@ private:
 		return TruckState::Destroyed == currentTruckState_;
 	}
 
+	void ResetRebelState() override
+	{
+		truckDurability_ = 15;
+		currentTruckState_ = TruckState::Idling;
+	}
+
 private: 
 	GameEngineStateManager truckStateManager_;
 
